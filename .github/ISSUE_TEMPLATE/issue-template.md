@@ -2,9 +2,8 @@
 name: Issue Template
 about: Issue 템플릿
 title: "[Feat]"
-labels: ''
-assignees: ''
-
+labels: ""
+assignees: ""
 ---
 
 <!-- 제목양식을 지켜주세요! [Feat] {제목~~} -->
