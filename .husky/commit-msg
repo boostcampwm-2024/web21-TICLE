@@ -1,0 +1,1 @@
+sh .husky/commit-msg.sh "$1"
