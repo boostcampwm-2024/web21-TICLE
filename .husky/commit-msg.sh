@@ -29,5 +29,7 @@ if ! echo "$subject" | grep -qE "$pattern"; then
     exit 1
 fi
 
+echo ""
 echo "커밋 완료!"
+echo ""
 exit 0
