@@ -9,7 +9,7 @@
 티끌모아 태산이 되듯,
 작은 티클들이 모여 큰 배움이 된다는 믿음으로 이름을 지었습니다.
 
-[:ledger: 팀 노션](https://rain-spatula-0a1.notion.site/12ae944ce960809eaf09e494ae58b73d?v=1b9cf2c65c7c4abd90a58ec5405973df&pvs=4) | [:busts_in_silhouette: 그라운드 룰](https://github.com/boostcampwm-2024/web21-boostproject/wiki/%EA%B7%B8%EB%9D%BC%EC%9A%B4%EB%93%9C%EB%A3%B0) | [:mag: 위키](https://github.com/boostcampwm-2024/web21-boostproject/wiki) | [🎨 피그마](https://www.figma.com/board/soBcz1zqqOf8ANcBqWidTg/%EC%99%80%EC%9D%B4%EC%96%B4-%ED%94%84%EB%A0%88%EC%9E%84?node-id=0-1&t=B94Trp1LBfsoQLgn-1)
+[:ledger: 팀 노션](https://www.notion.so/simeunseo/9-Ticle-12e599a6f0d2804682ccd2251248a435?pvs=4) | [:busts_in_silhouette: 그라운드 룰](https://github.com/boostcampwm-2024/web21-boostproject/wiki/%EA%B7%B8%EB%9D%BC%EC%9A%B4%EB%93%9C%EB%A3%B0) | [:mag: 위키](https://github.com/boostcampwm-2024/web21-boostproject/wiki) | [🎨 피그마](https://www.figma.com/board/soBcz1zqqOf8ANcBqWidTg/%EC%99%80%EC%9D%B4%EC%96%B4-%ED%94%84%EB%A0%88%EC%9E%84?node-id=0-1&t=B94Trp1LBfsoQLgn-1)
 
 </div>
 
