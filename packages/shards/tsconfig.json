@@ -1,0 +1,11 @@
+{
+  "extends": "@repo/tsconfig/base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  // TODO: 자유롭게 수정
+  "include": ["*.ts", "*.d.ts"]
+}
