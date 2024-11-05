@@ -26,7 +26,7 @@ module.exports = {
   parserOptions: {
     project: [baseConfig, appConfig, nodeConfig],
   },
-  ignorePatterns: ['dist', '.eslintrc.cjs'],
+  ignorePatterns: ['dist', '.eslintrc.cjs', 'postcss.config.js', 'tailwind.config.ts'],
   rules: {
     'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
     'import/no-unresolved': ['error', { ignore: ['^/'] }],
