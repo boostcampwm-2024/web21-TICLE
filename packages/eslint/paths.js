@@ -1,4 +1,3 @@
-// packages/eslint/rules/paths.js
 /** @type {import("eslint").Linter.Config} */
 module.exports = {
   settings: {
