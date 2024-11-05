@@ -4,7 +4,7 @@ import { Controller, Get, Patch, Post } from '@nestjs/common';
 export class AuthController {
   constructor() {}
 
-  @Post('/signup')
+  @Post('signup')
   signup() {}
 
   @Post('login')
