@@ -12,6 +12,7 @@ const config: Config = {
       sans: ['Pretendard', ...fontFamily.sans],
     },
     extend: {
+      // colors
       backgroundColor: {
         primary: 'var(--purple-500)',
         secondary: 'var(--purple-200)',
@@ -34,6 +35,80 @@ const config: Config = {
         main: 'var(--grey-300)',
         primary: 'var(--purple-500)',
         error: 'var(--red)',
+      },
+
+      // fonts
+      fontSize: {
+        head1: [
+          '1.75rem',
+          {
+            lineHeight: '34px',
+            fontWeight: '700',
+          },
+        ],
+        head2: [
+          '1.5rem',
+          {
+            lineHeight: '30px',
+            fontWeight: '700',
+          },
+        ],
+        head3: [
+          '1.25rem',
+          {
+            lineHeight: '28px',
+            fontWeight: '700',
+          },
+        ],
+        title1: [
+          '1.125rem',
+          {
+            lineHeight: '24px',
+            fontWeight: '600',
+          },
+        ],
+        title2: [
+          '1rem',
+          {
+            lineHeight: '20px',
+            fontWeight: '600',
+          },
+        ],
+        body1: [
+          '1rem',
+          {
+            lineHeight: '24px',
+            fontWeight: '500',
+          },
+        ],
+        body2: [
+          '0.875rem',
+          {
+            lineHeight: '20px',
+            fontWeight: '500',
+          },
+        ],
+        body3: [
+          '0.875rem',
+          {
+            lineHeight: '20px',
+            fontWeight: '400',
+          },
+        ],
+        body4: [
+          '0.75rem',
+          {
+            lineHeight: '16px',
+            fontWeight: '500',
+          },
+        ],
+        label1: [
+          '0.875rem',
+          {
+            lineHeight: '16px',
+            fontWeight: '600',
+          },
+        ],
       },
     },
   },

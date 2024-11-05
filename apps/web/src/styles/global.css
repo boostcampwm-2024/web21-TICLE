@@ -6,6 +6,7 @@
 
 @layer base {
   body {
+    /* colors */
     --purple-700: #452bd9;
     --purple-600: #5031ff;
     --purple-500: #7057ff;
