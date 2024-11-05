@@ -5,7 +5,7 @@ import { AppModule } from '@/app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  
+
   //swagger setting
   const config = new DocumentBuilder()
     .setTitle('Ticle API server')
