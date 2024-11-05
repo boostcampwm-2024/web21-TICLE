@@ -1,4 +1,4 @@
-import { Controller, Get, Patch, Post } from '@nestjs/common';
+import { Controller, Get, Post } from '@nestjs/common';
 
 @Controller('auth')
 export class AuthController {
@@ -9,14 +9,6 @@ export class AuthController {
 
   @Post('login')
   localLogin() {}
-
-  @Get('profile')
-  profile() {
-    return 'profile';
-  }
-
-  @Patch('/profile')
-  patchProfile() {}
 
   @Get('google/login')
   googleAuth() {}

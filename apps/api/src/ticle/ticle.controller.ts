@@ -2,7 +2,7 @@ import { Controller, Get, Param, Post, Query } from '@nestjs/common';
 
 @Controller('ticle')
 export class TicleController {
-  @Post('')
+  @Post()
   createTicle() {}
 
   @Get(':ticleId')
@@ -12,8 +12,8 @@ export class TicleController {
   getTicleList(@Query('filter') filter?: string, @Query('sort') sort?: string) {}
 
   @Get('search')
-  getSearchList() {}
+  getTicleSearchList() {}
 
-  @Get(':ticleId/apply')
-  applyTicle(@Param('ticleId') params: any) {}
+  @Post(':ticleId/apply')
+  applyToTicle(@Param('ticleId') params: any) {}
 }

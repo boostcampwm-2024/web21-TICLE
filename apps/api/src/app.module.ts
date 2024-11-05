@@ -6,9 +6,10 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { StreamModule } from './stream/stream.module';
 import { TicleModule } from './ticle/ticle.module';
+import { UserModule } from './user/user.module';
 
 @Module({
-  imports: [AuthModule, TicleModule, StreamModule],
+  imports: [AuthModule, TicleModule, StreamModule, UserModule],
   controllers: [AppController],
   providers: [AppService],
 })
