@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AppController } from '@/app.controller';
@@ -11,7 +12,16 @@ import { TicleModule } from './ticle/ticle.module';
 import { UserModule } from './user/user.module';
 
 @Module({
-  imports: [AuthModule, TicleModule, StreamModule, UserModule, TypeOrmModule.forRoot(dbConfig)],
+  imports: [
+    AuthModule,
+    TicleModule,
+    StreamModule,
+    UserModule,
+    TypeOrmModule.forRoot(dbConfig),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
