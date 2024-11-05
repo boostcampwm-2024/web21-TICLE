@@ -1,0 +1,33 @@
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard-dynamic-subset.css');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    --purple-700: #452bd9;
+    --purple-600: #5031ff;
+    --purple-500: #7057ff;
+    --purple-400: #917eff;
+    --purple-300: #b4a7ff;
+    --purple-200: #d5ceff;
+    --purple-100: #eeebff;
+
+    --black: #1e1e1e;
+    --grey-900: #5b5d60;
+    --grey-800: #777a7d;
+    --grey-700: #999ea2;
+    --grey-500: #d8dee4;
+    --grey-400: #e0e5e9;
+    --grey-300: #e5e9ed;
+    --grey-200: #edf0f3;
+    --grey-100: #f3f5f7;
+    --grey-50: #fbfcfc;
+    --white: #ffffff;
+
+    --red: #f45c55;
+    --yellow: #ffe04c;
+    --green: #2ddd93;
+  }
+}
