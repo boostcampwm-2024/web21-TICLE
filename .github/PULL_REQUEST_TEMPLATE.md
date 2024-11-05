@@ -1,11 +1,3 @@
----
-name: Pull Request Template
-about: PR 템플릿
-title: '[Feat]'
-labels: ''
-assignees: ''
----
-
 <!-- 제목양식을 지켜주세요! [Feat] {제목~~} -->
 <!-- Reviewer, Assignees, Label 붙이기 -->
 
