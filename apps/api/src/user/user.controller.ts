@@ -5,10 +5,8 @@ export class UserController {
   constructor() {}
 
   @Get('profile')
-  profile() {
-    return 'profile';
-  }
+  getUserProfile() {}
 
   @Patch('profile')
-  patchProfile() {}
+  patchUserProfile() {}
 }
