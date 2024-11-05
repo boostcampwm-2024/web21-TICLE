@@ -12,7 +12,7 @@ const config: Config = {
       sans: ['Pretendard', ...fontFamily.sans],
     },
     extend: {
-      // colors
+      // color
       backgroundColor: {
         primary: 'var(--purple-500)',
         secondary: 'var(--purple-200)',
@@ -37,7 +37,7 @@ const config: Config = {
         error: 'var(--red)',
       },
 
-      // fonts
+      // font
       fontSize: {
         head1: [
           '1.75rem',
@@ -109,6 +109,21 @@ const config: Config = {
             fontWeight: '600',
           },
         ],
+      },
+
+      // borderRadius
+      borderRadius: {
+        base: '0.25rem',
+        md: '0.375rem',
+        lg: '0.5rem',
+        full: '9999px',
+      },
+
+      // boxShadow
+      boxShadow: {
+        normal: '0px 1px 2px 0px var(--grey-500)',
+        up: '0px 2px 8px 0px var(--grey-500)',
+        floating: '0px 16px 28px 0px var(--grey-500), 0px 0px 4px 0px var(--grey-500)',
       },
     },
   },
