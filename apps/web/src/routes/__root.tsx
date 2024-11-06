@@ -1,21 +1,21 @@
-import { Outlet, createRootRoute, useRouter } from '@tanstack/react-router';
+import { Outlet, createRootRoute, useLocation } from '@tanstack/react-router';
 
 import Header from '@/components/common/Header';
 
-const NO_HEADER_PATHS = ['/live'];
+const NO_HEADER_PATHS = ['/live', '/auth/oauth', '/auth/login'];
 
 export const Route = createRootRoute({
   component: RootComponent,
 });
 
 function RootComponent() {
-  const router = useRouter();
-  const currentPath = router.state.location.pathname;
-  const shouldShowHeader = !NO_HEADER_PATHS.includes(currentPath);
+  const location = useLocation();
+  const currentPath = location.pathname;
+  const hasHeader = !NO_HEADER_PATHS.includes(currentPath);
 
   return (
     <>
-      {shouldShowHeader && <Header />}
+      {hasHeader && <Header />}
       <Outlet />
     </>
   );
