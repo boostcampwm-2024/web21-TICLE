@@ -1,4 +1,11 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  OneToMany,
+  UpdateDateColumn,
+} from 'typeorm';
 
 import { Applicant } from './applicant.entity';
 import { Ticle } from './ticle.entity';
@@ -32,13 +39,11 @@ export class User {
   @Column({ type: 'varchar', name: 'social_id' })
   socialId: string;
 
-  @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', name: 'created_at' })
+  @CreateDateColumn({ type: 'timestamp', name: 'created_at' })
   createdAt: Date;
 
-  @CreateDateColumn({
+  @UpdateDateColumn({
     type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP',
-    onUpdate: 'CURRENT_TIMESTAMP',
     name: 'updated_at',
   })
   updatedAt: Date;

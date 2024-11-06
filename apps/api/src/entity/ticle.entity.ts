@@ -47,7 +47,7 @@ export class Ticle {
   @Column({ type: 'enum', enum: TicleStatus, default: TicleStatus.OPEN, name: 'ticle_status' })
   ticleStatus: TicleStatus;
 
-  @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', name: 'created_at' })
+  @CreateDateColumn({ type: 'timestamp', name: 'created_at' })
   createdAt: Date;
 
   @OneToMany(() => Applicant, (applicant) => applicant.ticle)

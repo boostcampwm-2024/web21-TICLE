@@ -23,7 +23,7 @@ export class Summary {
   @Column('varchar')
   summary: string;
 
-  @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', name: 'created_at' })
+  @CreateDateColumn({ type: 'timestamp', name: 'created_at' })
   createdAt: Date;
 
   @OneToOne(() => Ticle, (ticle) => ticle.summary)

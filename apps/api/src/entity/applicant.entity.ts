@@ -12,7 +12,7 @@ import { Ticle } from './ticle.entity';
 import { User } from './user.entity';
 
 @Entity('applicant')
-@Index('idx_unique_application', ['ticle_id', 'user_id'], { unique: true })
+@Index('idx_unique_application', ['ticle', 'user'], { unique: true })
 export class Applicant {
   @PrimaryGeneratedColumn({ type: 'bigint' })
   id: number;
@@ -25,6 +25,6 @@ export class Applicant {
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', name: 'created_at' })
+  @CreateDateColumn({ type: 'timestamp', name: 'created_at' })
   createdAt: Date;
 }

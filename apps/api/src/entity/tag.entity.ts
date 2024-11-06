@@ -10,7 +10,7 @@ export class Tag {
   @Column('varchar')
   name: string;
 
-  @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', name: 'created_at' })
+  @CreateDateColumn({ type: 'timestamp', name: 'created_at' })
   createdAt: Date;
 
   @ManyToMany(() => Ticle, (ticle) => ticle.tags)
