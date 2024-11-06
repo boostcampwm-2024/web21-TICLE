@@ -1,9 +1,8 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AppController } from '@/app.controller';
-import databaseConfig from 'config/database.config';
 import { TypeOrmConfigService } from 'config/typeorm.config';
 
 import { AppService } from './app.service';
@@ -16,7 +15,6 @@ import { UserModule } from './user/user.module';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [databaseConfig],
       envFilePath: '.env',
     }),
     AuthModule,

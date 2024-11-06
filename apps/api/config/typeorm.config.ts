@@ -10,11 +10,11 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
   createTypeOrmOptions(): TypeOrmModuleOptions {
     return {
       type: 'mysql',
-      host: this.configService.get<string>('database.host'),
-      port: this.configService.get<number>('database.port'),
-      username: this.configService.get<string>('database.username'),
-      password: this.configService.get<string>('database.password'),
-      database: this.configService.get<string>('database.name'),
+      host: this.configService.get<string>('DATABASE_HOST'),
+      port: this.configService.get<number>('DATABASE_PORT'),
+      username: this.configService.get<string>('DATABASE_USERNAME'),
+      password: this.configService.get<string>('DATABASE_PASSWORD'),
+      database: this.configService.get<string>('DATABASE_NAME'),
       entities: [__dirname + '/../**/*.entity{.ts,.js}'],
       synchronize: true, // 개발 환경에서만 사용 (프로덕션에선 비활성화 권장)
     };
