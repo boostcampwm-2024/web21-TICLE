@@ -15,6 +15,7 @@ import { Route as DashboardLayoutImport } from './routes/dashboard/_layout';
 import { Route as IndexImport } from './routes/index';
 import { Route as TicleOpenImport } from './routes/ticle/open';
 import { Route as TicleTicleIdImport } from './routes/ticle/$ticleId';
+import { Route as LiveTicleIdImport } from './routes/live/$ticleId';
 import { Route as DashboardOpenImport } from './routes/dashboard/open';
 import { Route as DashboardApplyImport } from './routes/dashboard/apply';
 import { Route as AuthOauthImport } from './routes/auth/oauth';
@@ -43,6 +44,12 @@ const TicleOpenRoute = TicleOpenImport.update({
 const TicleTicleIdRoute = TicleTicleIdImport.update({
   id: '/ticle/$ticleId',
   path: '/ticle/$ticleId',
+  getParentRoute: () => rootRoute,
+} as any);
+
+const LiveTicleIdRoute = LiveTicleIdImport.update({
+  id: '/live/$ticleId',
+  path: '/live/$ticleId',
   getParentRoute: () => rootRoute,
 } as any);
 
@@ -116,6 +123,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardOpenImport;
       parentRoute: typeof DashboardLayoutImport;
     };
+    '/live/$ticleId': {
+      id: '/live/$ticleId';
+      path: '/live/$ticleId';
+      fullPath: '/live/$ticleId';
+      preLoaderRoute: typeof LiveTicleIdImport;
+      parentRoute: typeof rootRoute;
+    };
     '/ticle/$ticleId': {
       id: '/ticle/$ticleId';
       path: '/ticle/$ticleId';
@@ -156,6 +170,7 @@ export interface FileRoutesByFullPath {
   '/auth/oauth': typeof AuthOauthRoute;
   '/dashboard/apply': typeof DashboardApplyRoute;
   '/dashboard/open': typeof DashboardOpenRoute;
+  '/live/$ticleId': typeof LiveTicleIdRoute;
   '/ticle/$ticleId': typeof TicleTicleIdRoute;
   '/ticle/open': typeof TicleOpenRoute;
 }
@@ -167,6 +182,7 @@ export interface FileRoutesByTo {
   '/auth/oauth': typeof AuthOauthRoute;
   '/dashboard/apply': typeof DashboardApplyRoute;
   '/dashboard/open': typeof DashboardOpenRoute;
+  '/live/$ticleId': typeof LiveTicleIdRoute;
   '/ticle/$ticleId': typeof TicleTicleIdRoute;
   '/ticle/open': typeof TicleOpenRoute;
 }
@@ -179,6 +195,7 @@ export interface FileRoutesById {
   '/auth/oauth': typeof AuthOauthRoute;
   '/dashboard/apply': typeof DashboardApplyRoute;
   '/dashboard/open': typeof DashboardOpenRoute;
+  '/live/$ticleId': typeof LiveTicleIdRoute;
   '/ticle/$ticleId': typeof TicleTicleIdRoute;
   '/ticle/open': typeof TicleOpenRoute;
 }
@@ -192,6 +209,7 @@ export interface FileRouteTypes {
     | '/auth/oauth'
     | '/dashboard/apply'
     | '/dashboard/open'
+    | '/live/$ticleId'
     | '/ticle/$ticleId'
     | '/ticle/open';
   fileRoutesByTo: FileRoutesByTo;
@@ -202,6 +220,7 @@ export interface FileRouteTypes {
     | '/auth/oauth'
     | '/dashboard/apply'
     | '/dashboard/open'
+    | '/live/$ticleId'
     | '/ticle/$ticleId'
     | '/ticle/open';
   id:
@@ -212,6 +231,7 @@ export interface FileRouteTypes {
     | '/auth/oauth'
     | '/dashboard/apply'
     | '/dashboard/open'
+    | '/live/$ticleId'
     | '/ticle/$ticleId'
     | '/ticle/open';
   fileRoutesById: FileRoutesById;
@@ -222,6 +242,7 @@ export interface RootRouteChildren {
   DashboardLayoutRoute: typeof DashboardLayoutRouteWithChildren;
   AuthLoginRoute: typeof AuthLoginRoute;
   AuthOauthRoute: typeof AuthOauthRoute;
+  LiveTicleIdRoute: typeof LiveTicleIdRoute;
   TicleTicleIdRoute: typeof TicleTicleIdRoute;
   TicleOpenRoute: typeof TicleOpenRoute;
 }
@@ -231,6 +252,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardLayoutRoute: DashboardLayoutRouteWithChildren,
   AuthLoginRoute: AuthLoginRoute,
   AuthOauthRoute: AuthOauthRoute,
+  LiveTicleIdRoute: LiveTicleIdRoute,
   TicleTicleIdRoute: TicleTicleIdRoute,
   TicleOpenRoute: TicleOpenRoute,
 };
@@ -249,6 +271,7 @@ export const routeTree = rootRoute
         "/dashboard",
         "/auth/login",
         "/auth/oauth",
+        "/live/$ticleId",
         "/ticle/$ticleId",
         "/ticle/open"
       ]
@@ -276,6 +299,9 @@ export const routeTree = rootRoute
     "/dashboard/open": {
       "filePath": "dashboard/open.tsx",
       "parent": "/dashboard"
+    },
+    "/live/$ticleId": {
+      "filePath": "live/$ticleId.tsx"
     },
     "/ticle/$ticleId": {
       "filePath": "ticle/$ticleId.tsx"
