@@ -23,7 +23,7 @@ import { UserModule } from './user/user.module';
     UserModule,
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
-      useClass: TypeOrmConfigService, // TypeOrmConfigService로 대체
+      useClass: TypeOrmConfigService,
     }),
   ],
   controllers: [AppController],
