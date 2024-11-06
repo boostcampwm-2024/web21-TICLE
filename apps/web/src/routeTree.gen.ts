@@ -11,7 +11,7 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root';
-import { Route as DashboardImport } from './routes/dashboard';
+import { Route as DashboardLayoutImport } from './routes/dashboard/_layout';
 import { Route as IndexImport } from './routes/index';
 import { Route as TicleOpenImport } from './routes/ticle/open';
 import { Route as TicleTicleIdImport } from './routes/ticle/$ticleId';
@@ -22,7 +22,7 @@ import { Route as AuthLoginImport } from './routes/auth/login';
 
 // Create/Update Routes
 
-const DashboardRoute = DashboardImport.update({
+const DashboardLayoutRoute = DashboardLayoutImport.update({
   id: '/dashboard',
   path: '/dashboard',
   getParentRoute: () => rootRoute,
@@ -49,13 +49,13 @@ const TicleTicleIdRoute = TicleTicleIdImport.update({
 const DashboardOpenRoute = DashboardOpenImport.update({
   id: '/open',
   path: '/open',
-  getParentRoute: () => DashboardRoute,
+  getParentRoute: () => DashboardLayoutRoute,
 } as any);
 
 const DashboardApplyRoute = DashboardApplyImport.update({
   id: '/apply',
   path: '/apply',
-  getParentRoute: () => DashboardRoute,
+  getParentRoute: () => DashboardLayoutRoute,
 } as any);
 
 const AuthOauthRoute = AuthOauthImport.update({
@@ -85,7 +85,7 @@ declare module '@tanstack/react-router' {
       id: '/dashboard';
       path: '/dashboard';
       fullPath: '/dashboard';
-      preLoaderRoute: typeof DashboardImport;
+      preLoaderRoute: typeof DashboardLayoutImport;
       parentRoute: typeof rootRoute;
     };
     '/auth/login': {
@@ -107,14 +107,14 @@ declare module '@tanstack/react-router' {
       path: '/apply';
       fullPath: '/dashboard/apply';
       preLoaderRoute: typeof DashboardApplyImport;
-      parentRoute: typeof DashboardImport;
+      parentRoute: typeof DashboardLayoutImport;
     };
     '/dashboard/open': {
       id: '/dashboard/open';
       path: '/open';
       fullPath: '/dashboard/open';
       preLoaderRoute: typeof DashboardOpenImport;
-      parentRoute: typeof DashboardImport;
+      parentRoute: typeof DashboardLayoutImport;
     };
     '/ticle/$ticleId': {
       id: '/ticle/$ticleId';
@@ -135,21 +135,23 @@ declare module '@tanstack/react-router' {
 
 // Create and export the route tree
 
-interface DashboardRouteChildren {
+interface DashboardLayoutRouteChildren {
   DashboardApplyRoute: typeof DashboardApplyRoute;
   DashboardOpenRoute: typeof DashboardOpenRoute;
 }
 
-const DashboardRouteChildren: DashboardRouteChildren = {
+const DashboardLayoutRouteChildren: DashboardLayoutRouteChildren = {
   DashboardApplyRoute: DashboardApplyRoute,
   DashboardOpenRoute: DashboardOpenRoute,
 };
 
-const DashboardRouteWithChildren = DashboardRoute._addFileChildren(DashboardRouteChildren);
+const DashboardLayoutRouteWithChildren = DashboardLayoutRoute._addFileChildren(
+  DashboardLayoutRouteChildren
+);
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute;
-  '/dashboard': typeof DashboardRouteWithChildren;
+  '/dashboard': typeof DashboardLayoutRouteWithChildren;
   '/auth/login': typeof AuthLoginRoute;
   '/auth/oauth': typeof AuthOauthRoute;
   '/dashboard/apply': typeof DashboardApplyRoute;
@@ -160,7 +162,7 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute;
-  '/dashboard': typeof DashboardRouteWithChildren;
+  '/dashboard': typeof DashboardLayoutRouteWithChildren;
   '/auth/login': typeof AuthLoginRoute;
   '/auth/oauth': typeof AuthOauthRoute;
   '/dashboard/apply': typeof DashboardApplyRoute;
@@ -172,7 +174,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRoute;
   '/': typeof IndexRoute;
-  '/dashboard': typeof DashboardRouteWithChildren;
+  '/dashboard': typeof DashboardLayoutRouteWithChildren;
   '/auth/login': typeof AuthLoginRoute;
   '/auth/oauth': typeof AuthOauthRoute;
   '/dashboard/apply': typeof DashboardApplyRoute;
@@ -217,7 +219,7 @@ export interface FileRouteTypes {
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute;
-  DashboardRoute: typeof DashboardRouteWithChildren;
+  DashboardLayoutRoute: typeof DashboardLayoutRouteWithChildren;
   AuthLoginRoute: typeof AuthLoginRoute;
   AuthOauthRoute: typeof AuthOauthRoute;
   TicleTicleIdRoute: typeof TicleTicleIdRoute;
@@ -226,7 +228,7 @@ export interface RootRouteChildren {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  DashboardRoute: DashboardRouteWithChildren,
+  DashboardLayoutRoute: DashboardLayoutRouteWithChildren,
   AuthLoginRoute: AuthLoginRoute,
   AuthOauthRoute: AuthOauthRoute,
   TicleTicleIdRoute: TicleTicleIdRoute,
@@ -255,7 +257,7 @@ export const routeTree = rootRoute
       "filePath": "index.tsx"
     },
     "/dashboard": {
-      "filePath": "dashboard.tsx",
+      "filePath": "dashboard/_layout.tsx",
       "children": [
         "/dashboard/apply",
         "/dashboard/open"
