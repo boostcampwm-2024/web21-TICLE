@@ -13,9 +13,12 @@
 import { Route as rootRoute } from './routes/__root';
 import { Route as DashboardImport } from './routes/dashboard';
 import { Route as IndexImport } from './routes/index';
+import { Route as TicleOpenImport } from './routes/ticle/open';
 import { Route as TicleTicleIdImport } from './routes/ticle/$ticleId';
 import { Route as DashboardOpenImport } from './routes/dashboard/open';
 import { Route as DashboardApplyImport } from './routes/dashboard/apply';
+import { Route as AuthOauthImport } from './routes/auth/oauth';
+import { Route as AuthLoginImport } from './routes/auth/login';
 
 // Create/Update Routes
 
@@ -28,6 +31,12 @@ const DashboardRoute = DashboardImport.update({
 const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRoute,
+} as any);
+
+const TicleOpenRoute = TicleOpenImport.update({
+  id: '/ticle/open',
+  path: '/ticle/open',
   getParentRoute: () => rootRoute,
 } as any);
 
@@ -49,6 +58,18 @@ const DashboardApplyRoute = DashboardApplyImport.update({
   getParentRoute: () => DashboardRoute,
 } as any);
 
+const AuthOauthRoute = AuthOauthImport.update({
+  id: '/auth/oauth',
+  path: '/auth/oauth',
+  getParentRoute: () => rootRoute,
+} as any);
+
+const AuthLoginRoute = AuthLoginImport.update({
+  id: '/auth/login',
+  path: '/auth/login',
+  getParentRoute: () => rootRoute,
+} as any);
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -65,6 +86,20 @@ declare module '@tanstack/react-router' {
       path: '/dashboard';
       fullPath: '/dashboard';
       preLoaderRoute: typeof DashboardImport;
+      parentRoute: typeof rootRoute;
+    };
+    '/auth/login': {
+      id: '/auth/login';
+      path: '/auth/login';
+      fullPath: '/auth/login';
+      preLoaderRoute: typeof AuthLoginImport;
+      parentRoute: typeof rootRoute;
+    };
+    '/auth/oauth': {
+      id: '/auth/oauth';
+      path: '/auth/oauth';
+      fullPath: '/auth/oauth';
+      preLoaderRoute: typeof AuthOauthImport;
       parentRoute: typeof rootRoute;
     };
     '/dashboard/apply': {
@@ -88,6 +123,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TicleTicleIdImport;
       parentRoute: typeof rootRoute;
     };
+    '/ticle/open': {
+      id: '/ticle/open';
+      path: '/ticle/open';
+      fullPath: '/ticle/open';
+      preLoaderRoute: typeof TicleOpenImport;
+      parentRoute: typeof rootRoute;
+    };
   }
 }
 
@@ -108,47 +150,87 @@ const DashboardRouteWithChildren = DashboardRoute._addFileChildren(DashboardRout
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute;
   '/dashboard': typeof DashboardRouteWithChildren;
+  '/auth/login': typeof AuthLoginRoute;
+  '/auth/oauth': typeof AuthOauthRoute;
   '/dashboard/apply': typeof DashboardApplyRoute;
   '/dashboard/open': typeof DashboardOpenRoute;
   '/ticle/$ticleId': typeof TicleTicleIdRoute;
+  '/ticle/open': typeof TicleOpenRoute;
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute;
   '/dashboard': typeof DashboardRouteWithChildren;
+  '/auth/login': typeof AuthLoginRoute;
+  '/auth/oauth': typeof AuthOauthRoute;
   '/dashboard/apply': typeof DashboardApplyRoute;
   '/dashboard/open': typeof DashboardOpenRoute;
   '/ticle/$ticleId': typeof TicleTicleIdRoute;
+  '/ticle/open': typeof TicleOpenRoute;
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute;
   '/': typeof IndexRoute;
   '/dashboard': typeof DashboardRouteWithChildren;
+  '/auth/login': typeof AuthLoginRoute;
+  '/auth/oauth': typeof AuthOauthRoute;
   '/dashboard/apply': typeof DashboardApplyRoute;
   '/dashboard/open': typeof DashboardOpenRoute;
   '/ticle/$ticleId': typeof TicleTicleIdRoute;
+  '/ticle/open': typeof TicleOpenRoute;
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath;
-  fullPaths: '/' | '/dashboard' | '/dashboard/apply' | '/dashboard/open' | '/ticle/$ticleId';
+  fullPaths:
+    | '/'
+    | '/dashboard'
+    | '/auth/login'
+    | '/auth/oauth'
+    | '/dashboard/apply'
+    | '/dashboard/open'
+    | '/ticle/$ticleId'
+    | '/ticle/open';
   fileRoutesByTo: FileRoutesByTo;
-  to: '/' | '/dashboard' | '/dashboard/apply' | '/dashboard/open' | '/ticle/$ticleId';
-  id: '__root__' | '/' | '/dashboard' | '/dashboard/apply' | '/dashboard/open' | '/ticle/$ticleId';
+  to:
+    | '/'
+    | '/dashboard'
+    | '/auth/login'
+    | '/auth/oauth'
+    | '/dashboard/apply'
+    | '/dashboard/open'
+    | '/ticle/$ticleId'
+    | '/ticle/open';
+  id:
+    | '__root__'
+    | '/'
+    | '/dashboard'
+    | '/auth/login'
+    | '/auth/oauth'
+    | '/dashboard/apply'
+    | '/dashboard/open'
+    | '/ticle/$ticleId'
+    | '/ticle/open';
   fileRoutesById: FileRoutesById;
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute;
   DashboardRoute: typeof DashboardRouteWithChildren;
+  AuthLoginRoute: typeof AuthLoginRoute;
+  AuthOauthRoute: typeof AuthOauthRoute;
   TicleTicleIdRoute: typeof TicleTicleIdRoute;
+  TicleOpenRoute: typeof TicleOpenRoute;
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRoute: DashboardRouteWithChildren,
+  AuthLoginRoute: AuthLoginRoute,
+  AuthOauthRoute: AuthOauthRoute,
   TicleTicleIdRoute: TicleTicleIdRoute,
+  TicleOpenRoute: TicleOpenRoute,
 };
 
 export const routeTree = rootRoute
@@ -163,7 +245,10 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/dashboard",
-        "/ticle/$ticleId"
+        "/auth/login",
+        "/auth/oauth",
+        "/ticle/$ticleId",
+        "/ticle/open"
       ]
     },
     "/": {
@@ -176,6 +261,12 @@ export const routeTree = rootRoute
         "/dashboard/open"
       ]
     },
+    "/auth/login": {
+      "filePath": "auth/login.tsx"
+    },
+    "/auth/oauth": {
+      "filePath": "auth/oauth.tsx"
+    },
     "/dashboard/apply": {
       "filePath": "dashboard/apply.tsx",
       "parent": "/dashboard"
@@ -186,6 +277,9 @@ export const routeTree = rootRoute
     },
     "/ticle/$ticleId": {
       "filePath": "ticle/$ticleId.tsx"
+    },
+    "/ticle/open": {
+      "filePath": "ticle/open.tsx"
     }
   }
 }

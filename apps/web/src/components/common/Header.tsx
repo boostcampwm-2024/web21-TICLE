@@ -10,6 +10,9 @@ function Header() {
       <Link to="/dashboard" className="[&.active]:font-bold">
         대시보드
       </Link>
+      <Link to="/auth/oauth" className="[&.active]:font-bold">
+        로그인
+      </Link>
     </nav>
   );
 }
