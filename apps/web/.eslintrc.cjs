@@ -33,7 +33,7 @@ module.exports = {
     project: [baseConfig, appConfig, nodeConfig],
     ecmaFeatures: { jsx: true },
   },
-  ignorePatterns: ['dist', '.eslintrc.cjs', 'postcss.config.js', 'tailwind.config.ts'],
+  ignorePatterns: ['dist', '.eslintrc.cjs', 'postcss.config.cjs', 'tailwind.config.ts'],
   rules: {
     'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
     'import/no-unresolved': ['error', { ignore: ['^/'] }],
