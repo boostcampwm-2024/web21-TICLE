@@ -14,6 +14,8 @@
   "dependencies": {
     "@repo/shared": "workspace:*",
     "@repo/types": "workspace:*",
+    "@tanstack/react-router": "^1.79.0",
+    "@tanstack/router-vite-plugin": "^1.79.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
@@ -21,6 +23,7 @@
     "@eslint/js": "^9.13.0",
     "@repo/lint": "workspace:*",
     "@repo/tsconfig": "workspace:*",
+    "@tanstack/router-cli": "^1.79.0",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.3.3",
