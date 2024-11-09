@@ -14,9 +14,11 @@
     "@repo/types": "workspace:*",
     "@tanstack/react-router": "^1.79.0",
     "@tanstack/router-vite-plugin": "^1.79.0",
+    "clsx": "^2.1.1",
     "prettier-plugin-tailwindcss": "^0.6.8",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "tailwind-merge": "^2.5.4"
   },
   "devDependencies": {
     "@eslint/js": "^9.13.0",
