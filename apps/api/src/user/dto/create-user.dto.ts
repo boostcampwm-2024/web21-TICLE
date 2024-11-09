@@ -3,4 +3,8 @@ export class CreateUserDto {
   password: string;
   nickname: string;
   email: string;
+  introduce: string;
+  profileImageUrl: string;
+  provider: string;
+  socialId: string;
 }

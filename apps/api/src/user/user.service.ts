@@ -14,7 +14,7 @@ export class UserService {
     private userRepository: Repository<User>
   ) {}
 
-  async create(createUserDto: CreateUserDto): Promise<Omit<User, 'password'>> {
+  async createUser(createUserDto: CreateUserDto): Promise<Omit<User, 'password'>> {
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(createUserDto.password, saltRounds);
     const user = this.userRepository.create({
