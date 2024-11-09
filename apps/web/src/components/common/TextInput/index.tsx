@@ -19,19 +19,23 @@ const inputVariants = cva(
 );
 
 interface TextInputProps extends InputHTMLAttributes<HTMLInputElement> {
+  value?: string;
   label?: string;
   description?: string;
   errorMessage?: string;
   required?: boolean;
+  maxLength?: number;
   type?: 'text' | 'email' | 'password' | 'number';
 }
 
 function TextInput(
   {
+    value,
     label,
     description,
     errorMessage,
     required,
+    maxLength,
     type = 'text',
     className,
     ...props
@@ -40,22 +44,28 @@ function TextInput(
 ) {
   const inputState = errorMessage ? 'error' : 'default';
   return (
-    <div className="flex flex-col gap-1.5">
+    <div className="flex w-min flex-col gap-1.5">
       {label && (
         <label className="text-title2 text-main">
           {label}
           {required && <span className="text-error">{' *'}</span>}
         </label>
       )}
-      {description && <p className="text-body3 text-alt">{description}</p>}
+      {description && <p className="text-body2 text-alt">{description}</p>}
       <input
-        {...props}
+        value={value}
         type={type}
         ref={ref}
         required={required}
         className={cn(inputVariants({ state: inputState }), className)}
+        {...props}
       />
-      {errorMessage && <span className="text-label1 text-error">{errorMessage}</span>}
+      <div className="relative">
+        {errorMessage && <p className="text-label1 text-error">{errorMessage}</p>}
+        {maxLength && (
+          <p className="w-100 absolute right-0 top-0 text-body4 text-weak">{`${value?.length ?? 0}/${maxLength}`}</p>
+        )}
+      </div>
     </div>
   );
 }
