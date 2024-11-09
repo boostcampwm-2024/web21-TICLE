@@ -28,7 +28,7 @@
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/swagger": "^8.0.1",
     "@nestjs/typeorm": "^10.0.2",
-    "@repo/shards": "workspace:*",
+    "@repo/shared": "workspace:*",
     "@repo/types": "workspace:*",
     "mysql2": "^3.11.3",
     "reflect-metadata": "^0.2.0",
