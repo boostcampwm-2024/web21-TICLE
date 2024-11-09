@@ -37,6 +37,10 @@ module.exports = {
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/no-explicit-any': 'warn',
     '@typescript-eslint/no-non-null-assertion': 'warn',
+    'padding-line-between-statements': [
+      'error',
+      { blankLine: 'always', prev: 'import', next: '*' },
+    ],
 
     // 분리된 규칙들 병합
     ...namingConfig.rules,
