@@ -43,5 +43,6 @@ module.exports = {
         },
       },
     ],
+    'import/newline-after-import': 'error',
   },
 };
