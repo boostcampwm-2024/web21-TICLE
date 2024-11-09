@@ -32,13 +32,13 @@ export class Ticle {
   @JoinColumn({ name: 'author_id' })
   author: User;
 
-  @Column({ type: 'timestamp', nullable: false, name: 'author_name' })
+  @Column({ type: 'varchar', nullable: false, name: 'author_name' })
   authorName: string;
 
-  @Column({ type: 'timestamp', nullable: false, name: 'author_email' })
+  @Column({ type: 'varchar', nullable: false, name: 'author_email' })
   authorEmail: string;
 
-  @Column({ type: 'timestamp', nullable: false, name: 'author_introduce' })
+  @Column({ type: 'varchar', nullable: false, name: 'author_introduce' })
   authorIntroduce: string;
 
   @Column({ type: 'varchar', nullable: false })
