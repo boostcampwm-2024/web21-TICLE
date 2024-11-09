@@ -8,6 +8,10 @@ import { User } from '@/entity/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserService } from './user.service';
 
+jest.mock('bcrypt', () => ({
+  hash: jest.fn().mockResolvedValue('hashedPassword'),
+}));
+
 describe('UserService', () => {
   let service: UserService;
   let repository: Repository<User>;
