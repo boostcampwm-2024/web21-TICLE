@@ -1,4 +1,22 @@
+import { cva } from 'class-variance-authority';
 import { forwardRef, InputHTMLAttributes, Ref } from 'react';
+
+import cn from '@/utils/cn';
+
+const inputVariants = cva(
+  'w-full rounded-base border bg-white px-3.5 py-2.5 text-body1 text-main placeholder:text-weak',
+  {
+    variants: {
+      state: {
+        default: 'border-main focus:border-primary',
+        error: 'focus:border-error',
+      },
+    },
+    defaultVariants: {
+      state: 'default',
+    },
+  }
+);
 
 interface TextInputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -20,6 +38,7 @@ function TextInput(
   }: TextInputProps,
   ref: Ref<HTMLInputElement>
 ) {
+  const inputState = errorMessage ? 'error' : 'default';
   return (
     <div className="flex flex-col gap-1.5">
       {label && (
@@ -34,7 +53,7 @@ function TextInput(
         type={type}
         ref={ref}
         required={required}
-        className={`${className} ${errorMessage && 'focus:border-error'} boder-main h-11 w-full rounded border border-main bg-white px-3.5 py-2.5 text-body1 text-main placeholder:text-weak focus:border-primary focus:outline-none`}
+        className={cn(inputVariants({ state: inputState }), className)}
       />
       {errorMessage && <span className="text-label1 text-error">{errorMessage}</span>}
     </div>
