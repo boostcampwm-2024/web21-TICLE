@@ -46,9 +46,13 @@ function TextInput(
   return (
     <div className="flex w-min flex-col gap-1.5">
       {label && (
-        <label className="text-title2 text-main">
+        <label htmlFor={label} className="text-title2 text-main">
           {label}
-          {required && <span className="text-error">{' *'}</span>}
+          {required && (
+            <span className="text-error" aria-hidden>
+              {' *'}
+            </span>
+          )}
         </label>
       )}
       {description && <p className="text-body2 text-alt">{description}</p>}
@@ -58,10 +62,18 @@ function TextInput(
         ref={ref}
         required={required}
         className={cn(inputVariants({ state: inputState }), className)}
+        aria-invalid={!!errorMessage}
+        aria-describedby={
+          errorMessage ? `${label}-error` : description ? `${label}-description` : undefined
+        }
         {...props}
       />
       <div className="relative">
-        {errorMessage && <p className="text-label1 text-error">{errorMessage}</p>}
+        {errorMessage && (
+          <p className="text-label1 text-error" id={`${label}-error`}>
+            {errorMessage}
+          </p>
+        )}
         {maxLength && (
           <p className="w-100 absolute right-0 top-0 text-body4 text-weak">{`${value?.length ?? 0}/${maxLength}`}</p>
         )}
