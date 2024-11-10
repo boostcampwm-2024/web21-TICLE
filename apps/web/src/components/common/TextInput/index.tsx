@@ -1,6 +1,7 @@
 import { cva } from 'class-variance-authority';
 import { forwardRef, InputHTMLAttributes, Ref } from 'react';
 
+import ExclamationIc from '@/assets/icons/exclamation.svg?react';
 import cn from '@/utils/cn';
 
 const STATE = {
@@ -78,7 +79,8 @@ function TextInput(
       />
       <div className="relative">
         {errorMessage && (
-          <p className="text-label1 text-error" id={`${label}-error`}>
+          <p className="flex items-center text-label1 text-error" id={`${label}-error`}>
+            <ExclamationIc className="fill-error" />
             {errorMessage}
           </p>
         )}
