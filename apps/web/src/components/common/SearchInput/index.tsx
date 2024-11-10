@@ -14,10 +14,11 @@ interface SearchInputProps
   onChange: (value: string) => void;
   onClear: () => void;
   onSearch: (value: string) => void;
+  size?: keyof typeof SIZE_VARIANTS;
 }
 
 function SearchInput(
-  { value, onChange, onClear, onSearch, className, ...props }: SearchInputProps,
+  { value, onChange, onClear, onSearch, size = 'md', className, ...props }: SearchInputProps,
   ref: Ref<HTMLInputElement>
 ) {
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -31,10 +32,7 @@ function SearchInput(
   };
 
   return (
-    <div
-      role="search"
-      className={cn(inputWrapperVariants({ size: SIZE_VARIANTS.md }), 'relative', className)}
-    >
+    <div role="search" className={cn(inputWrapperVariants({ size: size }), 'relative', className)}>
       <input
         ref={ref}
         type="search"
