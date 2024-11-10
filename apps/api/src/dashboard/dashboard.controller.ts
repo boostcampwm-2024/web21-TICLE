@@ -10,7 +10,7 @@ export class DashboardController {
   @Get('applied')
   getAppliedTicleList() {}
 
-  @Get('created/:ticleId/participants')
+  @Get('created/:ticleId/applicants')
   getParticipants(@Param('ticleId') ticleId: number) {}
 
   @Post('created/:ticleId/start')
