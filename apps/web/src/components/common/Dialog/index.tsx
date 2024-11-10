@@ -1,6 +1,7 @@
 import { ReactNode } from '@tanstack/react-router';
 import { useRef } from 'react';
 
+import CloseIc from '@/assets/icons/close.svg?react';
 import useOutsideClick from '@/hooks/useOutsideClick';
 import cn from '@/utils/cn';
 
@@ -35,6 +36,15 @@ function DialogRoot({ isOpen, onClose, children, className }: DialogRootProps) {
   );
 }
 
+function DialogClose({ onClose }: { onClose?: () => void }) {
+  return (
+    <button onClick={onClose} className="absolute right-6 top-8 fill-main">
+      <CloseIc />
+    </button>
+  );
+}
+
 export const Dialog = {
   Root: DialogRoot,
+  Close: DialogClose,
 };
