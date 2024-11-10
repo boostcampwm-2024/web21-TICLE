@@ -29,17 +29,17 @@ export class Ticle {
   id: number;
 
   @ManyToOne(() => User, (user) => user.ticles)
-  @JoinColumn({ name: 'author_id' })
-  author: User;
+  @JoinColumn({ name: 'speaker_id' })
+  speaker: User;
 
-  @Column({ type: 'varchar', nullable: false, name: 'author_name' })
-  authorName: string;
+  @Column({ type: 'varchar', nullable: false, name: 'speaker_name' })
+  speakerName: string;
 
-  @Column({ type: 'varchar', nullable: false, name: 'author_email' })
-  authorEmail: string;
+  @Column({ type: 'varchar', nullable: false, name: 'speaker_email' })
+  speakerEmail: string;
 
-  @Column({ type: 'varchar', nullable: false, name: 'author_introduce' })
-  authorIntroduce: string;
+  @Column({ type: 'varchar', nullable: false, name: 'speaker_introduce' })
+  speakerIntroduce: string;
 
   @Column({ type: 'varchar', nullable: false })
   title: string;

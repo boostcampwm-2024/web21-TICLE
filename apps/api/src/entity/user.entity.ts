@@ -48,7 +48,7 @@ export class User {
   })
   updatedAt: Date;
 
-  @OneToMany(() => Ticle, (ticle) => ticle.author)
+  @OneToMany(() => Ticle, (ticle) => ticle.speaker)
   ticles: Ticle[];
 
   @OneToMany(() => Applicant, (applicant) => applicant.user)
