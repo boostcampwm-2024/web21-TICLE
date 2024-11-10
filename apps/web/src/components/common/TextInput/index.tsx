@@ -9,6 +9,12 @@ const VALIDATION_STATE = {
   error: 'error',
 } as const;
 
+const SIZE_VARIANTS = {
+  sm: 'sm',
+  md: 'md',
+  lg: 'lg',
+} as const;
+
 const inputVariants = cva(
   'w-full rounded-base border bg-white px-3.5 py-2.5 text-body1 text-main placeholder:text-weak',
   {
@@ -24,25 +30,39 @@ const inputVariants = cva(
   }
 );
 
-interface TextInputProps extends InputHTMLAttributes<HTMLInputElement> {
+const inputWrapperVariants = cva('flex flex-col gap-1.5', {
+  variants: {
+    size: {
+      [SIZE_VARIANTS.sm]: 'w-40',
+      [SIZE_VARIANTS.md]: 'w-64',
+      [SIZE_VARIANTS.lg]: 'w-full',
+    },
+  },
+  defaultVariants: {
+    size: 'lg',
+  },
+});
+
+interface TextInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size'> {
   label?: string;
   description?: string;
   errorMessage?: string;
   required?: boolean;
   maxLength?: number;
-  width?: number;
+  size?: keyof typeof SIZE_VARIANTS;
   type?: 'text' | 'email' | 'password' | 'number';
 }
 
 function TextInput(
   {
+    defaultValue,
     label,
     description,
     errorMessage,
     required,
     maxLength,
+    size,
     type = 'text',
-    width,
     className,
     onChange,
     ...props
@@ -60,7 +80,7 @@ function TextInput(
   };
 
   return (
-    <div className={cn('flex flex-col gap-1.5', width && `w-${width}`)}>
+    <div className={cn(inputWrapperVariants({ size: size }))}>
       {label && (
         <label htmlFor={label} className="text-title2 text-main">
           {label}
@@ -100,7 +120,7 @@ function TextInput(
           <p
             ref={counterRef}
             className="absolute right-0 top-0 text-body4 text-weak"
-          >{`${props.defaultValue?.toString().length ?? 0}/${maxLength}`}</p>
+          >{`${defaultValue?.toString().length ?? 0}/${maxLength}`}</p>
         )}
       </div>
     </div>
