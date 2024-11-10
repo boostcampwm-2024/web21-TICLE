@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { ReactNode } from '@tanstack/react-router';
 import { cva } from 'class-variance-authority';
 import { useRef } from 'react';
@@ -51,11 +52,6 @@ function DialogClose({ onClose }: DialogCloseProps) {
   );
 }
 
-interface DialogTitleProps {
-  align?: 'start' | 'center' | 'end';
-  children?: ReactNode;
-}
-
 const ALIGN = {
   start: 'start',
   center: 'center',
@@ -75,12 +71,22 @@ const dialogTitleVariants = cva('text-head3 text-main', {
   },
 });
 
+interface DialogTitleProps {
+  align?: 'start' | 'center' | 'end';
+  children?: ReactNode;
+}
+
 function DialogTitle({ align = 'start', children }: DialogTitleProps) {
   return <h2 className={dialogTitleVariants({ align: align })}>{children}</h2>;
+}
+
+function DialogDescription({ children, className }: DialogProps) {
+  return <p className={cn('mt-4 text-body1 text-main', className)}>{children}</p>;
 }
 
 export const Dialog = {
   Root: DialogRoot,
   Close: DialogClose,
   Title: DialogTitle,
+  Description: DialogDescription,
 };
