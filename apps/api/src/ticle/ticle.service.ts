@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 
 import { Ticle, TicleStatus } from '@/entity/ticle.entity';
 
-import { CreateTicleDto } from './ticle.controller';
+import { CreateTicleDto } from './dto/createTicleDto';
 
 @Injectable()
 export class TicleService {
