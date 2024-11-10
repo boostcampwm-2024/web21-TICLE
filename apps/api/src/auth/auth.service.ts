@@ -46,11 +46,11 @@ export class AuthService {
   }
 
   /**
-   * passport 인증 후 로그인 로직 access_token 반환 (todo : 로그인 성공시 필요한 데이터들 추가해야함.)
+   * passport 인증 후 access_token 반환 (todo : 로그인 성공시 필요한 데이터들 추가해야함.)
    * @param user
    * @returns access_token
    */
-  async login(user: Omit<User, 'password'>): Promise<{ access_token: string }> {
+  async createJWT(user: Omit<User, 'password'>): Promise<{ access_token: string }> {
     const payload = { username: user.username, sub: user.id };
     return {
       access_token: this.jwtService.sign(payload),

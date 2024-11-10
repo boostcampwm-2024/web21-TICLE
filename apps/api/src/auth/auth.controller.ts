@@ -56,7 +56,7 @@ export class AuthController {
   async localLogin(@Request() req) {
     return {
       status: 'success',
-      data: await this.authService.login(req.user),
+      data: await this.authService.createJWT(req.user),
     };
   }
 
