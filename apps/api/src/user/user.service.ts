@@ -13,17 +13,16 @@ export class UserService {
     @InjectRepository(User)
     private userRepository: Repository<User>
   ) {}
+
   /**
    * 유저 생성
    * @param createUserDto
    * @returns 비밀번호 제외한 유저 정보
    */
   async createUser(createUserDto: CreateUserDto): Promise<Omit<User, 'password'>> {
-    const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(createUserDto.password, saltRounds);
     const user = this.userRepository.create({
       ...createUserDto,
-      password: hashedPassword,
+      password: await this.hashPassword(createUserDto.password),
     });
     await this.userRepository.save(user);
 
@@ -46,5 +45,15 @@ export class UserService {
     }
 
     return user;
+  }
+
+  /**
+   * 비밀번호 해싱
+   * @param password
+   * @param saltRounds
+   * @returns
+   */
+  private async hashPassword(password: string, saltRounds = 10): Promise<string> {
+    return bcrypt.hash(password, saltRounds);
   }
 }

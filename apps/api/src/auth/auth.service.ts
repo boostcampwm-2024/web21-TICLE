@@ -33,6 +33,12 @@ export class AuthService {
     }
     return null;
   }
+
+  /**
+   * 회원가입 로직
+   * @param createUserDto
+   * @returns 회원가입 성공시 유저 정보 반환(비밀번호 제외)
+   */
   async signup(createUserDto: CreateUserDto): Promise<Omit<User, 'password'>> {
     // username 중복 체크 중복 시 ConflictException 발생
     const existingUser = await this.userService.findUser(createUserDto.username);
@@ -41,6 +47,7 @@ export class AuthService {
     }
     return this.userService.createUser(createUserDto);
   }
+
   /**
    * passport 인증 후 로그인 로직 access_token 반환 (todo : 로그인 성공시 필요한 데이터들 추가해야함.)
    * @param user
