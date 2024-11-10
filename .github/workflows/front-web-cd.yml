@@ -45,6 +45,13 @@ jobs:
         with:
           fetch-depth: 2
 
+      - name: .env 파일 생성
+        run: |
+          jq -r 'to_entries|map("\(.key)=\(.value|tostring)")|.[]' <<< "$SECRETS_CONTEXT" > .env
+          mv .env apps/web/.env
+        env:
+          SECRETS_CONTEXT: ${{ toJson(secrets) }}
+
       - name: 🐳 Docker 로그인
         uses: docker/login-action@v3
         with:
