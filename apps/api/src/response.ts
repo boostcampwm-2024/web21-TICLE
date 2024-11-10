@@ -1,19 +1,19 @@
-export interface SuccessResponse<T> {
+export type SuccessResponse<T> = {
   status: 'success';
   data: {
     result: T;
     message: string;
   };
-}
+};
 
-export interface ErrorResponse {
+export type ErrorResponse = {
   status: 'error';
   error: {
     code: number;
     message: string;
     details?: any;
   };
-}
+};
 
 export class Response {
   static success<T>(
