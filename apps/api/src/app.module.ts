@@ -7,6 +7,7 @@ import { TypeOrmConfigService } from 'config/typeorm.config';
 
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
+import { DashboardModule } from './dashboard/dashboard.module';
 import { StreamModule } from './stream/stream.module';
 import { TicleModule } from './ticle/ticle.module';
 import { UserModule } from './user/user.module';
@@ -25,6 +26,7 @@ import { UserModule } from './user/user.module';
       imports: [ConfigModule],
       useClass: TypeOrmConfigService,
     }),
+    DashboardModule,
   ],
   controllers: [AppController],
   providers: [AppService],
