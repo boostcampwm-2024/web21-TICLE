@@ -13,7 +13,7 @@ export const VALIDATION_STATE = {
 export const SIZE_VARIANTS = {
   sm: 'sm',
   md: 'md',
-  lg: 'lg',
+  full: 'full',
 } as const;
 
 export const inputVariants = cva(
@@ -36,11 +36,11 @@ export const inputWrapperVariants = cva('flex flex-col gap-1.5', {
     size: {
       [SIZE_VARIANTS.sm]: 'w-40',
       [SIZE_VARIANTS.md]: 'w-64',
-      [SIZE_VARIANTS.lg]: 'w-full',
+      [SIZE_VARIANTS.full]: 'w-full',
     },
   },
   defaultVariants: {
-    size: 'lg',
+    size: 'full',
   },
 });
 

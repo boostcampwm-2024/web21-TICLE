@@ -35,7 +35,9 @@ const textAreaVariants = cva(
   }
 );
 
-interface TextAreaProps extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'size'> {
+interface TextAreaProps
+  extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'size' | 'defaultValue'> {
+  defaultValue?: string;
   label?: string;
   description?: string;
   errorMessage?: string;
@@ -109,7 +111,7 @@ function TextArea(
           <p
             ref={counterRef}
             className="absolute right-0 top-0 text-body4 text-weak"
-          >{`${defaultValue?.toString().length ?? 0}/${maxLength}`}</p>
+          >{`${defaultValue?.length ?? 0}/${maxLength}`}</p>
         )}
       </div>
     </div>
