@@ -20,10 +20,10 @@ export class AuthController {
 
   @Post('login')
   @UseGuards(LocalAuthGuard)
-  localLogin(@Request() req) {
+  async localLogin(@Request() req) {
     return {
       status: 'success',
-      data: this.authService.login(req.user),
+      data: await this.authService.login(req.user),
     };
   }
 
