@@ -30,7 +30,7 @@ function DialogRoot({ isOpen, onClose, children, className }: DialogRootProps) {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className="fixed inset-0 flex h-full w-full items-center justify-center bg-overlay bg-opacity-50"
+            className="fixed inset-0 flex h-full w-full items-center justify-center bg-overlay"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
           >
@@ -58,7 +58,7 @@ interface DialogCloseProps {
 function DialogClose({ onClose }: DialogCloseProps) {
   return (
     <button onClick={onClose} className="absolute right-6 top-8 fill-main">
-      <CloseIc />
+      <CloseIc aria-hidden />
     </button>
   );
 }
