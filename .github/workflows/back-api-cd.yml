@@ -1,0 +1,91 @@
+name: 백엔드 @app/api CD
+
+on:
+  push:
+    branches: [main, release]
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x]
+
+    steps:
+      - name: ✅ 체크아웃
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: ☑️ pnpm 버전 설정
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - name: ☑️ 노드 버전 설정
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
+
+      - name: ⬇️ 의존성 설치
+        run: pnpm install --frozen-lockfile
+
+      - name: 📦 프로젝트 빌드
+        run: pnpm build:api
+
+  build:
+    runs-on: ubuntu-latest
+    needs: ci
+
+    steps:
+      - name: ✅ 체크아웃
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: .env 파일 생성
+        run: |
+          jq -r 'to_entries|map("\(.key)=\(.value|tostring)")|.[]' <<< "$SECRETS_CONTEXT" > .env
+          mv .env apps/api/.env
+        env:
+          SECRETS_CONTEXT: ${{ toJson(secrets) }}
+
+      - name: 🐳 Docker 로그인
+        uses: docker/login-action@v3
+        with:
+          registry: ${{secrets.DOCKER_REGISTRY_URL}}
+          username: ${{secrets.DOCKER_REGISTRY_ACCESS_KEY}}
+          password: ${{secrets.DOCKER_REGISTRY_SECRET_KEY}}
+
+      - name: 🐳 Docker 빌드 및 푸시
+        run: docker buildx build -f apps/api/Dockerfile . -t ${{secrets.DOCKER_REGISTRY_URL}}/api:${{ github.sha }} -t ${{secrets.DOCKER_REGISTRY_URL}}/api:latest --push
+
+  deploy:
+    needs: build
+    name: Deploy api
+    runs-on: [ticle-api]
+
+    steps:
+      - name: 🐳 Docker 로그인
+        uses: docker/login-action@v3
+        with:
+          registry: ${{secrets.DOCKER_REGISTRY_URL}}
+          username: ${{secrets.DOCKER_REGISTRY_ACCESS_KEY}}
+          password: ${{secrets.DOCKER_REGISTRY_SECRET_KEY}}
+
+      - name: 🐳 Docker 이미지 다운로드
+        run: |
+          docker pull ${{secrets.DOCKER_REGISTRY_URL}}/api:${{ github.sha }}
+
+      - name: 🐳 Docker 기존 컨테이너 종료
+        run: |
+          docker stop api || true
+          docker rm api || true
+
+      - name: 🐳 api 컨테이너 실행
+        run: |
+          docker run -dit --name api \
+            -p 3001:3001 \
+            ${{secrets.DOCKER_REGISTRY_URL}}/api:${{ github.sha }}
