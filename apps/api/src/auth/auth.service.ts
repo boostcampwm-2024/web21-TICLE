@@ -6,6 +6,8 @@ import { User } from '@/entity/user.entity';
 import { CreateUserDto } from '@/user/dto/create-user.dto';
 import { UserService } from '@/user/user.service';
 
+import { SignupRequestDto } from './dto/signupRequest.dto';
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -39,13 +41,8 @@ export class AuthService {
    * @param createUserDto
    * @returns 회원가입 성공시 유저 정보 반환(비밀번호 제외)
    */
-  async signup(createUserDto: CreateUserDto): Promise<Omit<User, 'password'>> {
-    // username 중복 체크 중복 시 ConflictException 발생
-    const existingUser = await this.userService.findUser(createUserDto.username);
-    if (existingUser) {
-      throw new ConflictException('Username already exists');
-    }
-    return this.userService.createUser(createUserDto);
+  async signup(signupRequestDto: SignupRequestDto): Promise<Omit<User, 'password'>> {
+    return this.userService.createUser(signupRequestDto);
   }
 
   /**
