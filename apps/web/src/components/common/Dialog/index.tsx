@@ -84,9 +84,14 @@ function DialogDescription({ children, className }: DialogProps) {
   return <p className={cn('mt-4 text-body1 text-main', className)}>{children}</p>;
 }
 
+function DialogContent({ children, className }: DialogProps) {
+  return <div className={cn('mt-5', className)}>{children}</div>;
+}
+
 export const Dialog = {
   Root: DialogRoot,
   Close: DialogClose,
   Title: DialogTitle,
   Description: DialogDescription,
+  Content: DialogContent,
 };
