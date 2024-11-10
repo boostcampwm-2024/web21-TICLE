@@ -39,6 +39,8 @@ const config: Config = {
       fill: {
         primary: 'var(--purple-500)',
         main: 'var(--grey-900)',
+        weak: 'var(--gray-700)',
+        white: 'var(--white)',
         error: 'var(--red)',
       },
 
