@@ -36,6 +36,11 @@ const config: Config = {
         primary: 'var(--purple-500)',
         error: 'var(--red)',
       },
+      fill: {
+        primary: 'var(--purple-500)',
+        main: 'var(--grey-900)',
+        error: 'var(--red)',
+      },
 
       // font
       fontSize: {
