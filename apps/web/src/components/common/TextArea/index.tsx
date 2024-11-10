@@ -9,6 +9,12 @@ const VALIDATION_STATE = {
   error: 'error',
 } as const;
 
+const SIZE_VARIANTS = {
+  sm: 'sm',
+  md: 'md',
+  lg: 'lg',
+} as const;
+
 const textAreaVariants = cva(
   'w-full rounded-base border bg-white px-3.5 py-2.5 text-body1 text-main placeholder:text-weak resize-none',
   {
@@ -17,6 +23,11 @@ const textAreaVariants = cva(
         [VALIDATION_STATE.default]: 'border-main focus:border-primary',
         [VALIDATION_STATE.error]: 'focus:border-error',
       },
+      size: {
+        [SIZE_VARIANTS.sm]: 'h-24',
+        [SIZE_VARIANTS.md]: 'h-72',
+        [SIZE_VARIANTS.lg]: 'h-[40rem]',
+      },
     },
     defaultVariants: {
       validation: 'default',
@@ -24,14 +35,13 @@ const textAreaVariants = cva(
   }
 );
 
-interface TextAreaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
+interface TextAreaProps extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'size'> {
   label?: string;
   description?: string;
   errorMessage?: string;
   required?: boolean;
   maxLength?: number;
-  width?: number;
-  height?: number;
+  size: keyof typeof SIZE_VARIANTS;
 }
 
 function TextArea(
@@ -42,8 +52,7 @@ function TextArea(
     errorMessage,
     required,
     maxLength,
-    width,
-    height,
+    size,
     className,
     onChange,
     ...props
@@ -61,7 +70,7 @@ function TextArea(
   };
 
   return (
-    <div className={cn('flex flex-col gap-1.5', width && `w-[${width}]`)}>
+    <div className={cn('flex flex-col gap-1.5')}>
       {label && (
         <label htmlFor={label} className="text-title2 text-main">
           {label}
@@ -82,11 +91,7 @@ function TextArea(
         ref={ref}
         required={required}
         onChange={handleCounter}
-        className={cn(
-          textAreaVariants({ validation: textAreaValidation }),
-          className,
-          height && `h-[${height}]`
-        )}
+        className={cn(textAreaVariants({ validation: textAreaValidation, size: size }), className)}
         aria-invalid={!!errorMessage}
         aria-describedby={
           errorMessage ? `${label}-error` : description ? `${label}-description` : undefined
