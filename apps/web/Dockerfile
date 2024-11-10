@@ -17,7 +17,7 @@ RUN pnpm install -g turbo@^2.2.3
 
 COPY . .
 
-RUN turbo prune web --docker
+RUN turbo prune @app/web --docker
 
 FROM base AS installer
 
