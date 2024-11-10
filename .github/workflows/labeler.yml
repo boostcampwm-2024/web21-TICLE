@@ -1,5 +1,5 @@
 ## .github/workflows/labeler.yml
-name: labeler
+name: PR Size Labeler
 
 on: [pull_request]
 
@@ -13,7 +13,7 @@ jobs:
     name: Label the PR size
     steps:
       - uses: codelytv/pr-size-labeler@v1
-      
+
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           xs_label: 'size/xs'
