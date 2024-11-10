@@ -4,7 +4,7 @@ import { forwardRef, InputHTMLAttributes, Ref } from 'react';
 import ExclamationIc from '@/assets/icons/exclamation.svg?react';
 import cn from '@/utils/cn';
 
-const STATE = {
+const VALIDATION_STATE = {
   default: 'default',
   error: 'error',
 } as const;
@@ -13,13 +13,13 @@ const inputVariants = cva(
   'w-full rounded-base border bg-white px-3.5 py-2.5 text-body1 text-main placeholder:text-weak',
   {
     variants: {
-      state: {
-        [STATE.default]: 'border-main focus:border-primary',
-        [STATE.error]: 'focus:border-error',
+      validation: {
+        [VALIDATION_STATE.default]: 'border-main focus:border-primary',
+        [VALIDATION_STATE.error]: 'focus:border-error',
       },
     },
     defaultVariants: {
-      state: 'default',
+      validation: 'default',
     },
   }
 );
@@ -50,7 +50,7 @@ function TextInput(
   }: TextInputProps,
   ref: Ref<HTMLInputElement>
 ) {
-  const inputState = errorMessage ? STATE.error : STATE.default;
+  const inputValidation = errorMessage ? VALIDATION_STATE.error : VALIDATION_STATE.default;
   return (
     <div className={cn('flex flex-col gap-1.5', width !== undefined ? `w-[${width}px]` : '')}>
       {label && (
@@ -70,7 +70,7 @@ function TextInput(
         type={type}
         ref={ref}
         required={required}
-        className={cn(inputVariants({ state: inputState }), className)}
+        className={cn(inputVariants({ validation: inputValidation }), className)}
         aria-invalid={!!errorMessage}
         aria-describedby={
           errorMessage ? `${label}-error` : description ? `${label}-description` : undefined
