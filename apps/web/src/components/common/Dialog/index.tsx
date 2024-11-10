@@ -31,7 +31,7 @@ function DialogRoot({ isOpen, onClose, children, className }: DialogRootProps) {
           ref={dialogRef}
           role="dialog"
           aria-modal="true"
-          className={cn('relative rounded-lg bg-white px-6 py-7 shadow-normal', className)}
+          className={cn('relative w-80 rounded-lg bg-white px-6 py-7 shadow-normal', className)}
         >
           {children}
         </div>
@@ -52,22 +52,22 @@ function DialogClose({ onClose }: DialogCloseProps) {
   );
 }
 
-const ALIGN = {
+const TITLE_ALIGN = {
   start: 'start',
   center: 'center',
   end: 'end',
 } as const;
 
-const dialogTitleVariants = cva('text-head3 text-main', {
+const titleVariants = cva('text-head3 text-main', {
   variants: {
     align: {
-      [ALIGN.start]: 'text-start',
-      [ALIGN.center]: 'text-center',
-      [ALIGN.end]: 'text-end',
+      [TITLE_ALIGN.start]: 'text-start',
+      [TITLE_ALIGN.center]: 'text-center',
+      [TITLE_ALIGN.end]: 'text-end',
     },
   },
   defaultVariants: {
-    align: ALIGN.start,
+    align: TITLE_ALIGN.start,
   },
 });
 
@@ -77,7 +77,7 @@ interface DialogTitleProps {
 }
 
 function DialogTitle({ align = 'start', children }: DialogTitleProps) {
-  return <h2 className={dialogTitleVariants({ align: align })}>{children}</h2>;
+  return <h2 className={titleVariants({ align: align })}>{children}</h2>;
 }
 
 function DialogDescription({ children, className }: DialogProps) {
@@ -85,7 +85,36 @@ function DialogDescription({ children, className }: DialogProps) {
 }
 
 function DialogContent({ children, className }: DialogProps) {
-  return <div className={cn('mt-5', className)}>{children}</div>;
+  return <main className={cn('mt-5', className)}>{children}</main>;
+}
+
+const FOOTER_VARIANT = {
+  single: 'single',
+  horizontal: 'horizontal',
+  vertical: 'vertical',
+} as const;
+
+const footerVariants = cva('mt-6', {
+  variants: {
+    variant: {
+      [FOOTER_VARIANT.single]: 'block',
+      [FOOTER_VARIANT.horizontal]: 'flex gap-2.5',
+      [FOOTER_VARIANT.vertical]: 'flex flex-col gap-2.5',
+    },
+  },
+  defaultVariants: {
+    variant: FOOTER_VARIANT.single,
+  },
+});
+
+interface DialogFooterProps extends DialogProps {
+  variant?: keyof typeof FOOTER_VARIANT;
+}
+
+function DialogFooter({ children, className, variant = 'single' }: DialogFooterProps) {
+  return (
+    <footer className={cn(footerVariants({ variant: variant }), className)}>{children}</footer>
+  );
 }
 
 export const Dialog = {
@@ -94,4 +123,5 @@ export const Dialog = {
   Title: DialogTitle,
   Description: DialogDescription,
   Content: DialogContent,
+  Footer: DialogFooter,
 };
