@@ -7,7 +7,13 @@ const nodeConfig = path.resolve(__dirname, 'tsconfig.node.json');
 /** @type {import("eslint").Linter.Config} */
 module.exports = {
   root: true,
-  extends: [require.resolve('@repo/lint'), 'plugin:react-hooks/recommended'],
+  extends: [
+    require.resolve('@repo/lint'),
+    'plugin:react/recommended',
+    'plugin:react-hooks/recommended',
+    'plugin:jsx-a11y/recommended',
+    'plugin:react/jsx-runtime',
+  ],
   plugins: ['react-refresh'],
   settings: {
     react: {
@@ -25,10 +31,16 @@ module.exports = {
   },
   parserOptions: {
     project: [baseConfig, appConfig, nodeConfig],
+    ecmaFeatures: { jsx: true },
   },
-  ignorePatterns: ['dist', '.eslintrc.cjs'],
+  ignorePatterns: ['dist', '.eslintrc.cjs', 'postcss.config.cjs', 'tailwind.config.ts'],
   rules: {
     'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
     'import/no-unresolved': ['error', { ignore: ['^/'] }],
+    'react/jsx-curly-brace-presence': ['error', { props: 'never', children: 'never' }],
+    'react/jsx-boolean-value': ['error', 'never'],
+    'no-multiple-empty-lines': ['error', { max: 1 }],
+    'import/no-duplicates': 'error',
+    'no-console': 'error',
   },
 };

@@ -13,9 +13,6 @@
     "dev": {
       "cache": false,
       "persistent": true
-    },
-    "type-check": {
-      "outputs": []
     }
   }
 }

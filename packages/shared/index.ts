@@ -1,4 +1,4 @@
-export const shards = {
+export const shared = {
   asdasd: 1,
   asdww: 1,
 };

@@ -10,15 +10,25 @@
     "test": {
       "dependsOn": ["build"]
     },
-    "lint": {
-      "outputs": []
-    },
     "dev": {
       "cache": false,
       "persistent": true
     },
-    "type-check": {
-      "dependsOn": []
+    "clean": {
+      "cache": false
+    },
+    "lint": {
+      "dependsOn": ["^lint"]
+    },
+    "format": {
+      "outputs": []
+    },
+    "format:check": {
+      "outputs": []
+    },
+    "typecheck": {
+      "outputs": [],
+      "cache": true
     }
   }
 }
