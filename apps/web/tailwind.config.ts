@@ -3,7 +3,7 @@ import type { Config } from 'tailwindcss';
 
 const config: Config = {
   content: [
-    './src/pages/**/*.{js,ts,jsx,tsx}',
+    './src/routes/**/*.{js,ts,jsx,tsx}',
     './src/components/**/*.{js,ts,jsx,tsx}',
     './src/*.tsx',
   ],
@@ -34,6 +34,13 @@ const config: Config = {
       borderColor: {
         main: 'var(--grey-300)',
         primary: 'var(--purple-500)',
+        error: 'var(--red)',
+      },
+      fill: {
+        primary: 'var(--purple-500)',
+        main: 'var(--grey-900)',
+        weak: 'var(--gray-700)',
+        white: 'var(--white)',
         error: 'var(--red)',
       },
 

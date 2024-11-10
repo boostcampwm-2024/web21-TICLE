@@ -22,6 +22,10 @@
     },
     "format:check": {
       "outputs": []
+    },
+    "typecheck": {
+      "outputs": [],
+      "cache": true
     }
   }
 }
