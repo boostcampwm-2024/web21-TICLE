@@ -1,34 +1,36 @@
 import { ReactNode } from '@tanstack/react-router';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 interface PortalProps {
   portalId: string;
-  className: string;
-  children: ReactNode;
+  className?: string;
+  children?: ReactNode;
 }
 
 function Portal({ portalId, className, children }: PortalProps) {
-  useEffect(() => {
-    let portalRoot = document.getElementById(portalId);
+  const [portalRoot, setPortalRoot] = useState<HTMLElement | null>(null);
 
-    if (!portalId) {
-      portalRoot = document.createElement('div');
-      portalRoot.setAttribute('id', portalId);
+  useEffect(() => {
+    let element = document.getElementById(portalId);
+
+    if (!element) {
+      element = document.createElement('div');
+      element.setAttribute('id', portalId);
       if (className) {
-        portalRoot.className = className;
+        element.className = className;
       }
-      document.body.appendChild(portalRoot);
+      document.body.appendChild(element);
     }
+    setPortalRoot(element);
 
     return () => {
-      if (portalRoot && !portalRoot.childNodes.length) {
-        portalRoot.remove();
+      if (element && !element.childNodes.length) {
+        element.remove();
       }
     };
   }, [portalId, className]);
 
-  const portalRoot = document.getElementById(portalId);
   if (!portalRoot) return null;
 
   return createPortal(children, portalRoot);
