@@ -1,21 +1,22 @@
+/* eslint-disable react-refresh/only-export-components */
 import { cva } from 'class-variance-authority';
 import { ChangeEvent, forwardRef, InputHTMLAttributes, Ref, useRef } from 'react';
 
 import ExclamationIc from '@/assets/icons/exclamation.svg?react';
 import cn from '@/utils/cn';
 
-const VALIDATION_STATE = {
+export const VALIDATION_STATE = {
   default: 'default',
   error: 'error',
 } as const;
 
-const SIZE_VARIANTS = {
+export const SIZE_VARIANTS = {
   sm: 'sm',
   md: 'md',
   lg: 'lg',
 } as const;
 
-const inputVariants = cva(
+export const inputVariants = cva(
   'w-full rounded-base border bg-white px-3.5 py-2.5 text-body1 text-main placeholder:text-weak',
   {
     variants: {
@@ -30,7 +31,7 @@ const inputVariants = cva(
   }
 );
 
-const inputWrapperVariants = cva('flex flex-col gap-1.5', {
+export const inputWrapperVariants = cva('flex flex-col gap-1.5', {
   variants: {
     size: {
       [SIZE_VARIANTS.sm]: 'w-40',
