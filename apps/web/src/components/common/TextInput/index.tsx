@@ -3,13 +3,18 @@ import { forwardRef, InputHTMLAttributes, Ref } from 'react';
 
 import cn from '@/utils/cn';
 
+const STATE = {
+  default: 'default',
+  error: 'error',
+} as const;
+
 const inputVariants = cva(
   'w-full rounded-base border bg-white px-3.5 py-2.5 text-body1 text-main placeholder:text-weak',
   {
     variants: {
       state: {
-        default: 'border-main focus:border-primary',
-        error: 'focus:border-error',
+        [STATE.default]: 'border-main focus:border-primary',
+        [STATE.error]: 'focus:border-error',
       },
     },
     defaultVariants: {
@@ -25,6 +30,7 @@ interface TextInputProps extends InputHTMLAttributes<HTMLInputElement> {
   errorMessage?: string;
   required?: boolean;
   maxLength?: number;
+  width?: number;
   type?: 'text' | 'email' | 'password' | 'number';
 }
 
@@ -37,14 +43,15 @@ function TextInput(
     required,
     maxLength,
     type = 'text',
+    width,
     className,
     ...props
   }: TextInputProps,
   ref: Ref<HTMLInputElement>
 ) {
-  const inputState = errorMessage ? 'error' : 'default';
+  const inputState = errorMessage ? STATE.error : STATE.default;
   return (
-    <div className="flex w-min flex-col gap-1.5">
+    <div className={cn('flex flex-col gap-1.5', width !== undefined ? `w-[${width}px]` : '')}>
       {label && (
         <label htmlFor={label} className="text-title2 text-main">
           {label}
@@ -57,6 +64,7 @@ function TextInput(
       )}
       {description && <p className="text-body2 text-alt">{description}</p>}
       <input
+        id={label}
         value={value}
         type={type}
         ref={ref}
@@ -75,7 +83,7 @@ function TextInput(
           </p>
         )}
         {maxLength && (
-          <p className="w-100 absolute right-0 top-0 text-body4 text-weak">{`${value?.length ?? 0}/${maxLength}`}</p>
+          <p className="absolute right-0 top-0 text-body4 text-weak">{`${value?.length ?? 0}/${maxLength}`}</p>
         )}
       </div>
     </div>

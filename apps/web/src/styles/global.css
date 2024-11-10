@@ -47,4 +47,12 @@
     --yellow: #ffe04c;
     --green: #2ddd93;
   }
+
+  * {
+    @apply transition-colors duration-200 ease-in-out;
+  }
+
+  input:focus {
+    outline: none;
+  }
 }
