@@ -1,6 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import { ReactNode } from '@tanstack/react-router';
 import { cva } from 'class-variance-authority';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useRef } from 'react';
 
 import CloseIc from '@/assets/icons/close.svg?react';
@@ -26,16 +27,26 @@ function DialogRoot({ isOpen, onClose, children, className }: DialogRootProps) {
 
   return (
     <Portal portalId="dialog">
-      <div className="fixed top-0 flex h-full w-full items-center justify-center bg-overlay">
-        <div
-          ref={dialogRef}
-          role="dialog"
-          aria-modal="true"
-          className={cn('relative w-80 rounded-lg bg-white px-6 py-7 shadow-normal', className)}
-        >
-          {children}
-        </div>
-      </div>
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            className="fixed inset-0 flex h-full w-full items-center justify-center bg-overlay bg-opacity-50"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
+            <motion.div
+              ref={dialogRef}
+              role="dialog"
+              aria-modal="true"
+              className={cn('relative w-80 rounded-lg bg-white px-6 py-7 shadow-normal', className)}
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              {children}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </Portal>
   );
 }
