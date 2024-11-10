@@ -13,7 +13,11 @@ export class UserService {
     @InjectRepository(User)
     private userRepository: Repository<User>
   ) {}
-
+  /**
+   * 유저 생성
+   * @param createUserDto
+   * @returns 비밀번호 제외한 유저 정보
+   */
   async createUser(createUserDto: CreateUserDto): Promise<Omit<User, 'password'>> {
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(createUserDto.password, saltRounds);
@@ -27,7 +31,11 @@ export class UserService {
     return result;
   }
 
-  //todo : 불필요한 데이터 보내지 않게/ 로그인용으로만 사용하게 수정
+  /**
+   * 로그인 시 유저정보 반환 (todo : 불필요한 데이터 보내지 않게 수정)
+   * @param username
+   * @returns User 객체
+   */
   async findUser(username: string): Promise<User | undefined> {
     const user = await this.userRepository.findOne({
       where: { username },

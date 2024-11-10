@@ -49,7 +49,7 @@ describe('LocalStrategy', () => {
 
       const result = await strategy.validate(mockUsername, mockPassword);
 
-      expect(authService.validateUser).toHaveBeenCalledWith(mockUsername, mockPassword);
+      expect(authService.validateLocalLogin).toHaveBeenCalledWith(mockUsername, mockPassword);
       expect(result).toEqual(mockUser);
     });
 
@@ -60,7 +60,7 @@ describe('LocalStrategy', () => {
         UnauthorizedException
       );
 
-      expect(authService.validateUser).toHaveBeenCalledWith(mockUsername, mockPassword);
+      expect(authService.validateLocalLogin).toHaveBeenCalledWith(mockUsername, mockPassword);
     });
 
     it('should call AuthService.validateUser with correct parameters', async () => {
@@ -68,8 +68,8 @@ describe('LocalStrategy', () => {
 
       await strategy.validate(mockUsername, mockPassword);
 
-      expect(authService.validateUser).toHaveBeenCalledWith(mockUsername, mockPassword);
-      expect(authService.validateUser).toHaveBeenCalledTimes(1);
+      expect(authService.validateLocalLogin).toHaveBeenCalledWith(mockUsername, mockPassword);
+      expect(authService.validateLocalLogin).toHaveBeenCalledTimes(1);
     });
   });
 });
