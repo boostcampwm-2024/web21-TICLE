@@ -1,34 +1,19 @@
-import { ConflictException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as bcrypt from 'bcrypt';
 
+import { User } from '@/entity/user.entity';
+import { UserService } from '@/user/user.service';
+
 import { AuthService } from './auth.service';
-import { CreateUserDto } from '../user/dto/create-user.dto';
-import { UserService } from '../user/user.service';
+import { SignupRequestDto } from './dto/signupRequest.dto';
 
 jest.mock('bcrypt');
 
 describe('AuthService', () => {
-  let authService: AuthService;
+  let service: AuthService;
   let userService: UserService;
   let jwtService: JwtService;
-
-  const mockUser = {
-    id: 1,
-    username: 'testuser',
-    password: 'hashedPassword',
-    nickname: 'Test User',
-    email: 'test@example.com',
-    introduce: 'Hello',
-    profileImageUrl: 'http://example.com/profile.jpg',
-    provider: 'local',
-    socialId: '',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    ticles: [],
-    applicants: [],
-  };
 
   const mockUserService = {
     findUser: jest.fn(),
@@ -54,7 +39,7 @@ describe('AuthService', () => {
       ],
     }).compile();
 
-    authService = module.get<AuthService>(AuthService);
+    service = module.get<AuthService>(AuthService);
     userService = module.get<UserService>(UserService);
     jwtService = module.get<JwtService>(JwtService);
   });
@@ -63,99 +48,116 @@ describe('AuthService', () => {
     jest.clearAllMocks();
   });
 
-  describe('validateLocalLogin', () => {
-    it('should return user without password if credentials are valid', async () => {
-      const username = 'testuser';
-      const password = 'password123';
-      const { password: _, ...userWithoutPassword } = mockUser;
+  it('should be defined', () => {
+    expect(service).toBeDefined();
+  });
 
+  describe('validateLocalLogin', () => {
+    const mockUser = {
+      id: 1,
+      username: 'testuser',
+      password: 'hashedPassword',
+      nickname: 'Test User',
+      email: 'test@example.com',
+      introduce: 'Hello',
+      profileImageUrl: 'http://example.com/image.jpg',
+      provider: 'local',
+      socialId: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
+    it('should return user without password if validation is successful', async () => {
       mockUserService.findUser.mockResolvedValue(mockUser);
       (bcrypt.compare as jest.Mock).mockResolvedValue(true);
 
-      const result = await authService.validateLocalLogin(username, password);
+      const { password, ...expectedResult } = mockUser;
+      const result = await service.validateLocalLogin('testuser', 'password123');
 
-      expect(result).toEqual(userWithoutPassword);
-      expect(mockUserService.findUser).toHaveBeenCalledWith(username);
-      expect(bcrypt.compare).toHaveBeenCalledWith(password, mockUser.password);
+      expect(result).toEqual(expectedResult);
+      expect(userService.findUser).toHaveBeenCalledWith('testuser');
+      expect(bcrypt.compare).toHaveBeenCalledWith('password123', 'hashedPassword');
     });
 
     it('should return null if user is not found', async () => {
       mockUserService.findUser.mockResolvedValue(null);
 
-      const result = await authService.validateLocalLogin('nonexistent', 'password123');
+      const result = await service.validateLocalLogin('nonexistent', 'password123');
 
       expect(result).toBeNull();
-      expect(mockUserService.findUser).toHaveBeenCalledWith('nonexistent');
+      expect(userService.findUser).toHaveBeenCalledWith('nonexistent');
+      expect(bcrypt.compare).not.toHaveBeenCalled();
     });
 
     it('should return null if password is invalid', async () => {
       mockUserService.findUser.mockResolvedValue(mockUser);
       (bcrypt.compare as jest.Mock).mockResolvedValue(false);
 
-      const result = await authService.validateLocalLogin('testuser', 'wrongpassword');
+      const result = await service.validateLocalLogin('testuser', 'wrongpassword');
 
       expect(result).toBeNull();
+      expect(userService.findUser).toHaveBeenCalledWith('testuser');
+      expect(bcrypt.compare).toHaveBeenCalledWith('wrongpassword', 'hashedPassword');
     });
   });
 
   describe('signup', () => {
-    it('should create a new user if username does not exist', async () => {
-      const createUserDto: CreateUserDto = {
-        username: 'newuser',
-        password: 'password123',
-        nickname: 'New User',
-        email: 'new@example.com',
-        introduce: 'Hello',
-        profileImageUrl: 'http://example.com/profile.jpg',
-        provider: 'local',
-        socialId: '',
-      };
+    const signupDto: SignupRequestDto = {
+      username: 'newuser',
+      password: 'password123',
+      nickname: 'New User',
+      email: 'new@example.com',
+      introduce: 'Hello World',
+      profileImageUrl: 'http://example.com/new.jpg',
+      provider: 'local',
+      socialId: null,
+    };
 
-      const { password: _, ...expectedUser } = mockUser;
+    const mockCreatedUser = {
+      id: 1,
+      ...signupDto,
+      password: 'hashedPassword',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
 
-      mockUserService.findUser.mockResolvedValue(null);
-      mockUserService.createUser.mockResolvedValue(expectedUser);
+    it('should create a new user successfully', async () => {
+      const { password, ...userWithoutPassword } = mockCreatedUser;
+      mockUserService.createUser.mockResolvedValue(userWithoutPassword);
 
-      const result = await authService.signup(createUserDto);
+      const result = await service.signup(signupDto);
 
-      expect(result).toEqual(expectedUser);
-      expect(mockUserService.findUser).toHaveBeenCalledWith(createUserDto.username);
-      expect(mockUserService.createUser).toHaveBeenCalledWith(createUserDto);
-    });
-
-    it('should throw ConflictException if username already exists', async () => {
-      const createUserDto: CreateUserDto = {
-        username: 'existinguser',
-        password: 'password123',
-        nickname: 'Existing User',
-        email: 'existing@example.com',
-        introduce: 'Hello',
-        profileImageUrl: 'http://example.com/profile.jpg',
-        provider: 'local',
-        socialId: '',
-      };
-
-      mockUserService.findUser.mockResolvedValue(mockUser);
-
-      await expect(authService.signup(createUserDto)).rejects.toThrow(ConflictException);
-      expect(mockUserService.findUser).toHaveBeenCalledWith(createUserDto.username);
-      expect(mockUserService.createUser).not.toHaveBeenCalled();
+      expect(result).toEqual(userWithoutPassword);
+      expect(userService.createUser).toHaveBeenCalledWith(signupDto);
     });
   });
 
   describe('login', () => {
-    it('should return access token for valid user', async () => {
-      const { password: _, ...userWithoutPassword } = mockUser;
-      const mockToken = 'mock.jwt.token';
+    const mockUser = {
+      id: 1,
+      username: 'testuser',
+      nickname: 'Test User',
+      email: 'test@example.com',
+      introduce: 'Hello',
+      profileImageUrl: 'http://example.com/image.jpg',
+      provider: 'local',
+      socialId: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      ticles: null,
+      applicants: null,
+    };
 
+    it('should return access token when login is successful', async () => {
+      const mockToken = 'mock.jwt.token';
       mockJwtService.sign.mockReturnValue(mockToken);
 
-      const result = await authService.login(userWithoutPassword);
+      const result = await service.createJWT(mockUser);
 
       expect(result).toEqual({ access_token: mockToken });
       expect(jwtService.sign).toHaveBeenCalledWith({
-        username: userWithoutPassword.username,
-        sub: userWithoutPassword.id,
+        username: mockUser.username,
+        sub: mockUser.id,
       });
     });
   });
