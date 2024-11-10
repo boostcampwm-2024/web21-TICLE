@@ -44,9 +44,9 @@ importers:
       '@nestjs/typeorm':
         specifier: ^10.0.2
         version: 10.0.2(@nestjs/common@10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.4.6(@nestjs/common@10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/platform-express@10.4.6)(reflect-metadata@0.2.2)(rxjs@7.8.1))(reflect-metadata@0.2.2)(rxjs@7.8.1)(typeorm@0.3.20(mysql2@3.11.3)(ts-node@10.9.2(@types/node@20.17.6)(typescript@5.6.3)))
-      '@repo/shards':
+      '@repo/shared':
         specifier: workspace:*
-        version: link:../../packages/shards
+        version: link:../../packages/shared
       '@repo/types':
         specifier: workspace:*
         version: link:../../packages/types
@@ -135,9 +135,9 @@ importers:
 
   apps/web:
     dependencies:
-      '@repo/shards':
+      '@repo/shared':
         specifier: workspace:*
-        version: link:../../packages/shards
+        version: link:../../packages/shared
       '@repo/types':
         specifier: workspace:*
         version: link:../../packages/types
@@ -211,6 +211,9 @@ importers:
       postcss:
         specifier: ^8.4.47
         version: 8.4.47
+      prettier-plugin-tailwindcss:
+        specifier: ^0.6.8
+        version: 0.6.8(prettier@3.3.3)
       tailwindcss:
         specifier: ^3.4.14
         version: 3.4.14(ts-node@10.9.2(@types/node@22.8.7)(typescript@5.6.3))
@@ -251,7 +254,7 @@ importers:
         specifier: '>=5.0.0'
         version: 5.6.3
 
-  packages/shards:
+  packages/shared:
     devDependencies:
       '@repo/lint':
         specifier: workspace:*
