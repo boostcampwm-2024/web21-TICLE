@@ -31,10 +31,13 @@ function SearchInput(
   };
 
   return (
-    <div className={cn(inputWrapperVariants({ size: SIZE_VARIANTS.md }), 'relative', className)}>
+    <div
+      role="search"
+      className={cn(inputWrapperVariants({ size: SIZE_VARIANTS.md }), 'relative', className)}
+    >
       <input
         ref={ref}
-        type="text"
+        type="search"
         value={value}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
@@ -43,12 +46,12 @@ function SearchInput(
       />
       <div className="absolute right-3 top-3">
         {value ? (
-          <button type="button" onClick={onClear}>
-            <CloseIc className="fill-main" />
+          <button type="button" onClick={onClear} aria-label="검색어 지우기">
+            <CloseIc className="fill-main" aria-hidden />
           </button>
         ) : (
-          <button type="button" onClick={() => onSearch(value)}>
-            <SearchIc className="fill-main" />
+          <button type="button" onClick={() => onSearch(value)} aria-label="검색하기">
+            <SearchIc className="fill-main" aria-hidden />
           </button>
         )}
       </div>
