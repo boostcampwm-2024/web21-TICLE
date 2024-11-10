@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import { Tag } from '@/entity/tag.entity';
 import { Ticle, TicleStatus } from '@/entity/ticle.entity';
@@ -18,7 +18,10 @@ export class TicleService {
 
   async createTicle(createTicleDto: CreateTicleDto): Promise<Ticle> {
     try {
-      const tags = await this.checkAndCreateTags(createTicleDto.tags);
+      const { existingTags, tagsToCreate } = await this.findExistingTags(createTicleDto.tags);
+      const newTags = await this.createNewTags(tagsToCreate);
+
+      const tags = [...existingTags, ...newTags];
       const newTicle = this.ticleRepository.create({
         ...createTicleDto,
         ticleStatus: TicleStatus.OPEN,
@@ -29,34 +32,32 @@ export class TicleService {
 
       return await this.ticleRepository.save(newTicle);
     } catch (error) {
-      throw new Error(`Failed to create ticle `);
+      throw new HttpException(`Failed to create ticle `, HttpStatus.BAD_REQUEST);
     }
   }
 
-  async checkAndCreateTags(tags: string[]): Promise<Tag[]> {
-    try {
-      const foundTags = [];
-      const toCreate = [];
+  async findExistingTags(tags: string[]) {
+    const existingTags = await this.tagRepository.find({
+      where: {
+        name: In(tags),
+      },
+    });
 
-      for (const tagName of tags) {
-        const tag = await this.tagRepository.findOne({ where: { name: tagName } });
-        if (tag) {
-          foundTags.push(tag);
-          continue;
-        }
-        toCreate.push(tagName);
-      }
+    const existingTagNames = new Set(existingTags.map((tag) => tag.name));
+    const tagsToCreate = tags.filter((tagName) => !existingTagNames.has(tagName));
 
-      for (const tagName of toCreate) {
-        const tag = this.tagRepository.create({
-          name: tagName,
-        });
-        await this.tagRepository.save(tag);
-        foundTags.push(tag);
-      }
-      return foundTags;
-    } catch (error) {
-      throw new Error(`cannot process tag `);
+    return {
+      existingTags,
+      tagsToCreate,
+    };
+  }
+
+  async createNewTags(this: any, tagsToCreate: string[]) {
+    if (tagsToCreate.length === 0) {
+      return [];
     }
+
+    const newTags = this.tagRepository.create(tagsToCreate.map((name) => ({ name })));
+    return await this.tagRepository.save(newTags);
   }
 }
