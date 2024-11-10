@@ -24,7 +24,6 @@ export class TicleService {
       const tags = [...existingTags, ...newTags];
       const newTicle = this.ticleRepository.create({
         ...createTicleDto,
-        ticleStatus: TicleStatus.OPEN,
         applicants: [],
         summary: null,
         tags: tags,
