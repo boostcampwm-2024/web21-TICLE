@@ -1,4 +1,5 @@
 import { ReactNode } from '@tanstack/react-router';
+import { cva } from 'class-variance-authority';
 import { useRef } from 'react';
 
 import CloseIc from '@/assets/icons/close.svg?react';
@@ -7,11 +8,13 @@ import cn from '@/utils/cn';
 
 import Portal from '../Portal';
 
-interface DialogRootProps {
+interface DialogProps {
+  className?: string;
+  children?: ReactNode;
+}
+interface DialogRootProps extends DialogProps {
   isOpen: boolean;
   onClose: () => void;
-  children: ReactNode;
-  className?: string;
 }
 
 function DialogRoot({ isOpen, onClose, children, className }: DialogRootProps) {
@@ -27,7 +30,7 @@ function DialogRoot({ isOpen, onClose, children, className }: DialogRootProps) {
           ref={dialogRef}
           role="dialog"
           aria-modal="true"
-          className={cn('relative rounded-lg bg-white px-6 py-8 shadow-normal', className)}
+          className={cn('relative rounded-lg bg-white px-6 py-7 shadow-normal', className)}
         >
           {children}
         </div>
@@ -36,7 +39,11 @@ function DialogRoot({ isOpen, onClose, children, className }: DialogRootProps) {
   );
 }
 
-function DialogClose({ onClose }: { onClose?: () => void }) {
+interface DialogCloseProps {
+  onClose?: () => void;
+}
+
+function DialogClose({ onClose }: DialogCloseProps) {
   return (
     <button onClick={onClose} className="absolute right-6 top-8 fill-main">
       <CloseIc />
@@ -44,7 +51,36 @@ function DialogClose({ onClose }: { onClose?: () => void }) {
   );
 }
 
+interface DialogTitleProps {
+  align?: 'start' | 'center' | 'end';
+  children?: ReactNode;
+}
+
+const ALIGN = {
+  start: 'start',
+  center: 'center',
+  end: 'end',
+} as const;
+
+const dialogTitleVariants = cva('text-head3 text-main', {
+  variants: {
+    align: {
+      [ALIGN.start]: 'text-start',
+      [ALIGN.center]: 'text-center',
+      [ALIGN.end]: 'text-end',
+    },
+  },
+  defaultVariants: {
+    align: ALIGN.start,
+  },
+});
+
+function DialogTitle({ align = 'start', children }: DialogTitleProps) {
+  return <h2 className={dialogTitleVariants({ align: align })}>{children}</h2>;
+}
+
 export const Dialog = {
   Root: DialogRoot,
   Close: DialogClose,
+  Title: DialogTitle,
 };
