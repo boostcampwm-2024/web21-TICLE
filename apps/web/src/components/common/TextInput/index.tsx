@@ -1,5 +1,5 @@
 import { cva } from 'class-variance-authority';
-import { forwardRef, InputHTMLAttributes, Ref } from 'react';
+import { ChangeEvent, forwardRef, InputHTMLAttributes, Ref, useRef } from 'react';
 
 import ExclamationIc from '@/assets/icons/exclamation.svg?react';
 import cn from '@/utils/cn';
@@ -25,7 +25,6 @@ const inputVariants = cva(
 );
 
 interface TextInputProps extends InputHTMLAttributes<HTMLInputElement> {
-  value?: string;
   label?: string;
   description?: string;
   errorMessage?: string;
@@ -37,7 +36,6 @@ interface TextInputProps extends InputHTMLAttributes<HTMLInputElement> {
 
 function TextInput(
   {
-    value,
     label,
     description,
     errorMessage,
@@ -46,13 +44,23 @@ function TextInput(
     type = 'text',
     width,
     className,
+    onChange,
     ...props
   }: TextInputProps,
   ref: Ref<HTMLInputElement>
 ) {
   const inputValidation = errorMessage ? VALIDATION_STATE.error : VALIDATION_STATE.default;
+  const counterRef = useRef<HTMLParagraphElement>(null);
+
+  const handleCounter = (e: ChangeEvent<HTMLInputElement>) => {
+    if (maxLength && counterRef.current) {
+      counterRef.current.textContent = `${e.target.value.length}/${maxLength}`;
+    }
+    onChange?.(e);
+  };
+
   return (
-    <div className={cn('flex flex-col gap-1.5', width !== undefined ? `w-[${width}px]` : '')}>
+    <div className={cn('flex flex-col gap-1.5', width && `w-${width}`)}>
       {label && (
         <label htmlFor={label} className="text-title2 text-main">
           {label}
@@ -63,13 +71,17 @@ function TextInput(
           )}
         </label>
       )}
-      {description && <p className="text-body2 text-alt">{description}</p>}
+      {description && (
+        <p className="text-body2 text-alt" id={`${label}-description`}>
+          {description}
+        </p>
+      )}
       <input
         id={label}
-        value={value}
         type={type}
         ref={ref}
         required={required}
+        onChange={handleCounter}
         className={cn(inputVariants({ validation: inputValidation }), className)}
         aria-invalid={!!errorMessage}
         aria-describedby={
@@ -79,13 +91,16 @@ function TextInput(
       />
       <div className="relative">
         {errorMessage && (
-          <p className="flex items-center text-label1 text-error" id={`${label}-error`}>
-            <ExclamationIc className="fill-error" />
+          <p className="flex items-center gap-1 text-label1 text-error" id={`${label}-error`}>
+            <ExclamationIc className="fill-error" width={9} />
             {errorMessage}
           </p>
         )}
         {maxLength && (
-          <p className="absolute right-0 top-0 text-body4 text-weak">{`${value?.length ?? 0}/${maxLength}`}</p>
+          <p
+            ref={counterRef}
+            className="absolute right-0 top-0 text-body4 text-weak"
+          >{`${props.defaultValue?.toString().length ?? 0}/${maxLength}`}</p>
         )}
       </div>
     </div>
