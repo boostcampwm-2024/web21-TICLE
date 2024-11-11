@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 
@@ -21,18 +21,13 @@ export class AuthService {
    * @param password
    * @returns 비밀번호가 일치하면 유저 정보 반환(비밀번호 제외), 아니면 null 반환
    */
-  async validateLocalLogin(
-    username: string,
-    password: string
-  ): Promise<Omit<User, 'password'> | null> {
-    const user = await this.userService.findUser(username);
-    if (user) {
-      const isPasswordValid = await bcrypt.compare(password, user.password);
-      if (isPasswordValid) {
-        const { password, ...result } = user;
-        return result;
-      }
+  async validateLocalLogin(username: string, password: string): Promise<Omit<User, 'password'>> {
+    const user: User | undefined = await this.userService.findUser(username);
+    if (user && (await bcrypt.compare(password, user.password))) {
+      const { password, ...result } = user;
+      return result;
     }
+    throw new UnauthorizedException('잘못된 로그인 정보');
   }
 
   /**
