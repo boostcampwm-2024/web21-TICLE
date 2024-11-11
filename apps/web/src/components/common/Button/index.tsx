@@ -64,19 +64,18 @@ const buttonTextVariants = cva('flex w-full items-center justify-center', {
 });
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  size: (typeof BUTTON_SIZE)[keyof typeof BUTTON_SIZE];
+  size?: (typeof BUTTON_SIZE)[keyof typeof BUTTON_SIZE];
   variant?: (typeof BUTTON_VARIANTS)[keyof typeof BUTTON_VARIANTS];
 }
 
-function Button(props: ButtonProps) {
-  const {
-    size = BUTTON_SIZE.lg,
-    variant = BUTTON_VARIANTS.primary,
-    disabled = false,
-    children,
-    className,
-    ...rest
-  } = props;
+function Button({
+  size = BUTTON_SIZE.lg,
+  variant = BUTTON_VARIANTS.primary,
+  disabled = false,
+  children,
+  className,
+  ...rest
+}: ButtonProps) {
   return (
     <button
       className={cn(buttonVariants({ size, variant: variant, disabled }), className)}
