@@ -1,5 +1,8 @@
-import { Controller, Get, Post, UseGuards, Request, Body } from '@nestjs/common';
+import { Body, Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Request as ExpressRequest } from 'express';
+
+import { User } from '@/entity/user.entity';
 
 import { AuthService } from './auth.service';
 import { LocalLoginRequestDto } from './dto/localLoginRequest.dto';
@@ -17,7 +20,7 @@ export class AuthController {
   @ApiOperation({ summary: '회원가입' })
   @ApiResponse({ status: 201, type: SignupResponseDto })
   @ApiResponse({ status: 409 })
-  async signup(@Body() createUserDto: SignupRequestDto) {
+  async signup(@Body() createUserDto: SignupRequestDto): Promise<SignupResponseDto> {
     const user = await this.authService.signup(createUserDto);
     return {
       status: 'success',
@@ -31,10 +34,10 @@ export class AuthController {
   @ApiResponse({ status: 200, type: LocalLoginResponseDto })
   @ApiResponse({ status: 401 })
   @UseGuards(LocalAuthGuard)
-  async localLogin(@Request() req) {
+  async localLogin(@Request() req: ExpressRequest): Promise<LocalLoginResponseDto> {
     return {
       status: 'success',
-      data: await this.authService.createJWT(req.user),
+      data: await this.authService.createJWT(req.user as Omit<User, 'password'>),
     };
   }
 
