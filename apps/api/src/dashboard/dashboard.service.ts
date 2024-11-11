@@ -36,4 +36,17 @@ export class DashboardService {
       throw new BadRequestException('신청한 티클 조회에 실패했습니다.');
     }
   }
+
+  async getApplicants(ticleId: number) {
+    try {
+      const applicants = await this.applicantRepository.find({
+        where: { ticle: { id: ticleId } },
+        relations: ['user'],
+      });
+
+      return applicants.map((applicant) => applicant.user);
+    } catch (error) {
+      throw new BadRequestException('참여자 목록 조회에 실패했습니다.');
+    }
+  }
 }
