@@ -8,6 +8,7 @@ import { Ticle } from '@/entity/ticle.entity';
 import { User } from '@/entity/user.entity';
 
 import { CreateTicleDto } from './dto/createTicleDto';
+import { TickleDetailResponseDto } from './dto/ticleDetailDto';
 
 @Injectable()
 export class TicleService {
@@ -123,5 +124,29 @@ export class TicleService {
       throw new NotFoundException(`cannot found user`);
     }
     return user;
+  }
+
+  async getTicleByTicleId(ticleId: number): Promise<TickleDetailResponseDto> {
+    const ticle = await this.ticleRepository.findOne({
+      where: { id: ticleId },
+      relations: {
+        tags: true,
+      },
+    });
+
+    if (!ticle) {
+      throw new NotFoundException('티클을 찾을 수 없습니다.');
+    }
+
+    return {
+      speakerName: ticle.speakerName,
+      speakerEmail: ticle.speakerEmail,
+      speakerIntroduce: ticle.speakerIntroduce,
+      title: ticle.title,
+      content: ticle.content,
+      startTime: ticle.startTime,
+      endTime: ticle.endTime,
+      tags: ticle.tags.map((tag) => tag.name),
+    };
   }
 }
