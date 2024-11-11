@@ -23,5 +23,7 @@ export class TicleController {
   getTicleSearchList() {}
 
   @Post(':ticleId/apply')
-  applyToTicle(@Param('ticleId') params: any) {}
+  applyToTicle(@Param('ticleId') ticleId: number, @Body() body: { userId: number }) {
+    return this.ticleService.applyTicle(ticleId, body.userId);
+  }
 }

@@ -2,8 +2,10 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 
+import { Applicant } from '@/entity/applicant.entity';
 import { Tag } from '@/entity/tag.entity';
 import { Ticle, TicleStatus } from '@/entity/ticle.entity';
+import { User } from '@/entity/user.entity';
 
 import { CreateTicleDto } from './dto/createTicleDto';
 
@@ -13,7 +15,11 @@ export class TicleService {
     @InjectRepository(Ticle)
     private ticleRepository: Repository<Ticle>,
     @InjectRepository(Tag)
-    private tagRepository: Repository<Tag>
+    private tagRepository: Repository<Tag>,
+    @InjectRepository(Applicant)
+    private applicantRepository: Repository<Applicant>,
+    @InjectRepository(User)
+    private userRepository: Repository<User>
   ) {}
 
   async createTicle(createTicleDto: CreateTicleDto): Promise<Ticle> {
@@ -51,12 +57,49 @@ export class TicleService {
     };
   }
 
-  async createNewTags(this: any, tagsToCreate: string[]) {
+  async createNewTags(tagsToCreate: string[]) {
     if (tagsToCreate.length === 0) {
       return [];
     }
 
     const newTags = this.tagRepository.create(tagsToCreate.map((name) => ({ name })));
     return await this.tagRepository.save(newTags);
+  }
+
+  async applyTicle(ticleId: number, applicantId: number) {
+    const ticle = await this.ticleRepository.findOne({ where: { id: ticleId } });
+    if (!ticle) {
+      throw new HttpException(`Cannot found ticle`, HttpStatus.NOT_FOUND);
+    }
+    const user = await this.userRepository.findOne({
+      where: { id: applicantId },
+    });
+
+    if (!user) {
+      throw new HttpException(`Cannot found user`, HttpStatus.NOT_FOUND);
+    }
+
+    const existingApplication = await this.applicantRepository.exists({
+      where: {
+        ticle: { id: ticleId },
+        user: { id: applicantId },
+      },
+    });
+
+    if (existingApplication) {
+      throw new HttpException('Already applied to this ticle', HttpStatus.BAD_REQUEST);
+    }
+
+    const newApplicant = this.applicantRepository.create({
+      ticle,
+      user,
+    });
+
+    await this.applicantRepository.save(newApplicant);
+
+    return {
+      status: 'success',
+      message: 'Successfully applied to ticle',
+    };
   }
 }
