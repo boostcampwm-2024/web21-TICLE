@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Post, Query } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe, Post, Query } from '@nestjs/common';
 
 import { DashboardService } from './dashboard.service';
 
@@ -12,7 +12,9 @@ export class DashboardController {
   }
 
   @Get('applied')
-  getAppliedTicleList() {}
+  async getAppliedTicleList(@Query('userId', ParseIntPipe) userId: number) {
+    return await this.dashboardService.getAppliedTicleList(userId);
+  }
 
   @Get('created/:ticleId/applicants')
   getParticipants(@Param('ticleId') ticleId: number) {}
