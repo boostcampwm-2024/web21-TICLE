@@ -10,7 +10,7 @@ function Badge({ children, className, ...rest }: BadgeProps) {
   return (
     <div
       className={cn(
-        'w-fit rounded-md border border-primary bg-secondary px-2 py-1.5 text-label1 text-primary',
+        'h-fit w-fit rounded-md border border-primary bg-secondary px-2 py-1.5 text-label1 text-primary',
         className
       )}
       {...rest}
