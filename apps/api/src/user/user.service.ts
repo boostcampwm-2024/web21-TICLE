@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
@@ -20,14 +20,27 @@ export class UserService {
    * @returns 비밀번호 제외한 유저 정보
    */
   async createUser(createUserDto: CreateUserDto): Promise<Omit<User, 'password'>> {
-    const user = this.userRepository.create({
-      ...createUserDto,
-      password: await this.hashPassword(createUserDto.password),
-    });
-    await this.userRepository.save(user);
+    try {
+      const user = this.userRepository.create({
+        ...createUserDto,
+        password: await this.hashPassword(createUserDto.password),
+      });
+      await this.userRepository.save(user);
 
-    const { password, ...result } = user;
-    return result;
+      const { password, ...result } = user;
+      return result;
+    } catch (error: any) {
+      if (error.code === 'ER_DUP_ENTRY' || error.errno === 1062) {
+        const message = error.message;
+        if (message.includes('UQ_user_username')) {
+          throw new ConflictException('이미 사용 중인 사용자 이름입니다.');
+        }
+        if (message.includes('UQ_user_email')) {
+          throw new ConflictException('이미 사용 중인 이메일입니다.');
+        }
+      }
+      throw new InternalServerErrorException();
+    }
   }
 
   /**

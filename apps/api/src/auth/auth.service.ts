@@ -36,7 +36,7 @@ export class AuthService {
   }
 
   /**
-   * 회원가입 로직
+   * 회원가입 로직 (todo : 회원가입에 필요한 로직 추가 또는 단일화)
    * @param createUserDto
    * @returns 회원가입 성공시 유저 정보 반환(비밀번호 제외)
    */
