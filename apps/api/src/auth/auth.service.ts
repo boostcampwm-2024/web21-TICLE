@@ -6,6 +6,7 @@ import { User } from '@/entity/user.entity';
 import { UserService } from '@/user/user.service';
 
 import { SignupRequestDto } from './dto/signupRequest.dto';
+import { JWTPayload } from './jwt/jwt.strategy';
 
 @Injectable()
 export class AuthService {
@@ -31,9 +32,8 @@ export class AuthService {
     return this.userService.createUser(signupRequestDto);
   }
 
-  async createJWT(user: Omit<User, 'password'>): Promise<{ access_token: string }> {
-    const payload = { username: user.username, sub: user.id };
   async createJWT(user: Omit<User, 'password'>) {
+    const payload: JWTPayload = { username: user.username, sub: user.id, email: user.email };
     return {
       access_token: this.jwtService.sign(payload),
     };
