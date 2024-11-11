@@ -46,10 +46,10 @@ const buttonTextVariants = cva('flex w-full items-center justify-center', {
       [BUTTON_VARIANTS.secondary]: 'text-primary',
     },
     size: {
-      [BUTTON_SIZE.sm]: 'text-base leading-5',
-      [BUTTON_SIZE.md]: 'text-lg leading-6',
-      [BUTTON_SIZE.lg]: 'text-xl font-bold',
-      [BUTTON_SIZE.full]: 'text-xl font-bold',
+      [BUTTON_SIZE.sm]: 'text-title2',
+      [BUTTON_SIZE.md]: 'text-title1',
+      [BUTTON_SIZE.lg]: 'text-head3',
+      [BUTTON_SIZE.full]: 'text-head3',
     },
     disabled: {
       true: 'text-weak',
