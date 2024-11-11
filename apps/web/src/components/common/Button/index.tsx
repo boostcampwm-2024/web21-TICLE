@@ -15,7 +15,7 @@ const BUTTON_VARIANTS = {
   secondary: 'secondary',
 } as const;
 
-const buttonVariants = cva('flex items-center justify-center rounded-lg py-2', {
+const buttonVariants = cva('flex h-fit w-fit items-center justify-center rounded-lg py-2', {
   variants: {
     variant: {
       [BUTTON_VARIANTS.primary]: 'bg-primary',
