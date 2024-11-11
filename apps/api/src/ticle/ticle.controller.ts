@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 
 import { CreateTicleDto } from './dto/createTicleDto';
+import { TickleDetailResponseDto } from './dto/ticleDetailDto';
 import { TicleService } from './ticle.service';
 
 @Controller('ticle')
@@ -14,7 +15,9 @@ export class TicleController {
   }
 
   @Get(':ticleId')
-  getTicle(@Param('ticleId') params: any) {}
+  getTicle(@Param('ticleId') ticleId: number): Promise<TickleDetailResponseDto> {
+    return this.ticleService.getTicleByTicleId(ticleId);
+  }
 
   @Get('list')
   getTicleList(@Query('filter') filter?: string, @Query('sort') sort?: string) {}

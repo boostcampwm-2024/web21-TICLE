@@ -1,11 +1,12 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 
 import { Tag } from '@/entity/tag.entity';
-import { Ticle, TicleStatus } from '@/entity/ticle.entity';
+import { Ticle } from '@/entity/ticle.entity';
 
 import { CreateTicleDto } from './dto/createTicleDto';
+import { TickleDetailResponseDto } from './dto/ticleDetailDto';
 
 @Injectable()
 export class TicleService {
@@ -58,5 +59,29 @@ export class TicleService {
 
     const newTags = this.tagRepository.create(tagsToCreate.map((name) => ({ name })));
     return await this.tagRepository.save(newTags);
+  }
+
+  async getTicleByTicleId(ticleId: number): Promise<TickleDetailResponseDto> {
+    const ticle = await this.ticleRepository.findOne({
+      where: { id: ticleId },
+      relations: {
+        tags: true,
+      },
+    });
+
+    if (!ticle) {
+      throw new NotFoundException('티클을 찾을 수 없습니다.');
+    }
+
+    return {
+      speakerName: ticle.speakerName,
+      speakerEmail: ticle.speakerEmail,
+      speakerIntroduce: ticle.speakerIntroduce,
+      title: ticle.title,
+      content: ticle.content,
+      startTime: ticle.startTime,
+      endTime: ticle.endTime,
+      tags: ticle.tags.map((tag) => tag.name),
+    };
   }
 }

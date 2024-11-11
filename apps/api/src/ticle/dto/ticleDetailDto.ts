@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class CreateTicleDto {
+export class TickleDetailResponseDto {
   @ApiProperty({
     example: '김철수',
     description: '발표자 이름',
@@ -48,7 +48,6 @@ export class CreateTicleDto {
     example: ['React', 'Frontend', 'State Management', 'Nest', 'Web Development'],
     description: '발표 관련 태그',
     type: [String],
-    required: false,
   })
-  tags?: string[];
+  tags: string[];
 }
