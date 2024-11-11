@@ -1,12 +1,20 @@
 import { HTMLAttributes, ReactNode } from 'react';
 
+import cn from '@/utils/cn';
+
 interface BadgeProps extends HTMLAttributes<HTMLDivElement> {
   children: ReactNode;
 }
 
-function Badge({ children }: BadgeProps) {
+function Badge({ children, className, ...rest }: BadgeProps) {
   return (
-    <div className="rounded-md border border-primary bg-secondary px-2 py-1.5 text-label1 text-primary">
+    <div
+      className={cn(
+        'rounded-md border border-primary bg-secondary px-2 py-1.5 text-label1 text-primary',
+        className
+      )}
+      {...rest}
+    >
       {children}
     </div>
   );
