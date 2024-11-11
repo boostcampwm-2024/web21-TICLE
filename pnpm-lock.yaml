@@ -40,10 +40,10 @@ importers:
         version: 10.4.6(@nestjs/common@10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.4.6)
       '@nestjs/swagger':
         specifier: ^8.0.1
-        version: 8.0.5(@nestjs/common@10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.4.6(@nestjs/common@10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/platform-express@10.4.6)(reflect-metadata@0.2.2)(rxjs@7.8.1))(reflect-metadata@0.2.2)
+        version: 8.0.1(@nestjs/common@10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.4.6(@nestjs/common@10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/platform-express@10.4.6)(reflect-metadata@0.2.2)(rxjs@7.8.1))(reflect-metadata@0.2.2)
       '@nestjs/typeorm':
         specifier: ^10.0.2
-        version: 10.0.2(@nestjs/common@10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.4.6(@nestjs/common@10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/platform-express@10.4.6)(reflect-metadata@0.2.2)(rxjs@7.8.1))(reflect-metadata@0.2.2)(rxjs@7.8.1)(typeorm@0.3.20(mysql2@3.11.4)(ts-node@10.9.2(@types/node@20.17.6)(typescript@5.6.3)))
+        version: 10.0.2(@nestjs/common@10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.4.6(@nestjs/common@10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/platform-express@10.4.6)(reflect-metadata@0.2.2)(rxjs@7.8.1))(reflect-metadata@0.2.2)(rxjs@7.8.1)(typeorm@0.3.20(mysql2@3.11.3)(ts-node@10.9.2(@types/node@20.17.6)(typescript@5.6.3)))
       '@repo/shared':
         specifier: workspace:*
         version: link:../../packages/shared
@@ -58,7 +58,7 @@ importers:
         version: 3.6.3(@typescript-eslint/parser@8.11.0(eslint@8.57.1)(typescript@5.6.3))(eslint-plugin-import@2.31.0)(eslint@8.57.1)
       mysql2:
         specifier: ^3.11.3
-        version: 3.11.4
+        version: 3.11.3
       passport:
         specifier: ^0.7.0
         version: 0.7.0
@@ -79,7 +79,7 @@ importers:
         version: 7.8.1
       typeorm:
         specifier: ^0.3.20
-        version: 0.3.20(mysql2@3.11.4)(ts-node@10.9.2(@types/node@20.17.6)(typescript@5.6.3))
+        version: 0.3.20(mysql2@3.11.3)(ts-node@10.9.2(@types/node@20.17.6)(typescript@5.6.3))
     devDependencies:
       '@nestjs/cli':
         specifier: ^10.0.0
@@ -173,7 +173,7 @@ importers:
         version: link:../../packages/types
       '@tanstack/react-router':
         specifier: ^1.79.0
-        version: 1.81.1(@tanstack/router-generator@1.79.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 1.79.0(@tanstack/router-generator@1.79.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@tanstack/router-vite-plugin':
         specifier: ^1.79.0
         version: 1.79.0(vite@5.4.10(@types/node@22.8.7)(terser@5.36.0))(webpack-sources@3.2.3)(webpack@5.96.1)
@@ -183,6 +183,9 @@ importers:
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
+      framer-motion:
+        specifier: ^11.11.11
+        version: 11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       prettier-plugin-tailwindcss:
         specifier: ^0.6.8
         version: 0.6.8(prettier@3.3.3)
@@ -1000,8 +1003,8 @@ packages:
       '@nestjs/websockets':
         optional: true
 
-  '@nestjs/mapped-types@2.0.6':
-    resolution: {integrity: sha512-84ze+CPfp1OWdpRi1/lOu59hOhTz38eVzJvRKrg9ykRFwDz+XleKfMsG0gUqNZYFa6v53XYzeD+xItt8uDW7NQ==}
+  '@nestjs/mapped-types@2.0.5':
+    resolution: {integrity: sha512-bSJv4pd6EY99NX9CjBIyn4TVDoSit82DUZlL4I3bqNfy5Gt+gXTa86i3I/i0iIV9P4hntcGM5GyO+FhZAhxtyg==}
     peerDependencies:
       '@nestjs/common': ^8.0.0 || ^9.0.0 || ^10.0.0
       class-transformer: ^0.4.0 || ^0.5.0
@@ -1030,8 +1033,8 @@ packages:
     peerDependencies:
       typescript: '>=4.8.2'
 
-  '@nestjs/swagger@8.0.5':
-    resolution: {integrity: sha512-ZmBdsbQNs3wIN5kCuvAVbz3/ULh3gi814oHTP49uTqAGi1aT0YSatUyncwQOHBOlRT+rwF+TNjoAsZ+twIk/Jw==}
+  '@nestjs/swagger@8.0.1':
+    resolution: {integrity: sha512-kW0dlsZXXWQgSSJHvk0fzg6kHvLcJ6trpbfvj5UN8DWIyCdCS/MGNshDE3P82xxKcg/pLZH7z41qYpFiawkGvQ==}
     peerDependencies:
       '@fastify/static': ^6.0.0 || ^7.0.0
       '@nestjs/common': ^9.0.0 || ^10.0.0
@@ -1200,9 +1203,6 @@ packages:
   '@rtsao/scc@1.1.0':
     resolution: {integrity: sha512-zt6OdqaDoOnJ1ZYsCYGt9YmWzDXl4vQdKTyJev62gFhRGKdx7mcT54V9KIjg+d2wi9EXsPvAPKe7i7WjfVWB8g==}
 
-  '@scarf/scarf@1.4.0':
-    resolution: {integrity: sha512-xxeapPiUXdZAE3che6f3xogoJPeZgig6omHEy1rIY5WVsB3H2BHNnZH+gHG6x91SCWyQCzWGsuL2Hh3ClO5/qQ==}
-
   '@sinclair/typebox@0.27.8':
     resolution: {integrity: sha512-+Fj43pSMwJs4KRrH/938Uf+uAELIgVBmQzg/q1YG10djyfA3TnrU8N8XzqCh/okZdszqBQTZf96idMfE5lnwTA==}
 
@@ -1287,8 +1287,8 @@ packages:
     resolution: {integrity: sha512-2CqERleeqO3hkhJmyJm37tiL3LYgeOpmo8szqdjgtnnG0z7ZpvzkZz6HkfOr9Ca/ha7mhAiouSvLYuLkM37AMg==}
     engines: {node: '>=12'}
 
-  '@tanstack/react-router@1.81.1':
-    resolution: {integrity: sha512-2MufdPrN2fwcmf9r82Egl7RUzNN/tlVUz97TphCDX3k5yMslwouKLw481mY26PksiHw1nIYfsAggGTgSELP1xg==}
+  '@tanstack/react-router@1.79.0':
+    resolution: {integrity: sha512-v+0+Y3mCsd6waphnG0dloU9cDtSbB5k/LwbkhqXd2uGhwZyI1/nvvOcSOnuTB8CDEvC6WFNBt+fKOPVqNZ3ezw==}
     engines: {node: '>=12'}
     peerDependencies:
       '@tanstack/router-generator': 1.79.0
@@ -2578,6 +2578,20 @@ packages:
   fraction.js@4.3.7:
     resolution: {integrity: sha512-ZsDfxO51wGAXREY55a7la9LScWpwv9RxIrYABrlvOFBlH/ShPnrtsXeuUIfXKKOVicNxQ+o8JTbJvjS4M89yew==}
 
+  framer-motion@11.11.11:
+    resolution: {integrity: sha512-tuDH23ptJAKUHGydJQII9PhABNJBpB+z0P1bmgKK9QFIssHGlfPd6kxMq00LSKwE27WFsb2z0ovY0bpUyMvfRw==}
+    peerDependencies:
+      '@emotion/is-prop-valid': '*'
+      react: ^18.0.0
+      react-dom: ^18.0.0
+    peerDependenciesMeta:
+      '@emotion/is-prop-valid':
+        optional: true
+      react:
+        optional: true
+      react-dom:
+        optional: true
+
   fresh@0.5.2:
     resolution: {integrity: sha512-zJ2mQYM18rEFOudeV4GShTGIQ7RbzA7ozbU9I/XBpm7kqgMywgmylMwXHxZJmkVoYkna9d2pVXVXPdYTP9ej8Q==}
     engines: {node: '>= 0.6'}
@@ -3387,8 +3401,8 @@ packages:
     resolution: {integrity: sha512-avsJQhyd+680gKXyG/sQc0nXaC6rBkPOfyHYcFb9+hdkqQkR9bdnkJ0AMZhke0oesPqIO+mFFJ+IdBc7mst4IA==}
     engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
 
-  mysql2@3.11.4:
-    resolution: {integrity: sha512-Z2o3tY4Z8EvSRDwknaC40MdZ3+m0sKbpnXrShQLdxPrAvcNli7jLrD2Zd2IzsRMw4eK9Yle500FDmlkIqp+krg==}
+  mysql2@3.11.3:
+    resolution: {integrity: sha512-Qpu2ADfbKzyLdwC/5d4W7+5Yz7yBzCU05YWt5npWzACST37wJsB23wgOSo00qi043urkiRwXtEvJc9UnuLX/MQ==}
     engines: {node: '>= 8.0'}
 
   mz@2.7.0:
@@ -4148,8 +4162,8 @@ packages:
   svg-parser@2.0.4:
     resolution: {integrity: sha512-e4hG1hRwoOdRb37cIMSgzNsxyzKfayW6VOflrwvR+/bzrkyxY/31WkbgnQpgtrNp1SdpJvpUAGTa/ZoiPNDuRQ==}
 
-  swagger-ui-dist@5.18.2:
-    resolution: {integrity: sha512-J+y4mCw/zXh1FOj5wGJvnAajq6XgHOyywsa9yITmwxIlJbMqITq3gYRZHaeqLVH/eV/HOPphE6NjF+nbSNC5Zw==}
+  swagger-ui-dist@5.17.14:
+    resolution: {integrity: sha512-CVbSfaLpstV65OnSjbXfVd6Sta3q3F7Cj/yYuvHMp1P90LztOLs6PfUnKEVAeiIVQt9u2SaPwv0LiH/OyMjHRw==}
 
   symbol-observable@4.0.0:
     resolution: {integrity: sha512-b19dMThMV4HVFynSAM1++gBHAbk2Tc/osgLIBZMKsyqh34jb2e8Os7T6ZW/Bt3pJFdBTd2JwAnAAEQV7rSNvcQ==}
@@ -4670,8 +4684,8 @@ packages:
   yallist@4.0.0:
     resolution: {integrity: sha512-3wdGidZyq5PB084XLES5TpOSRA3wjXAlIWMhum2kRcv/41Sn2emQ0dycQW4uZXLejwKvg6EsvbdlVL+FYEct7A==}
 
-  yaml@2.6.0:
-    resolution: {integrity: sha512-a6ae//JvKDEra2kdi1qzCyrJW/WZCgFi8ydDV+eXExl95t+5R+ijnqHJbz9tmMh8FUjx3iv2fCQ4dclAQlO2UQ==}
+  yaml@2.5.1:
+    resolution: {integrity: sha512-bLQOjaX/ADgQ20isPJRvF0iRUHIxVhYvr53Of7wGcWlO2jvtUlH5m87DsmulFVxRpNLOnI4tB6p/oh8D7kpn9Q==}
     engines: {node: '>= 14'}
     hasBin: true
 
@@ -5414,7 +5428,7 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  '@nestjs/mapped-types@2.0.6(@nestjs/common@10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(reflect-metadata@0.2.2)':
+  '@nestjs/mapped-types@2.0.5(@nestjs/common@10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(reflect-metadata@0.2.2)':
     dependencies:
       '@nestjs/common': 10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1)
       reflect-metadata: 0.2.2
@@ -5447,17 +5461,17 @@ snapshots:
     transitivePeerDependencies:
       - chokidar
 
-  '@nestjs/swagger@8.0.5(@nestjs/common@10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.4.6(@nestjs/common@10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/platform-express@10.4.6)(reflect-metadata@0.2.2)(rxjs@7.8.1))(reflect-metadata@0.2.2)':
+  '@nestjs/swagger@8.0.1(@nestjs/common@10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.4.6(@nestjs/common@10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/platform-express@10.4.6)(reflect-metadata@0.2.2)(rxjs@7.8.1))(reflect-metadata@0.2.2)':
     dependencies:
       '@microsoft/tsdoc': 0.15.0
       '@nestjs/common': 10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1)
       '@nestjs/core': 10.4.6(@nestjs/common@10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/platform-express@10.4.6)(reflect-metadata@0.2.2)(rxjs@7.8.1)
-      '@nestjs/mapped-types': 2.0.6(@nestjs/common@10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(reflect-metadata@0.2.2)
+      '@nestjs/mapped-types': 2.0.5(@nestjs/common@10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(reflect-metadata@0.2.2)
       js-yaml: 4.1.0
       lodash: 4.17.21
       path-to-regexp: 3.3.0
       reflect-metadata: 0.2.2
-      swagger-ui-dist: 5.18.2
+      swagger-ui-dist: 5.17.14
 
   '@nestjs/testing@10.4.6(@nestjs/common@10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.4.6(@nestjs/common@10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/platform-express@10.4.6)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/platform-express@10.4.6(@nestjs/common@10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.4.6))':
     dependencies:
@@ -5467,13 +5481,13 @@ snapshots:
     optionalDependencies:
       '@nestjs/platform-express': 10.4.6(@nestjs/common@10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.4.6)
 
-  '@nestjs/typeorm@10.0.2(@nestjs/common@10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.4.6(@nestjs/common@10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/platform-express@10.4.6)(reflect-metadata@0.2.2)(rxjs@7.8.1))(reflect-metadata@0.2.2)(rxjs@7.8.1)(typeorm@0.3.20(mysql2@3.11.4)(ts-node@10.9.2(@types/node@20.17.6)(typescript@5.6.3)))':
+  '@nestjs/typeorm@10.0.2(@nestjs/common@10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.4.6(@nestjs/common@10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/platform-express@10.4.6)(reflect-metadata@0.2.2)(rxjs@7.8.1))(reflect-metadata@0.2.2)(rxjs@7.8.1)(typeorm@0.3.20(mysql2@3.11.3)(ts-node@10.9.2(@types/node@20.17.6)(typescript@5.6.3)))':
     dependencies:
       '@nestjs/common': 10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1)
       '@nestjs/core': 10.4.6(@nestjs/common@10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/platform-express@10.4.6)(reflect-metadata@0.2.2)(rxjs@7.8.1)
       reflect-metadata: 0.2.2
       rxjs: 7.8.1
-      typeorm: 0.3.20(mysql2@3.11.4)(ts-node@10.9.2(@types/node@20.17.6)(typescript@5.6.3))
+      typeorm: 0.3.20(mysql2@3.11.3)(ts-node@10.9.2(@types/node@20.17.6)(typescript@5.6.3))
       uuid: 9.0.1
 
   '@nodelib/fs.scandir@2.1.5':
@@ -5567,8 +5581,6 @@ snapshots:
 
   '@rtsao/scc@1.1.0': {}
 
-  '@scarf/scarf@1.4.0': {}
-
   '@sinclair/typebox@0.27.8': {}
 
   '@sinonjs/commons@3.0.1':
@@ -5653,7 +5665,7 @@ snapshots:
 
   '@tanstack/history@1.61.1': {}
 
-  '@tanstack/react-router@1.81.1(@tanstack/router-generator@1.79.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@tanstack/react-router@1.79.0(@tanstack/router-generator@1.79.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@tanstack/history': 1.61.1
       '@tanstack/react-store': 0.5.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -7305,6 +7317,13 @@ snapshots:
 
   fraction.js@4.3.7: {}
 
+  framer-motion@11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+    dependencies:
+      tslib: 2.8.0
+    optionalDependencies:
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+
   fresh@0.5.2: {}
 
   fs-extra@10.1.0:
@@ -8267,7 +8286,7 @@ snapshots:
 
   mute-stream@1.0.0: {}
 
-  mysql2@3.11.4:
+  mysql2@3.11.3:
     dependencies:
       aws-ssl-profiles: 1.1.2
       denque: 2.1.0
@@ -8539,7 +8558,7 @@ snapshots:
   postcss-load-config@4.0.2(postcss@8.4.47)(ts-node@10.9.2(@types/node@22.8.7)(typescript@5.6.3)):
     dependencies:
       lilconfig: 3.1.2
-      yaml: 2.6.0
+      yaml: 2.5.1
     optionalDependencies:
       postcss: 8.4.47
       ts-node: 10.9.2(@types/node@22.8.7)(typescript@5.6.3)
@@ -9031,9 +9050,7 @@ snapshots:
 
   svg-parser@2.0.4: {}
 
-  swagger-ui-dist@5.18.2:
-    dependencies:
-      '@scarf/scarf': 1.4.0
+  swagger-ui-dist@5.17.14: {}
 
   symbol-observable@4.0.0: {}
 
@@ -9318,7 +9335,7 @@ snapshots:
 
   typedarray@0.0.6: {}
 
-  typeorm@0.3.20(mysql2@3.11.4)(ts-node@10.9.2(@types/node@20.17.6)(typescript@5.6.3)):
+  typeorm@0.3.20(mysql2@3.11.3)(ts-node@10.9.2(@types/node@20.17.6)(typescript@5.6.3)):
     dependencies:
       '@sqltools/formatter': 1.2.5
       app-root-path: 3.1.0
@@ -9336,7 +9353,7 @@ snapshots:
       uuid: 9.0.1
       yargs: 17.7.2
     optionalDependencies:
-      mysql2: 3.11.4
+      mysql2: 3.11.3
       ts-node: 10.9.2(@types/node@20.17.6)(typescript@5.6.3)
     transitivePeerDependencies:
       - supports-color
@@ -9568,7 +9585,7 @@ snapshots:
 
   yallist@4.0.0: {}
 
-  yaml@2.6.0: {}
+  yaml@2.5.1: {}
 
   yargs-parser@20.2.9: {}
 
