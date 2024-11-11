@@ -48,27 +48,22 @@ describe('LocalStrategy', () => {
 
   describe('validate', () => {
     it('should return a user when credentials are valid', async () => {
-      // Arrange
       const username = 'testuser';
       const password = 'password123';
       mockAuthService.validateLocalLogin.mockResolvedValue(mockUser);
 
-      // Act
       const result = await localStrategy.validate(username, password);
 
-      // Assert
       expect(authService.validateLocalLogin).toHaveBeenCalledWith(username, password);
       expect(result).toEqual(mockUser);
       expect(authService.validateLocalLogin).toHaveBeenCalledTimes(1);
     });
 
     it('should throw UnauthorizedException when credentials are invalid', async () => {
-      // Arrange
       const username = 'wronguser';
       const password = 'wrongpassword';
       mockAuthService.validateLocalLogin.mockResolvedValue(null);
 
-      // Act & Assert
       await expect(localStrategy.validate(username, password)).rejects.toThrow(
         UnauthorizedException
       );
