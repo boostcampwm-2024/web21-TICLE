@@ -14,58 +14,52 @@ export class UserService {
     private userRepository: Repository<User>
   ) {}
 
-  /**
-   * 유저 생성
-   * @param createUserDto
-   * @returns 비밀번호 제외한 유저 정보
-   */
-  async createUser(createUserDto: CreateUserDto): Promise<Omit<User, 'password'>> {
+  async createUser(createUserDto: CreateUserDto) {
     try {
+      await this.throwIfExistUser(createUserDto.username);
+      await this.throwIfExistEmail(createUserDto.email);
+      const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
       const user = this.userRepository.create({
         ...createUserDto,
-        password: await this.hashPassword(createUserDto.password),
+        password: hashedPassword,
       });
       await this.userRepository.save(user);
-
       const { password, ...result } = user;
       return result;
-    } catch (error: any) {
-      if (error.code === 'ER_DUP_ENTRY' || error.errno === 1062) {
-        const message = error.message;
-        if (message.includes('UQ_user_username')) {
-          throw new ConflictException('이미 사용 중인 사용자 이름입니다.');
-        }
-        if (message.includes('UQ_user_email')) {
-          throw new ConflictException('이미 사용 중인 이메일입니다.');
-        }
-      }
+    } catch (error) {
       throw new InternalServerErrorException();
     }
   }
 
-  /**
-   * 로그인 시 유저정보 반환 (todo : 불필요한 데이터 보내지 않게 수정)
-   * @param username
-   * @returns User 객체
-   */
-  async findUser(username: string): Promise<User | undefined> {
+  async throwIfExistUser(username: string) {
+    const existingUser = await this.userRepository.exists({
+      where: {
+        username,
+      },
+    });
+    if (existingUser) {
+      throw new ConflictException('이미 사용 중인 사용자 이름입니다.');
+    }
+  }
+
+  async throwIfExistEmail(email: string) {
+    const existingEmail = await this.userRepository.exists({
+      where: {
+        email,
+      },
+    });
+    if (existingEmail) {
+      throw new ConflictException('이미 사용 중인 이메일입니다.');
+    }
+  }
+
+  async findUser(username: string): Promise<User | null> {
     const user = await this.userRepository.findOne({
       where: { username },
     });
     if (!user) {
       return null;
     }
-
     return user;
-  }
-
-  /**
-   * 비밀번호 해싱
-   * @param password
-   * @param saltRounds
-   * @returns
-   */
-  private async hashPassword(password: string, saltRounds = 10): Promise<string> {
-    return bcrypt.hash(password, saltRounds);
   }
 }
