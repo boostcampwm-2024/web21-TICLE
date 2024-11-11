@@ -1,5 +1,5 @@
 import { cva } from 'class-variance-authority';
-import { ButtonHTMLAttributes, FunctionComponent, SVGProps } from 'react';
+import { ButtonHTMLAttributes } from 'react';
 
 import cn from '@/utils/cn';
 
@@ -66,7 +66,6 @@ const buttonTextVariants = cva('flex w-full items-center justify-center', {
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   size: (typeof BUTTON_SIZE)[keyof typeof BUTTON_SIZE];
   variant?: (typeof BUTTON_VARIANTS)[keyof typeof BUTTON_VARIANTS];
-  Icon?: FunctionComponent<SVGProps<SVGSVGElement>>;
 }
 
 function Button(props: ButtonProps) {
