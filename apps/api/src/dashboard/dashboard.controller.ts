@@ -1,11 +1,15 @@
-import { Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseIntPipe, Post, Query } from '@nestjs/common';
+
+import { DashboardService } from './dashboard.service';
 
 @Controller('dashboard')
 export class DashboardController {
-  constructor() {}
+  constructor(private readonly dashboardService: DashboardService) {}
 
   @Get('created')
-  getCreatedTicleList() {}
+  async getCreatedTicleList(@Query('speakerId', ParseIntPipe) speakerId: number) {
+    return await this.dashboardService.getCreatedTicleList(speakerId);
+  }
 
   @Get('applied')
   getAppliedTicleList() {}

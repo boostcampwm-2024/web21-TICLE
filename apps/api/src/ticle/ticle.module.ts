@@ -7,9 +7,11 @@ import { Tag } from '@/entity/tag.entity';
 import { Ticle } from '@/entity/ticle.entity';
 
 import { TicleController } from './ticle.controller';
+import { TicleService } from './ticle.service';
 
 @Module({
   controllers: [TicleController],
-  imports: [TypeOrmModule.forFeature([Ticle, Applicant, Summary, Tag])],
+  imports: [TypeOrmModule.forFeature([Ticle, Tag, Summary, Applicant])],
+  providers: [TicleService],
 })
 export class TicleModule {}
