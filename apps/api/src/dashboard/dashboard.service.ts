@@ -44,7 +44,10 @@ export class DashboardService {
         relations: ['user'],
       });
 
-      return applicants.map((applicant) => applicant.user);
+      return applicants.map((applicant) => ({
+        nickname: applicant.user.nickname,
+        profileImageUrl: applicant.user.profileImageUrl,
+      }));
     } catch (error) {
       throw new BadRequestException('참여자 목록 조회에 실패했습니다.');
     }
