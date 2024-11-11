@@ -16,7 +16,7 @@ const SIZE_VARIANTS = {
 } as const;
 
 const textAreaVariants = cva(
-  'w-full rounded-base border bg-white px-3.5 py-2.5 text-body1 text-main placeholder:text-weak resize-none',
+  'w-full resize-none rounded-base border bg-white px-3.5 py-2.5 text-body1 text-main placeholder:text-weak',
   {
     variants: {
       validation: {
