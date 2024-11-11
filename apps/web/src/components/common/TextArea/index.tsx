@@ -1,5 +1,5 @@
 import { cva } from 'class-variance-authority';
-import { ChangeEvent, forwardRef, InputHTMLAttributes, Ref, useRef } from 'react';
+import { ChangeEvent, forwardRef, Ref, TextareaHTMLAttributes, useRef } from 'react';
 
 import ExclamationIc from '@/assets/icons/exclamation.svg?react';
 import cn from '@/utils/cn';
@@ -12,16 +12,21 @@ const VALIDATION_STATE = {
 const SIZE_VARIANTS = {
   sm: 'sm',
   md: 'md',
-  full: 'full',
+  lg: 'lg',
 } as const;
 
-const inputVariants = cva(
-  'w-full rounded-base border bg-white px-3.5 py-2.5 text-body1 text-main placeholder:text-weak',
+const textAreaVariants = cva(
+  'w-full rounded-base border bg-white px-3.5 py-2.5 text-body1 text-main placeholder:text-weak resize-none',
   {
     variants: {
       validation: {
         [VALIDATION_STATE.default]: 'border-main focus:border-primary',
         [VALIDATION_STATE.error]: 'focus:border-error',
+      },
+      size: {
+        [SIZE_VARIANTS.sm]: 'h-24',
+        [SIZE_VARIANTS.md]: 'h-72',
+        [SIZE_VARIANTS.lg]: 'h-[40rem]',
       },
     },
     defaultVariants: {
@@ -30,30 +35,18 @@ const inputVariants = cva(
   }
 );
 
-const inputWrapperVariants = cva('flex flex-col gap-1.5', {
-  variants: {
-    size: {
-      [SIZE_VARIANTS.sm]: 'w-40',
-      [SIZE_VARIANTS.md]: 'w-64',
-      [SIZE_VARIANTS.full]: 'w-full',
-    },
-  },
-  defaultVariants: {
-    size: 'full',
-  },
-});
-
-interface TextInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size'> {
+interface TextAreaProps
+  extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'size' | 'defaultValue'> {
+  defaultValue?: string;
   label?: string;
   description?: string;
   errorMessage?: string;
   required?: boolean;
   maxLength?: number;
-  size?: keyof typeof SIZE_VARIANTS;
-  type?: 'text' | 'email' | 'password' | 'number';
+  size: keyof typeof SIZE_VARIANTS;
 }
 
-function TextInput(
+function TextArea(
   {
     defaultValue,
     label,
@@ -62,17 +55,16 @@ function TextInput(
     required,
     maxLength,
     size,
-    type = 'text',
     className,
     onChange,
     ...props
-  }: TextInputProps,
-  ref: Ref<HTMLInputElement>
+  }: TextAreaProps,
+  ref: Ref<HTMLTextAreaElement>
 ) {
-  const inputValidation = errorMessage ? VALIDATION_STATE.error : VALIDATION_STATE.default;
+  const textAreaValidation = errorMessage ? VALIDATION_STATE.error : VALIDATION_STATE.default;
   const counterRef = useRef<HTMLParagraphElement>(null);
 
-  const handleCounter = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleCounter = (e: ChangeEvent<HTMLTextAreaElement>) => {
     if (maxLength && counterRef.current) {
       counterRef.current.textContent = `${e.target.value.length}/${maxLength}`;
     }
@@ -80,7 +72,7 @@ function TextInput(
   };
 
   return (
-    <div className={cn(inputWrapperVariants({ size: size }))}>
+    <div className={cn('flex flex-col gap-1.5')}>
       {label && (
         <label htmlFor={label} className="text-title2 text-main">
           {label}
@@ -96,13 +88,12 @@ function TextInput(
           {description}
         </p>
       )}
-      <input
+      <textarea
         id={label}
-        type={type}
         ref={ref}
         required={required}
         onChange={handleCounter}
-        className={cn(inputVariants({ validation: inputValidation }), className)}
+        className={cn(textAreaVariants({ validation: textAreaValidation, size: size }), className)}
         aria-invalid={!!errorMessage}
         aria-describedby={
           errorMessage ? `${label}-error` : description ? `${label}-description` : undefined
@@ -120,11 +111,11 @@ function TextInput(
           <p
             ref={counterRef}
             className="absolute right-0 top-0 text-body4 text-weak"
-          >{`${defaultValue?.toString().length ?? 0}/${maxLength}`}</p>
+          >{`${defaultValue?.length ?? 0}/${maxLength}`}</p>
         )}
       </div>
     </div>
   );
 }
 
-export default forwardRef<HTMLInputElement, TextInputProps>(TextInput);
+export default forwardRef<HTMLTextAreaElement, TextAreaProps>(TextArea);
