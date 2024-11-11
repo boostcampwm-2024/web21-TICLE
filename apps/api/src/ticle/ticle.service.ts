@@ -4,11 +4,13 @@ import { In, Repository } from 'typeorm';
 
 import { Applicant } from '@/entity/applicant.entity';
 import { Tag } from '@/entity/tag.entity';
-import { Ticle } from '@/entity/ticle.entity';
+import { Ticle, TicleStatus } from '@/entity/ticle.entity';
 import { User } from '@/entity/user.entity';
 
 import { CreateTicleDto } from './dto/createTicleDto';
+import { GetTicleListQueryDto } from './dto/getTicleListQueryDto';
 import { TickleDetailResponseDto } from './dto/ticleDetailDto';
+import { SortType } from './sortType.enum';
 
 @Injectable()
 export class TicleService {
@@ -147,6 +149,67 @@ export class TicleService {
       startTime: ticle.startTime,
       endTime: ticle.endTime,
       tags: ticle.tags.map((tag) => tag.name),
+    };
+  }
+
+  async getTicleList(query: GetTicleListQueryDto) {
+    const { page, pageSize, isOpen, sort } = query;
+    const skip = (page - 1) * pageSize;
+    const queryBuilder = this.ticleRepository
+      .createQueryBuilder('ticle')
+      .select([
+        'ticle.id',
+        'ticle.title',
+        'ticle.startTime',
+        'ticle.endTime',
+        'ticle.speakerName',
+        'ticle.createdAt',
+      ])
+      .where('ticle.ticleStatus = :status', {
+        status: isOpen ? TicleStatus.OPEN : TicleStatus.CLOSED,
+      })
+      .leftJoin('ticle.tags', 'tags')
+      .addSelect('tags.name')
+      .loadRelationCountAndMap('ticle.applicantsCount', 'ticle.applicants')
+      .skip(skip)
+      .take(pageSize);
+
+    switch (sort) {
+      case SortType.NEWEST:
+        queryBuilder.orderBy('ticle.createdAt', 'DESC');
+        break;
+      case SortType.OLDEST:
+        queryBuilder.orderBy('ticle.createdAt', 'ASC');
+        break;
+      case SortType.TRENDING:
+        queryBuilder.orderBy('ticle.applicantsCount', 'DESC');
+        break;
+      default:
+        queryBuilder.orderBy('ticle.createdAt', 'DESC');
+    }
+    const [ticles, totalItems] = await queryBuilder.getManyAndCount();
+
+    const formattedTicles = ticles.map((ticle) => ({
+      id: ticle.id,
+      title: ticle.title,
+      tags: ticle.tags.map((tag) => tag.name),
+      startTime: ticle.startTime,
+      endTime: ticle.endTime,
+      speakerName: ticle.speakerName,
+      applicantsCount: (ticle as any).applicantsCount || 0,
+    }));
+
+    const totalPages = Math.ceil(totalItems / pageSize);
+
+    return {
+      ticles: formattedTicles,
+      meta: {
+        page,
+        take: pageSize,
+        totalItems,
+        totalPages,
+        hasNextPage: page < totalPages,
+      },
     };
   }
 }
