@@ -64,7 +64,7 @@ export class TicleService {
     }
 
     const newTags = this.tagRepository.create(tagsToCreate.map((name) => ({ name })));
-    return await this.tagRepository.save(newTags);
+    return this.tagRepository.save(newTags);
   }
 
   async applyTicle(ticleId: number, userId: number) {
