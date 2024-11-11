@@ -67,19 +67,25 @@ export class TicleService {
   }
 
   async applyTicle(ticleId: number, userId: number) {
-    const ticle = await this.getTicleByTicleId(ticleId);
+    const ticle = await this.getTicleWithSpeakerIdByTicleId(ticleId);
     const user = await this.getUserById(userId);
 
+    await this.throwIfApplierIsSpeaker(ticle.speaker.id, userId);
     await this.throwIfExistApplicant(ticleId, userId);
 
     const newApplicant = this.applicantRepository.create({
       ticle,
       user,
     });
-
     await this.applicantRepository.save(newApplicant);
 
     return 'Successfully applied to ticle';
+  }
+
+  async throwIfApplierIsSpeaker(speakerId: number, userId: number): Promise<void> {
+    if (speakerId === userId) {
+      throw new HttpException('speaker cannot apply their ticle', HttpStatus.BAD_REQUEST);
+    }
   }
 
   async throwIfExistApplicant(ticleId: number, userId: number) {
@@ -96,8 +102,18 @@ export class TicleService {
     return;
   }
 
-  async getTicleByTicleId(ticleId: number) {
-    const ticle = await this.ticleRepository.findOne({ where: { id: ticleId } });
+  async getTicleWithSpeakerIdByTicleId(ticleId: number) {
+    const ticle = await this.ticleRepository.findOne({
+      where: { id: ticleId },
+      select: {
+        speaker: {
+          id: true,
+        },
+      },
+      relations: {
+        speaker: true,
+      },
+    });
     if (!ticle) {
       throw new HttpException(`cannot found ticle`, HttpStatus.NOT_FOUND);
     }
