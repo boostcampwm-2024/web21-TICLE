@@ -72,19 +72,17 @@ function Button({
   size = BUTTON_SIZE.lg,
   variant = BUTTON_VARIANTS.primary,
   disabled = false,
-  children,
   className,
+  children,
   ...rest
 }: ButtonProps) {
   return (
     <button
-      className={cn(buttonVariants({ size, variant: variant, disabled }), className)}
+      className={cn(buttonVariants({ size, variant, disabled }), className)}
       disabled={disabled}
       {...rest}
     >
-      <span className={cn(buttonTextVariants({ size, variant: variant, disabled }))}>
-        {children}
-      </span>
+      <span className={buttonTextVariants({ size, variant, disabled })}>{children}</span>
     </button>
   );
 }
