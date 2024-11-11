@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Ticle } from '@/entity/ticle.entity';
 import { Applicant } from '@/entity/applicant.entity';
