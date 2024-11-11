@@ -197,6 +197,7 @@ export class TicleService {
       endTime: ticle.endTime,
       speakerName: ticle.speakerName,
       applicantsCount: (ticle as any).applicantsCount || 0,
+      createdAt: ticle.createdAt,
     }));
 
     const totalPages = Math.ceil(totalItems / pageSize);
