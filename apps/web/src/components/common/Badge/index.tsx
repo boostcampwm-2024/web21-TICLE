@@ -1,6 +1,6 @@
-import { ReactNode } from 'react';
+import { HTMLAttributes, ReactNode } from 'react';
 
-interface BadgeProps {
+interface BadgeProps extends HTMLAttributes<HTMLDivElement> {
   children: ReactNode;
 }
 
