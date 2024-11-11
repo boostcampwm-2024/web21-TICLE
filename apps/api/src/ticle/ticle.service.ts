@@ -66,29 +66,11 @@ export class TicleService {
     return await this.tagRepository.save(newTags);
   }
 
-  async applyTicle(ticleId: number, applicantId: number) {
-    const ticle = await this.ticleRepository.findOne({ where: { id: ticleId } });
-    if (!ticle) {
-      throw new HttpException(`Cannot found ticle`, HttpStatus.NOT_FOUND);
-    }
-    const user = await this.userRepository.findOne({
-      where: { id: applicantId },
-    });
+  async applyTicle(ticleId: number, userId: number) {
+    const ticle = await this.getTicleByTicleId(ticleId);
+    const user = await this.getUserById(userId);
 
-    if (!user) {
-      throw new HttpException(`Cannot found user`, HttpStatus.NOT_FOUND);
-    }
-
-    const existingApplication = await this.applicantRepository.exists({
-      where: {
-        ticle: { id: ticleId },
-        user: { id: applicantId },
-      },
-    });
-
-    if (existingApplication) {
-      throw new HttpException('Already applied to this ticle', HttpStatus.BAD_REQUEST);
-    }
+    await this.throwIfExistApplicant(ticleId, userId);
 
     const newApplicant = this.applicantRepository.create({
       ticle,
@@ -97,9 +79,39 @@ export class TicleService {
 
     await this.applicantRepository.save(newApplicant);
 
-    return {
-      status: 'success',
-      message: 'Successfully applied to ticle',
-    };
+    return 'Successfully applied to ticle';
+  }
+
+  async throwIfExistApplicant(ticleId: number, userId: number) {
+    const existingApplication = await this.applicantRepository.exists({
+      where: {
+        ticle: { id: ticleId },
+        user: { id: userId },
+      },
+    });
+
+    if (existingApplication) {
+      throw new HttpException('already applied to this ticle', HttpStatus.BAD_REQUEST);
+    }
+    return;
+  }
+
+  async getTicleByTicleId(ticleId: number) {
+    const ticle = await this.ticleRepository.findOne({ where: { id: ticleId } });
+    if (!ticle) {
+      throw new HttpException(`cannot found ticle`, HttpStatus.NOT_FOUND);
+    }
+    return ticle;
+  }
+
+  async getUserById(id: number) {
+    const user = await this.userRepository.findOne({
+      where: { id: id },
+    });
+
+    if (!user) {
+      throw new HttpException(`cannot found user`, HttpStatus.NOT_FOUND);
+    }
+    return user;
   }
 }
