@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -7,10 +7,12 @@ import { Ticle } from '@/entity/ticle.entity';
 
 @Injectable()
 export class DashboardService {
-  @InjectRepository(Ticle)
-  private ticleRepository: Repository<Ticle>;
-  @InjectRepository(Applicant)
-  private applicantRepository: Repository<Applicant>;
+  constructor(
+    @InjectRepository(Ticle)
+    private readonly ticleRepository: Repository<Ticle>,
+    @InjectRepository(Applicant)
+    private readonly applicantRepository: Repository<Applicant>
+  ) {}
 
   async getCreatedTicleList(speakerId: number) {
     try {
@@ -18,7 +20,7 @@ export class DashboardService {
         where: { speaker: { id: speakerId } },
       });
     } catch (error) {
-      throw new HttpException(`Failed to get created ticle list`, HttpStatus.BAD_REQUEST);
+      throw new BadRequestException('개설한 티클 조회에 실패했습니다.');
     }
   }
 }
