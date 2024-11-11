@@ -4,15 +4,15 @@ import { RefObject, useEffect } from 'react';
 const useOutsideClick = (ref: RefObject<HTMLElement>, onClose: () => void) => {
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as ReactNode)) {
-        onClose();
+      if (!ref.current || ref.current.contains(e.target as ReactNode)) {
+        return;
       }
+      onClose();
     };
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        onClose();
-      }
+      if (e.key !== 'Escape') return;
+      onClose();
     };
 
     document.addEventListener('mousedown', handleClickOutside);
