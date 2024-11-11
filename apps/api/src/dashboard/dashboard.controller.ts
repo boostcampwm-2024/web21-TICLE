@@ -6,7 +6,7 @@ import { DashboardService } from './dashboard.service';
 export class DashboardController {
   constructor(private readonly dashboardService: DashboardService) {}
 
-  @Get('created')
+  @Post('created')
   async getCreatedTicleList(@Body() body: { speakerId: number }) {
     return await this.dashboardService.getCreatedTicleList(body.speakerId);
   }
