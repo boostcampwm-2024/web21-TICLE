@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-const useDialog = (defaultOpen: boolean = false) => {
+const useModal = (defaultOpen: boolean = false) => {
   const [isOpen, setIsOpen] = useState<boolean>(defaultOpen);
 
   const onOpen = () => {
@@ -14,4 +14,4 @@ const useDialog = (defaultOpen: boolean = false) => {
   return { isOpen, onOpen, onClose };
 };
 
-export default useDialog;
+export default useModal;

@@ -1,7 +1,7 @@
-import useDialog from './useDialog';
+import useModal from './useModal';
 
-const useDialogPrompt = <T = void>() => {
-  const { isOpen, onOpen, onClose } = useDialog();
+const useModalPrompt = <T = void>() => {
+  const { isOpen, onOpen, onClose } = useModal();
 
   const prompt = () =>
     new Promise<T>((resolve, reject) => {
@@ -30,4 +30,4 @@ const useDialogPrompt = <T = void>() => {
   };
 };
 
-export default useDialogPrompt;
+export default useModalPrompt;
