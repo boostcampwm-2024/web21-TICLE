@@ -72,16 +72,11 @@ export class TicleService {
     if (!ticle) {
       throw new NotFoundException('티클을 찾을 수 없습니다.');
     }
+    const { tags, ...ticleData } = ticle;
 
     return {
-      speakerName: ticle.speakerName,
-      speakerEmail: ticle.speakerEmail,
-      speakerIntroduce: ticle.speakerIntroduce,
-      title: ticle.title,
-      content: ticle.content,
-      startTime: ticle.startTime,
-      endTime: ticle.endTime,
-      tags: ticle.tags.map((tag) => tag.name),
+      ...ticleData,
+      tags: tags.map((tag) => tag.name),
     };
   }
 }
