@@ -1,10 +1,10 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 
 import { Applicant } from '@/entity/applicant.entity';
 import { Tag } from '@/entity/tag.entity';
-import { Ticle, TicleStatus } from '@/entity/ticle.entity';
+import { Ticle } from '@/entity/ticle.entity';
 import { User } from '@/entity/user.entity';
 
 import { CreateTicleDto } from './dto/createTicleDto';
@@ -37,7 +37,7 @@ export class TicleService {
 
       return await this.ticleRepository.save(newTicle);
     } catch (error) {
-      throw new HttpException(`Failed to create ticle `, HttpStatus.BAD_REQUEST);
+      throw new BadRequestException(`Failed to create ticle `);
     }
   }
 
@@ -70,7 +70,7 @@ export class TicleService {
     const ticle = await this.getTicleWithSpeakerIdByTicleId(ticleId);
     const user = await this.getUserById(userId);
     if (ticle.speaker.id === userId) {
-      throw new HttpException('speaker cannot apply their ticle', HttpStatus.BAD_REQUEST);
+      throw new BadRequestException('speaker cannot apply their ticle');
     }
     await this.throwIfExistApplicant(ticleId, userId);
 
@@ -91,7 +91,7 @@ export class TicleService {
     });
 
     if (existingApplication) {
-      throw new HttpException('already applied to this ticle', HttpStatus.BAD_REQUEST);
+      throw new BadRequestException('already applied to this ticle');
     }
     return;
   }
@@ -109,7 +109,7 @@ export class TicleService {
       },
     });
     if (!ticle) {
-      throw new HttpException(`cannot found ticle`, HttpStatus.NOT_FOUND);
+      throw new NotFoundException(`cannot found ticle`);
     }
     return ticle;
   }
@@ -120,7 +120,7 @@ export class TicleService {
     });
 
     if (!user) {
-      throw new HttpException(`cannot found user`, HttpStatus.NOT_FOUND);
+      throw new NotFoundException(`cannot found user`);
     }
     return user;
   }
