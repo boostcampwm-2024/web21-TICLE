@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 
@@ -32,7 +32,7 @@ export class TicleService {
 
       return await this.ticleRepository.save(newTicle);
     } catch (error) {
-      throw new HttpException(`Failed to create ticle `, HttpStatus.BAD_REQUEST);
+      throw new BadRequestException(`Failed to create ticle `);
     }
   }
 
