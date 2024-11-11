@@ -30,16 +30,16 @@ export class User {
   @Index('UQ_user_email', { unique: true })
   email: string;
 
-  @Column({ type: 'varchar' })
+  @Column({ type: 'varchar', nullable: true })
   introduce: string;
 
-  @Column({ type: 'varchar', name: 'profile_image_url' })
+  @Column({ type: 'varchar', name: 'profile_image_url', nullable: true })
   profileImageUrl: string;
 
-  @Column({ type: 'varchar' })
+  @Column({ type: 'varchar', default: 'local' })
   provider: string;
 
-  @Column({ type: 'varchar', name: 'social_id' })
+  @Column({ type: 'varchar', name: 'social_id', nullable: true })
   socialId: string;
 
   @CreateDateColumn({ type: 'timestamp', name: 'created_at' })
