@@ -1,5 +1,5 @@
 import { ReactNode } from '@tanstack/react-router';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 
 interface PortalProps {
@@ -9,31 +9,26 @@ interface PortalProps {
 }
 
 function Portal({ portalId, className, children }: PortalProps) {
-  const [portalRoot, setPortalRoot] = useState<HTMLElement | null>(null);
+  let element = document.getElementById(portalId);
+
+  if (!element) {
+    element = document.createElement('div');
+    element.setAttribute('id', portalId);
+    if (className) {
+      element.className = className;
+    }
+    document.body.appendChild(element);
+  }
 
   useEffect(() => {
-    let element = document.getElementById(portalId);
-
-    if (!element) {
-      element = document.createElement('div');
-      element.setAttribute('id', portalId);
-      if (className) {
-        element.className = className;
-      }
-      document.body.appendChild(element);
-    }
-    setPortalRoot(element);
-
     return () => {
       if (element && !element.childNodes.length) {
         element.remove();
       }
     };
-  }, [portalId, className]);
+  }, [element]);
 
-  if (!portalRoot) return null;
-
-  return createPortal(children, portalRoot);
+  return createPortal(children, element);
 }
 
 export default Portal;
