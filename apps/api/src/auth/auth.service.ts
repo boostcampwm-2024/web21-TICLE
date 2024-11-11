@@ -15,7 +15,7 @@ export class AuthService {
   ) {}
 
   async validateLocalLogin(username: string, inputPassword: string) {
-    const user = await this.userService.findUser(username);
+    const user = await this.userService.findUserByUsername(username);
     if (!user) {
       throw new UnauthorizedException('잘못된 로그인 정보');
     }
@@ -27,12 +27,13 @@ export class AuthService {
     return result;
   }
 
-  async signup(signupRequestDto: SignupRequestDto): Promise<Omit<User, 'password'>> {
+  async signup(signupRequestDto: SignupRequestDto) {
     return this.userService.createUser(signupRequestDto);
   }
 
   async createJWT(user: Omit<User, 'password'>): Promise<{ access_token: string }> {
     const payload = { username: user.username, sub: user.id };
+  async createJWT(user: Omit<User, 'password'>) {
     return {
       access_token: this.jwtService.sign(payload),
     };
