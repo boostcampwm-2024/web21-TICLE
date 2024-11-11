@@ -62,14 +62,4 @@ export class UserService {
     }
     return user;
   }
-
-  async findUserById(userId: number): Promise<User | null> {
-    const user = await this.userRepository.findOne({
-      where: { id: userId },
-    });
-    if (!user) {
-      return null;
-    }
-    return user;
-  }
 }
