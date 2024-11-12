@@ -174,7 +174,7 @@ export class TicleService {
       .skip(skip)
       .take(pageSize);
 
-  switch (sort) {
+    switch (sort) {
       case SortType.OLDEST:
         queryBuilder.orderBy('ticle.createdAt', 'ASC');
         break;
@@ -184,7 +184,6 @@ export class TicleService {
       case SortType.NEWEST:
       default:
         queryBuilder.orderBy('ticle.createdAt', 'DESC');
-}
     }
     const [ticles, totalItems] = await queryBuilder.getManyAndCount();
 
