@@ -1,16 +1,36 @@
+import { cva } from 'class-variance-authority';
 import { HTMLAttributes } from 'react';
 
-import personImage from '@/assets/images/person.png';
+import PersonIc from '@/assets/icons/person.svg?react';
 import cn from '@/utils/cn';
+
+const AVATAR_SIZE = {
+  sm: 'sm',
+  md: 'md',
+  lg: 'lg',
+} as const;
+
+const avatarVariants = cva('flex items-center justify-center overflow-hidden rounded-full bg-alt', {
+  variants: {
+    size: {
+      [AVATAR_SIZE.sm]: 'h-[50px] w-[50px]',
+      [AVATAR_SIZE.md]: 'h-[84px] w-[84px]',
+      [AVATAR_SIZE.lg]: 'h-[100px] w-[100px]',
+    },
+  },
+  defaultVariants: {
+    size: AVATAR_SIZE.sm,
+  },
+});
 
 interface AvatarProps extends HTMLAttributes<HTMLDivElement> {
   src?: string;
   alt?: string;
-  size: number;
+  size: (typeof AVATAR_SIZE)[keyof typeof AVATAR_SIZE];
 }
 
 function Avatar(props: AvatarProps) {
-  const { src = personImage, alt = 'avatar', size, className, ...rest } = props;
+  const { src, alt = 'avatar', size, className, ...rest } = props;
 
   return (
     <div
@@ -18,13 +38,11 @@ function Avatar(props: AvatarProps) {
         width: `${size}px`,
         height: `${size}px`,
       }}
-      className={cn(
-        'flex items-center justify-center overflow-hidden rounded-full bg-alt',
-        className
-      )}
+      className={cn(avatarVariants({ size }), className)}
       {...rest}
     >
-      <img src={src} alt={alt} className="object-cover" />
+      {src && <img src={src} alt={alt} className="object-cover" />}
+      {!src && <PersonIc className="h-full w-full fill-weak text-weak" />}
     </div>
   );
 }
