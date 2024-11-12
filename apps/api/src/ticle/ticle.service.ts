@@ -174,18 +174,17 @@ export class TicleService {
       .skip(skip)
       .take(pageSize);
 
-    switch (sort) {
-      case SortType.NEWEST:
-        queryBuilder.orderBy('ticle.createdAt', 'DESC');
-        break;
+  switch (sort) {
       case SortType.OLDEST:
         queryBuilder.orderBy('ticle.createdAt', 'ASC');
         break;
       case SortType.TRENDING:
         queryBuilder.orderBy('ticle.applicantsCount', 'DESC');
         break;
+      case SortType.NEWEST:
       default:
         queryBuilder.orderBy('ticle.createdAt', 'DESC');
+}
     }
     const [ticles, totalItems] = await queryBuilder.getManyAndCount();
 
