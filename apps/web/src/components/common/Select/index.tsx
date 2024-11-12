@@ -1,8 +1,9 @@
 import { cva } from 'class-variance-authority';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 import ChevronDownIc from '@/assets/icons/chevron-down.svg?react';
 import ChevronUpIc from '@/assets/icons/chevron-up.svg?react';
+import useOutsideClick from '@/hooks/useOutsideClick';
 
 interface Select {
   options: string[];
@@ -22,6 +23,9 @@ function Select({ options, placeholder }: Select) {
     setIsOpen((prev) => !prev);
   };
 
+  const selectRef = useRef<HTMLDivElement>(null);
+  useOutsideClick(selectRef, handleSelectOpen);
+
   const selectVariants = cva(
     'text-body1 cursor-pointer text-main px-3.5 py-2.5 flex gap-3.5 justify-between items-center rounded-base',
     {
@@ -38,7 +42,7 @@ function Select({ options, placeholder }: Select) {
   );
 
   return (
-    <div className="relative max-w-32">
+    <div ref={selectRef} className="relative max-w-32">
       <label className={selectVariants({ isOpen: isOpen })} onClick={handleSelectOpen}>
         {selectedOption || placeholder}
         {isOpen ? <ChevronUpIc /> : <ChevronDownIc />}
