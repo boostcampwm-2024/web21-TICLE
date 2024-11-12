@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
@@ -14,29 +14,52 @@ export class UserService {
     private userRepository: Repository<User>
   ) {}
 
-  async createUser(createUserDto: CreateUserDto): Promise<Omit<User, 'password'>> {
-    const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(createUserDto.password, saltRounds);
-    const user = this.userRepository.create({
-      ...createUserDto,
-      password: hashedPassword,
-    });
-    await this.userRepository.save(user);
-
-    const { password, ...result } = user;
-    return result;
+  async createUser(createUserDto: CreateUserDto) {
+    try {
+      await this.throwIfExistUser(createUserDto.username);
+      await this.throwIfExistEmail(createUserDto.email);
+      const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
+      const user = this.userRepository.create({
+        ...createUserDto,
+        password: hashedPassword,
+      });
+      await this.userRepository.save(user);
+      const { password, ...result } = user;
+      return result;
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
   }
 
-  //todo : 불필요한 데이터 보내지 않게/ 로그인용으로만 사용하게 수정
-  async findUser(username: string): Promise<User | undefined> {
+  async throwIfExistUser(username: string) {
+    const existingUser = await this.userRepository.exists({
+      where: {
+        username,
+      },
+    });
+    if (existingUser) {
+      throw new ConflictException('이미 사용 중인 사용자 이름입니다.');
+    }
+  }
+
+  async throwIfExistEmail(email: string) {
+    const existingEmail = await this.userRepository.exists({
+      where: {
+        email,
+      },
+    });
+    if (existingEmail) {
+      throw new ConflictException('이미 사용 중인 이메일입니다.');
+    }
+  }
+
+  async findUser(username: string): Promise<User | null> {
     const user = await this.userRepository.findOne({
       where: { username },
     });
-
     if (!user) {
       return null;
     }
-
     return user;
   }
 }
