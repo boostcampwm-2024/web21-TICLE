@@ -5,6 +5,7 @@ import {
   CreateDateColumn,
   OneToMany,
   UpdateDateColumn,
+  Index,
 } from 'typeorm';
 
 import { Applicant } from './applicant.entity';
@@ -15,7 +16,8 @@ export class User {
   @PrimaryGeneratedColumn({ type: 'bigint' })
   id: number;
 
-  @Column({ type: 'varchar', unique: true })
+  @Column({ type: 'varchar' })
+  @Index('UQ_user_username', { unique: true })
   username: string;
 
   @Column({ type: 'varchar' })
@@ -24,19 +26,20 @@ export class User {
   @Column({ type: 'varchar' })
   nickname: string;
 
-  @Column({ type: 'varchar', unique: true })
+  @Column({ type: 'varchar' })
+  @Index('UQ_user_email', { unique: true })
   email: string;
 
-  @Column({ type: 'varchar' })
+  @Column({ type: 'varchar', nullable: true })
   introduce: string;
 
-  @Column({ type: 'varchar', name: 'profile_image_url' })
+  @Column({ type: 'varchar', name: 'profile_image_url', nullable: true })
   profileImageUrl: string;
 
-  @Column({ type: 'varchar' })
+  @Column({ type: 'varchar', default: 'local' })
   provider: string;
 
-  @Column({ type: 'varchar', name: 'social_id' })
+  @Column({ type: 'varchar', name: 'social_id', nullable: true })
   socialId: string;
 
   @CreateDateColumn({ type: 'timestamp', name: 'created_at' })
@@ -48,7 +51,7 @@ export class User {
   })
   updatedAt: Date;
 
-  @OneToMany(() => Ticle, (ticle) => ticle.author)
+  @OneToMany(() => Ticle, (ticle) => ticle.speaker)
   ticles: Ticle[];
 
   @OneToMany(() => Applicant, (applicant) => applicant.user)

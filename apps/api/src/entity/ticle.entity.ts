@@ -17,7 +17,7 @@ import { Summary } from './summary.entity';
 import { Tag } from './tag.entity';
 import { User } from './user.entity';
 
-enum TicleStatus {
+export enum TicleStatus {
   OPEN = 'open',
   CLOSED = 'closed',
 }
@@ -29,19 +29,28 @@ export class Ticle {
   id: number;
 
   @ManyToOne(() => User, (user) => user.ticles)
-  @JoinColumn({ name: 'author_id' })
-  author: User;
+  @JoinColumn({ name: 'speaker_id' })
+  speaker: User;
 
-  @Column({ type: 'varchar', nullable: false })
+  @Column({ type: 'varchar', name: 'speaker_name' })
+  speakerName: string;
+
+  @Column({ type: 'varchar', name: 'speaker_email' })
+  speakerEmail: string;
+
+  @Column({ type: 'varchar', name: 'speaker_introduce' })
+  speakerIntroduce: string;
+
+  @Column({ type: 'varchar' })
   title: string;
 
-  @Column({ type: 'text', nullable: false })
+  @Column({ type: 'text' })
   content: string;
 
-  @Column({ type: 'timestamp', nullable: false, name: 'start_time' })
+  @Column({ type: 'timestamp', name: 'start_time' })
   startTime: Date;
 
-  @Column({ type: 'timestamp', nullable: false, name: 'end_time' })
+  @Column({ type: 'timestamp', name: 'end_time' })
   endTime: Date;
 
   @Column({ type: 'enum', enum: TicleStatus, default: TicleStatus.OPEN, name: 'ticle_status' })
