@@ -1,6 +1,6 @@
 import { Outlet, createRootRoute, useLocation } from '@tanstack/react-router';
 
-import Header from '@/components/common/Header';
+import Header from '@/components/Header';
 
 const NO_HEADER_PATHS = ['/live', '/auth'];
 
