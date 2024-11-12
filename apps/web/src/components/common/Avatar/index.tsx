@@ -29,9 +29,7 @@ interface AvatarProps extends HTMLAttributes<HTMLDivElement> {
   size: (typeof AVATAR_SIZE)[keyof typeof AVATAR_SIZE];
 }
 
-function Avatar(props: AvatarProps) {
-  const { src, alt = 'avatar', size, className, ...rest } = props;
-
+function Avatar({ alt = 'avatar', src, size, className, ...rest }: AvatarProps) {
   return (
     <div
       style={{
