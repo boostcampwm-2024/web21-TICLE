@@ -12,8 +12,7 @@ function Header() {
         <Link to="/">
           <TicleLogo className="h-6 fill-primary text-primary" />
         </Link>
-        {/* TODO: 주소 연결 */}
-        <Link to="/ticle/open" className={NAV_STYLE}>
+        <Link to="/" className={NAV_STYLE}>
           티클
         </Link>
         <Link to="/dashboard" className={NAV_STYLE}>
