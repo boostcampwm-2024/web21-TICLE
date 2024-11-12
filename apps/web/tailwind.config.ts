@@ -26,9 +26,9 @@ const config: Config = {
       textColor: {
         main: 'var(--black)',
         alt: 'var(--grey-900)',
+        hover: 'var(--grey-800)',
         weak: 'var(--grey-700)',
         primary: 'var(--purple-500)',
-        hover: 'var(--purple-700)',
         white: 'var(--white)',
         error: 'var(--red)',
       },
