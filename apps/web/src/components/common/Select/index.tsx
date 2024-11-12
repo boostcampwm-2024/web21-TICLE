@@ -1,5 +1,5 @@
 import { cva } from 'class-variance-authority';
-import { useRef, useState } from 'react';
+import { useRef, useState, KeyboardEvent } from 'react';
 
 import ChevronDownIc from '@/assets/icons/chevron-down.svg?react';
 import ChevronUpIc from '@/assets/icons/chevron-up.svg?react';
@@ -28,11 +28,19 @@ function Select({ options, placeholder, selectedOption, onChange }: Select) {
     setIsOpen((prev) => !prev);
   };
 
+  const handleOptionKeyDown = (e: KeyboardEvent, option: string) => {
+    if (e.key !== 'Enter') {
+      return;
+    }
+    e.preventDefault();
+    handleOptionChange(option);
+  };
+
   const selectRef = useRef<HTMLDivElement>(null);
   useOutsideClick(selectRef, handleSelectClose);
 
   const selectVariants = cva(
-    'text-body1 cursor-pointer text-main px-3.5 py-2.5 flex gap-3.5 justify-between items-center rounded-base',
+    'flex cursor-pointer items-center justify-between gap-3.5 rounded-base px-3.5 py-2.5 text-body1 text-main',
     {
       variants: {
         isOpen: {
@@ -48,17 +56,28 @@ function Select({ options, placeholder, selectedOption, onChange }: Select) {
 
   return (
     <div ref={selectRef} className="relative max-w-32">
-      <label className={selectVariants({ isOpen: isOpen })} onClick={handleSelectToggle}>
-        {selectedOption || placeholder}
-        {isOpen ? <ChevronUpIc /> : <ChevronDownIc />}
-      </label>
+      <button
+        className={selectVariants({ isOpen: isOpen })}
+        onClick={handleSelectToggle}
+        aria-expanded={isOpen}
+      >
+        <span>{selectedOption || placeholder}</span>
+        {isOpen ? <ChevronUpIc aria-hidden="true" /> : <ChevronDownIc aria-hidden="true" />}
+      </button>
       {isOpen && (
-        <ul className="absolute right-0 mt-2 flex w-full flex-col items-center gap-1.5 rounded-base border border-main bg-white p-2">
+        <ul
+          role="listbox"
+          className="absolute right-0 mt-2 flex w-full flex-col items-center gap-1.5 rounded-base border border-main bg-white p-2"
+        >
           {options.map((option) => (
             <li
-              className="cursor-pointer rounded-base px-6 py-2.5 hover:bg-teritary"
+              className="w-full cursor-pointer rounded-base px-6 py-2.5 text-center hover:bg-teritary"
               key={option}
+              role="option"
+              aria-selected={option === selectedOption}
+              tabIndex={0}
               onClick={() => handleOptionChange(option)}
+              onKeyDown={(e) => handleOptionKeyDown(e, option)}
             >
               {option}
             </li>
