@@ -4,10 +4,7 @@ import { ChangeEvent, forwardRef, Ref, TextareaHTMLAttributes, useRef } from 're
 import ExclamationIc from '@/assets/icons/exclamation.svg?react';
 import cn from '@/utils/cn';
 
-const VALIDATION_STATE = {
-  default: 'default',
-  error: 'error',
-} as const;
+import { VALIDATION_STATE } from '../TextInput';
 
 const SIZE_VARIANTS = {
   sm: 'sm',

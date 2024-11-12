@@ -3,12 +3,8 @@ import { cva } from 'class-variance-authority';
 import { ChangeEvent, forwardRef, InputHTMLAttributes, Ref, useRef } from 'react';
 
 import ExclamationIc from '@/assets/icons/exclamation.svg?react';
+import { VALIDATION_STATE } from '@/constants/variants';
 import cn from '@/utils/cn';
-
-export const VALIDATION_STATE = {
-  default: 'default',
-  error: 'error',
-} as const;
 
 export const SIZE_VARIANTS = {
   sm: 'sm',
