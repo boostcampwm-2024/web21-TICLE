@@ -26,9 +26,10 @@ function SearchInput(
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      onSearch(value);
+    if (e.key !== 'Enter') {
+      return;
     }
+    onSearch(value);
   };
 
   return (
