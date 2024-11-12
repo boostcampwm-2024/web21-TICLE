@@ -2,9 +2,10 @@ import { forwardRef } from 'react';
 
 import CloseIc from '@/assets/icons/close.svg?react';
 import SearchIc from '@/assets/icons/search.svg?react';
+import { VALIDATION_STATE } from '@/constants/variants';
 import cn from '@/utils/cn';
 
-import { inputVariants, inputWrapperVariants, SIZE_VARIANTS, VALIDATION_STATE } from '../TextInput';
+import { inputVariants, inputWrapperVariants, SIZE_VARIANTS } from '../TextInput';
 
 import type { InputHTMLAttributes, KeyboardEvent, ChangeEvent, Ref } from 'react';
 
