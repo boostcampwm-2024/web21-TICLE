@@ -38,13 +38,13 @@ function Select({ options, placeholder }: Select) {
   );
 
   return (
-    <div className="min-w-28 max-w-fit">
+    <div className="relative max-w-32">
       <label className={selectVariants({ isOpen: isOpen })} onClick={handleSelectOpen}>
         {selectedOption || placeholder}
         {isOpen ? <ChevronUpIc /> : <ChevronDownIc />}
       </label>
       {isOpen && (
-        <ul className="flex flex-col items-center gap-1.5 rounded-base border border-main p-2">
+        <ul className="absolute right-0 mt-2 flex w-full flex-col items-center gap-1.5 rounded-base border border-main bg-white p-2">
           {options.map((option) => (
             <li
               className="cursor-pointer rounded-base px-6 py-2.5 hover:bg-teritary"
