@@ -9,11 +9,10 @@ function Header() {
   return (
     <header className="flex items-center justify-between border border-main bg-white px-[50px] py-4">
       <nav className="flex items-center justify-center gap-x-9">
-        {/* TODO: LOGO 설정 */}
         <Link to="/">
           <TicleLogo className="h-6 fill-primary text-primary" />
         </Link>
-        {/* TODO */}
+        {/* TODO: 주소 연결 */}
         <Link to="/ticle/open" className={NAV_STYLE}>
           티클
         </Link>
@@ -21,7 +20,6 @@ function Header() {
           대시보드
         </Link>
       </nav>
-
       {/* TODO: User 로그인시 핸들링 */}
       <section className="flex items-center justify-center">
         <Button size="sm">
