@@ -26,8 +26,8 @@ export class AuthService {
     return this.userService.createUser(signupRequestDto);
   }
 
-  async validateLocalLogin(username: string, inputPassword: string) {
-    const user = await this.userService.findUserByUsername(username);
+  async validateLocalLogin(email: string, inputPassword: string) {
+    const user = await this.userService.findUserByEmail(email);
     if (!user) {
       throw new UnauthorizedException('잘못된 로그인 정보');
     }
@@ -50,8 +50,9 @@ export class AuthService {
     }
     return user;
   }
+
   async createJWT(user: Omit<User, 'password'>) {
-    const payload = { username: user.username, sub: user.id };
+    const payload = { username: user.username, sub: user.id, email: user.email };
     return {
       access_token: this.jwtService.sign(payload),
     };

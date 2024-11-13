@@ -16,7 +16,6 @@ export class UserService {
 
   async createUser(createUserDto: CreateUserDto) {
     try {
-      await this.throwIfExistUser(createUserDto.username);
       await this.throwIfExistEmail(createUserDto.email);
       const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
       const user = this.userRepository.create({

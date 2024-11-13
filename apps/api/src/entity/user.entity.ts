@@ -1,11 +1,10 @@
 import {
-  Entity,
   Column,
-  PrimaryGeneratedColumn,
   CreateDateColumn,
+  Entity,
   OneToMany,
+  PrimaryGeneratedColumn,
   UpdateDateColumn,
-  Index,
 } from 'typeorm';
 
 import { Applicant } from './applicant.entity';
@@ -17,7 +16,6 @@ export class User {
   id: number;
 
   @Column({ type: 'varchar' })
-  @Index('UQ_user_username', { unique: true })
   username: string;
 
   @Column({ type: 'varchar' })
@@ -26,8 +24,7 @@ export class User {
   @Column({ type: 'varchar' })
   nickname: string;
 
-  @Column({ type: 'varchar' })
-  @Index('UQ_user_email', { unique: true })
+  @Column({ type: 'varchar', unique: true })
   email: string;
 
   @Column({ type: 'varchar', nullable: true })
