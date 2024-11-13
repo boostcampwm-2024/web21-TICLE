@@ -40,7 +40,7 @@ function Select({ options, placeholder, selectedOption, onChange }: Select) {
   useOutsideClick(selectRef, handleSelectClose);
 
   const selectVariants = cva(
-    'flex cursor-pointer items-center justify-between gap-3.5 rounded-base px-3.5 py-2.5 text-body1 text-main',
+    'flex w-full cursor-pointer items-center justify-between gap-3.5 rounded-base px-3.5 py-2.5 text-body1 text-main',
     {
       variants: {
         isOpen: {
@@ -55,7 +55,7 @@ function Select({ options, placeholder, selectedOption, onChange }: Select) {
   );
 
   return (
-    <div ref={selectRef} className="relative max-w-32">
+    <div ref={selectRef} className="relative w-32">
       <button
         className={selectVariants({ isOpen: isOpen })}
         onClick={handleSelectToggle}
