@@ -9,6 +9,7 @@ import { LocalLoginRequestDto } from './dto/localLoginRequest.dto';
 import { LocalLoginResponseDto } from './dto/localLoginResponse.dto';
 import { SignupRequestDto } from './dto/signupRequest.dto';
 import { SignupResponseDto } from './dto/signupResponse.dto';
+import { GitHubAuthGuard } from './github/github-auth.guard';
 import { LocalAuthGuard } from './local/local-auth.guard';
 
 @Controller('auth')
@@ -48,6 +49,7 @@ export class AuthController {
   googleAuthCallback() {}
 
   @Get('github/login')
+  @UseGuards(GitHubAuthGuard)
   githubAuth() {}
 
   @Get('github/callback')
