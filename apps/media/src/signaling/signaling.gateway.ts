@@ -17,12 +17,10 @@ export class SignalingGateway {
     @MessageBody() roomId: string,
   ) {
     this.mediasoupService.createRoom(roomId);
-    client.emit(`created roomId : ${roomId}`);
+    client.emit('room-created', roomId);
   }
 
   // @SubscribeMessage('join-room')
-
-  // @SubscribeMessage('get-rtpcapabilities')
 
   // @SubscribeMessage('create-transport')
 
