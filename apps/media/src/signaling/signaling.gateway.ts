@@ -26,7 +26,17 @@ export class SignalingGateway {
     client.emit('rtp-capabilities', rtpCapabilities);
   }
 
-  // @SubscribeMessage('create-transport')
+  @SubscribeMessage('create-transport')
+  async createTransport(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() roomId: string,
+  ) {
+    const transportOptions = await this.mediasoupService.createTransport(
+      roomId,
+      client,
+    );
+    client.emit('transport-created', transportOptions);
+  }
 
   // @SubscribeMessage('connect-transport')
 

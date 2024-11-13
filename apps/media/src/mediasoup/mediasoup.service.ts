@@ -2,6 +2,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import * as mediasoup from 'mediasoup';
 import * as os from 'os';
 import { Socket } from 'socket.io';
+import { config } from 'src/config';
 import { Room } from 'src/room';
 
 @Injectable()
@@ -60,5 +61,25 @@ export class MediasoupService implements OnModuleInit {
     room.addPeer(socket.id);
 
     return room.getRouter().rtpCapabilities;
+  }
+
+  public async createTransport(roomId: string, socket: Socket) {
+    const room = this.rooms.get(roomId);
+    if (!room) {
+      throw new Error(`Room ${roomId} not found`);
+    }
+    const router = room.getRouter();
+    const transport = await router.createWebRtcTransport(
+      config.mediasoup.webRtcTransport,
+    );
+
+    room.getPeer(socket.id).addSendTransport(transport);
+
+    return {
+      id: transport.id,
+      iceParameters: transport.iceParameters,
+      iceCandidates: transport.iceCandidates,
+      dtlsParameters: transport.dtlsParameters,
+    };
   }
 }
