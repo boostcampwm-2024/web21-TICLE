@@ -20,7 +20,11 @@ export class SignalingGateway {
     client.emit('room-created', roomId);
   }
 
-  // @SubscribeMessage('join-room')
+  @SubscribeMessage('join-room')
+  joinRoom(@ConnectedSocket() client: Socket, @MessageBody() roomId: string) {
+    const rtpCapabilities = this.mediasoupService.joinRoom(roomId, client);
+    client.emit('rtp-capabilities', rtpCapabilities);
+  }
 
   // @SubscribeMessage('create-transport')
 
