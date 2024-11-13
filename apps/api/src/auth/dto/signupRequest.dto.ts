@@ -7,11 +7,11 @@ export class SignupRequestDto {
   @ApiProperty({ example: 'password123' })
   password: string;
 
-  @ApiProperty({ example: 'nickname' })
-  nickname: string;
-
   @ApiProperty({ example: 'user@example.com' })
   email: string;
+
+  @ApiProperty({ example: 'nickname' })
+  nickname?: string;
 
   @ApiProperty({ example: "Hello, I'm user", required: false })
   introduce?: string;
