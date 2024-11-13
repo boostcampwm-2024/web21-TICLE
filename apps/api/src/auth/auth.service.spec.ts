@@ -74,7 +74,7 @@ describe('AuthService', () => {
       const result = await service.validateLocalLogin('testuser', 'password123');
 
       expect(result).toEqual(expectedResult);
-      expect(userService.findUser).toHaveBeenCalledWith('testuser');
+      expect(userService.findUserByUsername).toHaveBeenCalledWith('testuser');
       expect(bcrypt.compare).toHaveBeenCalledWith('password123', 'hashedPassword');
     });
 
@@ -84,7 +84,7 @@ describe('AuthService', () => {
       const result = await service.validateLocalLogin('nonexistent', 'password123');
 
       expect(result).toBeNull();
-      expect(userService.findUser).toHaveBeenCalledWith('nonexistent');
+      expect(userService.findUserByUsername).toHaveBeenCalledWith('nonexistent');
       expect(bcrypt.compare).not.toHaveBeenCalled();
     });
 
@@ -95,7 +95,7 @@ describe('AuthService', () => {
       const result = await service.validateLocalLogin('testuser', 'wrongpassword');
 
       expect(result).toBeNull();
-      expect(userService.findUser).toHaveBeenCalledWith('testuser');
+      expect(userService.findUserByUsername).toHaveBeenCalledWith('testuser');
       expect(bcrypt.compare).toHaveBeenCalledWith('wrongpassword', 'hashedPassword');
     });
   });

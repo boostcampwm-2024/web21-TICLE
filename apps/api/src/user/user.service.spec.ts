@@ -110,7 +110,7 @@ describe('UserService', () => {
     it('should return a user if found', async () => {
       mockRepository.findOne.mockResolvedValue(mockUser);
 
-      const result = await service.findUser(username);
+      const result = await service.findUserByUsername(username);
 
       expect(mockRepository.findOne).toHaveBeenCalledWith({
         where: { username },
@@ -121,7 +121,7 @@ describe('UserService', () => {
     it('should return null if user is not found', async () => {
       mockRepository.findOne.mockResolvedValue(null);
 
-      const result = await service.findUser(username);
+      const result = await service.findUserByUsername(username);
 
       expect(mockRepository.findOne).toHaveBeenCalledWith({
         where: { username },
