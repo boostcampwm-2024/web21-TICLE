@@ -1,9 +1,11 @@
+import { Router } from 'mediasoup/node/lib/RouterTypes';
 import { Worker } from 'mediasoup/node/lib/types';
 import { config } from './config';
 import { Peer } from './peer';
+
 export class Room {
   id: string;
-  router: any;
+  router: Router;
   peers: Map<string, Peer>;
   constructor(roomId: string) {
     this.id = roomId;
@@ -22,7 +24,7 @@ export class Room {
     return this.router;
   }
 
-  addPeer(socketId) {
+  addPeer(socketId: string) {
     const peer = new Peer(socketId);
     this.peers.set(socketId, peer);
     return peer;

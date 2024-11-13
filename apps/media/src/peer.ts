@@ -5,7 +5,7 @@ export class Peer {
   producers: Map<string, any>;
   consumers: Map<string, any>;
 
-  constructor(socketId) {
+  constructor(socketId: string) {
     this.socketId = socketId;
     this.sendTransport = null;
     this.receiveTransport = null;
