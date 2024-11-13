@@ -14,28 +14,31 @@ export class SignalingGateway {
   @SubscribeMessage('create-room')
   async handleCreateRoom(
     @ConnectedSocket() client: Socket,
-    @MessageBody() roomId: string,
+    @MessageBody('roomId') roomId: string,
   ) {
     this.mediasoupService.createRoom(roomId);
-    client.emit('room-created', roomId);
+    return { roomId };
   }
 
   @SubscribeMessage('join-room')
-  joinRoom(@ConnectedSocket() client: Socket, @MessageBody() roomId: string) {
+  joinRoom(
+    @ConnectedSocket() client: Socket,
+    @MessageBody('roomId') roomId: string,
+  ) {
     const rtpCapabilities = this.mediasoupService.joinRoom(roomId, client);
-    client.emit('rtp-capabilities', rtpCapabilities);
+    return { rtpCapabilities };
   }
 
   @SubscribeMessage('create-transport')
   async createTransport(
     @ConnectedSocket() client: Socket,
-    @MessageBody() roomId: string,
+    @MessageBody('roomId') roomId: string,
   ) {
     const transportOptions = await this.mediasoupService.createTransport(
       roomId,
       client,
     );
-    client.emit('transport-created', transportOptions);
+    return { transportOptions };
   }
 
   // @SubscribeMessage('connect-transport')

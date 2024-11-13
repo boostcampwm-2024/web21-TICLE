@@ -44,6 +44,7 @@ export class MediasoupService implements OnModuleInit {
 
   public async createRoom(roomId: string) {
     const worker = this.getWorker();
+
     const room = new Room(roomId);
     this.rooms.set(roomId, room);
     await room.init(worker);
@@ -72,7 +73,6 @@ export class MediasoupService implements OnModuleInit {
     const transport = await router.createWebRtcTransport(
       config.mediasoup.webRtcTransport,
     );
-
     room.getPeer(socket.id).addSendTransport(transport);
 
     return {
