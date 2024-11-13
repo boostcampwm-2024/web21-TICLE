@@ -5,6 +5,20 @@ import ChevronDownIc from '@/assets/icons/chevron-down.svg?react';
 import ChevronUpIc from '@/assets/icons/chevron-up.svg?react';
 import useOutsideClick from '@/hooks/useOutsideClick';
 
+const selectVariants = cva(
+  'flex w-full cursor-pointer items-center justify-between gap-3.5 rounded-base px-3.5 py-2.5 text-body1 text-main',
+  {
+    variants: {
+      isOpen: {
+        true: 'border border-primary',
+        false: 'border border-main',
+      },
+    },
+    defaultVariants: {
+      isOpen: true,
+    },
+  }
+);
 interface Select {
   options: string[];
   placeholder: string;
@@ -38,21 +52,6 @@ function Select({ options, placeholder, selectedOption, onChange }: Select) {
 
   const selectRef = useRef<HTMLDivElement>(null);
   useOutsideClick(selectRef, handleSelectClose);
-
-  const selectVariants = cva(
-    'flex w-full cursor-pointer items-center justify-between gap-3.5 rounded-base px-3.5 py-2.5 text-body1 text-main',
-    {
-      variants: {
-        isOpen: {
-          true: 'border border-primary',
-          false: 'border border-main',
-        },
-      },
-      defaultVariants: {
-        isOpen: true,
-      },
-    }
-  );
 
   return (
     <div ref={selectRef} className="relative w-32">
