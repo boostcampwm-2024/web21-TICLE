@@ -1,4 +1,9 @@
 import { Module } from '@nestjs/common';
+import { MediasoupService } from './mediasoup.service';
 
-@Module({})
+@Module({
+  imports: [],
+  providers: [MediasoupService],
+  exports: [MediasoupService],
+})
 export class MediasoupModule {}

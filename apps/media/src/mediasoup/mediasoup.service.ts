@@ -1,11 +1,13 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import * as mediasoup from 'mediasoup';
 import * as os from 'os';
+import { Room } from 'src/room';
 
 @Injectable()
 export class MediasoupService implements OnModuleInit {
   private nextWorkerIndex = 0;
   private workers = [];
+  private rooms = [];
 
   constructor() {}
 
@@ -36,5 +38,12 @@ export class MediasoupService implements OnModuleInit {
     const worker = this.workers[this.nextWorkerIndex].worker;
     this.nextWorkerIndex = (this.nextWorkerIndex + 1) % this.workers.length;
     return worker;
+  }
+
+  public async createRoom(roomId: string) {
+    const worker = this.getWorker();
+    const room = new Room(roomId);
+    await room.init(worker);
+    return roomId;
   }
 }
