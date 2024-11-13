@@ -6,24 +6,22 @@ import { DashboardService } from './dashboard.service';
 export class DashboardController {
   constructor(private readonly dashboardService: DashboardService) {}
 
-  @Get('created')
-  async getCreatedTicleList(@Query('speakerId', ParseIntPipe) speakerId: number) {
-    return await this.dashboardService.getCreatedTicleList(speakerId);
+  @Get()
+  async getTicleList(
+    @Query('speakerId', ParseIntPipe) speakerId?: number,
+    @Query('userId', ParseIntPipe) userId?: number
+  ) {
+    return await this.dashboardService.getTicleList(speakerId, userId);
   }
 
-  @Get('applied')
-  async getAppliedTicleList(@Query('userId', ParseIntPipe) userId: number) {
-    return await this.dashboardService.getAppliedTicleList(userId);
-  }
-
-  @Get('created/:ticleId/applicants')
+  @Get(':ticleId/applicants')
   async getApplicants(@Param('ticleId') ticleId: number) {
     return await this.dashboardService.getApplicants(ticleId);
   }
 
-  @Post('created/:ticleId/start')
+  @Post('start')
   startTicle(@Param('ticleId') ticleId: number) {}
 
-  @Post('applied/:ticleId/join')
+  @Post('join')
   joinTicle(@Param('ticleId') ticleId: number) {}
 }
