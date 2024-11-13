@@ -1,13 +1,10 @@
 import { cva } from 'class-variance-authority';
-import { ChangeEvent, forwardRef, Ref, TextareaHTMLAttributes, useRef } from 'react';
+import { ChangeEvent, forwardRef, Ref, TextareaHTMLAttributes, useId, useRef } from 'react';
 
 import ExclamationIc from '@/assets/icons/exclamation.svg?react';
+import { VALIDATION_STATE } from '@/constants/variants';
 import cn from '@/utils/cn';
-
-const VALIDATION_STATE = {
-  default: 'default',
-  error: 'error',
-} as const;
+import getDescribedByIds from '@/utils/getDescribedByIds';
 
 const SIZE_VARIANTS = {
   sm: 'sm',
@@ -30,7 +27,7 @@ const textAreaVariants = cva(
       },
     },
     defaultVariants: {
-      validation: 'default',
+      validation: VALIDATION_STATE.default,
     },
   }
 );
@@ -61,6 +58,7 @@ function TextArea(
   }: TextAreaProps,
   ref: Ref<HTMLTextAreaElement>
 ) {
+  const ariaId = useId();
   const textAreaValidation = errorMessage ? VALIDATION_STATE.error : VALIDATION_STATE.default;
   const counterRef = useRef<HTMLParagraphElement>(null);
 
@@ -72,44 +70,45 @@ function TextArea(
   };
 
   return (
-    <div className={cn('flex flex-col gap-1.5')}>
+    <div className="flex flex-col gap-1.5">
       {label && (
         <label htmlFor={label} className="text-title2 text-main">
           {label}
           {required && (
-            <span className="text-error" aria-hidden>
+            <span className="text-error" aria-label="필수 입력">
               {' *'}
             </span>
           )}
         </label>
       )}
       {description && (
-        <p className="text-body2 text-alt" id={`${label}-description`}>
+        <p className="text-body2 text-alt" id={`${ariaId}-description`}>
           {description}
         </p>
       )}
       <textarea
-        id={label}
+        id={ariaId}
         ref={ref}
         required={required}
         onChange={handleCounter}
         className={cn(textAreaVariants({ validation: textAreaValidation, size: size }), className)}
+        aria-required={required}
         aria-invalid={!!errorMessage}
-        aria-describedby={
-          errorMessage ? `${label}-error` : description ? `${label}-description` : undefined
-        }
+        aria-describedby={getDescribedByIds({ ariaId, description, errorMessage, maxLength })}
         {...props}
       />
       <div className="relative">
         {errorMessage && (
-          <p className="flex items-center gap-1 text-label1 text-error" id={`${label}-error`}>
-            <ExclamationIc className="fill-error" width={9} />
+          <p className="flex items-center gap-1 text-label1 text-error" id={`${ariaId}-error`}>
+            <ExclamationIc className="fill-error" width={9} height={9} aria-hidden />
             {errorMessage}
           </p>
         )}
         {maxLength && (
           <p
             ref={counterRef}
+            id={`${ariaId}-counter`}
+            aria-live="polite"
             className="absolute right-0 top-0 text-body4 text-weak"
           >{`${defaultValue?.length ?? 0}/${maxLength}`}</p>
         )}
