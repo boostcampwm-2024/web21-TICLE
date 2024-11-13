@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, Request, UseGuards } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Request as ExpressRequest } from 'express';
 
@@ -6,7 +6,7 @@ import { User } from '@/entity/user.entity';
 
 import { AuthService } from './auth.service';
 import { LocalLoginRequestDto } from './dto/localLoginRequest.dto';
-import { LocalLoginResponseDto } from './dto/localLoginResponse.dto';
+import { LoginSuccessResponseDto } from './dto/localLoginResponse.dto';
 import { SignupRequestDto } from './dto/signupRequest.dto';
 import { SignupResponseDto } from './dto/signupResponse.dto';
 import { GitHubAuthGuard } from './github/github-auth.guard';
@@ -32,10 +32,10 @@ export class AuthController {
   @Post('login')
   @ApiOperation({ summary: '로컬 로그인' })
   @ApiBody({ type: LocalLoginRequestDto })
-  @ApiResponse({ status: 200, type: LocalLoginResponseDto })
+  @ApiResponse({ status: 200, type: LoginSuccessResponseDto })
   @ApiResponse({ status: 401 })
   @UseGuards(LocalAuthGuard)
-  async localLogin(@Request() req: ExpressRequest): Promise<LocalLoginResponseDto> {
+  async localLogin(@Request() req: ExpressRequest): Promise<LoginSuccessResponseDto> {
     return {
       status: 'success',
       data: await this.authService.createJWT(req.user as Omit<User, 'password'>),
@@ -53,5 +53,11 @@ export class AuthController {
   githubAuth() {}
 
   @Get('github/callback')
-  githubAuthCallback() {}
+  @UseGuards(GitHubAuthGuard)
+  async githubAuthCallback(@Req() req: ExpressRequest): Promise<LoginSuccessResponseDto> {
+    return {
+      status: 'success',
+      data: await this.authService.createJWT(req.user as Omit<User, 'password'>),
+    };
+  }
 }

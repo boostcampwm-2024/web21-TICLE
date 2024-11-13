@@ -7,12 +7,24 @@ import { UserService } from '@/user/user.service';
 
 import { SignupRequestDto } from './dto/signupRequest.dto';
 
+interface socialUserDto {
+  provider: string;
+  socialId: string;
+  username: string;
+  email: string;
+  profileImageUrl?: string;
+}
+
 @Injectable()
 export class AuthService {
   constructor(
     private userService: UserService,
     private jwtService: JwtService
   ) {}
+
+  async signup(signupRequestDto: SignupRequestDto) {
+    return this.userService.createUser(signupRequestDto);
+  }
 
   async validateLocalLogin(username: string, inputPassword: string) {
     const user = await this.userService.findUserByUsername(username);
@@ -27,10 +39,17 @@ export class AuthService {
     return result;
   }
 
-  async signup(signupRequestDto: SignupRequestDto) {
-    return this.userService.createUser(signupRequestDto);
+  async cheeckSocialUser(userSocialData: socialUserDto) {
+    const user = await this.userService.findUserByEmail(userSocialData.email);
+    if (!user) {
+      const randomValue = Math.random().toString(36).slice(-15);
+      return await this.userService.createUser({
+        ...userSocialData,
+        password: randomValue,
+      });
+    }
+    return user;
   }
-
   async createJWT(user: Omit<User, 'password'>) {
     const payload = { username: user.username, sub: user.id };
     return {
