@@ -7,7 +7,7 @@ import { UserService } from '@/user/user.service';
 
 import { SignupRequestDto } from './dto/signupRequest.dto';
 
-interface socialUserDto {
+interface SocialUserDto {
   provider: string;
   socialId: string;
   username: string;
@@ -39,7 +39,7 @@ export class AuthService {
     return result;
   }
 
-  async checkSocialUser(userSocialData: socialUserDto) {
+  async checkSocialUser(userSocialData: SocialUserDto) {
     const user = await this.userService.findUserByEmail(userSocialData.email);
     if (!user) {
       const randomValue = Math.random().toString(36).slice(-15);
