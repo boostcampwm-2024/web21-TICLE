@@ -39,7 +39,7 @@ export class AuthService {
     return result;
   }
 
-  async cheeckSocialUser(userSocialData: socialUserDto) {
+  async checkSocialUser(userSocialData: socialUserDto) {
     const user = await this.userService.findUserByEmail(userSocialData.email);
     if (!user) {
       const randomValue = Math.random().toString(36).slice(-15);

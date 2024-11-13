@@ -28,7 +28,7 @@ export class GitHubStrategy extends PassportStrategy(Strategy, 'github') {
       email: emails[0].value,
       profileImageUrl: photos?.[0]?.value,
     };
-    this.authService.createSocialUser(user);
+    this.authService.checkSocialUser(user);
     return user;
   }
 }
