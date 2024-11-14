@@ -1,7 +1,33 @@
-import { SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
+
+import {
+  ConnectedSocket,
+  MessageBody,
+  SubscribeMessage,
+  WebSocketGateway,
+} from '@nestjs/websockets';
+import { Socket } from 'socket.io';
+import { MediasoupService } from 'src/mediasoup/mediasoup.service';
 
 @WebSocketGateway()
 export class SignalingGateway {
-  @SubscribeMessage('message')
-  handleMessage(client: any, payload: any) {}
+  constructor(private mediasoupService: MediasoupService) {}
+
+  @SubscribeMessage('create-room')
+  async handleCreateRoom(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() roomId: string,
+  ) {
+    this.mediasoupService.createRoom(roomId);
+    client.emit('room-created', roomId);
+  }
+
+  // @SubscribeMessage('join-room')
+
+  // @SubscribeMessage('create-transport')
+
+  // @SubscribeMessage('connect-transport')
+
+  // @SubscribeMessage('produce') //producer 만들어 달라고 요청 (자기가 쓰려고)
+
+  // @SubscribeMessage('consume') // 방에있는 producer들을 Consumer로 받아오려고 요청
 }
