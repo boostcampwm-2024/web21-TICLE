@@ -19,4 +19,11 @@ export interface ConsumerTransport {
   consumerTransport: types.Transport; // Consumer가 사용하는 transport 객체
 }
 
+export interface TransportOptions {
+  id: string;
+  iceParameters: types.IceParameters;
+  iceCandidates: types.IceCandidate[];
+  dtlsParameters: types.DtlsParameters;
+}
+
 export type Func = ([param]?: any) => void;
