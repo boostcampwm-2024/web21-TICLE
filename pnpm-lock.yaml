@@ -43,10 +43,10 @@ importers:
         version: 10.4.6(@nestjs/common@10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.4.6)
       '@nestjs/swagger':
         specifier: ^8.0.1
-        version: 8.0.1(@nestjs/common@10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.4.6)(reflect-metadata@0.2.2)
+        version: 8.0.1(@nestjs/common@10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.4.6(@nestjs/common@10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/platform-express@10.4.6)(@nestjs/websockets@10.4.7)(reflect-metadata@0.2.2)(rxjs@7.8.1))(reflect-metadata@0.2.2)
       '@nestjs/typeorm':
         specifier: ^10.0.2
-        version: 10.0.2(@nestjs/common@10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.4.6)(reflect-metadata@0.2.2)(rxjs@7.8.1)(typeorm@0.3.20(mysql2@3.11.3)(ts-node@10.9.2(@types/node@20.17.6)(typescript@5.6.3)))
+        version: 10.0.2(@nestjs/common@10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.4.6(@nestjs/common@10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/platform-express@10.4.6)(@nestjs/websockets@10.4.7)(reflect-metadata@0.2.2)(rxjs@7.8.1))(reflect-metadata@0.2.2)(rxjs@7.8.1)(typeorm@0.3.20(mysql2@3.11.3)(ts-node@10.9.2(@types/node@20.17.6)(typescript@5.6.3)))
       '@repo/shared':
         specifier: workspace:*
         version: link:../../packages/shared
@@ -98,7 +98,7 @@ importers:
         version: 10.2.3(chokidar@3.6.0)(typescript@5.6.3)
       '@nestjs/testing':
         specifier: ^10.0.0
-        version: 10.4.6(@nestjs/common@10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.4.6)(@nestjs/platform-express@10.4.6)
+        version: 10.4.6(@nestjs/common@10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.4.6(@nestjs/common@10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/platform-express@10.4.6)(@nestjs/websockets@10.4.7)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/platform-express@10.4.6(@nestjs/common@10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.4.6))
       '@repo/lint':
         specifier: workspace:*
         version: link:../../packages/eslint
@@ -197,7 +197,7 @@ importers:
         version: 10.4.7(@nestjs/common@10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.4.6)(@nestjs/platform-socket.io@10.4.7)(reflect-metadata@0.2.2)(rxjs@7.8.1)
       mediasoup:
         specifier: ^3.15.0
-        version: 3.15.0
+        version: 3.15.1
       reflect-metadata:
         specifier: ^0.2.0
         version: 0.2.2
@@ -216,7 +216,7 @@ importers:
         version: 10.2.3(chokidar@3.6.0)(typescript@5.6.3)
       '@nestjs/testing':
         specifier: ^10.0.0
-        version: 10.4.6(@nestjs/common@10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.4.6)(@nestjs/platform-express@10.4.6)
+        version: 10.4.6(@nestjs/common@10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.4.6(@nestjs/common@10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/platform-express@10.4.6)(@nestjs/websockets@10.4.7)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/platform-express@10.4.6(@nestjs/common@10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.4.6))
       '@types/express':
         specifier: ^5.0.0
         version: 5.0.0
@@ -295,6 +295,9 @@ importers:
       framer-motion:
         specifier: ^11.11.11
         version: 11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      mediasoup-client:
+        specifier: ^3.7.17
+        version: 3.7.17
       prettier-plugin-tailwindcss:
         specifier: ^0.6.8
         version: 0.6.8(prettier@3.3.3)
@@ -1536,6 +1539,9 @@ packages:
   '@types/estree@1.0.6':
     resolution: {integrity: sha512-AYnb1nQyY49te+VRAVgmzfcgjYS91mY5P0TKUDCLEM+gNnA+3T6rWITXRLYCpahpqSQbN5cE+gHpnPyXjHWxcw==}
 
+  '@types/events@3.0.3':
+    resolution: {integrity: sha512-trOc4AAUThEz9hapPtSd7wf5tiQKvTtu5b371UxXdTuqzIh0ArcRspRP0i0Viu+LXstIQ1z96t1nsPxT9ol01g==}
+
   '@types/express-serve-static-core@5.0.1':
     resolution: {integrity: sha512-CRICJIl0N5cXDONAdlTv5ShATZ4HEwk6kDDIW2/w9qOWKg+NU/5F8wYRWCrONad0/UKkloNSmmyN/wX4rtpbVA==}
 
@@ -1937,6 +1943,10 @@ packages:
   available-typed-arrays@1.0.7:
     resolution: {integrity: sha512-wvUjBtSGN7+7SjNpq/9M2Tg350UZD3q62IFZLbRAR1bSMlCo1ZaeW+BJ+D090e4hIIZLBcTDWe4Mh4jvUDajzQ==}
     engines: {node: '>= 0.4'}
+
+  awaitqueue@3.0.2:
+    resolution: {integrity: sha512-AVAtRwmf0DNSesMdyanFKKejTrOnjdKtz5LIDQFu2OTUgXvB/CRTYMrkPAF/2GCF9XBtYVxSwxDORlD41S+RyQ==}
+    engines: {node: '>=16'}
 
   aws-ssl-profiles@1.1.2:
     resolution: {integrity: sha512-NZKeq9AfyQvEeNlN0zSYAaWrmBffJh3IELMZfRpJVWgrpEbtEpnjvzqBPf+mxoI287JohRDoa+/nsfqqiZmF6g==}
@@ -2667,6 +2677,10 @@ packages:
     resolution: {integrity: sha512-aIL5Fx7mawVa300al2BnEE4iNvo1qETxLrPI/o05L7z6go7fCw1J6EQmbK4FmJ2AS7kgVF/KEZWufBfdClMcPg==}
     engines: {node: '>= 0.6'}
 
+  event-target-shim@6.0.2:
+    resolution: {integrity: sha512-8q3LsZjRezbFZ2PN+uP+Q7pnHUMmAOziU2vA2OwoFaKIXxlxl38IylhSSgUorWu/rf4er67w0ikBqjBFk/pomA==}
+    engines: {node: '>=10.13.0'}
+
   events@3.3.0:
     resolution: {integrity: sha512-mQw+2fkQbALzQ7V0MY0IqdnXNOeTtP4r0lN9z7AAawCXgqea7bDii20AYrIBrFd/Hx0M2Ocz6S111CaFkUcb0Q==}
     engines: {node: '>=0.8.x'}
@@ -2690,6 +2704,9 @@ packages:
   external-editor@3.1.0:
     resolution: {integrity: sha512-hMQ4CX1p1izmuLYyZqLMO/qGNw10wSv9QDCPfzXfyFrOaCSSoRfqE1Kf1s5an66J5JZC62NewG+mK49jOCtQew==}
     engines: {node: '>=4'}
+
+  fake-mediastreamtrack@1.2.0:
+    resolution: {integrity: sha512-AxHtlEmka1sqNoe3Ej1H1hJc9gjjO/6vCbCPm4D4QeEXvzhjYumA+iZ7wOi2WrmkAhGElHhBgWoNgJhFccectA==}
 
   fast-deep-equal@3.1.3:
     resolution: {integrity: sha512-f3qQ9oQy9j2AhBe/H9VC91wLmKBCCU/gDOnKNAYG5hswO7BLKj09Hc5HYNz9cGI++xlpDCIgDaitVs03ATR84Q==}
@@ -3546,8 +3563,12 @@ packages:
     resolution: {integrity: sha512-dq+qelQ9akHpcOl/gUVRTxVIOkAJ1wR3QAvb4RsVjS8oVoFjDGTc679wJYmUmknUF5HwMLOgb5O+a3KxfWapPQ==}
     engines: {node: '>= 0.6'}
 
-  mediasoup@3.15.0:
-    resolution: {integrity: sha512-Ec+l5+GPAfAW0xy19bJIchzW8Cqct6LzOeZfLm0FjA/mJ13MJc9n76IO5z2TSNmsbKWZMh+repf05z6zmajDVg==}
+  mediasoup-client@3.7.17:
+    resolution: {integrity: sha512-yAOYrA30W+8I8RWdMHy6ahAD8y/zeKQSe8HXnUiKxRvBFgor3q1lOLCf1zk96fvpv69ayX4Ti6Ve1pWSCU36dw==}
+    engines: {node: '>=18'}
+
+  mediasoup@3.15.1:
+    resolution: {integrity: sha512-ony9GcsKijGz+4IgrgAxr2olI9f7G94L6t9e2iupVVSztVZHzBcA0ZLPXrNU07FXQmpYAwIKTlMWoSTiSDDRpw==}
     engines: {node: '>=18'}
 
   memfs@3.5.3:
@@ -4241,6 +4262,10 @@ packages:
     resolution: {integrity: sha512-pN/yOAvcC+5rQ5nERGuwrjLlYvLTbCibnZ1I7B1LaiAz9BRBlE9GMgE/eqV30P7aJQUf7Ddimy/RsbYO/GrVGg==}
     engines: {node: '>= 10.13.0'}
 
+  sdp-transform@2.14.2:
+    resolution: {integrity: sha512-icY6jVao7MfKCieyo1AyxFYm1baiM+fA00qW/KrNNVlkxHAd34riEKuEkUe4bBb3gJwLJZM+xT60Yj1QL8rHiA==}
+    hasBin: true
+
   semver@6.3.1:
     resolution: {integrity: sha512-BR7VvDCVHO+q2xBEWskxS6DJE1qRnb7DxzUrogb71CWoSficBxYsiAGd+Kl0mmq/MprG9yArRkyrQxTO6XjMzA==}
     hasBin: true
@@ -4780,6 +4805,10 @@ packages:
   typescript@5.6.3:
     resolution: {integrity: sha512-hjcS1mhfuyi4WW8IWtjP7brDrG2cuDZukyrYrSauoXGNgx0S7zceP07adYkJycEr56BOUTNPzbInooiN3fn1qw==}
     engines: {node: '>=14.17'}
+    hasBin: true
+
+  ua-parser-js@1.0.39:
+    resolution: {integrity: sha512-k24RCVWlEcjkdOxYmVJgeD/0a1TiSpqLg+ZalVGV9lsnr4yqu0w7tX/x2xX6G4zpkgQnRf89lxuZ1wsbjXM8lw==}
     hasBin: true
 
   uid2@0.0.4:
@@ -5813,7 +5842,7 @@ snapshots:
     transitivePeerDependencies:
       - chokidar
 
-  '@nestjs/swagger@8.0.1(@nestjs/common@10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.4.6)(reflect-metadata@0.2.2)':
+  '@nestjs/swagger@8.0.1(@nestjs/common@10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.4.6(@nestjs/common@10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/platform-express@10.4.6)(@nestjs/websockets@10.4.7)(reflect-metadata@0.2.2)(rxjs@7.8.1))(reflect-metadata@0.2.2)':
     dependencies:
       '@microsoft/tsdoc': 0.15.0
       '@nestjs/common': 10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1)
@@ -5825,7 +5854,7 @@ snapshots:
       reflect-metadata: 0.2.2
       swagger-ui-dist: 5.17.14
 
-  '@nestjs/testing@10.4.6(@nestjs/common@10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.4.6)(@nestjs/platform-express@10.4.6)':
+  '@nestjs/testing@10.4.6(@nestjs/common@10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.4.6(@nestjs/common@10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/platform-express@10.4.6)(@nestjs/websockets@10.4.7)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/platform-express@10.4.6(@nestjs/common@10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.4.6))':
     dependencies:
       '@nestjs/common': 10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1)
       '@nestjs/core': 10.4.6(@nestjs/common@10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/platform-express@10.4.6)(@nestjs/websockets@10.4.7)(reflect-metadata@0.2.2)(rxjs@7.8.1)
@@ -5833,7 +5862,7 @@ snapshots:
     optionalDependencies:
       '@nestjs/platform-express': 10.4.6(@nestjs/common@10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.4.6)
 
-  '@nestjs/typeorm@10.0.2(@nestjs/common@10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.4.6)(reflect-metadata@0.2.2)(rxjs@7.8.1)(typeorm@0.3.20(mysql2@3.11.3)(ts-node@10.9.2(@types/node@20.17.6)(typescript@5.6.3)))':
+  '@nestjs/typeorm@10.0.2(@nestjs/common@10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.4.6(@nestjs/common@10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/platform-express@10.4.6)(@nestjs/websockets@10.4.7)(reflect-metadata@0.2.2)(rxjs@7.8.1))(reflect-metadata@0.2.2)(rxjs@7.8.1)(typeorm@0.3.20(mysql2@3.11.3)(ts-node@10.9.2(@types/node@20.17.6)(typescript@5.6.3)))':
     dependencies:
       '@nestjs/common': 10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1)
       '@nestjs/core': 10.4.6(@nestjs/common@10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/platform-express@10.4.6)(@nestjs/websockets@10.4.7)(reflect-metadata@0.2.2)(rxjs@7.8.1)
@@ -6168,6 +6197,8 @@ snapshots:
       '@types/json-schema': 7.0.15
 
   '@types/estree@1.0.6': {}
+
+  '@types/events@3.0.3': {}
 
   '@types/express-serve-static-core@5.0.1':
     dependencies:
@@ -6678,6 +6709,12 @@ snapshots:
   available-typed-arrays@1.0.7:
     dependencies:
       possible-typed-array-names: 1.0.0
+
+  awaitqueue@3.0.2(supports-color@9.4.0):
+    dependencies:
+      debug: 4.3.7(supports-color@9.4.0)
+    transitivePeerDependencies:
+      - supports-color
 
   aws-ssl-profiles@1.1.2: {}
 
@@ -7384,7 +7421,7 @@ snapshots:
       debug: 4.3.7(supports-color@9.4.0)
       enhanced-resolve: 5.17.1
       eslint: 8.57.1
-      eslint-module-utils: 2.12.0(@typescript-eslint/parser@8.11.0(eslint@8.57.1)(typescript@5.6.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.3)(eslint@8.57.1)
+      eslint-module-utils: 2.12.0(@typescript-eslint/parser@8.11.0(eslint@8.57.1)(typescript@5.6.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.3(@typescript-eslint/parser@8.11.0(eslint@8.57.1)(typescript@5.6.3))(eslint-plugin-import@2.31.0)(eslint@8.57.1))(eslint@8.57.1)
       fast-glob: 3.3.2
       get-tsconfig: 4.8.1
       is-bun-module: 1.2.1
@@ -7397,7 +7434,7 @@ snapshots:
       - eslint-import-resolver-webpack
       - supports-color
 
-  eslint-module-utils@2.12.0(@typescript-eslint/parser@8.11.0(eslint@8.57.1)(typescript@5.6.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.3)(eslint@8.57.1):
+  eslint-module-utils@2.12.0(@typescript-eslint/parser@8.11.0(eslint@8.57.1)(typescript@5.6.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.3(@typescript-eslint/parser@8.11.0(eslint@8.57.1)(typescript@5.6.3))(eslint-plugin-import@2.31.0)(eslint@8.57.1))(eslint@8.57.1):
     dependencies:
       debug: 3.2.7
     optionalDependencies:
@@ -7419,7 +7456,7 @@ snapshots:
       doctrine: 2.1.0
       eslint: 8.57.1
       eslint-import-resolver-node: 0.3.9
-      eslint-module-utils: 2.12.0(@typescript-eslint/parser@8.11.0(eslint@8.57.1)(typescript@5.6.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.3)(eslint@8.57.1)
+      eslint-module-utils: 2.12.0(@typescript-eslint/parser@8.11.0(eslint@8.57.1)(typescript@5.6.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.6.3(@typescript-eslint/parser@8.11.0(eslint@8.57.1)(typescript@5.6.3))(eslint-plugin-import@2.31.0)(eslint@8.57.1))(eslint@8.57.1)
       hasown: 2.0.2
       is-core-module: 2.15.1
       is-glob: 4.0.3
@@ -7577,6 +7614,8 @@ snapshots:
 
   etag@1.8.1: {}
 
+  event-target-shim@6.0.2: {}
+
   events@3.3.0: {}
 
   execa@5.1.1:
@@ -7642,6 +7681,11 @@ snapshots:
       chardet: 0.7.0
       iconv-lite: 0.4.24
       tmp: 0.0.33
+
+  fake-mediastreamtrack@1.2.0:
+    dependencies:
+      event-target-shim: 6.0.2
+      uuid: 9.0.1
 
   fast-deep-equal@3.1.3: {}
 
@@ -8702,7 +8746,21 @@ snapshots:
 
   media-typer@0.3.0: {}
 
-  mediasoup@3.15.0:
+  mediasoup-client@3.7.17:
+    dependencies:
+      '@types/debug': 4.1.12
+      '@types/npm-events-package': '@types/events@3.0.3'
+      awaitqueue: 3.0.2(supports-color@9.4.0)
+      debug: 4.3.7(supports-color@9.4.0)
+      fake-mediastreamtrack: 1.2.0
+      h264-profile-level-id: 2.0.0(supports-color@9.4.0)
+      npm-events-package: events@3.3.0
+      queue-microtask: 1.2.3
+      sdp-transform: 2.14.2
+      supports-color: 9.4.0
+      ua-parser-js: 1.0.39
+
+  mediasoup@3.15.1:
     dependencies:
       '@types/ini': 4.1.1
       debug: 4.3.7(supports-color@9.4.0)
@@ -9338,6 +9396,8 @@ snapshots:
       ajv: 6.12.6
       ajv-keywords: 3.5.2(ajv@6.12.6)
 
+  sdp-transform@2.14.2: {}
+
   semver@6.3.1: {}
 
   semver@7.6.3: {}
@@ -9958,6 +10018,8 @@ snapshots:
       - supports-color
 
   typescript@5.6.3: {}
+
+  ua-parser-js@1.0.39: {}
 
   uid2@0.0.4: {}
 
