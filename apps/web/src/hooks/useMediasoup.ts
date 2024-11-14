@@ -1,10 +1,12 @@
 import { useParams } from '@tanstack/react-router';
-import { Producer, ProducerOptions } from 'mediasoup-client/lib/types';
+import * as mediasoup from 'mediasoup-client';
+import { Device, Producer, ProducerOptions } from 'mediasoup-client/lib/types';
 import { useEffect, useRef, useState } from 'react';
 import { Socket } from 'socket.io-client';
 
 import { ENV } from '@/constants/env';
 import useSocket from '@/hooks/useSocket';
+import { RtpCapabilities } from '@/types/mediasoup';
 
 const PRODUCER_OPTIONS: ProducerOptions = {
   encodings: [
@@ -41,11 +43,12 @@ const useMediaSoup = ({ stream }: MediaSoupArgs): UseMediaSoupResult => {
 
   const socket = useSocket(`${ENV.WS_URL}:8080`);
 
-  const [peers, setPeers] = useState<string[]>([]);
+  const deviceRef = useRef<Device | null>(null);
 
   const videoOptionsRef = useRef<ProducerOptions>({ ...PRODUCER_OPTIONS });
   const audioOptionsRef = useRef<ProducerOptions>({});
 
+  const [peers, setPeers] = useState<string[]>([]);
   const videoProducerRef = useRef<Producer | null>(null);
   const audioProducerRef = useRef<Producer | null>(null);
 
@@ -83,11 +86,31 @@ const useMediaSoup = ({ stream }: MediaSoupArgs): UseMediaSoupResult => {
     });
   };
 
-  const createRoom = (ticleId: string) => {
-    socket.current?.emit('createRoom', { ticleId });
+  const joinRoom = () => {
+    const currentSocket = socket.current;
+
+    if (!currentSocket) {
+      return;
+    }
+
+    currentSocket.emit('create-room', { ticleId });
+
+    currentSocket.emit(
+      'join-room',
+      { ticleId },
+      async ({ rtpCapabilities }: { rtpCapabilities: RtpCapabilities }) => {
+        await createDevice(rtpCapabilities);
+      }
+    );
   };
 
-  const joinRoom = () => {};
+  const createDevice = async (rtcCapabilities: RtpCapabilities) => {
+    const device = new mediasoup.Device();
+
+    deviceRef.current = device;
+
+    return device.load({ routerRtpCapabilities: rtcCapabilities });
+  };
 
   const createTransport = () => {};
 
