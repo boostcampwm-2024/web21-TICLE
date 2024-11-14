@@ -17,7 +17,9 @@ export class DashboardController {
   }
 
   @Get('created/:ticleId/applicants')
-  getParticipants(@Param('ticleId') ticleId: number) {}
+  async getApplicants(@Param('ticleId') ticleId: number) {
+    return await this.dashboardService.getApplicants(ticleId);
+  }
 
   @Post('created/:ticleId/start')
   startTicle(@Param('ticleId') ticleId: number) {}

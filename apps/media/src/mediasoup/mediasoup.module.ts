@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+
 import { MediasoupService } from './mediasoup.service';
 
 @Module({
@@ -6,4 +7,5 @@ import { MediasoupService } from './mediasoup.service';
   providers: [MediasoupService],
   exports: [MediasoupService],
 })
+
 export class MediasoupModule {}

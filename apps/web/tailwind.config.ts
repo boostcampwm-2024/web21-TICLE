@@ -26,6 +26,7 @@ const config: Config = {
       textColor: {
         main: 'var(--black)',
         alt: 'var(--grey-900)',
+        hover: 'var(--grey-800)',
         weak: 'var(--grey-700)',
         primary: 'var(--purple-500)',
         white: 'var(--white)',
@@ -85,14 +86,14 @@ const config: Config = {
           '1rem',
           {
             lineHeight: '24px',
-            fontWeight: '500',
+            fontWeight: '400',
           },
         ],
         body2: [
           '0.875rem',
           {
             lineHeight: '20px',
-            fontWeight: '500',
+            fontWeight: '400',
           },
         ],
         body3: [
@@ -106,7 +107,7 @@ const config: Config = {
           '0.75rem',
           {
             lineHeight: '16px',
-            fontWeight: '500',
+            fontWeight: '400',
           },
         ],
         label1: [
