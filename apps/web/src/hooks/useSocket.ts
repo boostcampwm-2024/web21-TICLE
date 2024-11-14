@@ -1,7 +1,9 @@
-import { useEffect, useRef } from 'react';
+import { MutableRefObject, useEffect, useRef } from 'react';
 import { Socket, io } from 'socket.io-client';
 
-const useSocket = (url: string): Socket | null => {
+type UseSocketResult = MutableRefObject<Socket | null>;
+
+const useSocket = (url: string): UseSocketResult => {
   const socket = useRef<Socket | null>(null);
 
   useEffect(() => {
@@ -12,7 +14,7 @@ const useSocket = (url: string): Socket | null => {
     };
   }, [url]);
 
-  return socket.current;
+  return socket;
 };
 
 export default useSocket;
