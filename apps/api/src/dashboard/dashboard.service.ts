@@ -14,16 +14,6 @@ export class DashboardService {
     private readonly applicantRepository: Repository<Applicant>
   ) {}
 
-  async getTicleList(speakerId?: number, userId?: number) {
-    if (speakerId) {
-      return await this.getCreatedTicleList(speakerId);
-    } else if (userId) {
-      return await this.getAppliedTicleList(userId);
-    } else {
-      throw new BadRequestException('speakerId 또는 userId 중 하나는 필요합니다.');
-    }
-  }
-
   async getCreatedTicleList(speakerId: number) {
     try {
       return await this.ticleRepository.find({

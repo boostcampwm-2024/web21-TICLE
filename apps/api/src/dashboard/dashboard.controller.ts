@@ -1,17 +1,20 @@
-import { Controller, Get, Param, ParseIntPipe, Post, Query } from '@nestjs/common';
+import { Controller, Get, Param, Post, Query, UseGuards, Request } from '@nestjs/common';
 
 import { DashboardService } from './dashboard.service';
+import { JwtAuthGuard } from '@/auth/jwt/jwt-auth.guard';
 
 @Controller('dashboard')
 export class DashboardController {
   constructor(private readonly dashboardService: DashboardService) {}
 
   @Get()
-  async getTicleList(
-    @Query('speakerId', ParseIntPipe) speakerId?: number,
-    @Query('userId', ParseIntPipe) userId?: number
-  ) {
-    return await this.dashboardService.getTicleList(speakerId, userId);
+  @UseGuards(JwtAuthGuard)
+  async getTicleList(@Request() req: any, @Query('isSpeaker') isSpeakcer: boolean) {
+    if (isSpeakcer) {
+      return await this.dashboardService.getCreatedTicleList(req.user.id);
+    } else {
+      return await this.dashboardService.getAppliedTicleList(req.user.id);
+    }
   }
 
   @Get(':ticleId/applicants')
