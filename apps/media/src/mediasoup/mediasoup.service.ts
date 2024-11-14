@@ -1,6 +1,7 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import * as mediasoup from 'mediasoup';
 import * as os from 'os';
+import { Socket } from 'socket.io';
 
 import { Room } from 'src/room';
 
@@ -9,7 +10,7 @@ import { Room } from 'src/room';
 export class MediasoupService implements OnModuleInit {
   private nextWorkerIndex = 0;
   private workers = [];
-  private rooms = [];
+  private rooms: Map<string, Room> = new Map();
 
 
   constructor() {}
@@ -46,8 +47,21 @@ export class MediasoupService implements OnModuleInit {
   public async createRoom(roomId: string) {
     const worker = this.getWorker();
     const room = new Room(roomId);
+    this.rooms.set(roomId, room);
     await room.init(worker);
     return roomId;
   }
 
+  public joinRoom(roomId: string, socket: Socket) {
+    const room = this.rooms.get(roomId);
+    if (!room) {
+      throw new Error(`Room ${roomId} not found`);
+    }
+    if (room.peers.has(socket.id)) {
+      throw new Error(`Peer ${socket.id} already exists`);
+    }
+    room.addPeer(socket.id);
+
+    return room.getRouter().rtpCapabilities;
+  }
 }
