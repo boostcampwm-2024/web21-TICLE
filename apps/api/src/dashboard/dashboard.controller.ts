@@ -1,7 +1,7 @@
 import { Controller, Get, Param, Post, Query, UseGuards, Request } from '@nestjs/common';
 
-import { DashboardService } from './dashboard.service';
 import { JwtAuthGuard } from '@/auth/jwt/jwt-auth.guard';
+import { DashboardService } from './dashboard.service';
 
 @Controller('dashboard')
 export class DashboardController {
