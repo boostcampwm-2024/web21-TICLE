@@ -18,6 +18,7 @@ export class DashboardService {
     try {
       return await this.ticleRepository.find({
         where: { speaker: { id: speakerId } },
+        select: ['title', 'startTime', 'endTime', 'ticleStatus'],
       });
     } catch (error) {
       throw new BadRequestException('개설한 티클 조회에 실패했습니다.');
@@ -26,14 +27,37 @@ export class DashboardService {
 
   async getAppliedTicleList(userId: number) {
     try {
-      const applicants = await this.applicantRepository.find({
+      return await this.applicantRepository.find({
         where: { user: { id: userId } },
         relations: ['ticle'],
+        select: {
+          ticle: {
+            title: true,
+            startTime: true,
+            endTime: true,
+            ticleStatus: true,
+          },
+        },
       });
-
-      return applicants.map((applicant) => applicant.ticle);
     } catch (error) {
       throw new BadRequestException('신청한 티클 조회에 실패했습니다.');
+    }
+  }
+
+  async getApplicants(ticleId: number) {
+    try {
+      return await this.applicantRepository.find({
+        where: { ticle: { id: ticleId } },
+        relations: ['user'],
+        select: {
+          user: {
+            nickname: true,
+            profileImageUrl: true,
+          },
+        },
+      });
+    } catch (error) {
+      throw new BadRequestException('참여자 목록 조회에 실패했습니다.');
     }
   }
 }
