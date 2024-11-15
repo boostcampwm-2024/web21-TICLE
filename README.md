@@ -6,7 +6,7 @@
 <img width="600" alt="메인 배너" src="https://github.com/user-attachments/assets/eb4c89c8-6870-4114-bddc-796b51bd7163">
 <br/>
 
-[:ledger: 팀 노션](https://www.notion.so/simeunseo/9-Ticle-12e599a6f0d2804682ccd2251248a435?pvs=4) | [:mag: 위키](https://github.com/boostcampwm-2024/web21-boostproject/wiki) | [🎨 피그마](https://www.figma.com/design/nw74detTvjXGrDP2cfdmwp/TICLE-%EB%94%94%EC%9E%90%EC%9D%B8?node-id=32-4477&t=3FCCnBpgQXMZs63X-1)
+### [:ledger: 팀 노션](https://www.notion.so/simeunseo/9-Ticle-12e599a6f0d2804682ccd2251248a435?pvs=4) | [:mag: 위키](https://github.com/boostcampwm-2024/web21-boostproject/wiki) | [🎨 피그마](https://www.figma.com/design/nw74detTvjXGrDP2cfdmwp/TICLE-%EB%94%94%EC%9E%90%EC%9D%B8?node-id=32-4477&t=3FCCnBpgQXMZs63X-1) | [🗓️ 스프린트 백로그](https://github.com/orgs/boostcampwm-2024/projects/82/views/7)
 
 </div>
 
@@ -26,8 +26,8 @@
 
 <img width="600" alt="티클 리스트(메인)" src="https://github.com/user-attachments/assets/08449986-eda7-408a-845a-cd21da718837">
 <div>
-<img width="300" alt="개설한 티클 관리" src="https://github.com/user-attachments/assets/9dc9627e-c806-4560-82d0-a949b1dca153">
-<img width="300" alt="신청한 티클 관리" src="https://github.com/user-attachments/assets/81cf68b1-4006-4c05-9984-29d450106b2c">
+<img width="600" alt="개설한 티클 관리" src="https://github.com/user-attachments/assets/9dc9627e-c806-4560-82d0-a949b1dca153">
+<img width="600" alt="신청한 티클 관리" src="https://github.com/user-attachments/assets/81cf68b1-4006-4c05-9984-29d450106b2c">
 </div>
 
 ### **✔️ 티클 소개 페이지**
@@ -39,6 +39,29 @@
 ### **✔️ AI 요약 기능**
 
     CLOVA API를 이용해 티클 내용을 요약하여 제공합니다.
+
+# 📽️ 스트리밍 구현 흐름
+
+### Producer(미디어 전송 엔드포인트)
+
+<img width="2768" alt="mediasoup sequence diagram - producer" src="https://github.com/user-attachments/assets/8b10a0be-c0c4-4e41-b3a9-462b5fc78be6">
+
+### Consumer(미디어 수신 엔드포인트)
+
+<img width="2768" alt="mediasoup sequence diagram - consumer" src="https://github.com/user-attachments/assets/fd5d2819-bc96-4598-9875-18cb67abb20d">
+
+# ✍️ 학습 정리
+
+| 분야       | 기술                                                                                                                                                                                                                                                                                                                            |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 공통       | [Turborepo 정리 - 지석호](https://simeunseo.notion.site/Turborepo-0c5bcd0bed0445c4a8c6730b991eefd0?pvs=4) <br/>[패키지 매니저 - 지석호](https://simeunseo.notion.site/12e599a6f0d2816c9ccfe5b9f8743641?pvs=4) <br/> [WebRTC 정리 - 이지은, 황성하](https://simeunseo.notion.site/WebRTC-8c90ccf49d7c4ec5894222aeeb6de5a4?pvs=4) |
+| 프론트엔드 | [공통 컴포넌트를 나누는 기준 - 심은서](https://simeunseo.notion.site/139599a6f0d2806b85cdcaefe62ec4ee?pvs=4)<br/> [Tanstack Router로 공통 레이아웃을 가진 중첩 페이지 라우터 구현하기 - 심은서](https://simeunseo.notion.site/Tanstack-Router-136599a6f0d280f9af53ed949671e6bf?pvs=4)                                           |
+| 백엔드     | [VPC 설정 - 황성하](https://simeunseo.notion.site/VPC-12bab0d1e2cb4105bc72e528fae7f22f?pvs=4)                                                                                                                                                                                                                                   |
+
+#### ↗️ 더 많은 학습 정리 보기
+
+[💭 학습 기록장](https://simeunseo.notion.site/12e599a6f0d2807489d3fc76cbdcaa98?v=12e599a6f0d28130bc68000c718aa85b&pvs=4)
+[👾 개발 기록장](https://simeunseo.notion.site/12e599a6f0d280c0a7d9c948983ff80a?v=12e599a6f0d281afa7a4000c474633fc&pvs=4)
 
 # 🛠️ 기술 스택
 
