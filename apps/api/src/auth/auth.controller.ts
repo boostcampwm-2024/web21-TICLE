@@ -6,8 +6,8 @@ import { User } from '@/entity/user.entity';
 
 import { AuthService } from './auth.service';
 import { LocalLoginRequestDto } from './dto/localLoginRequest.dto';
-import { LoginSuccessResponseDto } from './dto/localLoginResponse.dto';
 import { LocalSignupRequestDto } from './dto/localSignupRequest.dto';
+import { LoginSuccessResponseDto } from './dto/loginResponse.dto';
 import { SignupResponseDto } from './dto/signupResponse.dto';
 import { GitHubAuthGuard } from './github/github-auth.guard';
 import { LocalAuthGuard } from './local/local-auth.guard';
