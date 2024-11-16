@@ -18,7 +18,7 @@ function Open() {
     register,
     handleSubmit,
     control,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<OpenFormInputs>({
     resolver: zodResolver(ticleOpenFormSchema),
     mode: 'onChange',
@@ -80,7 +80,7 @@ function Open() {
           <HashtagInput label="해시태그" required control={control} />
         </FormBox>
         <div className="mt-9 flex w-full justify-end">
-          <Button size="lg" type="submit">
+          <Button size="lg" type="submit" disabled={isSubmitting}>
             티클 개설하기
           </Button>
         </div>
