@@ -36,14 +36,15 @@ export const ticleOpenFormSchema = z.object({
   selfIntroduction: z.string().min(1).max(500),
   title: z.string().min(1).max(30),
   ticleIntroduction: z.string().min(1).max(1500),
-  hashtag: z
-    .array(z.string().min(1).max(7))
+  hashtags: z
+    .array(z.string())
     .min(1)
     .max(4)
     .refine((arr) => {
       const set = new Set(arr);
       return set.size === arr.length;
     }, '중복된 해시태그가 존재합니다.'),
+  hashtagInput: z.string().max(7),
 });
 
 export type OpenFormInputs = z.infer<typeof ticleOpenFormSchema>;

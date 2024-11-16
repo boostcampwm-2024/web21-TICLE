@@ -1,4 +1,4 @@
-import { forwardRef, useId, Ref, useState, ChangeEvent, KeyboardEvent } from 'react';
+import { forwardRef, useId, Ref, KeyboardEvent } from 'react';
 import { Control, useController } from 'react-hook-form';
 
 import CloseCircleIc from '@/assets/icons/close-circle.svg?react';
@@ -16,34 +16,37 @@ interface HashtagInputProps {
 
 function HashtagInput({ label, required, control }: HashtagInputProps, ref: Ref<HTMLInputElement>) {
   const ariaId = useId();
-  const [inputValue, setInputValue] = useState('');
 
   const {
-    field: { value: hashtags = [], onChange },
-    fieldState: { error },
+    field: { value: hashtags = [], onChange: onHashtagsChange },
+    fieldState: { error: hashtagsError },
   } = useController({
-    name: 'hashtag',
+    name: 'hashtags',
     control,
   });
 
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value);
-  };
+  const {
+    field: { value: input = '', onChange: onInputChange },
+    fieldState: { error: inputError },
+  } = useController({
+    name: 'hashtagInput',
+    control,
+  });
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key !== 'Enter' || e.nativeEvent.isComposing) return;
     e.preventDefault();
 
-    const newHashag = inputValue.trim();
-    if (!newHashag) return;
+    const newHashag = input.trim();
+    if (!newHashag || newHashag.length > 7) return;
 
-    onChange([...hashtags, newHashag]);
-    setInputValue('');
+    onHashtagsChange([...hashtags, newHashag]);
+    onInputChange('');
   };
 
   const handleDelete = (indexToRemove: number) => {
     const newTags = hashtags.filter((_, idx) => idx !== indexToRemove);
-    onChange(newTags);
+    onHashtagsChange(newTags);
   };
 
   return (
@@ -68,20 +71,20 @@ function HashtagInput({ label, required, control }: HashtagInputProps, ref: Ref<
           </Badge>
         ))}
         <input
-          value={inputValue}
+          value={input}
           type="text"
           ref={ref}
           id={ariaId}
-          onChange={handleInputChange}
+          onChange={onInputChange}
           onKeyDown={handleKeyDown}
           className="w-full"
           placeholder="작성 후 Enter 키를 눌러 추가해 주세요."
         />
       </div>
-      {error && (
+      {(inputError || hashtagsError) && (
         <p className="flex items-center gap-1 text-label1 text-error" id={`${ariaId}-error`}>
           <ExclamationIc className="fill-error" width={9} height={9} aria-hidden />
-          {error.message}
+          {inputError?.message || hashtagsError?.message}
         </p>
       )}
     </div>

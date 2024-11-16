@@ -23,11 +23,10 @@ function Open() {
     resolver: zodResolver(ticleOpenFormSchema),
     mode: 'onChange',
     defaultValues: {
-      hashtag: [],
+      hashtags: [],
     },
   });
   const navigate = useNavigate();
-
   const onSubmit = (inputs: OpenFormInputs) => {
     // TODO: API
     navigate({ to: '/' }); // TODO: 생성된 티클로 redirect -> post시 응답값으로 ticleId가 필요
