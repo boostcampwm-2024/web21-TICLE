@@ -8,13 +8,12 @@ import Badge from '@/components/common/Badge';
 import { OpenFormInputs } from '../../../../../../packages/types/src/formSchema';
 
 interface HashtagInputProps {
-  label?: string;
   required?: boolean;
   control: Control<OpenFormInputs>;
   maxLength?: number;
 }
 
-function HashtagInput({ label, required, control }: HashtagInputProps, ref: Ref<HTMLInputElement>) {
+function HashtagInput({ required, control }: HashtagInputProps, ref: Ref<HTMLInputElement>) {
   const ariaId = useId();
 
   const {
@@ -33,6 +32,7 @@ function HashtagInput({ label, required, control }: HashtagInputProps, ref: Ref<
     control,
   });
 
+  console.log(hashtagsError, inputError);
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key !== 'Enter' || e.nativeEvent.isComposing) return;
     e.preventDefault();
@@ -51,16 +51,14 @@ function HashtagInput({ label, required, control }: HashtagInputProps, ref: Ref<
 
   return (
     <div className="flex flex-col gap-1.5">
-      {label && (
-        <label htmlFor={ariaId} className="text-title2 text-main">
-          {label}
-          {required && (
-            <span className="text-error" aria-label="필수 입력">
-              {' *'}
-            </span>
-          )}
-        </label>
-      )}
+      <label htmlFor={ariaId} className="text-title2 text-main">
+        해시태그
+        {required && (
+          <span className="text-error" aria-label="필수 입력">
+            {' *'}
+          </span>
+        )}
+      </label>
       <div className="flex w-full gap-2 rounded-base border bg-white px-3.5 py-2.5 text-body1 text-main placeholder:text-weak">
         {hashtags.map((tag, idx) => (
           <Badge key={`${tag}-${idx}`} className="flex flex-shrink-0 gap-1">

@@ -5,11 +5,12 @@ const customErrorMap: z.ZodErrorMap = (issue: z.IssueData, ctx: z.ErrorMapCtx) =
 
   switch (issue.code) {
     case z.ZodIssueCode.too_small:
-      if (issue.type === 'string' || issue.type === 'array') {
+      if (issue.type === 'string' || issue.type === 'array')
         if (issue.minimum === 1) {
-          message = '필수로 입력해 주세요.';
+          {
+            message = '필수로 입력해 주세요.';
+          }
         }
-      }
       break;
     case z.ZodIssueCode.too_big:
       if (issue.type === 'string') {
@@ -24,6 +25,10 @@ const customErrorMap: z.ZodErrorMap = (issue: z.IssueData, ctx: z.ErrorMapCtx) =
         message = '올바른 이메일 형식이 아닙니다.';
       }
       break;
+    case z.ZodIssueCode.invalid_type:
+      if (issue.expected === 'date') {
+        message = '필수로 선택해 주세요.';
+      }
   }
   return { message };
 };
@@ -43,8 +48,11 @@ export const ticleOpenFormSchema = z.object({
     .refine((arr) => {
       const set = new Set(arr);
       return set.size === arr.length;
-    }, '중복된 해시태그가 존재합니다.'),
-  hashtagInput: z.string().max(7),
+    }, '중복된 해시태그가 존재합니다.')
+    .default([]),
+  hashtagInput: z.string().max(7).optional(),
+  startDate: z.date(),
+  endDate: z.date(),
 });
 
 export type OpenFormInputs = z.infer<typeof ticleOpenFormSchema>;

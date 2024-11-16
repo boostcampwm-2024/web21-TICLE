@@ -6,12 +6,14 @@ import Button from '@/components/common/Button';
 import TextArea from '@/components/common/TextArea';
 import TextInput from '@/components/common/TextInput';
 
+import DateTimePicker from './DateTimePicker';
 import FormBox from './FormBox';
 import HashtagInput from './HashtagInput';
 import {
   OpenFormInputs,
   ticleOpenFormSchema,
 } from '../../../../../../packages/types/src/formSchema';
+import 'react-datepicker/dist/react-datepicker.css';
 
 function Open() {
   const {
@@ -76,7 +78,8 @@ function Open() {
             {...register('ticleIntroduction')}
             errorMessage={errors.ticleIntroduction?.message}
           />
-          <HashtagInput label="해시태그" required control={control} />
+          <HashtagInput required control={control} />
+          <DateTimePicker required control={control} />
         </FormBox>
         <div className="mt-9 flex w-full justify-end">
           <Button size="lg" type="submit" disabled={isSubmitting}>
