@@ -36,9 +36,10 @@ export class AuthController {
   @ApiResponse({ status: 401 })
   @UseGuards(LocalAuthGuard)
   async localLogin(@Request() req: ExpressRequest): Promise<LoginSuccessResponseDto> {
+    const jwtToken = await this.authService.createJWT(req.user as Omit<User, 'password'>);
     return {
       status: 'success',
-      data: await this.authService.createJWT(req.user as Omit<User, 'password'>),
+      data: jwtToken,
     };
   }
 
@@ -55,9 +56,10 @@ export class AuthController {
   @Get('github/callback')
   @UseGuards(GitHubAuthGuard)
   async githubAuthCallback(@Req() req: ExpressRequest): Promise<LoginSuccessResponseDto> {
+    const jwtToken = await this.authService.createJWT(req.user as Omit<User, 'password'>);
     return {
       status: 'success',
-      data: await this.authService.createJWT(req.user as Omit<User, 'password'>),
+      data: jwtToken,
     };
   }
 }
