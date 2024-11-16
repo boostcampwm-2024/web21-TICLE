@@ -19,7 +19,7 @@ export class GitHubStrategy extends PassportStrategy(Strategy, 'github') {
     });
   }
 
-  async validate(profile: Profile) {
+  async validate(accessToken: string, refreshToken: string, profile: Profile) {
     const { id, username, emails, photos } = profile;
 
     const user = {
@@ -29,7 +29,7 @@ export class GitHubStrategy extends PassportStrategy(Strategy, 'github') {
       email: emails[0].value,
       profileImageUrl: photos?.[0]?.value,
     };
-    this.authService.checkSocialUser(user);
+    await this.authService.checkSocialUser(user);
     return user;
   }
 }
