@@ -36,7 +36,6 @@
     "@repo/tsconfig": "workspace:*",
     "@tanstack/router-cli": "^1.79.0",
     "@types/react": "^18.3.12",
-    "@types/react-datepicker": "^7.0.0",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.3.3",
     "autoprefixer": "^10.4.20",
