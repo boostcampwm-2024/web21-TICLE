@@ -1,10 +1,9 @@
 import { ko } from 'date-fns/locale';
 import DatePicker from 'react-datepicker';
 import { Control, useController } from 'react-hook-form';
+import { OpenFormInputs } from '@repo/types/src/formSchema';
 
 import ExclamationIc from '@/assets/icons/exclamation.svg?react';
-
-import { OpenFormInputs } from '../../../../../../packages/types/src/formSchema';
 
 const todayDate = new Date();
 

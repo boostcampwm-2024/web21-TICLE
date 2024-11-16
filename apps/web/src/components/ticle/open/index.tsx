@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from '@tanstack/react-router';
 import { useForm } from 'react-hook-form';
+import { OpenFormInputs, ticleOpenFormSchema } from '@repo/types/src/formSchema';
 
 import Button from '@/components/common/Button';
 import TextArea from '@/components/common/TextArea';
@@ -9,10 +10,6 @@ import TextInput from '@/components/common/TextInput';
 import DateTimePicker from './DateTimePicker';
 import FormBox from './FormBox';
 import HashtagInput from './HashtagInput';
-import {
-  OpenFormInputs,
-  ticleOpenFormSchema,
-} from '../../../../../../packages/types/src/formSchema';
 import 'react-datepicker/dist/react-datepicker.css';
 
 function Open() {
@@ -72,7 +69,7 @@ function Open() {
           <TextArea
             label="상세 설명"
             description="티클에 대한 자세한 정보를 적어주세요."
-            size="sm"
+            size="lg"
             required
             maxLength={1500}
             {...register('ticleIntroduction')}

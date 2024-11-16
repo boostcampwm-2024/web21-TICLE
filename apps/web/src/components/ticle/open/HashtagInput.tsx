@@ -32,7 +32,6 @@ function HashtagInput({ required, control }: HashtagInputProps, ref: Ref<HTMLInp
     control,
   });
 
-  console.log(hashtagsError, inputError);
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key !== 'Enter' || e.nativeEvent.isComposing) return;
     e.preventDefault();
