@@ -7,6 +7,7 @@ import TextArea from '@/components/common/TextArea';
 import TextInput from '@/components/common/TextInput';
 
 import FormBox from './FormBox';
+import HashtagInput from './HashtagInput';
 import {
   OpenFormInputs,
   ticleOpenFormSchema,
@@ -16,15 +17,20 @@ function Open() {
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
   } = useForm<OpenFormInputs>({
     resolver: zodResolver(ticleOpenFormSchema),
     mode: 'onChange',
+    defaultValues: {
+      hashtag: [],
+    },
   });
   const navigate = useNavigate();
 
-  const onSubmit = () => {
-    navigate({ to: '/' });
+  const onSubmit = (inputs: OpenFormInputs) => {
+    // TODO: API
+    navigate({ to: '/' }); // TODO: 생성된 티클로 redirect -> post시 응답값으로 ticleId가 필요
   };
 
   return (
@@ -71,12 +77,7 @@ function Open() {
             {...register('ticleIntroduction')}
             errorMessage={errors.ticleIntroduction?.message}
           />
-          <TextInput
-            label="해시태그"
-            required
-            {...register('hashtags')}
-            errorMessage={errors.hashtags?.message}
-          />
+          <HashtagInput label="해시태그" required control={control} />
         </FormBox>
         <div className="mt-9 flex w-full justify-end">
           <Button size="lg" type="submit">

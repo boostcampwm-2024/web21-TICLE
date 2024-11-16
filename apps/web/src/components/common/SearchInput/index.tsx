@@ -1,6 +1,6 @@
 import { forwardRef } from 'react';
 
-import CloseIc from '@/assets/icons/close.svg?react';
+import CloseCircleIc from '@/assets/icons/close.svg?react';
 import SearchIc from '@/assets/icons/search.svg?react';
 import { VALIDATION_STATE } from '@/constants/variants';
 import cn from '@/utils/cn';
@@ -47,7 +47,7 @@ function SearchInput(
       <div className="absolute right-3 top-3">
         {value ? (
           <button type="button" onClick={onClear} aria-label="검색어 지우기">
-            <CloseIc className="fill-main" aria-hidden />
+            <CloseCircleIc className="fill-main" aria-hidden />
           </button>
         ) : (
           <button type="button" onClick={() => onSearch(value)} aria-label="검색하기">
