@@ -10,7 +10,7 @@ import { SignupRequestDto } from './dto/signupRequest.dto';
 interface SocialUserDto {
   provider: string;
   socialId: string;
-  username: string;
+  nickname: string;
   email: string;
   profileImageUrl?: string;
 }
@@ -22,12 +22,12 @@ export class AuthService {
     private jwtService: JwtService
   ) {}
 
-  async signup(signupRequestDto: SignupRequestDto) {
-    return this.userService.createUser(signupRequestDto);
+  async signupLocal(signupRequestDto: SignupRequestDto) {
+    return this.userService.createLocalUser(signupRequestDto);
   }
 
-  async validateLocalLogin(email: string, inputPassword: string) {
-    const user = await this.userService.findUserByEmail(email);
+  async validateLocalLogin(username: string, inputPassword: string) {
+    const user = await this.userService.findUserByUsername(username);
     if (!user) {
       throw new UnauthorizedException('잘못된 로그인 정보');
     }
@@ -39,20 +39,18 @@ export class AuthService {
     return result;
   }
 
-  async checkSocialUser(userSocialData: SocialUserDto) {
-    const user = await this.userService.findUserByEmail(userSocialData.email);
+  async checkSocialUser(socialUserData: SocialUserDto) {
+    const user = await this.userService.findUserBySocialIdAndProvider(
+      socialUserData.socialId,
+      socialUserData.provider
+    );
     if (!user) {
-      const randomValue = Math.random().toString(36).slice(-15);
-      return await this.userService.createUser({
-        ...userSocialData,
-        password: randomValue,
-      });
     }
     return user;
   }
 
   async createJWT(user: Omit<User, 'password'>) {
-    const payload = { username: user.username, sub: user.id, email: user.email };
+    const payload = { sub: user.id };
     return {
       access_token: this.jwtService.sign(payload),
     };

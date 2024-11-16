@@ -22,7 +22,7 @@ export class AuthController {
   @ApiResponse({ status: 201, type: SignupResponseDto })
   @ApiResponse({ status: 409 })
   async signup(@Body() createUserDto: SignupRequestDto): Promise<SignupResponseDto> {
-    const user = await this.authService.signup(createUserDto);
+    const user = await this.authService.signupLocal(createUserDto);
     return {
       status: 'success',
       data: user,

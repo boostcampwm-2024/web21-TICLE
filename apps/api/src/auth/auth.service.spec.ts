@@ -124,10 +124,10 @@ describe('AuthService', () => {
       const { password, ...userWithoutPassword } = mockCreatedUser;
       mockUserService.createUser.mockResolvedValue(userWithoutPassword);
 
-      const result = await service.signup(signupDto);
+      const result = await service.signupLocal(signupDto);
 
       expect(result).toEqual(userWithoutPassword);
-      expect(userService.createUser).toHaveBeenCalledWith(signupDto);
+      expect(userService.createLocalUser).toHaveBeenCalledWith(signupDto);
     });
   });
 

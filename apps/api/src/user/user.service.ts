@@ -14,9 +14,9 @@ export class UserService {
     private userRepository: Repository<User>
   ) {}
 
-  async createUser(createUserDto: CreateUserDto) {
+  async createLocalUser(createUserDto: CreateUserDto) {
     try {
-      await this.throwIfExistEmail(createUserDto.email);
+      await this.throwIfExistUsername(createUserDto.username);
       const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
       const user = this.userRepository.create({
         ...createUserDto,
@@ -30,7 +30,7 @@ export class UserService {
     }
   }
 
-  async throwIfExistUser(username: string) {
+  async throwIfExistUsername(username: string) {
     const existingUser = await this.userRepository.exists({
       where: {
         username,
@@ -38,17 +38,6 @@ export class UserService {
     });
     if (existingUser) {
       throw new ConflictException('이미 사용 중인 사용자 이름입니다.');
-    }
-  }
-
-  async throwIfExistEmail(email: string) {
-    const existingEmail = await this.userRepository.exists({
-      where: {
-        email,
-      },
-    });
-    if (existingEmail) {
-      throw new ConflictException('이미 사용 중인 이메일입니다.');
     }
   }
 
@@ -62,9 +51,9 @@ export class UserService {
     return user;
   }
 
-  async findUserByEmail(email: string): Promise<User | null> {
+  async findUserBySocialIdAndProvider(socialId: string, provider: string): Promise<User | null> {
     const user = await this.userRepository.findOne({
-      where: { email },
+      where: { socialId, provider },
     });
     if (!user) {
       return null;
