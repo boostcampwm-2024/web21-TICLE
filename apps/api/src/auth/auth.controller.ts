@@ -7,7 +7,7 @@ import { User } from '@/entity/user.entity';
 import { AuthService } from './auth.service';
 import { LocalLoginRequestDto } from './dto/localLoginRequest.dto';
 import { LoginSuccessResponseDto } from './dto/localLoginResponse.dto';
-import { SignupRequestDto } from './dto/signupRequest.dto';
+import { LocalSignupRequestDto } from './dto/localSignupRequest.dto';
 import { SignupResponseDto } from './dto/signupResponse.dto';
 import { GitHubAuthGuard } from './github/github-auth.guard';
 import { LocalAuthGuard } from './local/local-auth.guard';
@@ -21,7 +21,7 @@ export class AuthController {
   @ApiOperation({ summary: '회원가입' })
   @ApiResponse({ status: 201, type: SignupResponseDto })
   @ApiResponse({ status: 409 })
-  async signup(@Body() createUserDto: SignupRequestDto): Promise<SignupResponseDto> {
+  async signup(@Body() createUserDto: LocalSignupRequestDto): Promise<SignupResponseDto> {
     const user = await this.authService.signupLocal(createUserDto);
     return {
       status: 'success',

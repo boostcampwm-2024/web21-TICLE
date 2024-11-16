@@ -5,7 +5,8 @@ import { Repository } from 'typeorm';
 
 import { User } from '@/entity/user.entity';
 
-import { CreateUserDto } from './dto/create-user.dto';
+import { CreateLocalUserDto } from './dto/createLocalUser.dto';
+import { CreateSocialUserDto } from './dto/createSocialUser.dto';
 
 @Injectable()
 export class UserService {
@@ -14,7 +15,7 @@ export class UserService {
     private userRepository: Repository<User>
   ) {}
 
-  async createLocalUser(createUserDto: CreateUserDto) {
+  async createLocalUser(createUserDto: CreateLocalUserDto) {
     try {
       await this.throwIfExistUsername(createUserDto.username);
       const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
@@ -22,6 +23,17 @@ export class UserService {
         ...createUserDto,
         password: hashedPassword,
       });
+      await this.userRepository.save(user);
+      const { password, ...result } = user;
+      return result;
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async createSocialUser(socialUserData: CreateSocialUserDto) {
+    try {
+      const user = this.userRepository.create(socialUserData);
       await this.userRepository.save(user);
       const { password, ...result } = user;
       return result;

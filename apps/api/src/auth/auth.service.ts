@@ -5,7 +5,8 @@ import * as bcrypt from 'bcrypt';
 import { User } from '@/entity/user.entity';
 import { UserService } from '@/user/user.service';
 
-import { SignupRequestDto } from './dto/signupRequest.dto';
+import { CreateSocialUserDto } from '@/user/dto/createSocialUser.dto';
+import { LocalSignupRequestDto } from './dto/localSignupRequest.dto';
 
 interface SocialUserDto {
   provider: string;
@@ -22,8 +23,8 @@ export class AuthService {
     private jwtService: JwtService
   ) {}
 
-  async signupLocal(signupRequestDto: SignupRequestDto) {
-    return this.userService.createLocalUser(signupRequestDto);
+  async signupLocal(signupRequestDto: LocalSignupRequestDto) {
+    return this.userService.createLocalUser({ provider: 'local', ...signupRequestDto });
   }
 
   async validateLocalLogin(username: string, inputPassword: string) {
@@ -39,12 +40,13 @@ export class AuthService {
     return result;
   }
 
-  async checkSocialUser(socialUserData: SocialUserDto) {
+  async checkSocialUser(socialUserData: CreateSocialUserDto) {
     const user = await this.userService.findUserBySocialIdAndProvider(
       socialUserData.socialId,
       socialUserData.provider
     );
     if (!user) {
+      return this.userService.createSocialUser(socialUserData);
     }
     return user;
   }
