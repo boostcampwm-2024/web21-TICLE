@@ -63,7 +63,7 @@ function TextInput(
     type = 'text',
     className,
     onChange,
-    ...props
+    ...rest
   }: TextInputProps,
   ref: Ref<HTMLInputElement>
 ) {
@@ -105,7 +105,7 @@ function TextInput(
         aria-required={required}
         aria-invalid={!!errorMessage}
         aria-describedby={getDescribedByIds({ ariaId, description, errorMessage, maxLength })}
-        {...props}
+        {...rest}
       />
       <div className="relative">
         {errorMessage && (

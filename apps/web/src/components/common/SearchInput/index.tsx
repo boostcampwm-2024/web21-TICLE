@@ -19,7 +19,7 @@ interface SearchInputProps
 }
 
 function SearchInput(
-  { value, onChange, onClear, onSearch, size = 'md', className, ...props }: SearchInputProps,
+  { value, onChange, onClear, onSearch, size = 'md', className, ...rest }: SearchInputProps,
   ref: Ref<HTMLInputElement>
 ) {
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -42,7 +42,7 @@ function SearchInput(
         onChange={handleChange}
         onKeyDown={handleKeyDown}
         className={cn(inputVariants({ validation: VALIDATION_STATE.default }), 'pr-10', className)}
-        {...props}
+        {...rest}
       />
       <div className="absolute right-3 top-3">
         {value ? (

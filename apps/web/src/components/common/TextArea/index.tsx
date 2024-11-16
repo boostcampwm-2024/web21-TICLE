@@ -54,7 +54,7 @@ function TextArea(
     size,
     className,
     onChange,
-    ...props
+    ...rest
   }: TextAreaProps,
   ref: Ref<HTMLTextAreaElement>
 ) {
@@ -95,7 +95,7 @@ function TextArea(
         aria-required={required}
         aria-invalid={!!errorMessage}
         aria-describedby={getDescribedByIds({ ariaId, description, errorMessage, maxLength })}
-        {...props}
+        {...rest}
       />
       <div className="relative">
         {errorMessage && (
