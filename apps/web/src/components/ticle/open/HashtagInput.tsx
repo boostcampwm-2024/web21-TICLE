@@ -31,7 +31,7 @@ function HashtagInput({ label, required, control }: HashtagInputProps, ref: Ref<
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key !== 'Enter') return;
+    if (e.key !== 'Enter' || e.nativeEvent.isComposing) return;
     e.preventDefault();
 
     const newHashag = inputValue.trim();
