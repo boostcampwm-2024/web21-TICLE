@@ -1,3 +1,4 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from '@tanstack/react-router';
 import { useForm } from 'react-hook-form';
 
@@ -6,13 +7,18 @@ import TextArea from '@/components/common/TextArea';
 import TextInput from '@/components/common/TextInput';
 
 import FormBox from './FormBox';
+import {
+  OpenFormInputs,
+  ticleOpenFormSchema,
+} from '../../../../../../packages/types/src/formSchema';
 
 function Open() {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({
+  } = useForm<OpenFormInputs>({
+    resolver: zodResolver(ticleOpenFormSchema),
     mode: 'onChange',
   });
   const navigate = useNavigate();
@@ -29,29 +35,15 @@ function Open() {
           <TextInput
             label="이름(닉네임)"
             required
-            {...register('name', {
-              required: {
-                value: true,
-                message: '필수로 입력해 주세요.',
-              },
-              maxLength: {
-                value: 10,
-                message: '10자 이내로 입력해 주세요.',
-              },
-            })}
-            errorMessage={errors.name?.message as string}
+            {...register('name')}
+            errorMessage={errors.name?.message}
           />
           <TextInput
             label="이메일"
             type="email"
             required
-            {...register('email', {
-              required: {
-                value: true,
-                message: '필수로 입력해 주세요.',
-              },
-            })}
-            errorMessage={errors.email?.message as string}
+            {...register('email')}
+            errorMessage={errors.email?.message}
           />
           <TextArea
             label="자기소개"
@@ -59,34 +51,16 @@ function Open() {
             size="md"
             required
             maxLength={500}
-            {...register('selfIntroduction', {
-              required: {
-                value: true,
-                message: '필수로 입력해 주세요.',
-              },
-              maxLength: {
-                value: 500,
-                message: '500자 이내로 입력해 주세요.',
-              },
-            })}
-            errorMessage={errors.selfIntroduction?.message as string}
+            {...register('selfIntroduction')}
+            errorMessage={errors.selfIntroduction?.message}
           />
         </FormBox>
         <FormBox title="티클 정보" className="mt-14">
           <TextInput
             label="제목"
             required
-            {...register('title', {
-              required: {
-                value: true,
-                message: '필수로 입력해 주세요.',
-              },
-              maxLength: {
-                value: 30,
-                message: '30자 이내로 입력해 주세요.',
-              },
-            })}
-            errorMessage={errors.title?.message as string}
+            {...register('title')}
+            errorMessage={errors.title?.message}
           />
           <TextArea
             label="상세 설명"
@@ -94,21 +68,16 @@ function Open() {
             size="sm"
             required
             maxLength={1500}
-            {...register('ticleIntroduction', {
-              required: {
-                value: true,
-                message: '필수로 입력해 주세요.',
-              },
-              maxLength: {
-                value: 1500,
-                message: '1500자 이내로 입력해 주세요.',
-              },
-            })}
-            errorMessage={errors.ticleIntroduction?.message as string}
+            {...register('ticleIntroduction')}
+            errorMessage={errors.ticleIntroduction?.message}
           />
-          <TextInput label="해시태그" required />
+          <TextInput
+            label="해시태그"
+            required
+            {...register('hashtags')}
+            errorMessage={errors.hashtags?.message}
+          />
         </FormBox>
-
         <div className="mt-9 flex w-full justify-end">
           <Button size="lg" type="submit">
             티클 개설하기

@@ -12,6 +12,7 @@
     "format:check": "prettier --check \"src/**/*.{js,jsx,ts,tsx,json,md}\""
   },
   "dependencies": {
+    "@hookform/resolvers": "^3.9.1",
     "@repo/shared": "workspace:*",
     "@repo/types": "workspace:*",
     "@tanstack/react-router": "^1.79.0",
