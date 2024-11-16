@@ -1,5 +1,6 @@
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
 
+import BasicLayout from '@/components/common/BasicLayout';
 import DashboardTab from '@/components/dashboard';
 
 export const Route = createFileRoute('/dashboard')({
@@ -15,9 +16,9 @@ export const Route = createFileRoute('/dashboard')({
 
 function RouteComponent() {
   return (
-    <>
+    <BasicLayout>
       <DashboardTab />
       <Outlet />
-    </>
+    </BasicLayout>
   );
 }
