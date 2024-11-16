@@ -72,7 +72,7 @@ function TextArea(
   return (
     <div className="flex flex-col gap-1.5">
       {label && (
-        <label htmlFor={label} className="text-title2 text-main">
+        <label htmlFor={ariaId} className="text-title2 text-main">
           {label}
           {required && (
             <span className="text-error" aria-label="필수 입력">
