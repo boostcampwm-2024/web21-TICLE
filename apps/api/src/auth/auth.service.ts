@@ -3,9 +3,9 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 
 import { User } from '@/entity/user.entity';
+import { CreateSocialUserDto } from '@/user/dto/createSocialUser.dto';
 import { UserService } from '@/user/user.service';
 
-import { CreateSocialUserDto } from '@/user/dto/createSocialUser.dto';
 import { LocalSignupRequestDto } from './dto/localSignupRequest.dto';
 
 @Injectable()
