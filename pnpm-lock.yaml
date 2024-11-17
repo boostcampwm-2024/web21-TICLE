@@ -326,6 +326,9 @@ importers:
       '@repo/tsconfig':
         specifier: workspace:*
         version: link:../../packages/tsconfig
+      '@storybook/addon-actions':
+        specifier: ^8.4.4
+        version: 8.4.4(storybook@8.4.4(prettier@3.3.3))
       '@storybook/addon-essentials':
         specifier: ^8.4.4
         version: 8.4.4(@types/react@18.3.12)(storybook@8.4.4(prettier@3.3.3))(webpack-sources@3.2.3)
@@ -362,6 +365,9 @@ importers:
       autoprefixer:
         specifier: ^10.4.20
         version: 10.4.20(postcss@8.4.47)
+      chromatic:
+        specifier: ^11.18.1
+        version: 11.18.1
       eslint:
         specifier: ^8.57.0
         version: 8.57.1

@@ -1,0 +1,64 @@
+name: '스토리북 CD'
+on:
+  push:
+    branches: [main, release]
+  pull_request:
+    paths:
+      - 'apps/web/**'
+      - '.storybook/**'
+
+jobs:
+  chromatic:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Publish to Chromatic
+        id: chromatic
+        uses: chromaui/action@latest
+        with:
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          workingDir: apps/web
+          buildScriptName: storybook:build
+          onlyChanged: true
+          exitZeroOnChanges: true
+          autoAcceptChanges: ${{ github.event_name == 'push' && contains(github.ref, 'main') }}
+
+      - name: Find Comment
+        if: github.event_name == 'pull_request'
+        uses: peter-evans/find-comment@v2
+        id: find_comment
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: 🎨 스토리북 Preview 확인하기
+
+      - name: Create or update comment
+        if: github.event_name == 'pull_request'
+        uses: peter-evans/create-or-update-comment@v2
+        with:
+          comment-id: ${{ steps.find_comment.outputs.comment-id }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            # 🎨 스토리북 Preview 확인하기
+
+            ## 📚 Links
+            - ▶️ [Preview Storybook](${{ steps.chromatic.outputs.storybookUrl }})
+            - 🔍 [View Build Details](${{ steps.chromatic.outputs.buildUrl }})
+          edit-mode: replace
