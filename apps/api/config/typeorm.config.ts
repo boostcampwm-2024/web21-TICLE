@@ -18,6 +18,8 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
       autoLoadEntities: true,
       synchronize: nodeEnv !== 'production',
       logging: nodeEnv !== 'production',
+      supportBigNumbers: true,
+      bigNumberStrings: false,
     };
   }
 }

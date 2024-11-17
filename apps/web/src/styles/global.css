@@ -52,7 +52,20 @@
     @apply transition-colors duration-200 ease-in-out;
   }
 
-  input:focus {
+  input:focus,
+  textarea:focus {
     outline: none;
+  }
+
+  /* input type='search'의 기본 css 제거 */
+  input::-ms-clear,
+  input::-ms-reveal {
+    opacity: 0;
+  }
+  input::-webkit-search-decoration,
+  input::-webkit-search-cancel-button,
+  input::-webkit-search-results-button,
+  input::-webkit-search-results-decoration {
+    opacity: 0;
   }
 }

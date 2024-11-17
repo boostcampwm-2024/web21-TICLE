@@ -1,7 +1,6 @@
 import {
   Entity,
   Index,
-  Column,
   PrimaryGeneratedColumn,
   ManyToOne,
   JoinColumn,
@@ -17,11 +16,11 @@ export class Applicant {
   @PrimaryGeneratedColumn({ type: 'bigint' })
   id: number;
 
-  @ManyToOne(() => Ticle, (ticle) => ticle.id)
+  @ManyToOne(() => Ticle, (ticle) => ticle.applicants)
   @JoinColumn({ name: 'ticle_id' })
   ticle: Ticle;
 
-  @ManyToOne(() => User, (user) => user.ticles)
+  @ManyToOne(() => User, (user) => user.applicants)
   @JoinColumn({ name: 'user_id' })
   user: User;
 
