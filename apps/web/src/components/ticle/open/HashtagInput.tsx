@@ -57,7 +57,7 @@ function HashtagInput({ required, control }: HashtagInputProps, ref: Ref<HTMLInp
           </span>
         )}
       </label>
-      <div className="flex w-full gap-2 rounded-base border bg-white px-3.5 py-2.5 text-body1 text-main placeholder:text-weak">
+      <div className="flex w-full items-center gap-2 rounded-base border bg-white px-3.5 py-2.5 text-body1 text-main placeholder:text-weak">
         {hashtags.map((tag, idx) => (
           <Badge key={`${tag}-${idx}`} className="flex flex-shrink-0 gap-1">
             {tag}
@@ -73,7 +73,7 @@ function HashtagInput({ required, control }: HashtagInputProps, ref: Ref<HTMLInp
           id={ariaId}
           onChange={onInputChange}
           onKeyDown={handleKeyDown}
-          className="w-full"
+          className="h-10 w-full"
           placeholder="작성 후 Enter 키를 눌러 추가해 주세요."
         />
       </div>
