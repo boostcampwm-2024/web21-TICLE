@@ -1,11 +1,10 @@
 import { forwardRef, useId, Ref, KeyboardEvent } from 'react';
 import { Control, useController } from 'react-hook-form';
+import { OpenFormInputs } from '@repo/types/src/formSchema';
 
 import CloseCircleIc from '@/assets/icons/close-circle.svg?react';
 import ExclamationIc from '@/assets/icons/exclamation.svg?react';
 import Badge from '@/components/common/Badge';
-
-import { OpenFormInputs } from '../../../../../../packages/types/src/formSchema';
 
 interface HashtagInputProps {
   required?: boolean;
