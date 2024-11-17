@@ -1,4 +1,3 @@
-
 import {
   ConnectedSocket,
   MessageBody,
@@ -6,6 +5,7 @@ import {
   WebSocketGateway,
 } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
+
 import { MediasoupService } from 'src/mediasoup/mediasoup.service';
 
 @WebSocketGateway()

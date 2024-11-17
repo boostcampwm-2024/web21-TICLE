@@ -7,5 +7,4 @@ import { MediasoupService } from './mediasoup.service';
   providers: [MediasoupService],
   exports: [MediasoupService],
 })
-
 export class MediasoupModule {}

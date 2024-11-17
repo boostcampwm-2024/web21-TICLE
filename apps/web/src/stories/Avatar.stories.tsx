@@ -58,8 +58,6 @@ import Avatar from '@/components/common/Avatar';
 export default meta;
 type Story = StoryObj<typeof Avatar>;
 
-const sampleImageUrl = '/api/placeholder/100/100';
-
 export const Default: Story = {
   args: {
     size: 'md',

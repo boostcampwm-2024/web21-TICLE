@@ -1,5 +1,6 @@
 import { Router } from 'mediasoup/node/lib/RouterTypes';
 import { Worker } from 'mediasoup/node/lib/types';
+
 import { config } from './config';
 import { Peer } from './peer';
 

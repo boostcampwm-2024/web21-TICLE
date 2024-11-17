@@ -176,7 +176,7 @@ function FooterVariantDialog() {
       <Dialog.Root isOpen={dialog1.isOpen} onClose={dialog1.onClose}>
         <Dialog.Title>단일 버튼 예시</Dialog.Title>
         <Dialog.Description>
-          Footer variant가 'single'인 경우입니다. 사용자 액션이 하나일 경우 사용합니다.
+          {`Footer variant가 'single'인 경우입니다. 사용자 액션이 하나일 경우 사용합니다.`}
         </Dialog.Description>
         <Dialog.Footer variant="single">
           <Button size="full" onClick={dialog1.onClose}>
@@ -189,8 +189,8 @@ function FooterVariantDialog() {
       <Dialog.Root isOpen={dialog2.isOpen} onClose={dialog2.onClose}>
         <Dialog.Title>가로 버튼 배치 예시</Dialog.Title>
         <Dialog.Description>
-          Footer variant가 'horizontal'인 경우입니다. 위계가 유사한 두 개의 액션이 존재할 경우
-          사용합니다.
+          {`Footer variant가 'horizontal'인 경우입니다. 위계가 유사한 두 개의 액션이 존재할 경우
+          사용합니다.`}
         </Dialog.Description>
         <Dialog.Footer variant="horizontal">
           <Button size="full" onClick={dialog2.onClose} variant="secondary">
@@ -206,8 +206,8 @@ function FooterVariantDialog() {
       <Dialog.Root isOpen={dialog3.isOpen} onClose={dialog3.onClose}>
         <Dialog.Title>세로 버튼 배치 예시</Dialog.Title>
         <Dialog.Description>
-          Footer variant가 'vertical'인 경우입니다. 중요도 차이가 큰 두 개의 액션이 존재할 경우
-          사용합니다.
+          {`Footer variant가 'vertical'인 경우입니다. 중요도 차이가 큰 두 개의 액션이 존재할 경우
+          사용합니다.`}
         </Dialog.Description>
         <Dialog.Footer variant="vertical">
           <Button size="full" onClick={dialog3.onClose}>
