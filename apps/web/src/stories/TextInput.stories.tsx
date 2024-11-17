@@ -1,33 +1,41 @@
 import { action } from '@storybook/addon-actions';
 
-import TextArea from '@/components/common/TextArea';
+import TextInput, { SIZE_VARIANTS } from '@/components/common/TextInput';
 
 import type { Meta, StoryObj } from '@storybook/react';
 
-const meta: Meta<typeof TextArea> = {
-  title: 'common/TextArea',
-  component: TextArea,
+const meta: Meta<typeof TextInput> = {
+  title: 'common/TextInput',
+  component: TextInput,
   tags: ['autodocs'],
   argTypes: {
     size: {
       control: 'inline-radio',
-      options: ['sm', 'md', 'lg'],
-      description: 'TextArea의 크기를 지정합니다.',
+      options: ['sm', 'md', 'full'],
+      description: '입력창의 크기를 지정합니다.',
       table: {
-        type: { summary: 'sm | md | lg' },
+        type: { summary: 'sm | md | full' },
+      },
+    },
+    type: {
+      control: 'inline-radio',
+      options: ['text', 'email', 'password', 'number'],
+      description: '입력창의 타입을 지정합니다.',
+      table: {
+        type: { summary: 'text | email | password | number' },
       },
     },
     label: {
       control: 'text',
-      description: 'TextArea의 레이블입니다.',
+      description: '입력창의 레이블입니다.',
     },
     description: {
       control: 'text',
-      description: 'TextArea에 대한 설명문구입니다.',
+      description: '입력창에 대한 설명문구입니다.',
     },
     placeholder: {
       control: 'text',
-      description: 'TextArea의 placeholder 텍스트입니다.',
+      description: '입력창의 placeholder 텍스트입니다.',
     },
     required: {
       control: 'boolean',
@@ -53,17 +61,17 @@ const meta: Meta<typeof TextArea> = {
 <h3>Usage</h3>
 
 \`\`\`jsx
-import TextArea from '@/components/common/TextArea';
+import TextInput from '@/components/common/TextInput';
 
 // Basic usage
-<TextArea
+<TextInput
   label="Label"
   size="md"
   placeholder="내용을 입력해주세요."
 />
 
 // With description and required
-<TextArea
+<TextInput
   label="Label"
   description="Description text"
   required
@@ -72,20 +80,25 @@ import TextArea from '@/components/common/TextArea';
 />
 
 // With maxLength
-<TextArea
+<TextInput
   label="Label"
-  maxLength={200}
+  maxLength={50}
   size="md"
   placeholder="내용을 입력해주세요."
 />
 
 // With error
-<TextArea
+<TextInput
   label="Label"
   errorMessage="Error message"
   size="md"
   placeholder="내용을 입력해주세요."
 />
+
+// Different types
+<TextInput type="email" />
+<TextInput type="password" />
+<TextInput type="number" />
 \`\`\`
 `,
       },
@@ -94,21 +107,23 @@ import TextArea from '@/components/common/TextArea';
 };
 
 export default meta;
-type Story = StoryObj<typeof TextArea>;
+type Story = StoryObj<typeof TextInput>;
 
-interface TextAreaProps {
-  size: 'sm' | 'md' | 'lg';
+interface TextInputProps {
+  size?: keyof typeof SIZE_VARIANTS;
+  type?: 'text' | 'email' | 'password' | 'number';
   label?: string;
   description?: string;
   placeholder?: string;
   required?: boolean;
   maxLength?: number;
   errorMessage?: string;
-  defaultValue?: string;
+  defaultValue?: string | number | readonly string[];
 }
 
-const TextAreaComponent = ({
-  size,
+const TextInputComponent = ({
+  size = 'md',
+  type = 'text',
   label = 'Label',
   description,
   placeholder = '내용을 입력해주세요.',
@@ -116,10 +131,11 @@ const TextAreaComponent = ({
   maxLength,
   errorMessage,
   defaultValue,
-}: TextAreaProps) => {
+}: TextInputProps) => {
   return (
-    <TextArea
+    <TextInput
       size={size}
+      type={type}
       label={label}
       description={description}
       placeholder={placeholder}
@@ -135,10 +151,11 @@ const TextAreaComponent = ({
 export const Default: Story = {
   args: {
     size: 'md',
+    type: 'text',
     label: 'Label',
     placeholder: '내용을 입력해주세요.',
   },
-  render: (args) => <TextAreaComponent {...args} />,
+  render: (args) => <TextInputComponent {...args} />,
 };
 
 export const WithDescription: Story = {
@@ -154,14 +171,14 @@ export const WithDescription: Story = {
       include: ['size', 'label', 'description', 'required'],
     },
   },
-  render: (args) => <TextAreaComponent {...args} />,
+  render: (args) => <TextInputComponent {...args} />,
 };
 
 export const WithCounter: Story = {
   args: {
     size: 'md',
     label: 'Label',
-    maxLength: 200,
+    maxLength: 50,
     placeholder: '내용을 입력해주세요.',
   },
   parameters: {
@@ -169,7 +186,7 @@ export const WithCounter: Story = {
       include: ['size', 'maxLength'],
     },
   },
-  render: (args) => <TextAreaComponent {...args} />,
+  render: (args) => <TextInputComponent {...args} />,
 };
 
 export const WithError: Story = {
@@ -184,7 +201,7 @@ export const WithError: Story = {
       include: ['size', 'errorMessage'],
     },
   },
-  render: (args) => <TextAreaComponent {...args} />,
+  render: (args) => <TextInputComponent {...args} />,
 };
 
 export const WithDefaultValue: Story = {
@@ -199,7 +216,28 @@ export const WithDefaultValue: Story = {
       include: ['size', 'defaultValue'],
     },
   },
-  render: (args) => <TextAreaComponent {...args} />,
+  render: (args) => <TextInputComponent {...args} />,
+};
+
+export const Types: Story = {
+  parameters: {
+    controls: { disable: true },
+  },
+  render: () => {
+    const types = ['text', 'email', 'password', 'number'] as const;
+    return (
+      <div className="flex flex-col gap-4">
+        {types.map((type) => (
+          <TextInputComponent
+            key={type}
+            type={type}
+            label={`${type} type`}
+            placeholder={`Enter ${type}...`}
+          />
+        ))}
+      </div>
+    );
+  },
 };
 
 export const Size: Story = {
@@ -207,15 +245,15 @@ export const Size: Story = {
     controls: { disable: true },
   },
   render: () => {
-    const sizes = ['sm', 'md', 'lg'] as const;
+    const sizes = ['sm', 'md', 'full'] as const;
     return (
       <div className="flex flex-col gap-4">
         {sizes.map((size) => (
-          <TextAreaComponent
+          <TextInputComponent
             key={size}
             size={size}
             label={`${size} size`}
-            placeholder={`${size} size textarea`}
+            placeholder={`${size} size input`}
           />
         ))}
       </div>
