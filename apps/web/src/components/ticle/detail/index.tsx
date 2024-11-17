@@ -3,7 +3,7 @@ import ClockIc from '@/assets/icons/clock.svg?react';
 import Avatar from '@/components/common/Avatar';
 import Badge from '@/components/common/Badge';
 import Button from '@/components/common/Button';
-import { formatDateTimeRange, formateDateTime } from '@/utils/date';
+import { formatDateTimeRange } from '@/utils/date';
 
 const DATA = {
   speakerName: '김철수',
