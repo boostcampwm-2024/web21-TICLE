@@ -3,6 +3,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 import { AppModule } from '@/app.module';
 
+import { HttpExceptionFilter } from './httpexception.filter';
 import { ResponseInterceptor } from './response.interceptor';
 
 async function bootstrap() {
@@ -18,6 +19,7 @@ async function bootstrap() {
   SwaggerModule.setup('api-doc', app, document);
 
   app.useGlobalInterceptors(new ResponseInterceptor());
+  app.useGlobalFilters(new HttpExceptionFilter());
   app.setGlobalPrefix('api');
   await app.listen(process.env.PORT ?? 3000);
 }
