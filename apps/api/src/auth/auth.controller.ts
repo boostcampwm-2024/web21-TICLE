@@ -10,6 +10,7 @@ import { LocalSignupRequestDto } from './dto/localSignupRequest.dto';
 import { LoginSuccessResponseDto } from './dto/loginResponse.dto';
 import { SignupResponseDto } from './dto/signupResponse.dto';
 import { GitHubAuthGuard } from './github/github-auth.guard';
+import { GoogleAuthGuard } from './google/google-auth.guard';
 import { LocalAuthGuard } from './local/local-auth.guard';
 
 @Controller('auth')
@@ -44,10 +45,18 @@ export class AuthController {
   }
 
   @Get('google/login')
+  @UseGuards(GoogleAuthGuard)
   googleAuth() {}
 
   @Get('google/callback')
-  googleAuthCallback() {}
+  @UseGuards(GoogleAuthGuard)
+  async googleAuthCallback(@Req() req: ExpressRequest): Promise<LoginSuccessResponseDto> {
+    const jwtToken = await this.authService.createJWT(req.user as Omit<User, 'password'>);
+    return {
+      status: 'success',
+      data: jwtToken,
+    };
+  }
 
   @Get('github/login')
   @UseGuards(GitHubAuthGuard)
