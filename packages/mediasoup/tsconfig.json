@@ -1,0 +1,18 @@
+{
+  "extends": "@repo/tsconfig/base.json",
+  "compilerOptions": {
+    "target": "es2020",
+    "module": "esnext",
+    "lib": ["esnext"],
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "declaration": true,
+    "outDir": "dist"
+  },
+  // TODO: 자유롭게 수정
+  "include": ["src", "*.ts"],
+  "exclude": ["node_modules", "dist"]
+}
