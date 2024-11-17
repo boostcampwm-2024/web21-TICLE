@@ -32,6 +32,11 @@ function HashtagInput({ required, control }: HashtagInputProps, ref: Ref<HTMLInp
   });
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    handleAddHashtag(e);
+    handleDeleteTag(e);
+  };
+
+  const handleAddHashtag = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key !== 'Enter' || e.nativeEvent.isComposing) return;
     e.preventDefault();
 
@@ -42,7 +47,14 @@ function HashtagInput({ required, control }: HashtagInputProps, ref: Ref<HTMLInp
     onInputChange('');
   };
 
-  const handleDelete = (indexToRemove: number) => {
+  const handleDeleteTag = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key !== 'Backspace' || input !== '') return;
+
+    const newTags = hashtags.slice(0, hashtags.length - 1);
+    onHashtagsChange(newTags);
+  };
+
+  const handleDeleteBtnClick = (indexToRemove: number) => {
     const newTags = hashtags.filter((_, idx) => idx !== indexToRemove);
     onHashtagsChange(newTags);
   };
@@ -61,7 +73,7 @@ function HashtagInput({ required, control }: HashtagInputProps, ref: Ref<HTMLInp
         {hashtags.map((tag, idx) => (
           <Badge key={`${tag}-${idx}`} className="flex flex-shrink-0 gap-1">
             {tag}
-            <button type="button" onClick={() => handleDelete(idx)}>
+            <button type="button" onClick={() => handleDeleteBtnClick(idx)}>
               <CloseCircleIc width={12} height={12} className="fill-primary" />
             </button>
           </Badge>
