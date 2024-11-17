@@ -1,7 +1,7 @@
 import { fontFamily } from 'tailwindcss/defaultTheme';
 import type { Config } from 'tailwindcss';
 
-const config: Config = {
+const tailwindConfig: Config = {
   content: [
     './src/routes/**/*.{js,ts,jsx,tsx}',
     './src/components/**/*.{js,ts,jsx,tsx}',
@@ -137,4 +137,4 @@ const config: Config = {
   },
 };
 
-export default config;
+export default tailwindConfig;
