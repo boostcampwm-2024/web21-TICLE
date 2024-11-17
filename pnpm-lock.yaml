@@ -365,9 +365,6 @@ importers:
       autoprefixer:
         specifier: ^10.4.20
         version: 10.4.20(postcss@8.4.47)
-      chromatic:
-        specifier: ^11.18.1
-        version: 11.18.1
       eslint:
         specifier: ^8.57.0
         version: 8.57.1
