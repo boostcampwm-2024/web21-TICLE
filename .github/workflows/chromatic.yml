@@ -56,9 +56,8 @@ jobs:
           comment-id: ${{ steps.find_comment.outputs.comment-id }}
           issue-number: ${{ github.event.pull_request.number }}
           body: |
-            # 🎨 스토리북 Preview 확인하기
+            ### 🎨 스토리북 확인하기
 
-            ## 📚 Links
-            - ▶️ [Preview Storybook](${{ steps.chromatic.outputs.storybookUrl }})
-            - 🔍 [View Build Details](${{ steps.chromatic.outputs.buildUrl }})
+            - 👀 [Preview](${{ steps.chromatic.outputs.storybookUrl }})
+            - 🔍 [Build Details](${{ steps.chromatic.outputs.buildUrl }})
           edit-mode: replace
