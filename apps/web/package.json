@@ -33,6 +33,7 @@
     "@eslint/js": "^9.13.0",
     "@repo/lint": "workspace:*",
     "@repo/tsconfig": "workspace:*",
+    "@storybook/addon-actions": "^8.4.4",
     "@storybook/addon-essentials": "^8.4.4",
     "@storybook/addon-interactions": "^8.4.4",
     "@storybook/addon-onboarding": "^8.4.4",
