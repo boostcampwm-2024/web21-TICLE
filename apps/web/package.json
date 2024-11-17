@@ -12,7 +12,6 @@
     "format:check": "prettier --check \"src/**/*.{js,jsx,ts,tsx,json,md}\""
   },
   "dependencies": {
-    "@repo/shared": "workspace:*",
     "@repo/types": "workspace:*",
     "@tanstack/react-router": "^1.79.0",
     "@tanstack/router-vite-plugin": "^1.79.0",
