@@ -1,10 +1,7 @@
-export type SuccessResponse<T> = {
-  status: 'success';
-  data: {
-    result: T;
-    message: string;
-  };
-};
+export interface Response<T> {
+  status: string;
+  data: T;
+}
 
 export type ErrorResponse = {
   status: 'error';
