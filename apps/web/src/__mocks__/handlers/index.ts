@@ -9,16 +9,16 @@ const API_URL = ENV.API_URL;
 
 export const handlers = [
   // ticle handlers
-  http.get(`${API_URL}/ticle/:ticleId`, getTicle),
   http.get(`${API_URL}/ticle/list`, getTicleList),
+  http.get(`${API_URL}/ticle/:ticleId`, getTicle),
   http.post(`${API_URL}/ticle`, createTicle),
   http.post(`${API_URL}/ticle/:ticleId/apply`, applyTicle),
 
   // dashboard handlers
   http.get(`${API_URL}/dashboard`, getAppliedTicleList),
-  http.get(`${API_URL}/dashboard/:ticleId/applicants`, getAppliedTicleList),
   http.post(`${API_URL}/dashboard/start`, getAppliedTicleList),
   http.post(`${API_URL}/dashboard/join`, getAppliedTicleList),
+  http.get(`${API_URL}/dashboard/:ticleId/applicants`, getAppliedTicleList),
 
   // auth handlers
   http.get(`${API_URL}/auth/google/login`, logIn),

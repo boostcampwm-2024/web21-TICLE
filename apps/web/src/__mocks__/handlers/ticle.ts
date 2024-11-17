@@ -32,7 +32,6 @@ export const getTicle: HttpResponseResolver<{ ticleId: string }> = async ({ para
 export const getTicleList: HttpResponseResolver = async ({ request }) => {
   const url = new URL(request.url);
   const searchParams = url.searchParams;
-
   const page = Number(searchParams.get('page')) || 1;
   const pageSize = Number(searchParams.get('pageSize')) || 10;
   const isOpen = searchParams.get('isOpen') === 'true';
