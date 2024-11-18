@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from '@tanstack/react-router';
 import { useForm } from 'react-hook-form';
-import { OpenFormInputs, ticleOpenFormSchema } from '@repo/types/src/formSchema';
+import { OpenFormInputs, ticleOpenFormSchema } from '@repo/types';
 
 import Button from '@/components/common/Button';
 import TextArea from '@/components/common/TextArea';

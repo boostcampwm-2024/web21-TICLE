@@ -1,6 +1,6 @@
 import { forwardRef, useId, Ref, KeyboardEvent } from 'react';
 import { Control, useController } from 'react-hook-form';
-import { OpenFormInputs } from '@repo/types/src/formSchema';
+import { OpenFormInputs } from '@repo/types';
 
 import CloseCircleIc from '@/assets/icons/close-circle.svg?react';
 import ExclamationIc from '@/assets/icons/exclamation.svg?react';

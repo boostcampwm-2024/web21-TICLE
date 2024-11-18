@@ -2,7 +2,7 @@ import { isSameDay } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import DatePicker from 'react-datepicker';
 import { Control, useController } from 'react-hook-form';
-import { OpenFormInputs } from '@repo/types/src/formSchema';
+import { OpenFormInputs } from '@repo/types';
 
 import ExclamationIc from '@/assets/icons/exclamation.svg?react';
 
