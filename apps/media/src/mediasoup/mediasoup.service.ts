@@ -71,7 +71,7 @@ export class MediasoupService implements OnModuleInit {
     room.getPeer(socketId).addTransport(transport);
 
     return {
-      id: transport.id,
+      transportId: transport.id,
       iceParameters: transport.iceParameters,
       iceCandidates: transport.iceCandidates,
       dtlsParameters: transport.dtlsParameters,
