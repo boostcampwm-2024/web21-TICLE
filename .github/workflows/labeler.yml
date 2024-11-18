@@ -26,3 +26,4 @@ jobs:
           l_max_size: '1000'
           xl_label: 'size/xl'
           fail_if_xl: 'false'
+          message_if_xl: ''

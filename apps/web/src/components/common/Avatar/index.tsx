@@ -39,7 +39,7 @@ function Avatar({ alt = 'avatar', src, size, className, ...rest }: AvatarProps) 
       className={cn(avatarVariants({ size }), className)}
       {...rest}
     >
-      {src && <img src={src} alt={alt} className="object-cover" />}
+      {src && <img src={src} alt={alt} className="h-full w-full object-cover" />}
       {!src && <PersonIc className="h-full w-full fill-weak text-weak" />}
     </div>
   );

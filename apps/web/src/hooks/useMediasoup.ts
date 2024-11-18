@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useParams } from '@tanstack/react-router';
 import * as mediasoup from 'mediasoup-client';
 import { Device, Producer, ProducerOptions } from 'mediasoup-client/lib/types';
