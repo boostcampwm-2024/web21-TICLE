@@ -50,4 +50,10 @@ export class TickleDetailResponseDto {
     type: [String],
   })
   tags: string[];
+
+  @ApiProperty({
+    example: 'img url',
+    description: '발표자 프로필 이미지 Url',
+  })
+  speakerImgUrl: string;
 }
