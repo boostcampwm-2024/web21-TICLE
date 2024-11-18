@@ -7,10 +7,9 @@ const customErrorMap: z.ZodErrorMap = (issue: z.IssueData, ctx: z.ErrorMapCtx) =
     case z.ZodIssueCode.too_small:
       if (issue.type === 'string' || issue.type === 'array')
         if (issue.minimum === 1) {
-          {
-            message = '필수로 입력해 주세요.';
-          }
+          message = '필수로 입력해 주세요.';
         }
+
       break;
     case z.ZodIssueCode.too_big:
       if (issue.type === 'string') {
