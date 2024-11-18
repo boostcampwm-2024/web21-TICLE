@@ -2,6 +2,6 @@
 module.exports = {
   extends: [require.resolve('@repo/lint')],
   parserOptions: {
-    project: true,
+    project: './tsconfig.json',
   },
 };

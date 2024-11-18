@@ -5,7 +5,7 @@ import * as bcrypt from 'bcrypt';
 import { UserService } from '@/user/user.service';
 
 import { AuthService } from './auth.service';
-import { SignupRequestDto } from './dto/signupRequest.dto';
+import { LocalSignupRequestDto } from './dto/localSignupRequest.dto';
 
 jest.mock('bcrypt');
 
@@ -101,15 +101,13 @@ describe('AuthService', () => {
   });
 
   describe('signup', () => {
-    const signupDto: SignupRequestDto = {
+    const signupDto: LocalSignupRequestDto = {
       username: 'newuser',
       password: 'password123',
       nickname: 'New User',
       email: 'new@example.com',
       introduce: 'Hello World',
       profileImageUrl: 'http://example.com/new.jpg',
-      provider: 'local',
-      socialId: null,
     };
 
     const mockCreatedUser = {
@@ -124,10 +122,10 @@ describe('AuthService', () => {
       const { password, ...userWithoutPassword } = mockCreatedUser;
       mockUserService.createUser.mockResolvedValue(userWithoutPassword);
 
-      const result = await service.signup(signupDto);
+      const result = await service.signupLocal(signupDto);
 
       expect(result).toEqual(userWithoutPassword);
-      expect(userService.createUser).toHaveBeenCalledWith(signupDto);
+      expect(userService.createLocalUser).toHaveBeenCalledWith(signupDto);
     });
   });
 

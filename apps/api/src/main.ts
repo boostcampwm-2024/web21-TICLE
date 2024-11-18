@@ -3,6 +3,8 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 import { AppModule } from '@/app.module';
 
+import { ResponseInterceptor } from './response.interceptor';
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
@@ -15,6 +17,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api-doc', app, document);
 
+  app.useGlobalInterceptors(new ResponseInterceptor());
   app.setGlobalPrefix('api');
   await app.listen(process.env.PORT ?? 3000);
 }

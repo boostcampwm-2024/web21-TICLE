@@ -1,0 +1,16 @@
+[
+  {
+    "id": 1,
+    "title": "티클 제목 1",
+    "startTime": "2024-11-01T09:00:00Z",
+    "endTime": "2024-11-01T12:00:00Z",
+    "ticleStatus": "active"
+  },
+  {
+    "id": 2,
+    "title": "티클 제목 2",
+    "startTime": "2024-11-02T14:00:00Z",
+    "endTime": "2024-11-02T17:00:00Z",
+    "ticleStatus": "completed"
+  }
+]

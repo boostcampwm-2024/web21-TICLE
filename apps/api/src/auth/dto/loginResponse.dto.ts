@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class LocalLoginResponseDto {
+export class LoginSuccessResponseDto {
   @ApiProperty({ example: 'success' })
   status: string;
 

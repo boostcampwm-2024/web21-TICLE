@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "title": "모던 리액트와 상태관리 전략",
+    "tags": ["React", "Frontend", "State Management"],
+    "startTime": "2024-12-01T14:00:00.000Z",
+    "endTime": "2024-12-01T16:00:00.000Z",
+    "speakerName": "김철수",
+    "applicantsCount": 42,
+    "createdAt": "2024-12-01T16:00:00.000Z"
+  }
+]

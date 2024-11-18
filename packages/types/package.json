@@ -1,14 +1,28 @@
 {
   "name": "@repo/types",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch"
+  },
   "dependencies": {
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@repo/lint": "workspace:*",
     "@repo/tsconfig": "workspace:*",
-    "@repo/lint": "workspace:*"
+    "tsup": "^8.3.5",
+    "typescript": "^5.6.3"
   }
 }

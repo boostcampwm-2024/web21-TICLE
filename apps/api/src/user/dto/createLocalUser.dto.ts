@@ -1,10 +1,9 @@
-export class CreateUserDto {
+export class CreateLocalUserDto {
   username: string;
   password: string;
-  nickname: string;
   email: string;
+  provider: string;
+  nickname?: string;
   introduce?: string;
   profileImageUrl?: string;
-  provider?: string;
-  socialId?: string;
 }
