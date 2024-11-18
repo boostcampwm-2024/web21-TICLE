@@ -136,8 +136,11 @@ export class MediasoupService implements OnModuleInit {
   async getProducers(roomId: string, socketId: string) {
     const room = this.roomService.getRoom(roomId);
 
-    const peerIds = [...room.peers.keys()];
-    const producers = peerIds.filter((id) => id !== socketId);
+    const producers = [...room.peers.values()]
+      .filter((peer) => peer.socketId !== socketId)
+      .flatMap((peer) =>
+        [...peer.producers.values()].map((producer) => producer.id),
+      );
 
     return [...new Set(producers)];
   }

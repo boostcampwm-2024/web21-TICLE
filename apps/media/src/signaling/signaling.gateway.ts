@@ -27,7 +27,9 @@ export class SignalingGateway {
     @ConnectedSocket() client: Socket,
     @MessageBody('roomId') roomId: string,
   ) {
+    client.join(roomId);
     const rtpCapabilities = this.mediasoupService.joinRoom(roomId, client.id);
+    client.to(roomId).emit('new-peer', { peerId: client.id });
     return { rtpCapabilities };
   }
 
