@@ -1,8 +1,7 @@
-import { Body, Controller, Get, Post, Req, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Request as ExpressRequest } from 'express';
 
-import { User } from '@/entity/user.entity';
+import { GetUserId } from '@/common/decorator/get-userId.decorator';
 
 import { AuthService } from './auth.service';
 import { LocalLoginRequestDto } from './dto/localLoginRequest.dto';
@@ -36,8 +35,8 @@ export class AuthController {
   @ApiResponse({ status: 200, type: LoginSuccessResponseDto })
   @ApiResponse({ status: 401 })
   @UseGuards(LocalAuthGuard)
-  async localLogin(@Request() req: ExpressRequest): Promise<LoginSuccessResponseDto> {
-    const jwtToken = await this.authService.createJWT(req.user as Omit<User, 'password'>);
+  async localLogin(@GetUserId() userId: number): Promise<LoginSuccessResponseDto> {
+    const jwtToken = await this.authService.createJWT(userId);
     return {
       status: 'success',
       data: jwtToken,
@@ -50,8 +49,8 @@ export class AuthController {
 
   @Get('google/callback')
   @UseGuards(GoogleAuthGuard)
-  async googleAuthCallback(@Req() req: ExpressRequest): Promise<LoginSuccessResponseDto> {
-    const jwtToken = await this.authService.createJWT(req.user as Omit<User, 'password'>);
+  async googleAuthCallback(@GetUserId() userId: number): Promise<LoginSuccessResponseDto> {
+    const jwtToken = await this.authService.createJWT(userId);
     return {
       status: 'success',
       data: jwtToken,
@@ -64,8 +63,8 @@ export class AuthController {
 
   @Get('github/callback')
   @UseGuards(GitHubAuthGuard)
-  async githubAuthCallback(@Req() req: ExpressRequest): Promise<LoginSuccessResponseDto> {
-    const jwtToken = await this.authService.createJWT(req.user as Omit<User, 'password'>);
+  async githubAuthCallback(@GetUserId() userId: number): Promise<LoginSuccessResponseDto> {
+    const jwtToken = await this.authService.createJWT(userId);
     return {
       status: 'success',
       data: jwtToken,

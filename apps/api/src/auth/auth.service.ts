@@ -2,7 +2,6 @@ import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 
-import { User } from '@/entity/user.entity';
 import { CreateSocialUserDto } from '@/user/dto/createSocialUser.dto';
 import { UserService } from '@/user/user.service';
 
@@ -47,8 +46,8 @@ export class AuthService {
     return user;
   }
 
-  async createJWT(user: Omit<User, 'password'>) {
-    const payload = { sub: user.id };
+  async createJWT(userId: number) {
+    const payload = { sub: userId };
     return {
       access_token: this.jwtService.sign(payload),
     };
