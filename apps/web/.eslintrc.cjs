@@ -22,10 +22,10 @@ module.exports = {
     'import/resolver': {
       typescript: {
         project: [baseConfig, appConfig, nodeConfig],
-        node: {
-          paths: ['src'],
-          extensions: ['.js', '.jsx', '.ts', '.tsx'],
-        },
+      },
+      node: {
+        paths: ['src'],
+        extensions: ['.js', '.jsx', '.ts', '.tsx'],
       },
     },
   },

@@ -1,6 +1,6 @@
 import { forwardRef } from 'react';
 
-import CloseIc from '@/assets/icons/close.svg?react';
+import CloseCircleIc from '@/assets/icons/close.svg?react';
 import SearchIc from '@/assets/icons/search.svg?react';
 import { VALIDATION_STATE } from '@/constants/variants';
 import cn from '@/utils/cn';
@@ -19,7 +19,7 @@ interface SearchInputProps
 }
 
 function SearchInput(
-  { value, onChange, onClear, onSearch, size = 'md', className, ...props }: SearchInputProps,
+  { value, onChange, onClear, onSearch, size = 'md', className, ...rest }: SearchInputProps,
   ref: Ref<HTMLInputElement>
 ) {
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -42,12 +42,12 @@ function SearchInput(
         onChange={handleChange}
         onKeyDown={handleKeyDown}
         className={cn(inputVariants({ validation: VALIDATION_STATE.default }), 'pr-10', className)}
-        {...props}
+        {...rest}
       />
       <div className="absolute right-3 top-3">
         {value ? (
           <button type="button" onClick={onClear} aria-label="검색어 지우기">
-            <CloseIc className="fill-main" aria-hidden />
+            <CloseCircleIc className="fill-main" aria-hidden />
           </button>
         ) : (
           <button type="button" onClick={() => onSearch(value)} aria-label="검색하기">
