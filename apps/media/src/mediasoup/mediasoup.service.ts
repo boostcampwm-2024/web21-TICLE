@@ -5,8 +5,9 @@ import * as mediasoup from 'mediasoup';
 import { types } from 'mediasoup';
 import { Socket } from 'socket.io';
 
-import { config } from 'src/config';
-import { Room } from 'src/room';
+import { config } from 'src/mediasoup/config';
+import { RoomService } from 'src/room/room.service';
+import { Room } from 'src/room/room';
 
 @Injectable()
 export class MediasoupService implements OnModuleInit {
@@ -14,7 +15,7 @@ export class MediasoupService implements OnModuleInit {
   private workers = [];
   private rooms: Map<string, Room> = new Map();
 
-  constructor() {}
+  constructor(private roomService: RoomService) {}
 
   public async onModuleInit() {
     const numWorkers = os.cpus().length;
@@ -47,13 +48,10 @@ export class MediasoupService implements OnModuleInit {
 
   public async createRoom(roomId: string) {
     const worker = this.getWorker();
-    if (this.rooms.has(roomId)) {
-      return roomId;
-    }
-    const room = new Room(roomId);
-    this.rooms.set(roomId, room);
-    await room.init(worker);
-    return roomId;
+    const router = await worker.createRouter({
+      mediaCodecs: config.mediasoup.router.mediaCodecs,
+    });
+    return this.roomService.createRoom(roomId, router);
   }
 
   public joinRoom(roomId: string, socket: Socket) {

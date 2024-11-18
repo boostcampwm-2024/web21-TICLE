@@ -1,5 +1,4 @@
-import { types } from "mediasoup";
-
+import { types } from 'mediasoup';
 
 export class Peer {
   socketId: string;

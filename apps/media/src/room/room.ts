@@ -1,24 +1,15 @@
 import { Router } from 'mediasoup/node/lib/RouterTypes';
-import { Worker } from 'mediasoup/node/lib/types';
 
-import { config } from './config';
 import { Peer } from './peer';
 
 export class Room {
   id: string;
   router: Router;
   peers: Map<string, Peer>;
-  constructor(roomId: string) {
+  constructor(roomId: string, router: Router) {
     this.id = roomId;
-    this.router = null;
+    this.router = router;
     this.peers = new Map();
-  }
-
-  async init(worker: Worker) {
-    this.router = await worker.createRouter({
-      mediaCodecs: config.mediasoup.router.mediaCodecs,
-    });
-    return this.router;
   }
 
   getRouter() {
