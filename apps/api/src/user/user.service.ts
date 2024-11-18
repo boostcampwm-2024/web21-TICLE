@@ -5,7 +5,8 @@ import { Repository } from 'typeorm';
 
 import { User } from '@/entity/user.entity';
 
-import { CreateUserDto } from './dto/create-user.dto';
+import { CreateLocalUserDto } from './dto/createLocalUser.dto';
+import { CreateSocialUserDto } from './dto/createSocialUser.dto';
 
 @Injectable()
 export class UserService {
@@ -14,10 +15,9 @@ export class UserService {
     private userRepository: Repository<User>
   ) {}
 
-  async createUser(createUserDto: CreateUserDto) {
+  async createLocalUser(createUserDto: CreateLocalUserDto) {
     try {
-      await this.throwIfExistUser(createUserDto.username);
-      await this.throwIfExistEmail(createUserDto.email);
+      await this.throwIfExistUsername(createUserDto.username);
       const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
       const user = this.userRepository.create({
         ...createUserDto,
@@ -31,7 +31,18 @@ export class UserService {
     }
   }
 
-  async throwIfExistUser(username: string) {
+  async createSocialUser(socialUserData: CreateSocialUserDto) {
+    try {
+      const user = this.userRepository.create(socialUserData);
+      await this.userRepository.save(user);
+      const { password, ...result } = user;
+      return result;
+    } catch (error) {
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async throwIfExistUsername(username: string) {
     const existingUser = await this.userRepository.exists({
       where: {
         username,
@@ -42,20 +53,19 @@ export class UserService {
     }
   }
 
-  async throwIfExistEmail(email: string) {
-    const existingEmail = await this.userRepository.exists({
-      where: {
-        email,
-      },
-    });
-    if (existingEmail) {
-      throw new ConflictException('이미 사용 중인 이메일입니다.');
-    }
-  }
-
   async findUserByUsername(username: string): Promise<User | null> {
     const user = await this.userRepository.findOne({
       where: { username },
+    });
+    if (!user) {
+      return null;
+    }
+    return user;
+  }
+
+  async findUserBySocialIdAndProvider(socialId: string, provider: string): Promise<User | null> {
+    const user = await this.userRepository.findOne({
+      where: { socialId, provider },
     });
     if (!user) {
       return null;

@@ -54,7 +54,7 @@ function TextArea(
     size,
     className,
     onChange,
-    ...props
+    ...rest
   }: TextAreaProps,
   ref: Ref<HTMLTextAreaElement>
 ) {
@@ -72,7 +72,7 @@ function TextArea(
   return (
     <div className="flex flex-col gap-1.5">
       {label && (
-        <label htmlFor={label} className="text-title2 text-main">
+        <label htmlFor={ariaId} className="text-title2 text-main">
           {label}
           {required && (
             <span className="text-error" aria-label="필수 입력">
@@ -95,7 +95,7 @@ function TextArea(
         aria-required={required}
         aria-invalid={!!errorMessage}
         aria-describedby={getDescribedByIds({ ariaId, description, errorMessage, maxLength })}
-        {...props}
+        {...rest}
       />
       <div className="relative">
         {errorMessage && (
