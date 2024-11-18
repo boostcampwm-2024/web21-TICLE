@@ -271,6 +271,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@repo/mediasoup':
+        specifier: workspace:*
+        version: link:../../packages/mediasoup
       '@repo/types':
         specifier: workspace:*
         version: link:../../packages/types

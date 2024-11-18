@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@repo/types": "workspace:*",
+    "@repo/mediasoup": "workspace:*",
     "@tanstack/react-router": "^1.79.0",
     "@tanstack/router-vite-plugin": "^1.79.0",
     "class-variance-authority": "^0.7.0",
