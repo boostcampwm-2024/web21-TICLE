@@ -7,10 +7,7 @@ import {
 import { Socket } from 'socket.io';
 
 import { MediasoupService } from 'src/mediasoup/mediasoup.service';
-import {
-  ConnectTransportDto,
-  CreateTransportDto,
-} from '../../../../packages/mediasoup/src/server';
+import { server } from '@repo/mediasoup';
 
 @WebSocketGateway()
 export class SignalingGateway {
@@ -37,7 +34,7 @@ export class SignalingGateway {
   @SubscribeMessage('create-transport')
   async createTransport(
     @ConnectedSocket() client: Socket,
-    @MessageBody() createTransportDto: CreateTransportDto,
+    @MessageBody() createTransportDto: server.CreateTransportDto,
   ) {
     const transportOptions = await this.mediasoupService.createTransport(
       createTransportDto.roomId,
@@ -49,7 +46,7 @@ export class SignalingGateway {
   @SubscribeMessage('connect-transport')
   async connectTransport(
     @ConnectedSocket() client: Socket,
-    @MessageBody() connectTransportDto: ConnectTransportDto,
+    @MessageBody() connectTransportDto: server.ConnectTransportDto,
   ) {
     const socketId = client.id;
     const { transportId, dtlsParameters, roomId } = connectTransportDto;
