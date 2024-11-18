@@ -1,11 +1,12 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 
 import { User } from '@/entity/user.entity';
+import { CreateSocialUserDto } from '@/user/dto/createSocialUser.dto';
 import { UserService } from '@/user/user.service';
 
-import { SignupRequestDto } from './dto/signupRequest.dto';
+import { LocalSignupRequestDto } from './dto/localSignupRequest.dto';
 
 @Injectable()
 export class AuthService {
@@ -13,6 +14,14 @@ export class AuthService {
     private userService: UserService,
     private jwtService: JwtService
   ) {}
+
+  async signupLocal(signupRequestDto: LocalSignupRequestDto) {
+    const existingUser = await this.userService.findUserByUsername(signupRequestDto.username);
+    if (existingUser) {
+      throw new BadRequestException('이미 사용 중인 사용자 이름입니다.');
+    }
+    return this.userService.createLocalUser({ provider: 'local', ...signupRequestDto });
+  }
 
   async validateLocalLogin(username: string, inputPassword: string) {
     const user = await this.userService.findUserByUsername(username);
@@ -27,12 +36,19 @@ export class AuthService {
     return result;
   }
 
-  async signup(signupRequestDto: SignupRequestDto) {
-    return this.userService.createUser(signupRequestDto);
+  async checkSocialUser(socialUserData: CreateSocialUserDto) {
+    const user = await this.userService.findUserBySocialIdAndProvider(
+      socialUserData.socialId,
+      socialUserData.provider
+    );
+    if (!user) {
+      return this.userService.createSocialUser(socialUserData);
+    }
+    return user;
   }
 
   async createJWT(user: Omit<User, 'password'>) {
-    const payload = { username: user.username, sub: user.id };
+    const payload = { sub: user.id };
     return {
       access_token: this.jwtService.sign(payload),
     };

@@ -7,6 +7,7 @@ import { UserModule } from '@/user/user.module';
 
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
+import { GitHubStrategy } from './github/github.strategy';
 import { JwtStrategy } from './jwt/jwt.strategy';
 import { LocalStrategy } from './local/local.strategy';
 
@@ -25,6 +26,6 @@ import { LocalStrategy } from './local/local.strategy';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, LocalStrategy, JwtStrategy],
+  providers: [AuthService, LocalStrategy, JwtStrategy, GitHubStrategy],
 })
 export class AuthModule {}
