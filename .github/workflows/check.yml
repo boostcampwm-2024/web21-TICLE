@@ -23,10 +23,12 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '18'
-          cache: 'pnpm'
 
       - name: Install Packages
         run: pnpm install --frozen-lockfile
+
+      - name: Build @repo
+        run: pnpm build:packages
 
       - name: Run Check Scripts
         run: |

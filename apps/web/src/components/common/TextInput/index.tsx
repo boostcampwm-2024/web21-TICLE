@@ -4,8 +4,8 @@ import { ChangeEvent, forwardRef, InputHTMLAttributes, Ref, useId, useRef } from
 
 import ExclamationIc from '@/assets/icons/exclamation.svg?react';
 import { VALIDATION_STATE } from '@/constants/variants';
+import { getDescribedByIds } from '@/utils/a11y';
 import cn from '@/utils/cn';
-import getDescribedByIds from '@/utils/getDescribedByIds';
 
 export const SIZE_VARIANTS = {
   sm: 'sm',
@@ -63,7 +63,7 @@ function TextInput(
     type = 'text',
     className,
     onChange,
-    ...props
+    ...rest
   }: TextInputProps,
   ref: Ref<HTMLInputElement>
 ) {
@@ -105,7 +105,7 @@ function TextInput(
         aria-required={required}
         aria-invalid={!!errorMessage}
         aria-describedby={getDescribedByIds({ ariaId, description, errorMessage, maxLength })}
-        {...props}
+        {...rest}
       />
       <div className="relative">
         {errorMessage && (
