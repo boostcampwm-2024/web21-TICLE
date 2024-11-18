@@ -19,10 +19,11 @@ export class RoomService {
   }
 
   getRoom(roomId: string) {
-    if (!this.rooms.has(roomId)) {
+    const room = this.rooms.get(roomId)
+    if (!room) {
       throw new WsException(`방이 존재하지 않습니다.`);
     }
-    return this.rooms.get(roomId);
+    return room;
   }
 
 }

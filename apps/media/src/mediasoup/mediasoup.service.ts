@@ -54,7 +54,7 @@ export class MediasoupService implements OnModuleInit {
 
   joinRoom(roomId: string, socketId: string) {
     const room = this.roomService.getRoom(roomId);
-    if (room.isExistPeer(socketId)) {
+    if (room.hasPeer(socketId)) {
       throw new WsException(`Peer ${socketId} already exists`);
     }
     room.addPeer(socketId);
@@ -135,17 +135,11 @@ export class MediasoupService implements OnModuleInit {
 
   async getProducers(roomId: string, socketId: string) {
     const room = this.roomService.getRoom(roomId);
-    const peer = room.getPeer(socketId);
-    if (!peer) {
-      throw new WsException(`peer ${socketId} not found`);
-    }
 
-    const peers = [...room.peers.values()];
-    const producers = peers
-      .map((peer) => {
-        return [...peer.producers.keys()];
-      })
-      .flat();
+    const peerIds = [...room.peers.keys()];
+    const producers = peerIds.filter((id) => {
+      id !== socketId;
+    });
 
     return [...new Set(producers)];
   }
