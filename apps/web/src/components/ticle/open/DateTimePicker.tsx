@@ -1,3 +1,4 @@
+import { isSameDay } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import DatePicker from 'react-datepicker';
 import { Control, useController } from 'react-hook-form';
@@ -28,14 +29,6 @@ function DateTimePicker({ required, control }: DateTimePickerProps) {
     name: 'endDate',
     control,
   });
-
-  const isSameDay = (date1: Date, date2: Date) => {
-    return (
-      date1.getFullYear() === date2.getFullYear() &&
-      date1.getMonth() === date2.getMonth() &&
-      date1.getDate() === date2.getDate()
-    );
-  };
 
   const filterPassedTime = (time: Date) => {
     const selectedDate = new Date(time);
