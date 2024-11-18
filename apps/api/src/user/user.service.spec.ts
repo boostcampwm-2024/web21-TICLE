@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 
 import { User } from '@/entity/user.entity';
 
-import { CreateUserDto } from './dto/create-user.dto';
+import { CreateLocalUserDto } from './dto/createLocalUser.dto';
 import { UserService } from './user.service';
 
 jest.mock('bcrypt', () => ({
@@ -42,7 +42,7 @@ describe('UserService', () => {
   });
 
   describe('createUser', () => {
-    const createUserDto: CreateUserDto = {
+    const createUserDto: CreateLocalUserDto = {
       username: 'testuser',
       password: 'password123',
       nickname: 'Test User',
@@ -50,7 +50,6 @@ describe('UserService', () => {
       introduce: 'Hello, I am a test user',
       profileImageUrl: 'http://example.com/image.jpg',
       provider: 'local',
-      socialId: '12345',
     };
 
     const mockUser = {
@@ -68,7 +67,7 @@ describe('UserService', () => {
       mockRepository.create.mockReturnValue(mockUser);
       mockRepository.save.mockResolvedValue(mockUser);
 
-      const result = await service.createUser(createUserDto);
+      const result = await service.createLocalUser(createUserDto);
 
       expect(bcrypt.hash).toHaveBeenCalledWith(createUserDto.password, 10);
       expect(mockRepository.create).toHaveBeenCalledWith({
@@ -85,7 +84,7 @@ describe('UserService', () => {
     it('should throw an error if user creation fails', async () => {
       mockRepository.save.mockRejectedValue(new Error('Database error'));
 
-      await expect(service.createUser(createUserDto)).rejects.toThrow('Database error');
+      await expect(service.createLocalUser(createUserDto)).rejects.toThrow('Database error');
     });
   });
 

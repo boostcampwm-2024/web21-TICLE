@@ -47,9 +47,6 @@ importers:
       '@nestjs/typeorm':
         specifier: ^10.0.2
         version: 10.0.2(@nestjs/common@10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.4.6(@nestjs/common@10.4.6(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/platform-express@10.4.6)(@nestjs/websockets@10.4.7)(reflect-metadata@0.2.2)(rxjs@7.8.1))(reflect-metadata@0.2.2)(rxjs@7.8.1)(typeorm@0.3.20(mysql2@3.11.3)(ts-node@10.9.2(@types/node@20.17.6)(typescript@5.6.3)))
-      '@repo/shared':
-        specifier: workspace:*
-        version: link:../../packages/shared
       '@repo/types':
         specifier: workspace:*
         version: link:../../packages/types
@@ -278,8 +275,9 @@ importers:
         specifier: ^3.9.1
         version: 3.9.1(react-hook-form@7.53.2(react@18.3.1))
       '@repo/shared':
+      '@repo/mediasoup':
         specifier: workspace:*
-        version: link:../../packages/shared
+        version: link:../../packages/mediasoup
       '@repo/types':
         specifier: workspace:*
         version: link:../../packages/types
@@ -414,7 +412,14 @@ importers:
         specifier: '>=5.0.0'
         version: 5.6.3
 
-  packages/shared:
+  packages/mediasoup:
+    dependencies:
+      mediasoup:
+        specifier: ^3.15.0
+        version: 3.15.1
+      mediasoup-client:
+        specifier: ^3.7.17
+        version: 3.7.17
     devDependencies:
       '@repo/lint':
         specifier: workspace:*
@@ -422,6 +427,12 @@ importers:
       '@repo/tsconfig':
         specifier: workspace:*
         version: link:../tsconfig
+      tsup:
+        specifier: ^8.3.5
+        version: 8.3.5(jiti@1.21.6)(postcss@8.4.47)(tsx@4.19.2)(typescript@5.6.3)(yaml@2.5.1)
+      typescript:
+        specifier: ^5.6.3
+        version: 5.6.3
 
   packages/tsconfig: {}
 

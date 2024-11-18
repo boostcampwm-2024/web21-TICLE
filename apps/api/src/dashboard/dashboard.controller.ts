@@ -1,4 +1,6 @@
-import { Controller, Get, Param, ParseIntPipe, Post, Query } from '@nestjs/common';
+import { Controller, Get, Param, Post, Query, UseGuards, Request } from '@nestjs/common';
+
+import { JwtAuthGuard } from '@/auth/jwt/jwt-auth.guard';
 
 import { DashboardService } from './dashboard.service';
 
@@ -6,24 +8,24 @@ import { DashboardService } from './dashboard.service';
 export class DashboardController {
   constructor(private readonly dashboardService: DashboardService) {}
 
-  @Get('created')
-  async getCreatedTicleList(@Query('speakerId', ParseIntPipe) speakerId: number) {
-    return await this.dashboardService.getCreatedTicleList(speakerId);
+  @Get()
+  @UseGuards(JwtAuthGuard)
+  async getTicleList(@Request() req: any, @Query('isSpeaker') isSpeaker: boolean) {
+    if (isSpeaker) {
+      return this.dashboardService.getCreatedTicleList(req.user.id);
+    } else {
+      return this.dashboardService.getAppliedTicleList(req.user.id);
+    }
   }
 
-  @Get('applied')
-  async getAppliedTicleList(@Query('userId', ParseIntPipe) userId: number) {
-    return await this.dashboardService.getAppliedTicleList(userId);
-  }
-
-  @Get('created/:ticleId/applicants')
+  @Get(':ticleId/applicants')
   async getApplicants(@Param('ticleId') ticleId: number) {
     return await this.dashboardService.getApplicants(ticleId);
   }
 
-  @Post('created/:ticleId/start')
+  @Post('start')
   startTicle(@Param('ticleId') ticleId: number) {}
 
-  @Post('applied/:ticleId/join')
+  @Post('join')
   joinTicle(@Param('ticleId') ticleId: number) {}
 }
