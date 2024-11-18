@@ -3,6 +3,7 @@ import { Controller, Get, Param, Post, Query, UseGuards, Request } from '@nestjs
 import { JwtAuthGuard } from '@/auth/jwt/jwt-auth.guard';
 
 import { DashboardService } from './dashboard.service';
+import { GetUserId } from '@/common/decorator/get-userId.decorator';
 
 @Controller('dashboard')
 export class DashboardController {
@@ -10,11 +11,11 @@ export class DashboardController {
 
   @Get()
   @UseGuards(JwtAuthGuard)
-  async getTicleList(@Request() req: any, @Query('isSpeaker') isSpeaker: boolean) {
+  async getTicleList(@GetUserId() userId: number, @Query('isSpeaker') isSpeaker: boolean) {
     if (isSpeaker) {
-      return this.dashboardService.getCreatedTicleList(req.user.id);
+      return this.dashboardService.getCreatedTicleList(userId);
     } else {
-      return this.dashboardService.getAppliedTicleList(req.user.id);
+      return this.dashboardService.getAppliedTicleList(userId);
     }
   }
 
