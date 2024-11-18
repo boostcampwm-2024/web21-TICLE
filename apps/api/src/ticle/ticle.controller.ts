@@ -1,6 +1,8 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query, UsePipes } from '@nestjs/common';
 
-import { CreateTicleDto } from './dto/createTicleDto';
+import { ZodValidationPipe } from '@/zodpipevalidation';
+
+import { CreateTicleDto, CreateTicleSchema } from './dto/createTicleDto';
 import { GetTicleListQueryDto } from './dto/getTicleListQueryDto';
 import { TickleDetailResponseDto } from './dto/ticleDetailDto';
 import { SortType } from './sortType.enum';
@@ -11,6 +13,7 @@ export class TicleController {
   constructor(private readonly ticleService: TicleService) {}
 
   @Post()
+  @UsePipes(new ZodValidationPipe(CreateTicleSchema))
   async createTicle(@Body() createTicleDto: CreateTicleDto) {
     const newTicle = await this.ticleService.createTicle(createTicleDto);
     return newTicle.id;
