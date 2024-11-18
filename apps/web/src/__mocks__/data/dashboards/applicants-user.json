@@ -1,0 +1,10 @@
+[
+  {
+    "nickname": "참여자 닉네임 1",
+    "profileImageUrl": "https://example.com/profile1.jpg"
+  },
+  {
+    "nickname": "참여자 닉네임 2",
+    "profileImageUrl": "https://example.com/profile2.jpg"
+  }
+]
