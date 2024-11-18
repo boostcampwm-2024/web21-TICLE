@@ -3,10 +3,8 @@ import * as os from 'os';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import * as mediasoup from 'mediasoup';
 import { types } from 'mediasoup';
-import { Socket } from 'socket.io';
 
 import { RoomService } from 'src/room/room.service';
-import { Room } from 'src/room/room';
 import { Worker } from 'mediasoup/node/lib/types';
 import { MediasoupConfig } from './config';
 import { WsException } from '@nestjs/websockets';
@@ -15,7 +13,6 @@ import { WsException } from '@nestjs/websockets';
 export class MediasoupService implements OnModuleInit {
   private nextWorkerIndex = 0;
   private workers: Worker[] = [];
-  private rooms: Map<string, Room> = new Map();
 
   constructor(
     private roomService: RoomService,
@@ -58,7 +55,7 @@ export class MediasoupService implements OnModuleInit {
   joinRoom(roomId: string, socketId: string) {
     const room = this.roomService.getRoom(roomId);
     if (room.isExistPeer(socketId)) {
-      throw new Error(`Peer ${socketId} already exists`);
+      throw new WsException(`Peer ${socketId} already exists`);
     }
     room.addPeer(socketId);
 
@@ -67,7 +64,6 @@ export class MediasoupService implements OnModuleInit {
 
   async createTransport(roomId: string, socketId: string) {
     const room = this.roomService.getRoom(roomId);
-
     const router = room.getRouter();
     const transport = await router.createWebRtcTransport(
       this.mediasoupConfig.webRtcTransport,
@@ -88,40 +84,38 @@ export class MediasoupService implements OnModuleInit {
     roomId: string,
     socketId: string,
   ) {
-    const room = this.rooms.get(roomId);
-
+    const room = this.roomService.getRoom(roomId);
     const peer = room.getPeer(socketId);
     const transport = peer.getTransport(transportId);
-
     await transport.connect({ dtlsParameters });
   }
 
   async produce(
-    id: string,
+    socketId: string,
     kind: types.MediaKind,
     rtpParameters: types.RtpParameters,
     transportId: string,
     roomId: string,
   ) {
-    const room = this.rooms.get(roomId);
-    const peer = room.getPeer(id);
+    const room = this.roomService.getRoom(roomId);
+    const peer = room.getPeer(socketId);
     const transport = peer.getTransport(transportId);
     const producer = await transport.produce({ kind, rtpParameters });
 
     peer.addProducer(producer);
+
     return producer;
   }
 
   async consume(
-    id: string,
+    socketId: string,
     producerId: string,
     roomId: string,
     transportId: string,
     rtpCapabilities: types.RtpCapabilities,
   ) {
-    const room = this.rooms.get(roomId);
-    const peer = room.getPeer(id);
-
+    const room = this.roomService.getRoom(roomId);
+    const peer = room.getPeer(socketId);
     const transport = peer.getTransport(transportId);
     const consumer = await transport.consume({
       producerId,
@@ -139,19 +133,14 @@ export class MediasoupService implements OnModuleInit {
     };
   }
 
-  async getProducers(roomId: string, peerId: string) {
-    const room = this.rooms.get(roomId);
-    if (!room) {
-      throw new Error(`Room ${roomId} not found`);
-    }
-
-    const peer = room.getPeer(peerId);
+  async getProducers(roomId: string, socketId: string) {
+    const room = this.roomService.getRoom(roomId);
+    const peer = room.getPeer(socketId);
     if (!peer) {
-      throw new Error(`peer ${peerId} not found`);
+      throw new WsException(`peer ${socketId} not found`);
     }
 
     const peers = [...room.peers.values()];
-
     const producers = peers
       .map((peer) => {
         return [...peer.producers.keys()];
