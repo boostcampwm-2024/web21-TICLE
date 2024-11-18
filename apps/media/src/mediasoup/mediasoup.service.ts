@@ -5,17 +5,21 @@ import * as mediasoup from 'mediasoup';
 import { types } from 'mediasoup';
 import { Socket } from 'socket.io';
 
-import { config } from 'src/mediasoup/config';
 import { RoomService } from 'src/room/room.service';
 import { Room } from 'src/room/room';
+import { Worker } from 'mediasoup/node/lib/types';
+import { MediasoupConfig } from './config';
 
 @Injectable()
 export class MediasoupService implements OnModuleInit {
   private nextWorkerIndex = 0;
-  private workers = [];
+  private workers: Worker[] = [];
   private rooms: Map<string, Room> = new Map();
 
-  constructor(private roomService: RoomService) {}
+  constructor(
+    private roomService: RoomService,
+    private mediasoupConfig: MediasoupConfig,
+  ) {}
 
   public async onModuleInit() {
     const numWorkers = os.cpus().length;
@@ -25,23 +29,19 @@ export class MediasoupService implements OnModuleInit {
   }
 
   private async createWorker() {
-    const worker = await mediasoup.createWorker({
-      logLevel: 'warn',
-      rtcMinPort: 6002,
-      rtcMaxPort: 6202,
-    });
+    const worker = await mediasoup.createWorker(this.mediasoupConfig.worker);
 
     worker.on('died', () => {
       console.error('mediasoup worker has died');
       setTimeout(() => process.exit(1), 2000);
     });
 
-    this.workers.push({ worker, routers: new Map() });
+    this.workers.push(worker);
     return worker;
   }
 
   public getWorker() {
-    const worker = this.workers[this.nextWorkerIndex].worker;
+    const worker = this.workers[this.nextWorkerIndex];
     this.nextWorkerIndex = (this.nextWorkerIndex + 1) % this.workers.length;
     return worker;
   }
@@ -49,7 +49,7 @@ export class MediasoupService implements OnModuleInit {
   public async createRoom(roomId: string) {
     const worker = this.getWorker();
     const router = await worker.createRouter({
-      mediaCodecs: config.mediasoup.router.mediaCodecs,
+      mediaCodecs: this.mediasoupConfig.router.mediaCodecs,
     });
     return this.roomService.createRoom(roomId, router);
   }
@@ -74,7 +74,7 @@ export class MediasoupService implements OnModuleInit {
     }
     const router = room.getRouter();
     const transport = await router.createWebRtcTransport(
-      config.mediasoup.webRtcTransport,
+      this.mediasoupConfig.webRtcTransport,
     );
     room.getPeer(socket.id).addTransport(transport);
 

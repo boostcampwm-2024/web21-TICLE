@@ -22,11 +22,11 @@ export class Room {
     return peer;
   }
 
-  getPeer(socketId) {
+  getPeer(socketId: string) {
     return this.peers.get(socketId);
   }
 
-  removePeer(socketId) {
+  removePeer(socketId: string) {
     const peer = this.peers.get(socketId);
     if (peer) {
       peer.close();

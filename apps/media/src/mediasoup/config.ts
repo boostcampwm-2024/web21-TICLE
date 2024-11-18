@@ -1,36 +1,60 @@
-import { RtpCodecCapability } from 'mediasoup/node/lib/types';
+import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import {
+  RouterOptions,
+  RtpCodecCapability,
+  WebRtcTransportOptions,
+  WorkerSettings,
+} from 'mediasoup/node/lib/types';
 
-export const config = {
-  mediasoup: {
-    worker: {
-      rtcMinPort: 40000,
-      rtcMaxPort: 49999,
-    },
-    router: {
-      mediaCodecs: [
-        {
-          kind: 'audio',
-          mimeType: 'audio/opus',
-          clockRate: 48000,
-          channels: 2,
+@Injectable()
+export class MediasoupConfig {
+  constructor(private configService: ConfigService) {}
+  worker: WorkerSettings = {
+    logLevel: 'warn',
+    rtcMinPort: this.configService.get<number>('RTC_MIN_PORT'),
+    rtcMaxPort: this.configService.get<number>('RTC_MAX_PORT'),
+  };
+
+  router: RouterOptions = {
+    mediaCodecs: [
+      {
+        kind: 'audio',
+        mimeType: 'audio/opus',
+        clockRate: 48000,
+        channels: 2,
+      },
+      {
+        kind: 'video',
+        mimeType: 'video/VP8',
+        clockRate: 90000,
+      },
+    ] as RtpCodecCapability[],
+  };
+
+  webRtcTransport: WebRtcTransportOptions = {
+    listenInfos: [
+      {
+        protocol: 'udp',
+        ip: '0.0.0.0',
+        announcedAddress: this.configService.get('SERVER_ADDRESS'),
+        portRange: {
+          min: this.configService.get<number>('TRANSPORT_MIN_PORT'),
+          max: this.configService.get<number>('TRANSPORT_MAX_PORT'),
         },
-        {
-          kind: 'video',
-          mimeType: 'video/VP8',
-          clockRate: 90000,
+      },
+      {
+        protocol: 'tcp',
+        ip: '0.0.0.0',
+        announcedAddress: this.configService.get('SERVER_ADDRESS'),
+        portRange: {
+          min: this.configService.get<number>('TRANSPORT_MIN_PORT'),
+          max: this.configService.get<number>('TRANSPORT_MAX_PORT'),
         },
-      ] as RtpCodecCapability[],
-    },
-    webRtcTransport: {
-      listenIps: [
-        {
-          ip: '0.0.0.0',
-          announcedIp: '127.0.0.1', // 실제 서버 IP로 변경 필요
-        },
-      ],
-      enableUdp: true,
-      enableTcp: true,
-      preferUdp: true,
-    },
-  },
-};
+      },
+    ],
+    enableUdp: true,
+    enableTcp: true,
+    preferUdp: true,
+  };
+}
