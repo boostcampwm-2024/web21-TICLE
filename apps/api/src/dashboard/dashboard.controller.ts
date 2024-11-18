@@ -11,11 +11,19 @@ export class DashboardController {
 
   @Get()
   @UseGuards(JwtAuthGuard)
-  async getTicleList(@GetUserId() userId: number, @Query('isSpeaker') isSpeaker: boolean) {
+  async getTicleList(
+    @Request() req: any,
+    @Query('isSpeaker') isSpeaker: boolean,
+    @Query('page') page: number,
+    @Query('pageSize') pageSize: number,
+    @Query('status') status?: string
+  ) {
     if (isSpeaker) {
-      return this.dashboardService.getCreatedTicleList(userId);
+      // 진행예정 (pending) 또는 종료 (completed)에 따른 필터링을 추가
+      return this.dashboardService.getCreatedTicleList(req.user.id, page, pageSize, status);
     } else {
-      return this.dashboardService.getAppliedTicleList(userId);
+      // 신청한 티클의 상태에 맞는 필터링
+      return this.dashboardService.getAppliedTicleList(req.user.id, page, pageSize, status);
     }
   }
 

@@ -14,7 +14,7 @@ export class DashboardService {
     private readonly applicantRepository: Repository<Applicant>
   ) {}
 
-  async getCreatedTicleList(speakerId: number) {
+  async getCreatedTicleList(speakerId: number, page: number, pageSize: number, status?: string) {
     try {
       return await this.ticleRepository.find({
         where: { speaker: { id: speakerId } },
@@ -25,7 +25,7 @@ export class DashboardService {
     }
   }
 
-  async getAppliedTicleList(userId: number) {
+  async getAppliedTicleList(userId: number, page: number, pageSize: number, status?: string) {
     try {
       return await this.applicantRepository.find({
         where: { user: { id: userId } },
