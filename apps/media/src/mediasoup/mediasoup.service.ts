@@ -65,14 +65,14 @@ export class MediasoupService implements OnModuleInit {
     return room.getRouter().rtpCapabilities;
   }
 
-  async createTransport(roomId: string, socket: Socket) {
+  async createTransport(roomId: string, socketId: string) {
     const room = this.roomService.getRoom(roomId);
 
     const router = room.getRouter();
     const transport = await router.createWebRtcTransport(
       this.mediasoupConfig.webRtcTransport,
     );
-    room.getPeer(socket.id).addTransport(transport);
+    room.getPeer(socketId).addTransport(transport);
 
     return {
       id: transport.id,

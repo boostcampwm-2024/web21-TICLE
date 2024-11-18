@@ -38,7 +38,7 @@ export class SignalingGateway {
   ) {
     const transportOptions = await this.mediasoupService.createTransport(
       createTransportDto.roomId,
-      client,
+      client.id,
     );
     return { transportOptions };
   }
