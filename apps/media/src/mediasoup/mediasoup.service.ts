@@ -137,9 +137,7 @@ export class MediasoupService implements OnModuleInit {
     const room = this.roomService.getRoom(roomId);
 
     const peerIds = [...room.peers.keys()];
-    const producers = peerIds.filter((id) => {
-      id !== socketId;
-    });
+    const producers = peerIds.filter((id) => id !== socketId);
 
     return [...new Set(producers)];
   }
