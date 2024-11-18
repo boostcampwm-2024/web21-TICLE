@@ -9,6 +9,7 @@ import { RoomService } from 'src/room/room.service';
 import { Room } from 'src/room/room';
 import { Worker } from 'mediasoup/node/lib/types';
 import { MediasoupConfig } from './config';
+import { WsException } from '@nestjs/websockets';
 
 @Injectable()
 export class MediasoupService implements OnModuleInit {
@@ -21,7 +22,7 @@ export class MediasoupService implements OnModuleInit {
     private mediasoupConfig: MediasoupConfig,
   ) {}
 
-  public async onModuleInit() {
+  async onModuleInit() {
     const numWorkers = os.cpus().length;
     for (let i = 0; i < numWorkers; ++i) {
       await this.createWorker();
@@ -40,13 +41,13 @@ export class MediasoupService implements OnModuleInit {
     return worker;
   }
 
-  public getWorker() {
+  getWorker() {
     const worker = this.workers[this.nextWorkerIndex];
     this.nextWorkerIndex = (this.nextWorkerIndex + 1) % this.workers.length;
     return worker;
   }
 
-  public async createRoom(roomId: string) {
+  async createRoom(roomId: string) {
     const worker = this.getWorker();
     const router = await worker.createRouter({
       mediaCodecs: this.mediasoupConfig.router.mediaCodecs,
@@ -54,11 +55,8 @@ export class MediasoupService implements OnModuleInit {
     return this.roomService.createRoom(roomId, router);
   }
 
-  public joinRoom(roomId: string, socketId: string) {
+  joinRoom(roomId: string, socketId: string) {
     const room = this.roomService.getRoom(roomId);
-    if (!room) {
-      throw new Error(`Room ${roomId} not found`);
-    }
     if (room.isExistPeer(socketId)) {
       throw new Error(`Peer ${socketId} already exists`);
     }
@@ -67,11 +65,9 @@ export class MediasoupService implements OnModuleInit {
     return room.getRouter().rtpCapabilities;
   }
 
-  public async createTransport(roomId: string, socket: Socket) {
-    const room = this.rooms.get(roomId);
-    if (!room) {
-      throw new Error(`Room ${roomId} not found`);
-    }
+  async createTransport(roomId: string, socket: Socket) {
+    const room = this.roomService.getRoom(roomId);
+
     const router = room.getRouter();
     const transport = await router.createWebRtcTransport(
       this.mediasoupConfig.webRtcTransport,
@@ -86,7 +82,7 @@ export class MediasoupService implements OnModuleInit {
     };
   }
 
-  public async connectTransport(
+  async connectTransport(
     dtlsParameters: types.DtlsParameters,
     transportId: string,
     roomId: string,
