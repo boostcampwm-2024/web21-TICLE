@@ -84,5 +84,19 @@ export class SignalingGateway {
     return producer;
   }
 
-  // @SubscribeMessage('consume') // 방에있는 producer들을 Consumer로 받아오려고 요청
+  @SubscribeMessage('consume')
+  async handleConsume(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() createConsumerDto: server.CreateConsumerDto,
+  ) {
+    const { transportId, producerId, roomId, rtpCapabilities } =
+      createConsumerDto;
+    return this.mediasoupService.consume(
+      client.id,
+      producerId,
+      roomId,
+      transportId,
+      rtpCapabilities,
+    );
+  }
 }
