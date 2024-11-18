@@ -7,7 +7,7 @@ import {
 import { Socket } from 'socket.io';
 
 import { MediasoupService } from 'src/mediasoup/mediasoup.service';
-import { server } from '@repo/mediasoup';
+import { client, server } from '@repo/mediasoup';
 
 @WebSocketGateway()
 export class SignalingGateway {
@@ -35,12 +35,12 @@ export class SignalingGateway {
   async createTransport(
     @ConnectedSocket() client: Socket,
     @MessageBody() createTransportDto: server.CreateTransportDto,
-  ) {
+  ): Promise<client.CreateTransportRes> {
     const transportOptions = await this.mediasoupService.createTransport(
       createTransportDto.roomId,
       client.id,
     );
-    return { transportOptions };
+    return transportOptions;
   }
 
   @SubscribeMessage('connect-transport')
@@ -65,7 +65,7 @@ export class SignalingGateway {
   async handleProduce(
     @ConnectedSocket() client: Socket,
     @MessageBody() createProducerDto: server.CreateProducerDto,
-  ) {
+  ): Promise<client.CreateProducerRes> {
     const { transportId, kind, rtpParameters, roomId } = createProducerDto;
     const producer = await this.mediasoupService.produce(
       client.id,
@@ -75,29 +75,33 @@ export class SignalingGateway {
       roomId,
     );
 
-    client.to(roomId).emit('new-producer', {
+    const createProducerRes = {
       producerId: producer.id,
       peerId: client.id,
       kind,
-    });
+    };
 
-    return producer;
+    client.to(roomId).emit('new-producer', createProducerRes);
+    return createProducerRes;
   }
 
   @SubscribeMessage('consume')
   async handleConsume(
     @ConnectedSocket() client: Socket,
     @MessageBody() createConsumerDto: server.CreateConsumerDto,
-  ) {
+  ): Promise<client.CreateConsumerRes> {
     const { transportId, producerId, roomId, rtpCapabilities } =
       createConsumerDto;
-    return this.mediasoupService.consume(
+
+    const createConsumerRes = this.mediasoupService.consume(
       client.id,
       producerId,
       roomId,
       transportId,
       rtpCapabilities,
     );
+
+    return createConsumerRes;
   }
 
   @SubscribeMessage('get-producer')
