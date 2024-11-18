@@ -144,4 +144,26 @@ export class MediasoupService implements OnModuleInit {
       rtpParameters: consumer.rtpParameters,
     };
   }
+
+  async getProducers(roomId: string, peerId: string) {
+    const room = this.rooms.get(roomId);
+    if (!room) {
+      throw new Error(`Room ${roomId} not found`);
+    }
+
+    const peer = room.getPeer(peerId);
+    if (!peer) {
+      throw new Error(`peer ${peerId} not found`);
+    }
+
+    const peers = [...room.peers.values()];
+
+    const producers = peers
+      .map((peer) => {
+        return [...peer.producers.keys()];
+      })
+      .flat();
+
+    return [...new Set(producers)];
+  }
 }
