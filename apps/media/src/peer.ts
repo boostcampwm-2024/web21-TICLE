@@ -1,53 +1,46 @@
+import { types } from "mediasoup";
+
+
 export class Peer {
   socketId: string;
-  sendTransport: any;
-  receiveTransport: any;
-  producers: Map<string, any>;
-  consumers: Map<string, any>;
+
+  transports: Map<string, types.Transport>;
+  producers: Map<string, types.Producer>;
+  consumers: Map<string, types.Consumer>;
 
   constructor(socketId: string) {
     this.socketId = socketId;
-    this.sendTransport = null;
-    this.receiveTransport = null;
+    this.transports = new Map();
     this.producers = new Map();
     this.consumers = new Map();
   }
 
-  addSendTransport(transport) {
-    this.sendTransport = transport;
+  addTransport(transport: types.Transport) {
+    this.transports.set(transport.id, transport);
   }
 
-  addReceiveTransport(transport) {
-    this.receiveTransport = transport;
+  getTransport(transportId: string) {
+    return this.transports.get(transportId);
   }
 
-  getSendTransport() {
-    return this.sendTransport;
+  addProducer(producer: types.Producer) {
+    this.producers.set(producer.id, producer);
   }
 
-  getReceiveTransport() {
-    return this.receiveTransport;
-  }
-
-  addProducer(producerId, producer) {
-    this.producers.set(producerId, producer);
-  }
-
-  getProducer(producerId) {
+  getProducer(producerId: string) {
     return this.producers.get(producerId);
   }
 
-  addConsumer(consumerId, consumer) {
-    this.consumers.set(consumerId, consumer);
+  addConsumer(consumer: types.Consumer) {
+    this.consumers.set(consumer.id, consumer);
   }
 
-  getConsumer(consumerId) {
+  getConsumer(consumerId: string) {
     return this.consumers.get(consumerId);
   }
 
   close() {
-    if (this.sendTransport) this.sendTransport.close();
-    if (this.receiveTransport) this.receiveTransport.close();
+    this.transports.forEach((transport) => transport.close());
     this.producers.forEach((producer) => producer.close());
     this.consumers.forEach((consumer) => consumer.close());
   }

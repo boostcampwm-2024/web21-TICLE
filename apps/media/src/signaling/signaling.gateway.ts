@@ -7,6 +7,10 @@ import {
 import { Socket } from 'socket.io';
 
 import { MediasoupService } from 'src/mediasoup/mediasoup.service';
+import {
+  ConnectTransportDto,
+  CreateTransportDto,
+} from '../../../../packages/mediasoup/src/server';
 
 @WebSocketGateway()
 export class SignalingGateway {
@@ -33,16 +37,32 @@ export class SignalingGateway {
   @SubscribeMessage('create-transport')
   async createTransport(
     @ConnectedSocket() client: Socket,
-    @MessageBody('roomId') roomId: string,
+    @MessageBody() createTransportDto: CreateTransportDto,
   ) {
     const transportOptions = await this.mediasoupService.createTransport(
-      roomId,
+      createTransportDto.roomId,
       client,
     );
     return { transportOptions };
   }
 
-  // @SubscribeMessage('connect-transport')
+  @SubscribeMessage('connect-transport')
+  async connectTransport(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() connectTransportDto: ConnectTransportDto,
+  ) {
+    const socketId = client.id;
+    const { transportId, dtlsParameters, roomId } = connectTransportDto;
+
+    await this.mediasoupService.connectTransport(
+      dtlsParameters,
+      transportId,
+      roomId,
+      socketId,
+    );
+
+    return { message: 'success' };
+  }
 
   // @SubscribeMessage('produce') //producer 만들어 달라고 요청 (자기가 쓰려고)
 
