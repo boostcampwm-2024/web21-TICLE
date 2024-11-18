@@ -16,4 +16,11 @@ export class RoomService {
     this.rooms.set(roomId, room);
     return roomId;
   }
+
+  getRoom(roomId: string) {
+    return this.rooms.get(roomId);
+  }
+
+  
+
 }

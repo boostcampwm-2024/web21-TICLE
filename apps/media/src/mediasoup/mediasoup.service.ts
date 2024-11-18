@@ -54,15 +54,15 @@ export class MediasoupService implements OnModuleInit {
     return this.roomService.createRoom(roomId, router);
   }
 
-  public joinRoom(roomId: string, socket: Socket) {
-    const room = this.rooms.get(roomId);
+  public joinRoom(roomId: string, socketId: string) {
+    const room = this.roomService.getRoom(roomId);
     if (!room) {
       throw new Error(`Room ${roomId} not found`);
     }
-    if (room.peers.has(socket.id)) {
-      throw new Error(`Peer ${socket.id} already exists`);
+    if (room.isExistPeer(socketId)) {
+      throw new Error(`Peer ${socketId} already exists`);
     }
-    room.addPeer(socket.id);
+    room.addPeer(socketId);
 
     return room.getRouter().rtpCapabilities;
   }

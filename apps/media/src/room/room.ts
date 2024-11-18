@@ -26,6 +26,10 @@ export class Room {
     return this.peers.get(socketId);
   }
 
+  isExistPeer(socketId: string) {
+    return this.peers.has(socketId);
+  }
+
   removePeer(socketId: string) {
     const peer = this.peers.get(socketId);
     if (peer) {
