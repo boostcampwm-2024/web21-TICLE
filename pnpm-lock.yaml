@@ -274,7 +274,6 @@ importers:
       '@hookform/resolvers':
         specifier: ^3.9.1
         version: 3.9.1(react-hook-form@7.53.2(react@18.3.1))
-      '@repo/shared':
       '@repo/mediasoup':
         specifier: workspace:*
         version: link:../../packages/mediasoup

@@ -13,7 +13,6 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
-    "@repo/shared": "workspace:*",
     "@repo/types": "workspace:*",
     "@repo/mediasoup": "workspace:*",
     "@tanstack/react-router": "^1.79.0",
