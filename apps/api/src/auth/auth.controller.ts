@@ -72,7 +72,7 @@ export class AuthController {
   private setAuthCookie(response: Response, accessToken: string) {
     response.cookie('accessToken', accessToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: this.configService.get<string>('NODE_ENV') === 'production',
       sameSite: 'lax',
       path: '/',
     });
