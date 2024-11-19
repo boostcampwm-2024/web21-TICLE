@@ -15,6 +15,7 @@ function VideoPlayer({ stream, muted = true, className = '' }: MediaPlayerProps)
     }
   }, [stream]);
 
-  return <video ref={videoRef} autoPlay playsInline muted={muted} className={className} />;
+  // eslint-disable-next-line jsx-a11y/media-has-caption
+  return <video ref={videoRef} autoPlay muted={muted} className={className} />;
 }
 export default VideoPlayer;
