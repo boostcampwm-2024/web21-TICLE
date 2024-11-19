@@ -1,15 +1,16 @@
+import { MutableRefObject, useRef } from 'react';
+import { Socket } from 'socket.io-client';
 import type { client } from '@repo/mediasoup';
 import { SOCKET_EVENTS, TRANSPORT_EVENTS } from '@repo/mediasoup';
-import { useRef } from 'react';
 
 type Transport = client.BaseTransport;
 
-const useTransport = (socketRef: any, roomId: string) => {
+const useTransport = (socketRef: MutableRefObject<Socket | null>, roomId: string) => {
   const sendTransportRef = useRef<Transport | null>(null);
   const recvTransportRef = useRef<Transport | null>(null);
 
   const createSendTransport = (device: client.Device) => {
-const socket = socketRef.current;
+    const socket = socketRef.current;
 
     if (!socket) return;
 
@@ -37,7 +38,7 @@ const socket = socketRef.current;
   };
 
   const createRecvTransport = (device: client.Device) => {
-const socket = socketRef.current;
+    const socket = socketRef.current;
 
     if (!socket) return;
 

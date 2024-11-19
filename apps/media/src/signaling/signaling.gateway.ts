@@ -4,8 +4,8 @@ import {
   SubscribeMessage,
   WebSocketGateway,
 } from '@nestjs/websockets';
-import { client, server } from '@repo/mediasoup';
 import { Socket } from 'socket.io';
+import { client, server } from '@repo/mediasoup';
 
 import { MediasoupService } from 'src/mediasoup/mediasoup.service';
 

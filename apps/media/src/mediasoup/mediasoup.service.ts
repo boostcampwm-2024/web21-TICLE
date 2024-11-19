@@ -145,7 +145,7 @@ export class MediasoupService implements OnModuleInit {
         producerId: id,
         kind,
         peerId: peer.socketId,
-      })),
+      }))
     );
 
     return [...new Set(result)];

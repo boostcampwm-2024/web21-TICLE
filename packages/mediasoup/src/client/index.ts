@@ -1,5 +1,6 @@
-import type { types } from 'mediasoup-client';
 import { ProducerOptions } from 'mediasoup-client/lib/types';
+
+import type { types } from 'mediasoup-client';
 
 export type Device = types.Device;
 

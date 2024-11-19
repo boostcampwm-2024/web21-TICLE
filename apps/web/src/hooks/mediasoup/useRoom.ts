@@ -1,7 +1,9 @@
+import { MutableRefObject } from 'react';
+import { Socket } from 'socket.io-client';
 import type { client } from '@repo/mediasoup';
 import { SOCKET_EVENTS } from '@repo/mediasoup';
 
-const useRoom = (socketRef:any, roomId: string) => {
+const useRoom = (socketRef: MutableRefObject<Socket | null>, roomId: string) => {
   const createRoom = async () => {
     if (!socketRef.current) return;
 
