@@ -53,6 +53,8 @@ const useProducerStream = ({ socketRef, sendTransportRef }: UseProducerStreamPar
       track.stop();
       producer.close();
       producerRef.current = null;
+
+      socket.emit(SOCKET_EVENTS.closeProducer, { producerId: producer.id, roomId: ticleId });
     });
   };
 
@@ -104,7 +106,14 @@ const useProducerStream = ({ socketRef, sendTransportRef }: UseProducerStreamPar
   const startAudioStream = async () => {
     if (audioStream) return;
 
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const stream = await navigator.mediaDevices.getUserMedia({
+      audio: {
+        echoCancellation: true,
+        noiseSuppression: true,
+        autoGainControl: true,
+      },
+    });
+
     const track = stream.getAudioTracks()[0];
 
     setAudioStream(stream);
@@ -112,7 +121,13 @@ const useProducerStream = ({ socketRef, sendTransportRef }: UseProducerStreamPar
   };
 
   const startScreenStream = async () => {
-    const stream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+    const stream = await navigator.mediaDevices.getDisplayMedia({
+      video: {
+        width: { max: 1920 },
+        height: { max: 1080 },
+        frameRate: { max: 30 },
+      },
+    });
     const track = stream.getVideoTracks()[0];
 
     setScreenStream(stream);
