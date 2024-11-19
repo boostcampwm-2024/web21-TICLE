@@ -15,7 +15,8 @@
   },
   "scripts": {
     "build": "tsup",
-    "dev": "tsup --watch"
+    "dev": "tsup --watch",
+    "lint": "eslint . --fix"
   },
   "devDependencies": {
     "@repo/lint": "workspace:*",

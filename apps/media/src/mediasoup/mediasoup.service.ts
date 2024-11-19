@@ -1,13 +1,14 @@
 import * as os from 'os';
 
 import { Injectable, OnModuleInit } from '@nestjs/common';
+import { WsException } from '@nestjs/websockets';
 import * as mediasoup from 'mediasoup';
 import { types } from 'mediasoup';
+import { Worker } from 'mediasoup/node/lib/types';
 
 import { RoomService } from 'src/room/room.service';
-import { Worker } from 'mediasoup/node/lib/types';
+
 import { MediasoupConfig } from './config';
-import { WsException } from '@nestjs/websockets';
 
 @Injectable()
 export class MediasoupService implements OnModuleInit {
@@ -16,7 +17,7 @@ export class MediasoupService implements OnModuleInit {
 
   constructor(
     private roomService: RoomService,
-    private mediasoupConfig: MediasoupConfig,
+    private mediasoupConfig: MediasoupConfig
   ) {}
 
   async onModuleInit() {
@@ -65,9 +66,7 @@ export class MediasoupService implements OnModuleInit {
   async createTransport(roomId: string, socketId: string) {
     const room = this.roomService.getRoom(roomId);
     const router = room.getRouter();
-    const transport = await router.createWebRtcTransport(
-      this.mediasoupConfig.webRtcTransport,
-    );
+    const transport = await router.createWebRtcTransport(this.mediasoupConfig.webRtcTransport);
     room.getPeer(socketId).addTransport(transport);
 
     return {
@@ -82,7 +81,7 @@ export class MediasoupService implements OnModuleInit {
     dtlsParameters: types.DtlsParameters,
     transportId: string,
     roomId: string,
-    socketId: string,
+    socketId: string
   ) {
     const room = this.roomService.getRoom(roomId);
     const peer = room.getPeer(socketId);
@@ -95,7 +94,7 @@ export class MediasoupService implements OnModuleInit {
     kind: types.MediaKind,
     rtpParameters: types.RtpParameters,
     transportId: string,
-    roomId: string,
+    roomId: string
   ) {
     const room = this.roomService.getRoom(roomId);
     const peer = room.getPeer(socketId);
@@ -112,7 +111,7 @@ export class MediasoupService implements OnModuleInit {
     producerId: string,
     roomId: string,
     transportId: string,
-    rtpCapabilities: types.RtpCapabilities,
+    rtpCapabilities: types.RtpCapabilities
   ) {
     const room = this.roomService.getRoom(roomId);
     const peer = room.getPeer(socketId);
@@ -138,9 +137,7 @@ export class MediasoupService implements OnModuleInit {
 
     const producers = [...room.peers.values()]
       .filter((peer) => peer.socketId !== socketId)
-      .flatMap((peer) =>
-        [...peer.producers.values()].map((producer) => producer.id),
-      );
+      .flatMap((peer) => [...peer.producers.values()].map((producer) => producer.id));
 
     return [...new Set(producers)];
   }
