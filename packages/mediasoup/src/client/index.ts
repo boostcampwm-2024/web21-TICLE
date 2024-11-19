@@ -42,6 +42,12 @@ export interface RemoteStream {
   pause: boolean;
 }
 
+export interface GetProducersRes{
+  producerId: string;
+  kind: types.MediaKind;
+  peerId: string;
+}
+
 export const PRODUCER_OPTIONS: ProducerOptions = {
   encodings: [
     {

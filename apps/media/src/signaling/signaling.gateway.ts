@@ -98,7 +98,7 @@ export class SignalingGateway {
   async getProducers(
     @ConnectedSocket() client: Socket,
     @MessageBody() getProducerDto: server.GetProducersDto
-  ) {
+  ): Promise<client.GetProducersRes[]> {
     const { roomId } = getProducerDto;
     return this.mediasoupService.getProducers(roomId, client.id);
   }
