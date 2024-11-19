@@ -141,4 +141,9 @@ export class MediasoupService implements OnModuleInit {
 
     return [...new Set(producers)];
   }
+
+  disconnect(socketId: string) {
+    const roomIds = this.roomService.deletePeer(socketId);
+    return roomIds;
+  }
 }

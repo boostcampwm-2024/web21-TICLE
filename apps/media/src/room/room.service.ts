@@ -26,4 +26,16 @@ export class RoomService {
     }
     return room;
   }
+  deletePeer(socketId: string) {
+    for (const [roomId, room] of this.rooms) {
+      if (!room.removePeer(socketId)) continue;
+
+      if (room.peers.size === 0) {
+        room.close();
+        this.rooms.delete(roomId);
+      }
+
+      return roomId;
+    }
+  }
 }

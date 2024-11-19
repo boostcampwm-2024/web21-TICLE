@@ -1,6 +1,7 @@
 import {
   ConnectedSocket,
   MessageBody,
+  OnGatewayDisconnect,
   SubscribeMessage,
   WebSocketGateway,
 } from '@nestjs/websockets';
@@ -10,11 +11,12 @@ import { client, server } from '@repo/mediasoup';
 import { MediasoupService } from 'src/mediasoup/mediasoup.service';
 
 @WebSocketGateway()
-export class SignalingGateway {
+export class SignalingGateway implements OnGatewayDisconnect {
   constructor(private mediasoupService: MediasoupService) {}
 
   @SubscribeMessage('create-room')
   async handleCreateRoom(@ConnectedSocket() client: Socket, @MessageBody('roomId') roomId: string) {
+    console.log("create-room")
     this.mediasoupService.createRoom(roomId);
     return { roomId };
   }
@@ -90,7 +92,6 @@ export class SignalingGateway {
       transportId,
       rtpCapabilities
     );
-
     return createConsumerRes;
   }
 
@@ -101,5 +102,11 @@ export class SignalingGateway {
   ) {
     const { roomId } = getProducerDto;
     return this.mediasoupService.getProducers(roomId, client.id);
+  }
+
+  handleDisconnect(@ConnectedSocket() client: Socket) {
+    const roomId = this.mediasoupService.disconnect(client.id);
+
+    client.to(roomId).emit('peer-left', { peerId: client.id });
   }
 }
