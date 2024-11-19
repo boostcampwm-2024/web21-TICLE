@@ -14,7 +14,8 @@
   },
   "scripts": {
     "build": "tsup",
-    "dev": "tsup --watch"
+    "dev": "tsup --watch",
+    "lint": "eslint . --fix"
   },
   "dependencies": {
     "zod": "^3.23.8"
