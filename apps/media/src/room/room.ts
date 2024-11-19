@@ -1,24 +1,16 @@
 import { Router } from 'mediasoup/node/lib/RouterTypes';
-import { Worker } from 'mediasoup/node/lib/types';
 
-import { config } from './config';
 import { Peer } from './peer';
+import { WsException } from '@nestjs/websockets';
 
 export class Room {
   id: string;
   router: Router;
   peers: Map<string, Peer>;
-  constructor(roomId: string) {
+  constructor(roomId: string, router: Router) {
     this.id = roomId;
-    this.router = null;
+    this.router = router;
     this.peers = new Map();
-  }
-
-  async init(worker: Worker) {
-    this.router = await worker.createRouter({
-      mediaCodecs: config.mediasoup.router.mediaCodecs,
-    });
-    return this.router;
   }
 
   getRouter() {
@@ -31,11 +23,19 @@ export class Room {
     return peer;
   }
 
-  getPeer(socketId) {
-    return this.peers.get(socketId);
+  getPeer(socketId: string) {
+    const peer = this.peers.get(socketId);
+    if (!peer) {
+      throw new WsException(`방에 피어가 존재하지 않습니다.`);
+    }
+    return peer;
   }
 
-  removePeer(socketId) {
+  hasPeer(socketId: string) {
+    return this.peers.has(socketId);
+  }
+
+  removePeer(socketId: string) {
     const peer = this.peers.get(socketId);
     if (peer) {
       peer.close();

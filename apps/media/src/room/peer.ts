@@ -1,6 +1,5 @@
-import { types } from "mediasoup";
-
-
+import { types } from 'mediasoup';
+import { WsException } from '@nestjs/websockets';
 export class Peer {
   socketId: string;
 
@@ -20,7 +19,11 @@ export class Peer {
   }
 
   getTransport(transportId: string) {
-    return this.transports.get(transportId);
+    const transport = this.transports.get(transportId);
+    if (!transport) {
+      throw new WsException(`transport가 존재하지 않습니다.`)
+    }
+    return transport;
   }
 
   addProducer(producer: types.Producer) {

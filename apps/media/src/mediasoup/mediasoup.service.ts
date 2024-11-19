@@ -3,20 +3,23 @@ import * as os from 'os';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import * as mediasoup from 'mediasoup';
 import { types } from 'mediasoup';
-import { Socket } from 'socket.io';
 
-import { config } from 'src/config';
-import { Room } from 'src/room';
+import { RoomService } from 'src/room/room.service';
+import { Worker } from 'mediasoup/node/lib/types';
+import { MediasoupConfig } from './config';
+import { WsException } from '@nestjs/websockets';
 
 @Injectable()
 export class MediasoupService implements OnModuleInit {
   private nextWorkerIndex = 0;
-  private workers = [];
-  private rooms: Map<string, Room> = new Map();
+  private workers: Worker[] = [];
 
-  constructor() {}
+  constructor(
+    private roomService: RoomService,
+    private mediasoupConfig: MediasoupConfig,
+  ) {}
 
-  public async onModuleInit() {
+  async onModuleInit() {
     const numWorkers = os.cpus().length;
     for (let i = 0; i < numWorkers; ++i) {
       await this.createWorker();
@@ -24,110 +27,95 @@ export class MediasoupService implements OnModuleInit {
   }
 
   private async createWorker() {
-    const worker = await mediasoup.createWorker({
-      logLevel: 'warn',
-      rtcMinPort: 6002,
-      rtcMaxPort: 6202,
-    });
+    const worker = await mediasoup.createWorker(this.mediasoupConfig.worker);
 
     worker.on('died', () => {
       console.error('mediasoup worker has died');
       setTimeout(() => process.exit(1), 2000);
     });
 
-    this.workers.push({ worker, routers: new Map() });
+    this.workers.push(worker);
     return worker;
   }
 
-  public getWorker() {
-    const worker = this.workers[this.nextWorkerIndex].worker;
+  getWorker() {
+    const worker = this.workers[this.nextWorkerIndex];
     this.nextWorkerIndex = (this.nextWorkerIndex + 1) % this.workers.length;
     return worker;
   }
 
-  public async createRoom(roomId: string) {
+  async createRoom(roomId: string) {
     const worker = this.getWorker();
-    if (this.rooms.has(roomId)) {
-      return roomId;
-    }
-    const room = new Room(roomId);
-    this.rooms.set(roomId, room);
-    await room.init(worker);
-    return roomId;
+    const router = await worker.createRouter({
+      mediaCodecs: this.mediasoupConfig.router.mediaCodecs,
+    });
+    return this.roomService.createRoom(roomId, router);
   }
 
-  public joinRoom(roomId: string, socket: Socket) {
-    const room = this.rooms.get(roomId);
-    if (!room) {
-      throw new Error(`Room ${roomId} not found`);
+  joinRoom(roomId: string, socketId: string) {
+    const room = this.roomService.getRoom(roomId);
+    if (room.hasPeer(socketId)) {
+      throw new WsException(`Peer ${socketId} already exists`);
     }
-    if (room.peers.has(socket.id)) {
-      throw new Error(`Peer ${socket.id} already exists`);
-    }
-    room.addPeer(socket.id);
+    room.addPeer(socketId);
 
     return room.getRouter().rtpCapabilities;
   }
 
-  public async createTransport(roomId: string, socket: Socket) {
-    const room = this.rooms.get(roomId);
-    if (!room) {
-      throw new Error(`Room ${roomId} not found`);
-    }
+  async createTransport(roomId: string, socketId: string) {
+    const room = this.roomService.getRoom(roomId);
     const router = room.getRouter();
     const transport = await router.createWebRtcTransport(
-      config.mediasoup.webRtcTransport,
+      this.mediasoupConfig.webRtcTransport,
     );
-    room.getPeer(socket.id).addTransport(transport);
+    room.getPeer(socketId).addTransport(transport);
 
     return {
-      id: transport.id,
+      transportId: transport.id,
       iceParameters: transport.iceParameters,
       iceCandidates: transport.iceCandidates,
       dtlsParameters: transport.dtlsParameters,
     };
   }
 
-  public async connectTransport(
+  async connectTransport(
     dtlsParameters: types.DtlsParameters,
     transportId: string,
     roomId: string,
     socketId: string,
   ) {
-    const room = this.rooms.get(roomId);
-
+    const room = this.roomService.getRoom(roomId);
     const peer = room.getPeer(socketId);
     const transport = peer.getTransport(transportId);
-
     await transport.connect({ dtlsParameters });
   }
 
   async produce(
-    id: string,
+    socketId: string,
     kind: types.MediaKind,
     rtpParameters: types.RtpParameters,
     transportId: string,
     roomId: string,
   ) {
-    const room = this.rooms.get(roomId);
-    const peer = room.getPeer(id);
+    const room = this.roomService.getRoom(roomId);
+    const peer = room.getPeer(socketId);
     const transport = peer.getTransport(transportId);
     const producer = await transport.produce({ kind, rtpParameters });
 
     peer.addProducer(producer);
+
     return producer;
   }
 
   async consume(
-    id: string,
+    socketId: string,
     producerId: string,
     roomId: string,
     transportId: string,
     rtpCapabilities: types.RtpCapabilities,
   ) {
-    const room = this.rooms.get(roomId);
-    const peer = room.getPeer(id);
-
+    const room = this.roomService.getRoom(roomId);
+    const peer = room.getPeer(socketId);
     const transport = peer.getTransport(transportId);
     const consumer = await transport.consume({
       producerId,
@@ -145,24 +133,14 @@ export class MediasoupService implements OnModuleInit {
     };
   }
 
-  async getProducers(roomId: string, peerId: string) {
-    const room = this.rooms.get(roomId);
-    if (!room) {
-      throw new Error(`Room ${roomId} not found`);
-    }
+  async getProducers(roomId: string, socketId: string) {
+    const room = this.roomService.getRoom(roomId);
 
-    const peer = room.getPeer(peerId);
-    if (!peer) {
-      throw new Error(`peer ${peerId} not found`);
-    }
-
-    const peers = [...room.peers.values()];
-
-    const producers = peers
-      .map((peer) => {
-        return [...peer.producers.keys()];
-      })
-      .flat();
+    const producers = [...room.peers.values()]
+      .filter((peer) => peer.socketId !== socketId)
+      .flatMap((peer) =>
+        [...peer.producers.values()].map((producer) => producer.id),
+      );
 
     return [...new Set(producers)];
   }
