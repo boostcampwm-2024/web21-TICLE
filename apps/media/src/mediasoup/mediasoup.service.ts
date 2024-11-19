@@ -96,7 +96,6 @@ export class MediasoupService implements OnModuleInit {
     transportId: string,
     roomId: string
   ) {
-    console.log('kind@@@@@', kind);
     const room = this.roomService.getRoom(roomId);
     const peer = room.getPeer(socketId);
     const transport = peer.getTransport(transportId);

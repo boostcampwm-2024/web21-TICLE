@@ -4,8 +4,8 @@ import {
   SubscribeMessage,
   WebSocketGateway,
 } from '@nestjs/websockets';
-import { Socket } from 'socket.io';
 import { client, server } from '@repo/mediasoup';
+import { Socket } from 'socket.io';
 
 import { MediasoupService } from 'src/mediasoup/mediasoup.service';
 
@@ -25,7 +25,6 @@ export class SignalingGateway {
     const rtpCapabilities = this.mediasoupService.joinRoom(roomId, client.id);
     client.to(roomId).emit('new-peer', { peerId: client.id });
     return { rtpCapabilities };
-    //
   }
 
   @SubscribeMessage('create-transport')
