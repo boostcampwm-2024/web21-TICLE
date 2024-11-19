@@ -1,11 +1,11 @@
-import { Socket } from 'socket.io-client';
 import type { client } from '@repo/mediasoup';
 import { SOCKET_EVENTS } from '@repo/mediasoup';
 
-const useRoom = (socket: Socket | null, roomId: string) => {
+const useRoom = (socketRef:any, roomId: string) => {
   const createRoom = async () => {
-    if (!socket) return;
+    if (!socketRef.current) return;
 
+    const socket = socketRef.current;
     return new Promise<client.RtpCapabilities>((resolve) => {
       socket.emit(SOCKET_EVENTS.createRoom, { roomId }, () => {
         socket.emit(

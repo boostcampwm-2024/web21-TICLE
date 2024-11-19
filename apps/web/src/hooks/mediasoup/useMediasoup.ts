@@ -1,7 +1,7 @@
+import { client, SOCKET_EVENTS } from '@repo/mediasoup';
 import { useParams } from '@tanstack/react-router';
 import { types } from 'mediasoup-client';
-import { useEffect, useState, useRef } from 'react';
-import { client, SOCKET_EVENTS } from '@repo/mediasoup';
+import { useEffect, useRef, useState } from 'react';
 
 import { ENV } from '@/constants/env';
 
@@ -9,6 +9,43 @@ import useDevice from './useDevice';
 import useRoom from './useRoom';
 import useSocket from './useSocket';
 import useTransport from './useTransport';
+
+export const getProducerOptions = (kind: string) => {
+  if (kind === 'video') {
+    return {
+      encodings: [
+        {
+          rid: 'r0',
+          maxBitrate: 100000,
+          scalabilityMode: 'S1T3',
+        },
+        {
+          rid: 'r1',
+          maxBitrate: 300000,
+          scalabilityMode: 'S1T3',
+        },
+        {
+          rid: 'r2',
+          maxBitrate: 900000,
+          scalabilityMode: 'S1T3',
+        },
+      ],
+      codecOptions: {
+        videoGoogleStartBitrate: 1000,
+      },
+    };
+  } else if (kind === 'audio') {
+    return {
+      encodings: [
+        {
+          maxBitrate: 64000, // 오디오에 적합한 비트레이트
+        },
+      ],
+      codecOptions: {}, // 오디오에서는 비워둡니다.
+    };
+  }
+  throw new Error('Unsupported media kind');
+};
 
 const useMediasoup = () => {
   const { ticleId } = useParams({ from: '/live/$ticleId' });
@@ -22,11 +59,11 @@ const useMediasoup = () => {
   const audioProducerRef = useRef<types.Producer | null>(null);
   const screenProducerRef = useRef<types.Producer | null>(null);
 
-  const { createRoom } = useRoom(socketRef.current, ticleId);
+  const { createRoom } = useRoom(socketRef, ticleId);
   const { deviceRef, createDevice } = useDevice();
 
   const { sendTransportRef, recvTransportRef, createSendTransport, createRecvTransport } =
-    useTransport(socketRef.current, ticleId);
+    useTransport(socketRef, ticleId);
 
   const [peers, setPeers] = useState<string[]>([]);
   const [consumers, setConsumers] = useState<any[]>([]);
@@ -83,11 +120,18 @@ const useMediasoup = () => {
   const createProducer = async (track?: MediaStreamTrack) => {
     const transport = sendTransportRef.current;
 
+    debugger;
+
     if (!transport || !track) {
       return null;
     }
 
-    const producer = await transport.produce({ ...client.PRODUCER_OPTIONS, track });
+    const producerOptions = getProducerOptions(track.kind);
+
+    const producer = await transport.produce({
+      track,
+      ...producerOptions
+    });
 
     return producer;
   };
@@ -110,6 +154,8 @@ const useMediasoup = () => {
 
   const createScreen = async () => {
     const stream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+
+
     const track = stream.getVideoTracks()[0];
 
     screenStreamRef.current = stream;
@@ -129,6 +175,7 @@ const useMediasoup = () => {
       transportId: transport.id,
       rtpCapabilities: device.rtpCapabilities,
     };
+
 
     socket.emit(
       SOCKET_EVENTS.consume,
@@ -160,29 +207,40 @@ const useMediasoup = () => {
 
     const videoProducer = videoProducerRef.current;
     const audioProducer = audioProducerRef.current;
-    const screenProducer = screenProducerRef.current;
+    // const screenProducer = screenProducerRef.current;
 
-    if (!socket || !videoProducer || !audioProducer || !screenProducer) return;
+      console.log(!socket || !videoProducer || !audioProducer )
+
+
+
+    if (!socket || !videoProducer || !audioProducer ) return;
 
     // TODO: socket에 포함되지 않은 producer 목록 요청
     socket.emit(
       SOCKET_EVENTS.getProducer,
       { roomId: ticleId },
       (result: client.CreateProducerRes[]) => {
-        result
+        console.log(result);
+        const filtered = result
           .filter(
             (p) =>
-              p.producerId !== videoProducer.id ||
-              p.producerId !== audioProducer.id ||
-              p.producerId !== screenProducer.id
+              p.producerId !== videoProducer.id &&
+              p.producerId !== audioProducer.id 
           )
-          .forEach((p) => consume(p));
+
+          console.log(filtered)
+
+          debugger;
+
+          filtered.forEach((p) => consume(p));
+         
       }
     );
   };
 
   const initMediasoup = async () => {
     const rtpCapabilities = await createRoom();
+
 
     if (!rtpCapabilities) return;
 
@@ -191,7 +249,21 @@ const useMediasoup = () => {
     createSendTransport(device);
     createRecvTransport(device);
 
-    await Promise.all([createVideo(), createAudio(), createScreen()]);
+    // await Promise.all([createVideo(), createAudio(), createScreen()]);
+    // await Promise.all([createVideo(), createAudio()]);
+    // await createVideo();
+    // await createAudio();
+
+    await Promise.all([
+  createVideo().catch((err) => {
+    console.error('Error in createVideo:', err);
+  }),
+  createAudio().catch((err) => {
+    console.error('Error in createAudio:', err);
+  }),
+]);
+    console.log("@@")
+
 
     connectExistProducer();
   };
@@ -201,7 +273,7 @@ const useMediasoup = () => {
     initMediasoup();
   }, []);
 
-  return { remoteStreams };
+  return { remoteStreams, localVideoStreamRef:videoStreamRef, localAudioStreamRef:audioStreamRef };
 };
 
 export default useMediasoup;

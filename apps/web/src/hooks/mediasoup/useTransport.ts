@@ -1,15 +1,16 @@
-import { useRef } from 'react';
-import { Socket } from 'socket.io-client';
-import { SOCKET_EVENTS, TRANSPORT_EVENTS } from '@repo/mediasoup';
 import type { client } from '@repo/mediasoup';
+import { SOCKET_EVENTS, TRANSPORT_EVENTS } from '@repo/mediasoup';
+import { useRef } from 'react';
 
 type Transport = client.BaseTransport;
 
-const useTransport = (socket: Socket | null, roomId: string) => {
+const useTransport = (socketRef: any, roomId: string) => {
   const sendTransportRef = useRef<Transport | null>(null);
   const recvTransportRef = useRef<Transport | null>(null);
 
   const createSendTransport = (device: client.Device) => {
+const socket = socketRef.current;
+
     if (!socket) return;
 
     socket.emit(SOCKET_EVENTS.createTransport, { roomId }, (result: client.CreateTransportRes) => {
@@ -36,6 +37,8 @@ const useTransport = (socket: Socket | null, roomId: string) => {
   };
 
   const createRecvTransport = (device: client.Device) => {
+const socket = socketRef.current;
+
     if (!socket) return;
 
     socket.emit(SOCKET_EVENTS.createTransport, { roomId }, (result: client.CreateTransportRes) => {
