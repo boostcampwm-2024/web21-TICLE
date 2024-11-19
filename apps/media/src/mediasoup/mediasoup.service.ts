@@ -117,4 +117,31 @@ export class MediasoupService implements OnModuleInit {
     peer.addProducer(producer);
     return producer;
   }
+
+  async consume(
+    id: string,
+    producerId: string,
+    roomId: string,
+    transportId: string,
+    rtpCapabilities: types.RtpCapabilities,
+  ) {
+    const room = this.rooms.get(roomId);
+    const peer = room.getPeer(id);
+
+    const transport = peer.getTransport(transportId);
+    const consumer = await transport.consume({
+      producerId,
+      rtpCapabilities,
+      paused: false,
+    });
+
+    peer.addConsumer(consumer);
+
+    return {
+      consumerId: consumer.id,
+      producerId: consumer.producerId,
+      kind: consumer.kind,
+      rtpParameters: consumer.rtpParameters,
+    };
+  }
 }
