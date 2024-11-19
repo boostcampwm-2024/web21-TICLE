@@ -4,6 +4,7 @@ import { JwtAuthGuard } from '@/auth/jwt/jwt-auth.guard';
 
 import { DashboardService } from './dashboard.service';
 import { GetUserId } from '@/common/decorator/get-userId.decorator';
+import { TicleStatus } from '@/entity/ticle.entity';
 
 @Controller('dashboard')
 export class DashboardController {
@@ -16,7 +17,7 @@ export class DashboardController {
     @Query('isSpeaker') isSpeaker: boolean,
     @Query('page') page: number = 1,
     @Query('pageSize') pageSize: number = 10,
-    @Query('status') status?: string
+    @Query('status') status?: TicleStatus
   ) {
     if (isSpeaker) {
       return this.dashboardService.getCreatedTicleList(userId, page, pageSize, status);
