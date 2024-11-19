@@ -96,6 +96,7 @@ export class MediasoupService implements OnModuleInit {
     transportId: string,
     roomId: string
   ) {
+    console.log('kind@@@@@', kind);
     const room = this.roomService.getRoom(roomId);
     const peer = room.getPeer(socketId);
     const transport = peer.getTransport(transportId);
@@ -135,10 +136,18 @@ export class MediasoupService implements OnModuleInit {
   async getProducers(roomId: string, socketId: string) {
     const room = this.roomService.getRoom(roomId);
 
-    const producers = [...room.peers.values()]
-      .filter((peer) => peer.socketId !== socketId)
-      .flatMap((peer) => [...peer.producers.values()].map((producer) => producer.id));
+    const peers = [...room.peers.values()];
 
-    return [...new Set(producers)];
+    const filtered = peers.filter((peer) => peer.socketId !== socketId);
+
+    const result = filtered.flatMap((peer) =>
+      [...peer.producers.values()].map(({ id, kind }) => ({
+        producerId: id,
+        kind,
+        peerId: peer.socketId,
+      })),
+    );
+
+    return [...new Set(result)];
   }
 }
