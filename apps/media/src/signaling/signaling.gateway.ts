@@ -5,8 +5,8 @@ import {
   SubscribeMessage,
   WebSocketGateway,
 } from '@nestjs/websockets';
-import { Socket } from 'socket.io';
 import { client, server } from '@repo/mediasoup';
+import { Socket } from 'socket.io';
 
 import { MediasoupService } from 'src/mediasoup/mediasoup.service';
 
@@ -99,7 +99,7 @@ export class SignalingGateway implements OnGatewayDisconnect {
   async getProducers(
     @ConnectedSocket() client: Socket,
     @MessageBody() getProducerDto: server.GetProducersDto
-  ) {
+  ): Promise<client.GetProducersRes[]> {
     const { roomId } = getProducerDto;
     return this.mediasoupService.getProducers(roomId, client.id);
   }
