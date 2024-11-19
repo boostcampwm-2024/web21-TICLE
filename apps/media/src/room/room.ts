@@ -40,7 +40,9 @@ export class Room {
     if (peer) {
       peer.close();
       this.peers.delete(socketId);
+      return true;
     }
+    return false;
   }
 
   close() {

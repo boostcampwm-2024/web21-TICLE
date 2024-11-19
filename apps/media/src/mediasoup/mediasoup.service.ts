@@ -122,6 +122,11 @@ export class MediasoupService implements OnModuleInit {
       paused: false,
     });
 
+    consumer.on('producerclose', () => {
+      peer.consumers.delete(consumer.id);
+      consumer.close();
+    });
+
     peer.addConsumer(consumer);
 
     return {
@@ -148,5 +153,10 @@ export class MediasoupService implements OnModuleInit {
     );
 
     return [...new Set(result)];
+  }
+
+  disconnect(socketId: string) {
+    const roomIds = this.roomService.deletePeer(socketId);
+    return roomIds;
   }
 }
