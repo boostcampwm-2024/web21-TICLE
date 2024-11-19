@@ -122,6 +122,11 @@ export class MediasoupService implements OnModuleInit {
       paused: false,
     });
 
+    consumer.on('producerclose', () => {
+      peer.consumers.delete(consumer.id);
+      consumer.close();
+    });
+
     peer.addConsumer(consumer);
 
     return {
