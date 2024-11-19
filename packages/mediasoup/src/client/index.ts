@@ -19,6 +19,7 @@ export interface CreateProducerRes {
   kind: types.MediaKind;
   peerId: string;
   producerId: string;
+  appData:{isScreen:boolean};
 }
 
 export interface CreateTransportRes {

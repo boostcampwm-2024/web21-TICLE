@@ -15,6 +15,7 @@ export interface CreateProducerDto {
   kind: types.MediaKind;
   rtpParameters: types.RtpParameters;
   roomId: string;
+  appData:{isScreen:boolean};
 }
 
 export interface CreateConsumerDto {

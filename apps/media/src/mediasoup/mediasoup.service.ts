@@ -94,15 +94,20 @@ export class MediasoupService implements OnModuleInit {
     kind: types.MediaKind,
     rtpParameters: types.RtpParameters,
     transportId: string,
-    roomId: string
+    roomId: string,
+    appData: { isScreen: boolean }
   ) {
     const room = this.roomService.getRoom(roomId);
     const peer = room.getPeer(socketId);
     const transport = peer.getTransport(transportId);
-    const producer = await transport.produce({ kind, rtpParameters });
+    
+    const producer = await transport.produce({ kind, rtpParameters, appData });
+
+    if (appData.isScreen) {
+      room.addScreenProducer(producer);
+    }
 
     peer.addProducer(producer);
-
     return producer;
   }
 
