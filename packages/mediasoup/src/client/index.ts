@@ -1,5 +1,6 @@
-import type { types } from 'mediasoup-client';
 import { ProducerOptions } from 'mediasoup-client/lib/types';
+
+import type { types } from 'mediasoup-client';
 
 export type Device = types.Device;
 
@@ -39,6 +40,12 @@ export interface RemoteStream {
   stream: MediaStream;
   kind: types.MediaKind;
   pause: boolean;
+}
+
+export interface GetProducersRes{
+  producerId: string;
+  kind: types.MediaKind;
+  peerId: string;
 }
 
 export const PRODUCER_OPTIONS: ProducerOptions = {
