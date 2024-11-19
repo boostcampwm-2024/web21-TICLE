@@ -99,4 +99,13 @@ export class SignalingGateway {
       rtpCapabilities,
     );
   }
+
+  @SubscribeMessage('get-producer')
+  async getProducers(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() getProducerDto: server.GetProducersDto,
+  ) {
+    const { roomId } = getProducerDto;
+    return this.mediasoupService.getProducers(roomId, client.id);
+  }
 }
