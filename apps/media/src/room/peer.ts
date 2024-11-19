@@ -44,8 +44,8 @@ export class Peer {
   }
 
   close() {
-    this.transports.forEach((transport) => transport.close());
-    this.producers.forEach((producer) => producer.close());
     this.consumers.forEach((consumer) => consumer.close());
+    this.producers.forEach((producer) => producer.close());
+    this.transports.forEach((transport) => transport.close());
   }
 }

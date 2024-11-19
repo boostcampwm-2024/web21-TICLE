@@ -26,6 +26,7 @@ export class RoomService {
     }
     return room;
   }
+
   deletePeer(socketId: string) {
     for (const [roomId, room] of this.rooms) {
       if (!room.removePeer(socketId)) continue;
