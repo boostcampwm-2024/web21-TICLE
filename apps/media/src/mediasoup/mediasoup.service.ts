@@ -1,13 +1,14 @@
 import * as os from 'os';
 
 import { Injectable, OnModuleInit } from '@nestjs/common';
+import { WsException } from '@nestjs/websockets';
 import * as mediasoup from 'mediasoup';
 import { types } from 'mediasoup';
+import { Worker } from 'mediasoup/node/lib/types';
 
 import { RoomService } from 'src/room/room.service';
-import { Worker } from 'mediasoup/node/lib/types';
+
 import { MediasoupConfig } from './config';
-import { WsException } from '@nestjs/websockets';
 
 @Injectable()
 export class MediasoupService implements OnModuleInit {

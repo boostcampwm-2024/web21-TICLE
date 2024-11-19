@@ -5,9 +5,9 @@ import {
   WebSocketGateway,
 } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
+import { client, server } from '@repo/mediasoup';
 
 import { MediasoupService } from 'src/mediasoup/mediasoup.service';
-import { client, server } from '@repo/mediasoup';
 
 @WebSocketGateway()
 export class SignalingGateway {

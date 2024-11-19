@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { Room } from './room';
-import { Router } from 'mediasoup/node/lib/RouterTypes';
 import { WsException } from '@nestjs/websockets';
+import { Router } from 'mediasoup/node/lib/RouterTypes';
+
+import { Room } from './room';
 
 @Injectable()
 export class RoomService {

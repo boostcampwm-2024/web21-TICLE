@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 
 import { SignalingModule } from './signaling/signaling.module';
 
-import { ConfigModule } from '@nestjs/config';
 @Module({
   imports: [
     SignalingModule,

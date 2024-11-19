@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
 
-import { MediasoupService } from './mediasoup.service';
 import { RoomModule } from 'src/room/room.module';
+
 import { MediasoupConfig } from './config';
+import { MediasoupService } from './mediasoup.service';
 
 @Module({
   imports: [RoomModule],

@@ -1,5 +1,6 @@
-import { types } from 'mediasoup';
 import { WsException } from '@nestjs/websockets';
+import { types } from 'mediasoup';
+
 export class Peer {
   socketId: string;
 
