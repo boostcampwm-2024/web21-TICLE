@@ -6,7 +6,7 @@ import { MediasoupConfig } from './config';
 
 @Module({
   imports: [RoomModule],
-  providers: [MediasoupService,MediasoupConfig],
+  providers: [MediasoupService, MediasoupConfig],
   exports: [MediasoupService],
 })
 export class MediasoupModule {}

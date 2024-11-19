@@ -14,19 +14,13 @@ export class SignalingGateway {
   constructor(private mediasoupService: MediasoupService) {}
 
   @SubscribeMessage('create-room')
-  async handleCreateRoom(
-    @ConnectedSocket() client: Socket,
-    @MessageBody('roomId') roomId: string,
-  ) {
+  async handleCreateRoom(@ConnectedSocket() client: Socket, @MessageBody('roomId') roomId: string) {
     this.mediasoupService.createRoom(roomId);
     return { roomId };
   }
 
   @SubscribeMessage('join-room')
-  joinRoom(
-    @ConnectedSocket() client: Socket,
-    @MessageBody('roomId') roomId: string,
-  ) {
+  joinRoom(@ConnectedSocket() client: Socket, @MessageBody('roomId') roomId: string) {
     client.join(roomId);
     const rtpCapabilities = this.mediasoupService.joinRoom(roomId, client.id);
     client.to(roomId).emit('new-peer', { peerId: client.id });
@@ -36,11 +30,11 @@ export class SignalingGateway {
   @SubscribeMessage('create-transport')
   async createTransport(
     @ConnectedSocket() client: Socket,
-    @MessageBody() createTransportDto: server.CreateTransportDto,
+    @MessageBody() createTransportDto: server.CreateTransportDto
   ): Promise<client.CreateTransportRes> {
     const transportOptions = await this.mediasoupService.createTransport(
       createTransportDto.roomId,
-      client.id,
+      client.id
     );
     return transportOptions;
   }
@@ -48,17 +42,12 @@ export class SignalingGateway {
   @SubscribeMessage('connect-transport')
   async connectTransport(
     @ConnectedSocket() client: Socket,
-    @MessageBody() connectTransportDto: server.ConnectTransportDto,
+    @MessageBody() connectTransportDto: server.ConnectTransportDto
   ) {
     const socketId = client.id;
     const { transportId, dtlsParameters, roomId } = connectTransportDto;
 
-    await this.mediasoupService.connectTransport(
-      dtlsParameters,
-      transportId,
-      roomId,
-      socketId,
-    );
+    await this.mediasoupService.connectTransport(dtlsParameters, transportId, roomId, socketId);
 
     return { message: 'success' };
   }
@@ -66,7 +55,7 @@ export class SignalingGateway {
   @SubscribeMessage('produce')
   async handleProduce(
     @ConnectedSocket() client: Socket,
-    @MessageBody() createProducerDto: server.CreateProducerDto,
+    @MessageBody() createProducerDto: server.CreateProducerDto
   ): Promise<client.CreateProducerRes> {
     const { transportId, kind, rtpParameters, roomId } = createProducerDto;
     const producer = await this.mediasoupService.produce(
@@ -74,7 +63,7 @@ export class SignalingGateway {
       kind,
       rtpParameters,
       transportId,
-      roomId,
+      roomId
     );
 
     const createProducerRes = {
@@ -90,17 +79,16 @@ export class SignalingGateway {
   @SubscribeMessage('consume')
   async handleConsume(
     @ConnectedSocket() client: Socket,
-    @MessageBody() createConsumerDto: server.CreateConsumerDto,
+    @MessageBody() createConsumerDto: server.CreateConsumerDto
   ): Promise<client.CreateConsumerRes> {
-    const { transportId, producerId, roomId, rtpCapabilities } =
-      createConsumerDto;
+    const { transportId, producerId, roomId, rtpCapabilities } = createConsumerDto;
 
     const createConsumerRes = this.mediasoupService.consume(
       client.id,
       producerId,
       roomId,
       transportId,
-      rtpCapabilities,
+      rtpCapabilities
     );
 
     return createConsumerRes;
@@ -109,7 +97,7 @@ export class SignalingGateway {
   @SubscribeMessage('get-producer')
   async getProducers(
     @ConnectedSocket() client: Socket,
-    @MessageBody() getProducerDto: server.GetProducersDto,
+    @MessageBody() getProducerDto: server.GetProducersDto
   ) {
     const { roomId } = getProducerDto;
     return this.mediasoupService.getProducers(roomId, client.id);
