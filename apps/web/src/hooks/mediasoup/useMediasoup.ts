@@ -51,8 +51,18 @@ const useMediasoup = () => {
       consume({ producerId, kind, peerId });
     });
 
+    socket.on(SOCKET_EVENTS.peerLeft, ({ peerId }) => {
+      closeConsumer((rs) => rs.socketId !== peerId);
+    });
+
     socket.on(SOCKET_EVENTS.consumerClosed, ({ consumerId }) => {
-      closeConsumer(consumerId);
+      closeConsumer((rs) => rs.consumer.id !== consumerId);
+    });
+
+    socket.on(SOCKET_EVENTS.producerClosed, ({ producerId }) => {
+      closeConsumer((rs) => {
+        return rs.consumer.producerId !== producerId;
+      });
     });
   };
 
