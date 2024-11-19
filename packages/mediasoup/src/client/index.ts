@@ -1,3 +1,5 @@
+import { ProducerOptions } from 'mediasoup-client/lib/types';
+
 import type { types } from 'mediasoup-client';
 
 export type Device = types.Device;
@@ -14,9 +16,9 @@ export interface ConsumerTransports {
 }
 
 export interface CreateProducerRes {
+  kind: types.MediaKind;
   peerId: string;
   producerId: string;
-  kind: types.MediaKind;
 }
 
 export interface CreateTransportRes {
@@ -32,3 +34,39 @@ export interface CreateConsumerRes {
   kind: types.MediaKind;
   rtpParameters: types.RtpParameters;
 }
+
+export interface RemoteStream {
+  socketId: string;
+  stream: MediaStream;
+  kind: types.MediaKind;
+  pause: boolean;
+}
+
+export interface GetProducersRes{
+  producerId: string;
+  kind: types.MediaKind;
+  peerId: string;
+}
+
+export const PRODUCER_OPTIONS: ProducerOptions = {
+  encodings: [
+    {
+      rid: 'r0',
+      maxBitrate: 100000,
+      scalabilityMode: 'S1T3',
+    },
+    {
+      rid: 'r1',
+      maxBitrate: 300000,
+      scalabilityMode: 'S1T3',
+    },
+    {
+      rid: 'r2',
+      maxBitrate: 900000,
+      scalabilityMode: 'S1T3',
+    },
+  ],
+  codecOptions: {
+    videoGoogleStartBitrate: 1000,
+  },
+};

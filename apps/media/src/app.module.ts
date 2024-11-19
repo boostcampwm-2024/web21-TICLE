@@ -1,12 +1,17 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 
-import { MediasoupModule } from './mediasoup/mediasoup.module';
-import { MediasoupService } from './mediasoup/mediasoup.service';
 import { SignalingModule } from './signaling/signaling.module';
 
 @Module({
-  imports: [SignalingModule, MediasoupModule],
+  imports: [
+    SignalingModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
+    }),
+  ],
   controllers: [],
-  providers: [MediasoupService],
+  providers: [],
 })
 export class AppModule {}

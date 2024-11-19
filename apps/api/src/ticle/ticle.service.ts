@@ -129,21 +129,23 @@ export class TicleService {
   }
 
   async getTicleByTicleId(ticleId: number): Promise<TickleDetailResponseDto> {
-    const ticle = await this.ticleRepository.findOne({
-      where: { id: ticleId },
-      relations: {
-        tags: true,
-      },
-    });
+    const ticle = await this.ticleRepository
+      .createQueryBuilder('ticle')
+      .leftJoinAndSelect('ticle.tags', 'tags')
+      .leftJoinAndSelect('ticle.speaker', 'speaker')
+      .select(['ticle', 'tags', 'speaker.id', 'speaker.profileImageUrl'])
+      .where('ticle.id = :id', { id: ticleId })
+      .getOne();
 
     if (!ticle) {
       throw new NotFoundException('티클을 찾을 수 없습니다.');
     }
-    const { tags, ...ticleData } = ticle;
+    const { tags, speaker, ...ticleData } = ticle;
 
     return {
       ...ticleData,
       tags: tags.map((tag) => tag.name),
+      speakerImgUrl: speaker.profileImageUrl,
     };
   }
 

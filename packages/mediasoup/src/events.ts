@@ -13,6 +13,7 @@ export const SOCKET_EVENTS = {
   peerLeft: 'peer-left',
   consumerClosed: 'consumer-closed',
   consumerPaused: 'consumer-paused',
+  producerPaused: 'producer-paused',
   createRoom: 'create-room',
   joinRoom: 'join-room',
   createTransport: 'create-transport',

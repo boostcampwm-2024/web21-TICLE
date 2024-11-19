@@ -4,6 +4,7 @@ import {
   SubscribeMessage,
   WebSocketGateway,
 } from '@nestjs/websockets';
+import { client, server } from '@repo/mediasoup';
 import { Socket } from 'socket.io';
 
 import { MediasoupService } from 'src/mediasoup/mediasoup.service';
@@ -13,38 +14,92 @@ export class SignalingGateway {
   constructor(private mediasoupService: MediasoupService) {}
 
   @SubscribeMessage('create-room')
-  async handleCreateRoom(
-    @ConnectedSocket() client: Socket,
-    @MessageBody('roomId') roomId: string,
-  ) {
+  async handleCreateRoom(@ConnectedSocket() client: Socket, @MessageBody('roomId') roomId: string) {
     this.mediasoupService.createRoom(roomId);
     return { roomId };
   }
 
   @SubscribeMessage('join-room')
-  joinRoom(
-    @ConnectedSocket() client: Socket,
-    @MessageBody('roomId') roomId: string,
-  ) {
-    const rtpCapabilities = this.mediasoupService.joinRoom(roomId, client);
+  joinRoom(@ConnectedSocket() client: Socket, @MessageBody('roomId') roomId: string) {
+    client.join(roomId);
+    const rtpCapabilities = this.mediasoupService.joinRoom(roomId, client.id);
+    client.to(roomId).emit('new-peer', { peerId: client.id });
     return { rtpCapabilities };
   }
 
   @SubscribeMessage('create-transport')
   async createTransport(
     @ConnectedSocket() client: Socket,
-    @MessageBody('roomId') roomId: string,
-  ) {
+    @MessageBody() createTransportDto: server.CreateTransportDto
+  ): Promise<client.CreateTransportRes> {
     const transportOptions = await this.mediasoupService.createTransport(
-      roomId,
-      client,
+      createTransportDto.roomId,
+      client.id
     );
-    return { transportOptions };
+    return transportOptions;
   }
 
-  // @SubscribeMessage('connect-transport')
+  @SubscribeMessage('connect-transport')
+  async connectTransport(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() connectTransportDto: server.ConnectTransportDto
+  ) {
+    const socketId = client.id;
+    const { transportId, dtlsParameters, roomId } = connectTransportDto;
 
-  // @SubscribeMessage('produce') //producer 만들어 달라고 요청 (자기가 쓰려고)
+    await this.mediasoupService.connectTransport(dtlsParameters, transportId, roomId, socketId);
 
-  // @SubscribeMessage('consume') // 방에있는 producer들을 Consumer로 받아오려고 요청
+    return { message: 'success' };
+  }
+
+  @SubscribeMessage('produce')
+  async handleProduce(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() createProducerDto: server.CreateProducerDto
+  ): Promise<client.CreateProducerRes> {
+    const { transportId, kind, rtpParameters, roomId } = createProducerDto;
+    const producer = await this.mediasoupService.produce(
+      client.id,
+      kind,
+      rtpParameters,
+      transportId,
+      roomId
+    );
+
+    const createProducerRes = {
+      producerId: producer.id,
+      peerId: client.id,
+      kind,
+    };
+
+    client.to(roomId).emit('new-producer', createProducerRes);
+    return createProducerRes;
+  }
+
+  @SubscribeMessage('consume')
+  async handleConsume(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() createConsumerDto: server.CreateConsumerDto
+  ): Promise<client.CreateConsumerRes> {
+    const { transportId, producerId, roomId, rtpCapabilities } = createConsumerDto;
+
+    const createConsumerRes = this.mediasoupService.consume(
+      client.id,
+      producerId,
+      roomId,
+      transportId,
+      rtpCapabilities
+    );
+
+    return createConsumerRes;
+  }
+
+  @SubscribeMessage('get-producer')
+  async getProducers(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() getProducerDto: server.GetProducersDto
+  ): Promise<client.GetProducersRes[]> {
+    const { roomId } = getProducerDto;
+    return this.mediasoupService.getProducers(roomId, client.id);
+  }
 }
