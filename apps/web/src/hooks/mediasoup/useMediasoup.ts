@@ -1,7 +1,7 @@
-import { client, SOCKET_EVENTS } from '@repo/mediasoup';
 import { useParams } from '@tanstack/react-router';
 import { types } from 'mediasoup-client';
 import { useEffect, useRef, useState } from 'react';
+import { client, SOCKET_EVENTS } from '@repo/mediasoup';
 
 import { ENV } from '@/constants/env';
 
@@ -119,19 +119,13 @@ const useMediasoup = () => {
 
   const createProducer = async (track?: MediaStreamTrack) => {
     const transport = sendTransportRef.current;
-
-    debugger;
-
     if (!transport || !track) {
       return null;
     }
 
     const producerOptions = getProducerOptions(track.kind);
 
-    const producer = await transport.produce({
-      track,
-      ...producerOptions
-    });
+    const producer = await transport.produce({ track, ...producerOptions });
 
     return producer;
   };
@@ -155,7 +149,6 @@ const useMediasoup = () => {
   const createScreen = async () => {
     const stream = await navigator.mediaDevices.getDisplayMedia({ video: true });
 
-
     const track = stream.getVideoTracks()[0];
 
     screenStreamRef.current = stream;
@@ -175,7 +168,6 @@ const useMediasoup = () => {
       transportId: transport.id,
       rtpCapabilities: device.rtpCapabilities,
     };
-
 
     socket.emit(
       SOCKET_EVENTS.consume,
@@ -207,40 +199,28 @@ const useMediasoup = () => {
 
     const videoProducer = videoProducerRef.current;
     const audioProducer = audioProducerRef.current;
-    // const screenProducer = screenProducerRef.current;
+    const screenProducer = screenProducerRef.current;
 
-      console.log(!socket || !videoProducer || !audioProducer )
-
-
-
-    if (!socket || !videoProducer || !audioProducer ) return;
+    if (!socket || !videoProducer || !audioProducer) return;
 
     // TODO: socket에 포함되지 않은 producer 목록 요청
     socket.emit(
       SOCKET_EVENTS.getProducer,
       { roomId: ticleId },
       (result: client.CreateProducerRes[]) => {
-        console.log(result);
-        const filtered = result
-          .filter(
-            (p) =>
-              p.producerId !== videoProducer.id &&
-              p.producerId !== audioProducer.id 
-          )
-
-          console.log(filtered)
-
-          debugger;
-
-          filtered.forEach((p) => consume(p));
-         
+        const filtered = result.filter(
+          (p) =>
+            p.producerId !== videoProducer.id &&
+            p.producerId !== audioProducer.id &&
+            (screenProducer ? p.producerId !== screenProducer.id : true)
+        );
+        filtered.forEach((p) => consume(p));
       }
     );
   };
 
   const initMediasoup = async () => {
     const rtpCapabilities = await createRoom();
-
 
     if (!rtpCapabilities) return;
 
@@ -249,21 +229,7 @@ const useMediasoup = () => {
     createSendTransport(device);
     createRecvTransport(device);
 
-    // await Promise.all([createVideo(), createAudio(), createScreen()]);
-    // await Promise.all([createVideo(), createAudio()]);
-    // await createVideo();
-    // await createAudio();
-
-    await Promise.all([
-  createVideo().catch((err) => {
-    console.error('Error in createVideo:', err);
-  }),
-  createAudio().catch((err) => {
-    console.error('Error in createAudio:', err);
-  }),
-]);
-    console.log("@@")
-
+    await Promise.all([createVideo(), createAudio()]);
 
     connectExistProducer();
   };
@@ -273,7 +239,11 @@ const useMediasoup = () => {
     initMediasoup();
   }, []);
 
-  return { remoteStreams, localVideoStreamRef:videoStreamRef, localAudioStreamRef:audioStreamRef };
+  return {
+    remoteStreams,
+    localVideoStreamRef: videoStreamRef,
+    localAudioStreamRef: audioStreamRef,
+  };
 };
 
 export default useMediasoup;
