@@ -101,4 +101,20 @@ export class MediasoupService implements OnModuleInit {
 
     await transport.connect({ dtlsParameters });
   }
+
+  async produce(
+    id: string,
+    kind: types.MediaKind,
+    rtpParameters: types.RtpParameters,
+    transportId: string,
+    roomId: string,
+  ) {
+    const room = this.rooms.get(roomId);
+    const peer = room.getPeer(id);
+    const transport = peer.getTransport(transportId);
+    const producer = await transport.produce({ kind, rtpParameters });
+
+    peer.addProducer(producer);
+    return producer;
+  }
 }

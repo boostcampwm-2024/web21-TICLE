@@ -61,7 +61,28 @@ export class SignalingGateway {
     return { message: 'success' };
   }
 
-  // @SubscribeMessage('produce') //producer 만들어 달라고 요청 (자기가 쓰려고)
+  @SubscribeMessage('produce')
+  async handleProduce(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() createProducerDto: server.CreateProducerDto,
+  ) {
+    const { transportId, kind, rtpParameters, roomId } = createProducerDto;
+    const producer = await this.mediasoupService.produce(
+      client.id,
+      kind,
+      rtpParameters,
+      transportId,
+      roomId,
+    );
+
+    client.to(roomId).emit('new-producer', {
+      producerId: producer.id,
+      peerId: client.id,
+      kind,
+    });
+
+    return producer;
+  }
 
   // @SubscribeMessage('consume') // 방에있는 producer들을 Consumer로 받아오려고 요청
 }
