@@ -6,13 +6,24 @@ import AudioPlayer from './AudioPlayer';
 import VideoPlayer from './VideoPlayer';
 
 function MediaContainer() {
-  const { remoteStreams, audioStream, videoStream, screenStream, startScreenStream } =
-    useMediasoup();
+  const {
+    remoteStreams,
+    audioStream,
+    videoStream,
+    screenStream,
+    screenProducerRef,
+    startScreenStream,
+    closeStream,
+  } = useMediasoup();
   const [isScreenSharing, setIsScreenSharing] = useState(false);
 
-  const onClickScreenShare = () => {
-    startScreenStream();
-    setIsScreenSharing(true);
+  const toggleScreenShare = () => {
+    if (isScreenSharing && screenStream) {
+      closeStream(screenStream, screenProducerRef);
+    } else {
+      startScreenStream();
+    }
+    setIsScreenSharing((prev) => !prev);
   };
 
   return (
@@ -27,7 +38,7 @@ function MediaContainer() {
               className="h-full w-full rounded-lg object-cover"
             />
           )}
-          {screenStream && (
+          {screenStream && isScreenSharing && (
             <div className="absolute right-0 top-0 aspect-video w-1/4">
               <VideoPlayer
                 stream={screenStream}
@@ -43,11 +54,10 @@ function MediaContainer() {
           {/* Media Controls */}
           <div className="absolute bottom-2 right-2 flex gap-2">
             <button
-              onClick={onClickScreenShare}
+              onClick={toggleScreenShare}
               className="rounded bg-blue-500 px-3 py-1 text-white hover:bg-blue-600"
-              disabled={isScreenSharing}
             >
-              {isScreenSharing ? '화면 공유 중' : '화면 공유'}
+              {isScreenSharing ? '화면 공유 중지' : '화면 공유'}
             </button>
           </div>
         </div>

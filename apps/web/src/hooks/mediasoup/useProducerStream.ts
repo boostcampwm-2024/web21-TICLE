@@ -52,6 +52,7 @@ const useProducerStream = ({ socketRef, sendTransportRef }: UseProducerStreamPar
     stream.getTracks().forEach((track) => {
       track.stop();
       producer.close();
+      producerRef.current = null;
     });
   };
 
@@ -111,8 +112,6 @@ const useProducerStream = ({ socketRef, sendTransportRef }: UseProducerStreamPar
   };
 
   const startScreenStream = async () => {
-    if (screenStream) return;
-
     const stream = await navigator.mediaDevices.getDisplayMedia({ video: true });
     const track = stream.getVideoTracks()[0];
 

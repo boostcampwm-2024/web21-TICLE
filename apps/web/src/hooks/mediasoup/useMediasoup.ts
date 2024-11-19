@@ -21,6 +21,7 @@ const useMediasoup = () => {
     useTransport(socketRef, ticleId);
 
   const {
+    screenProducerRef,
     videoStream,
     audioStream,
     screenStream,
@@ -80,6 +81,7 @@ const useMediasoup = () => {
   }, []);
 
   return {
+    screenProducerRef,
     remoteStreams,
     videoStream,
     audioStream,
