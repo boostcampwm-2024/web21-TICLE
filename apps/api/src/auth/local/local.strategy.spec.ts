@@ -4,25 +4,14 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from '../auth.service';
 import { LocalStrategy } from './local.strategy';
 
+jest.mock('bcrypt', () => ({
+  compare: jest.fn(),
+}));
 describe('LocalStrategy', () => {
-  let localStrategy: LocalStrategy;
+  let strategy: LocalStrategy;
   let authService: AuthService;
 
-  const mockUser = {
-    id: 1,
-    username: 'testuser',
-    nickname: 'Test User',
-    email: 'test@example.com',
-    introduce: 'Hello',
-    profileImageUrl: 'http://example.com/profile.jpg',
-    provider: 'local',
-    socialId: '',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    ticles: [],
-    applicants: [],
-  };
-
+  // Mock AuthService
   const mockAuthService = {
     validateLocalLogin: jest.fn(),
   };
@@ -38,38 +27,67 @@ describe('LocalStrategy', () => {
       ],
     }).compile();
 
-    localStrategy = module.get<LocalStrategy>(LocalStrategy);
+    strategy = module.get<LocalStrategy>(LocalStrategy);
     authService = module.get<AuthService>(AuthService);
-  });
 
-  afterEach(() => {
+    // Clear all mocks before each test
     jest.clearAllMocks();
   });
 
   describe('validate', () => {
-    it('should return a user when credentials are valid', async () => {
-      const username = 'testuser';
-      const password = 'password123';
+    const mockCredentials = {
+      username: 'testuser',
+      password: 'password123',
+    };
+
+    it('should call authService.validateLocalLogin with correct credentials', async () => {
+      const mockUser = { id: 1, username: 'testuser', email: 'test@example.com' };
       mockAuthService.validateLocalLogin.mockResolvedValue(mockUser);
 
-      const result = await localStrategy.validate(username, password);
+      await strategy.validate(mockCredentials.username, mockCredentials.password);
 
-      expect(authService.validateLocalLogin).toHaveBeenCalledWith(username, password);
-      expect(result).toEqual(mockUser);
-      expect(authService.validateLocalLogin).toHaveBeenCalledTimes(1);
+      expect(authService.validateLocalLogin).toHaveBeenCalledWith(
+        mockCredentials.username,
+        mockCredentials.password
+      );
     });
 
-    it('should throw UnauthorizedException when credentials are invalid', async () => {
-      const username = 'wronguser';
-      const password = 'wrongpassword';
-      mockAuthService.validateLocalLogin.mockResolvedValue(null);
+    it('should return user id when validation is successful', async () => {
+      const mockUser = { id: 1, username: 'testuser', email: 'test@example.com' };
+      mockAuthService.validateLocalLogin.mockResolvedValue(mockUser);
 
-      await expect(localStrategy.validate(username, password)).rejects.toThrow(
-        UnauthorizedException
+      const result = await strategy.validate(mockCredentials.username, mockCredentials.password);
+
+      expect(result).toEqual({ id: mockUser.id });
+    });
+
+    it('should throw UnauthorizedException when authentication fails', async () => {
+      mockAuthService.validateLocalLogin.mockRejectedValue(
+        new UnauthorizedException('잘못된 로그인 정보')
       );
 
-      expect(authService.validateLocalLogin).toHaveBeenCalledWith(username, password);
-      expect(authService.validateLocalLogin).toHaveBeenCalledTimes(1);
+      await expect(
+        strategy.validate(mockCredentials.username, mockCredentials.password)
+      ).rejects.toThrow(UnauthorizedException);
+    });
+
+    it('should handle empty credentials properly', async () => {
+      mockAuthService.validateLocalLogin.mockRejectedValue(
+        new UnauthorizedException('잘못된 로그인 정보')
+      );
+
+      await expect(strategy.validate('', '')).rejects.toThrow(UnauthorizedException);
+
+      expect(authService.validateLocalLogin).toHaveBeenCalledWith('', '');
+    });
+
+    it('should properly pass through any errors from authService', async () => {
+      const customError = new UnauthorizedException('Custom error message');
+      mockAuthService.validateLocalLogin.mockRejectedValue(customError);
+
+      await expect(
+        strategy.validate(mockCredentials.username, mockCredentials.password)
+      ).rejects.toThrow(customError);
     });
   });
 });
