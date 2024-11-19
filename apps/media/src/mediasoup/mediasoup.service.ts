@@ -2,6 +2,7 @@ import * as os from 'os';
 
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import * as mediasoup from 'mediasoup';
+import { types } from 'mediasoup';
 import { Socket } from 'socket.io';
 
 import { config } from 'src/config';
@@ -46,7 +47,9 @@ export class MediasoupService implements OnModuleInit {
 
   public async createRoom(roomId: string) {
     const worker = this.getWorker();
-
+    if (this.rooms.has(roomId)) {
+      return roomId;
+    }
     const room = new Room(roomId);
     this.rooms.set(roomId, room);
     await room.init(worker);
@@ -75,7 +78,7 @@ export class MediasoupService implements OnModuleInit {
     const transport = await router.createWebRtcTransport(
       config.mediasoup.webRtcTransport,
     );
-    room.getPeer(socket.id).addSendTransport(transport);
+    room.getPeer(socket.id).addTransport(transport);
 
     return {
       id: transport.id,
@@ -83,5 +86,19 @@ export class MediasoupService implements OnModuleInit {
       iceCandidates: transport.iceCandidates,
       dtlsParameters: transport.dtlsParameters,
     };
+  }
+
+  public async connectTransport(
+    dtlsParameters: types.DtlsParameters,
+    transportId: string,
+    roomId: string,
+    socketId: string,
+  ) {
+    const room = this.rooms.get(roomId);
+
+    const peer = room.getPeer(socketId);
+    const transport = peer.getTransport(transportId);
+
+    await transport.connect({ dtlsParameters });
   }
 }
