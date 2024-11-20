@@ -11,12 +11,13 @@ export class RoomService {
   constructor() {}
 
   createRoom(roomId: string, router: Router) {
-    if (this.rooms.has(roomId)) {
-      return roomId;
-    }
     const room = new Room(roomId, router);
     this.rooms.set(roomId, room);
     return roomId;
+  }
+
+  existRoom(roomId: string) {
+    return this.rooms.has(roomId);
   }
 
   getRoom(roomId: string) {

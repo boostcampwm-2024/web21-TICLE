@@ -18,7 +18,6 @@ export class SignalingGateway implements OnGatewayDisconnect {
   @SubscribeMessage(SOCKET_EVENTS.createRoom)
   async handleCreateRoom(@ConnectedSocket() client: Socket, @MessageBody('roomId') roomId: string) {
     await this.mediasoupService.createRoom(roomId);
-
     return { roomId };
   }
 
@@ -60,19 +59,21 @@ export class SignalingGateway implements OnGatewayDisconnect {
     @ConnectedSocket() client: Socket,
     @MessageBody() createProducerDto: server.CreateProducerDto
   ): Promise<client.CreateProducerRes> {
-    const { transportId, kind, rtpParameters, roomId } = createProducerDto;
+    const { transportId, kind, rtpParameters, roomId, appData } = createProducerDto;
     const producer = await this.mediasoupService.produce(
       client.id,
       kind,
       rtpParameters,
       transportId,
-      roomId
+      roomId,
+      appData
     );
 
     const createProducerRes = {
       producerId: producer.id,
       peerId: client.id,
       kind,
+      appData,
     };
 
     client.to(roomId).emit(SOCKET_EVENTS.newProducer, createProducerRes);
