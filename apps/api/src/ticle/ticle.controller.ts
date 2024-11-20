@@ -2,7 +2,7 @@ import { Body, Controller, Get, Param, Post, Query, UseGuards, UsePipes } from '
 
 import { JwtAuthGuard } from '@/auth/jwt/jwt-auth.guard';
 import { GetUserId } from '@/common/decorator/get-userId.decorator';
-import { ZodValidationPipe } from '@/zodpipevalidation';
+import { ZodValidationPipe } from '@/zodValidationPipe';
 
 import { CreateTicleDto, CreateTicleSchema } from './dto/createTicleDto';
 import { GetTicleListQueryDto } from './dto/getTicleListQueryDto';
