@@ -1,14 +1,23 @@
 import { cva } from 'class-variance-authority';
+import { types } from 'mediasoup-client';
 import { useState } from 'react';
 
-import ChevronLeftIc from '@/assets/icons/chevron-left.svg?react';
-import ChevronRightIc from '@/assets/icons/chevron-right.svg?react';
 import useMediasoup from '@/hooks/mediasoup/useMediasoup';
+import usePagination from '@/hooks/usePagination';
 
 import AudioPlayer from './AudioPlayer';
+import PaginationControls from './PaginationControls';
 import VideoPlayer from './VideoPlayer';
 
 const ITEMS_PER_PAGE = 9;
+
+interface StreamData {
+  consumer?: types.Consumer;
+  socketId?: string;
+  kind: types.MediaKind;
+  stream: MediaStream | null;
+  pause: boolean;
+}
 
 const containerVariants = cva('flex-1 gap-5 overflow-hidden', {
   variants: {
@@ -50,7 +59,6 @@ function MediaContainer() {
     closeStream,
   } = useMediasoup();
   const [isScreenSharing, setIsScreenSharing] = useState(false);
-  const [currentPage, setCurrentPage] = useState(0);
 
   const toggleScreenShare = () => {
     if (isScreenSharing && localScreenStream) {
@@ -62,21 +70,22 @@ function MediaContainer() {
   };
 
   const remoteVideoStreams = remoteStreams.filter((stream) => stream.kind === 'video');
-  const allVideoStreams = [
+  const allVideoStreams: StreamData[] = [
     {
-      consumer: null,
-      socketId: null,
+      consumer: undefined,
+      socketId: undefined,
       kind: 'video',
       stream: localVideoStream,
       pause: false,
     },
     ...remoteVideoStreams,
   ];
-  const paginatedStreams = allVideoStreams.slice(
-    currentPage * ITEMS_PER_PAGE,
-    (currentPage + 1) * ITEMS_PER_PAGE
-  );
-  const totalPages = Math.ceil(allVideoStreams.length / ITEMS_PER_PAGE);
+
+  const { paginatedItems: paginatedStreams, ...paginationControlsProps } =
+    usePagination<StreamData>({
+      totalItems: allVideoStreams,
+      itemsPerPage: ITEMS_PER_PAGE,
+    });
 
   const isFixedGrid = allVideoStreams.length >= 9;
   const columnCount = getColumnCount(paginatedStreams.length);
@@ -89,7 +98,7 @@ function MediaContainer() {
           {paginatedStreams.map((stream) => (
             <div
               key={stream.socketId}
-              className={videoVariants({ type: stream.kind as 'video' | 'audio' })}
+              className={videoVariants({ type: stream.kind })}
               style={{ width: videoWidth }}
             >
               {stream.kind === 'video' ? (
@@ -100,24 +109,7 @@ function MediaContainer() {
             </div>
           ))}
         </div>
-        {currentPage !== 0 && (
-          <button
-            type="button"
-            onClick={() => setCurrentPage((prev) => Math.max(0, prev - 1))}
-            className="absolute left-[-45px] flex h-full items-center"
-          >
-            <ChevronLeftIc />
-          </button>
-        )}
-        {currentPage !== totalPages - 1 && (
-          <button
-            type="button"
-            className="absolute right-[-45px] flex h-full items-center"
-            onClick={() => setCurrentPage((prev) => Math.min(totalPages - 1, prev + 1))}
-          >
-            <ChevronRightIc />
-          </button>
-        )}
+        <PaginationControls {...paginationControlsProps} />
       </div>
 
       <footer className="flex h-[70px] justify-center gap-4 bg-primary pb-4 text-white">
