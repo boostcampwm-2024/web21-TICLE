@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from '@tanstack/react-router';
 import { useForm } from 'react-hook-form';
-import { OpenFormInputs, ticleOpenFormSchema } from '@repo/types';
+import { CreateTicleSchema, CreateTicleType } from '@repo/types';
 
 import Button from '@/components/common/Button';
 import TextArea from '@/components/common/TextArea';
@@ -18,15 +18,15 @@ function Open() {
     handleSubmit,
     control,
     formState: { errors, isSubmitting },
-  } = useForm<OpenFormInputs>({
-    resolver: zodResolver(ticleOpenFormSchema),
+  } = useForm<CreateTicleType & { hashtagInput: string }>({
+    resolver: zodResolver(CreateTicleSchema),
     mode: 'onChange',
-    defaultValues: {
-      hashtags: [],
-    },
+    errors: { hashtagInput: { type: 'maxLength', message: '태그는 최대 7자까지 가능합니다' } },
+    defaultValues: { tags: [] },
   });
+
   const navigate = useNavigate();
-  const onSubmit = (inputs: OpenFormInputs) => {
+  const onSubmit = (inputs: CreateTicleType) => {
     // TODO: API
     navigate({ to: '/' }); // TODO: 생성된 티클로 redirect -> post시 응답값으로 ticleId가 필요
   };
@@ -39,15 +39,15 @@ function Open() {
           <TextInput
             label="이름(닉네임)"
             required
-            {...register('name')}
-            errorMessage={errors.name?.message}
+            {...register('speakerName')}
+            errorMessage={errors.speakerName?.message}
           />
           <TextInput
             label="이메일"
             type="email"
             required
-            {...register('email')}
-            errorMessage={errors.email?.message}
+            {...register('speakerEmail')}
+            errorMessage={errors.speakerEmail?.message}
           />
           <TextArea
             label="자기소개"
@@ -55,8 +55,8 @@ function Open() {
             size="md"
             required
             maxLength={500}
-            {...register('selfIntroduction')}
-            errorMessage={errors.selfIntroduction?.message}
+            {...register('speakerIntroduce')}
+            errorMessage={errors.speakerIntroduce?.message}
           />
         </FormBox>
         <FormBox title="티클 정보" className="mt-14">
@@ -72,8 +72,8 @@ function Open() {
             size="lg"
             required
             maxLength={1500}
-            {...register('ticleIntroduction')}
-            errorMessage={errors.ticleIntroduction?.message}
+            {...register('content')}
+            errorMessage={errors.content?.message}
           />
           <HashtagInput required control={control} />
           <DateTimePicker required control={control} />
