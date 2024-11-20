@@ -35,7 +35,7 @@ function MediaContainer() {
             <VideoPlayer
               stream={videoStream}
               muted
-              className="h-full w-full rounded-lg object-cover"
+              className="aspect-video h-full w-full -scale-x-[1] rounded-lg"
             />
           )}
           {screenStream && isScreenSharing && (
@@ -43,7 +43,7 @@ function MediaContainer() {
               <VideoPlayer
                 stream={screenStream}
                 muted
-                className="h-full w-full rounded-lg border-2 border-blue-500 object-cover"
+                className="-full w-full rounded-lg border-2 border-blue-500 object-cover"
               />
             </div>
           )}
@@ -62,12 +62,14 @@ function MediaContainer() {
           </div>
         </div>
       </div>
-
       {/* Remote Streams */}
       {remoteStreams.map((remote, index) => (
         <div key={`${remote.socketId}-${index}`} className="relative aspect-video">
           {remote.kind === 'video' && (
-            <VideoPlayer stream={remote.stream} className="h-full w-full rounded-lg object-cover" />
+            <VideoPlayer
+              stream={remote.stream}
+              className="aspect-video h-full w-full rounded-lg object-cover"
+            />
           )}
           {remote.kind === 'audio' && <AudioPlayer stream={remote.stream} className="hidden" />}
           <div className="bg-black/50 absolute bottom-2 left-2 rounded px-2 py-1 text-sm text-white">

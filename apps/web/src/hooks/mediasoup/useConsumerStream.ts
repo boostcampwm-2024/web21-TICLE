@@ -13,7 +13,6 @@ interface UseProducerStreamParams {
 const useConsumerStream = ({ socketRef, deviceRef, recvTransportRef }: UseProducerStreamParams) => {
   const { ticleId } = useParams({ from: '/live/$ticleId' });
 
-  const [consumers, setConsumers] = useState<types.Consumer[]>([]);
   const [remoteStreams, setRemoteStreams] = useState<client.RemoteStream[]>([]);
 
   const consume = async ({ producerId, peerId, kind }: client.CreateProducerRes) => {
@@ -38,30 +37,24 @@ const useConsumerStream = ({ socketRef, deviceRef, recvTransportRef }: UseProduc
       const stream = new MediaStream([consumer.track]);
 
       const newRemoteStream: client.RemoteStream = {
+        consumer,
         socketId: peerId,
         kind,
         stream,
         pause: false,
       };
 
-      setConsumers((prev) => [...prev, consumer]);
       setRemoteStreams((prev) => [...prev, newRemoteStream]);
 
       consumer.resume();
     });
   };
 
-  const closeConsumer = (consumerId: string) => {
-    const consumer = consumers.find((c) => c.id === consumerId);
-
-    if (!consumer) return;
-
-    consumer.close();
-
-    setConsumers((prev) => prev.filter((c) => c.id !== consumerId));
+  const closeConsumer = (cb: (remoteStream: client.RemoteStream) => boolean) => {
+    setRemoteStreams((prev) => prev.filter(cb));
   };
 
-  return { consumers, remoteStreams, consume, closeConsumer };
+  return { remoteStreams, consume, closeConsumer };
 };
 
 export default useConsumerStream;

@@ -38,6 +38,7 @@ export interface CreateConsumerRes {
 export interface RemoteStream {
   socketId: string;
   stream: MediaStream;
+  consumer: types.Consumer;
   kind: types.MediaKind;
   pause: boolean;
 }
@@ -91,6 +92,8 @@ export const VIDEO_PRODUCER_OPTIONS: ProducerOptions = {
   ],
   codecOptions: {
     videoGoogleStartBitrate: 1000,
+    opusDtx: true,
+    opusStereo: true,
   },
 };
 
