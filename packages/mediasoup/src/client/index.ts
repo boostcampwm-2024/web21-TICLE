@@ -40,11 +40,12 @@ export interface CreateConsumerRes {
 export interface RemoteStream {
   socketId: string;
   stream: MediaStream;
+  consumer: types.Consumer;
   kind: types.MediaKind;
   pause: boolean;
 }
 
-export interface GetProducersRes{
+export interface GetProducersRes {
   producerId: string;
   kind: types.MediaKind;
   peerId: string;
@@ -71,4 +72,38 @@ export const PRODUCER_OPTIONS: ProducerOptions = {
   codecOptions: {
     videoGoogleStartBitrate: 1000,
   },
+};
+
+export const VIDEO_PRODUCER_OPTIONS: ProducerOptions = {
+  encodings: [
+    {
+      rid: 'r0',
+      maxBitrate: 100000,
+      scalabilityMode: 'S1T3',
+    },
+    {
+      rid: 'r1',
+      maxBitrate: 300000,
+      scalabilityMode: 'S1T3',
+    },
+    {
+      rid: 'r2',
+      maxBitrate: 900000,
+      scalabilityMode: 'S1T3',
+    },
+  ],
+  codecOptions: {
+    videoGoogleStartBitrate: 1000,
+    opusDtx: true,
+    opusStereo: true,
+  },
+};
+
+export const AUDIO_PRODUCER_OPTIONS: ProducerOptions = {
+  encodings: [
+    {
+      maxBitrate: 64000,
+    },
+  ],
+  codecOptions: {},
 };

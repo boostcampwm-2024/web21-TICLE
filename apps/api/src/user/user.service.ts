@@ -26,7 +26,7 @@ export class UserService {
       await this.userRepository.save(user);
       const { password, ...result } = user;
       return result;
-    } catch (error) {
+    } catch {
       throw new InternalServerErrorException();
     }
   }
@@ -35,9 +35,8 @@ export class UserService {
     try {
       const user = this.userRepository.create(socialUserData);
       await this.userRepository.save(user);
-      const { password, ...result } = user;
-      return result;
-    } catch (error) {
+      return user;
+    } catch {
       throw new InternalServerErrorException();
     }
   }

@@ -6,7 +6,7 @@ import * as mediasoup from 'mediasoup';
 import { types } from 'mediasoup';
 import { Worker } from 'mediasoup/node/lib/types';
 
-import { RoomService } from 'src/room/room.service';
+import { RoomService } from '@/room/room.service';
 
 import { MediaTypes } from '@repo/mediasoup';
 import { MediasoupConfig } from './config';
@@ -166,6 +166,15 @@ export class MediasoupService implements OnModuleInit {
 
   disconnect(socketId: string) {
     const roomIds = this.roomService.deletePeer(socketId);
+
     return roomIds;
+  }
+
+  disconnectProducer(roomId: string, producerId: string, socketId: string) {
+    const room = this.roomService.getRoom(roomId);
+    const peer = room.peers.get(socketId);
+    const producer = peer.getProducer(producerId);
+    producer.close();
+    return producerId;
   }
 }
