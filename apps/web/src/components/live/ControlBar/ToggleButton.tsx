@@ -39,9 +39,9 @@ const buttonVariants = cva('flex h-10 w-10 items-center justify-center rounded-l
 interface ToggleButtonProps extends HTMLAttributes<HTMLButtonElement> {
   ActiveIcon: FunctionComponent<SVGProps<SVGSVGElement>>;
   InactiveIcon: FunctionComponent<SVGProps<SVGSVGElement>>;
-  defaultActive?: boolean;
+  isActivated?: boolean;
   type?: keyof typeof BUTTON_TYPE;
-  onToggle: (isActivated: boolean) => void;
+  onToggle?: (isActivated: boolean) => void;
 }
 
 const ToggleButton = ({
@@ -49,15 +49,12 @@ const ToggleButton = ({
   InactiveIcon,
   className,
   type = 'default',
-  defaultActive = false,
+  isActivated = false,
   onToggle,
   ...props
 }: ToggleButtonProps) => {
-  const [isActivated, setIsActivated] = useState(defaultActive);
-
   const handleClick = () => {
-    setIsActivated((prev) => !prev);
-    onToggle(!isActivated);
+    onToggle?.(!isActivated);
   };
 
   return (
