@@ -124,25 +124,14 @@ export class SignalingGateway implements OnGatewayDisconnect {
     client.to(roomId).emit(SOCKET_EVENTS.producerClosed, { producerId });
   }
 
-  @SubscribeMessage(SOCKET_EVENTS.pauseProducer)
+  @SubscribeMessage(SOCKET_EVENTS.producerStatusChange)
   pauseProducer(
     @ConnectedSocket() client: Socket,
-    @MessageBody('roomId') roomId: string,
-    @MessageBody('producerId') producerId: string
+    @MessageBody() changeProducerState: server.ChangeProducerStateDto
   ) {
-    this.mediasoupService.pauseProducer(roomId, producerId, client.id);
+    const { roomId, producerId } = changeProducerState;
+    this.mediasoupService.changeProducerStatus(client.id, changeProducerState);
     client.to(roomId).emit(SOCKET_EVENTS.producerPaused, { producerId });
-    return { producerId };
-  }
-
-  @SubscribeMessage(SOCKET_EVENTS.resumeProducer)
-  resuemProducer(
-    @ConnectedSocket() client: Socket,
-    @MessageBody('roomId') roomId: string,
-    @MessageBody('producerId') producerId: string
-  ) {
-    this.mediasoupService.resumeProducer(roomId, producerId, client.id);
-    client.to(roomId).emit(SOCKET_EVENTS.producerResumed, { producerId });
     return { producerId };
   }
 
