@@ -1,3 +1,4 @@
+import { cva } from 'class-variance-authority';
 import { useState } from 'react';
 
 import ChevronLeftIc from '@/assets/icons/chevron-left.svg?react';
@@ -8,7 +9,30 @@ import AudioPlayer from './AudioPlayer';
 import VideoPlayer from './VideoPlayer';
 
 const ITEMS_PER_PAGE = 9;
-const VIDEO_GAP_SIZE = 20;
+
+const containerVariants = cva('flex-1 gap-5 overflow-hidden', {
+  variants: {
+    layout: {
+      grid: `grid grid-cols-3`,
+      flex: 'flex flex-wrap content-center justify-center',
+    },
+  },
+  defaultVariants: {
+    layout: 'flex',
+  },
+});
+
+const videoVariants = cva('aspect-video', {
+  variants: {
+    type: {
+      video: '',
+      audio: 'hidden',
+    },
+  },
+  defaultVariants: {
+    type: 'video',
+  },
+});
 
 const getColumnCount = (count: number) => {
   if (count <= 2) return count;
@@ -19,8 +43,8 @@ const getColumnCount = (count: number) => {
 function MediaContainer() {
   const {
     remoteStreams,
-    videoStream,
-    screenStream,
+    videoStream: localVideoStream,
+    screenStream: localScreenStream,
     screenProducerRef,
     startScreenStream,
     closeStream,
@@ -29,51 +53,52 @@ function MediaContainer() {
   const [currentPage, setCurrentPage] = useState(0);
 
   const toggleScreenShare = () => {
-    if (isScreenSharing && screenStream) {
-      closeStream(screenStream, screenProducerRef);
+    if (isScreenSharing && localScreenStream) {
+      closeStream(localScreenStream, screenProducerRef);
     } else {
       startScreenStream();
     }
     setIsScreenSharing(!isScreenSharing);
   };
 
-  const videoStreams = remoteStreams.filter((stream) => stream.kind === 'video');
-  const paginatedStreams = videoStreams.slice(
-    currentPage * (ITEMS_PER_PAGE - 1),
-    (currentPage + 1) * (ITEMS_PER_PAGE - 1)
+  const remoteVideoStreams = remoteStreams.filter((stream) => stream.kind === 'video');
+  const allVideoStreams = [
+    {
+      consumer: null,
+      socketId: null,
+      kind: 'video',
+      stream: localVideoStream,
+      pause: false,
+    },
+    ...remoteVideoStreams,
+  ];
+  const paginatedStreams = allVideoStreams.slice(
+    currentPage * ITEMS_PER_PAGE,
+    (currentPage + 1) * ITEMS_PER_PAGE
   );
-  const totalPages = Math.ceil((videoStreams.length + 1) / ITEMS_PER_PAGE);
-  const columnCount = getColumnCount(paginatedStreams.length + 1);
-  const videoWidth = `calc((100% - ${(columnCount - 1) * VIDEO_GAP_SIZE}px) / ${columnCount})`;
+  const totalPages = Math.ceil(allVideoStreams.length / ITEMS_PER_PAGE);
+
+  const isFixedGrid = allVideoStreams.length >= 9;
+  const columnCount = getColumnCount(paginatedStreams.length);
+  const videoWidth = isFixedGrid ? '100%' : `calc((100% - ${columnCount * 20}px) / ${columnCount})`;
 
   return (
     <div className="fixed inset-0 flex flex-col justify-between bg-black px-32">
       <div className="flex h-full min-h-0 flex-1 items-center justify-center gap-5 rounded-lg">
-        <div className="flex-1 overflow-hidden">
-          <div
-            className="flex flex-wrap content-center justify-center"
-            style={{ gap: VIDEO_GAP_SIZE + 'px' }}
-          >
-            {currentPage === 0 && (
-              <div className="aspect-video" style={{ width: videoWidth }}>
-                <VideoPlayer stream={videoStream} />
-              </div>
-            )}
-
-            {paginatedStreams.map((stream) => (
-              <div
-                key={stream.socketId}
-                className={`aspect-video ${stream.kind === 'audio' ? 'hidden' : ''}`}
-                style={{ width: videoWidth }}
-              >
-                {stream.kind === 'video' ? (
-                  <VideoPlayer stream={stream.stream} />
-                ) : (
-                  <AudioPlayer stream={stream.stream} />
-                )}
-              </div>
-            ))}
-          </div>
+        <div className={containerVariants({ layout: isFixedGrid ? 'grid' : 'flex' })}>
+          {paginatedStreams.map((stream) => (
+            <div
+              key={stream.socketId}
+              className={videoVariants({ type: stream.kind as 'video' | 'audio' })}
+              style={{ width: videoWidth }}
+            >
+              {stream.kind === 'video' ? (
+                <VideoPlayer stream={stream.stream} />
+              ) : (
+                <AudioPlayer stream={stream.stream} />
+              )}
+            </div>
+          ))}
         </div>
       </div>
       <div className="fixed inset-0 flex w-full justify-between">
