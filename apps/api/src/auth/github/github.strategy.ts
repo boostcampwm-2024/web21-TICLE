@@ -29,7 +29,7 @@ export class GitHubStrategy extends PassportStrategy(Strategy, 'github') {
       email: emails[0].value,
       profileImageUrl: photos?.[0]?.value,
     };
-    await this.authService.checkSocialUser(user);
-    return user;
+    const socialUser = await this.authService.checkSocialUser(user);
+    return { id: socialUser.id };
   }
 }
