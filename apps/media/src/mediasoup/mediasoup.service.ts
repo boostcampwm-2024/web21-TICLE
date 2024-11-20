@@ -51,7 +51,7 @@ export class MediasoupService implements OnModuleInit {
     if (isExistRoom) {
       return roomId;
     }
-    
+
     const worker = this.getWorker();
     const router = await worker.createRouter({
       mediaCodecs: this.mediasoupConfig.router.mediaCodecs,
@@ -102,12 +102,12 @@ export class MediasoupService implements OnModuleInit {
     rtpParameters: types.RtpParameters,
     transportId: string,
     roomId: string,
-    appData: {mediaTypes: MediaTypes}
+    appData: { mediaTypes: MediaTypes }
   ) {
     const room = this.roomService.getRoom(roomId);
     const peer = room.getPeer(socketId);
     const transport = peer.getTransport(transportId);
-    
+
     const producer = await transport.produce({ kind, rtpParameters, appData });
 
     peer.addProducer(producer);
@@ -157,7 +157,7 @@ export class MediasoupService implements OnModuleInit {
         producerId: id,
         kind,
         peerId: peer.socketId,
-        appData: appData
+        appData: appData,
       }))
     );
 
@@ -175,6 +175,15 @@ export class MediasoupService implements OnModuleInit {
     const peer = room.peers.get(socketId);
     const producer = peer.getProducer(producerId);
     producer.close();
+    return producerId;
+  }
+
+  pauseProducer(roomId: string, producerId: string, socketId: string) {
+
+    const room = this.roomService.getRoom(roomId);
+    const peer = room.peers.get(socketId);
+    const producer = peer.getProducer(producerId);
+    producer.pause();
     return producerId;
   }
 }
