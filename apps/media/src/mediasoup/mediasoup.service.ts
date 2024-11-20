@@ -188,29 +188,12 @@ export class MediasoupService implements OnModuleInit {
     return producerId;
   }
 
-  changeConsumerStatus(socketId: string, changeProducerState: server.ChangeProducerStateDto) {
-    const { producerId, status, roomId } = changeProducerState;
-    const room = this.roomService.getRoom(roomId);
-    const peer = room.peers.get(socketId);
-    const producer = peer.getProducer(producerId);
-
-    status === STREAM_STATUS.pause ? producer.pause() : producer.resume();
-    return producerId;
-  }
-
-  pauseConsumer(roomId: string, consumerId: string, socketId: string) {
+  changeConsumerStatus(socketId: string, changeConsumerState: server.ChangeConsumerStateDto) {
+    const { consumerId, status, roomId } = changeConsumerState;
     const room = this.roomService.getRoom(roomId);
     const peer = room.peers.get(socketId);
     const consumer = peer.getConsumer(consumerId);
-    consumer.pause();
-    return consumerId;
-  }
-
-  resumeConsumer(roomId: string, consumerId: string, socketId: string) {
-    const room = this.roomService.getRoom(roomId);
-    const peer = room.peers.get(socketId);
-    const consumer = peer.getConsumer(consumerId);
-    consumer.pause();
+    status === STREAM_STATUS.pause ? consumer.pause() : consumer.resume();
     return consumerId;
   }
 }
