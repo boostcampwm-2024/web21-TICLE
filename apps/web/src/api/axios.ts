@@ -8,4 +8,5 @@ const axiosInstance = axios.create({
   withCredentials: true,
   timeout: 5000,
 });
+
 export default axiosInstance;
