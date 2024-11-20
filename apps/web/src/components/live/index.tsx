@@ -1,5 +1,7 @@
 import { useState } from 'react';
+import { SOCKET_EVENTS } from '@repo/mediasoup';
 
+import ControlBar from '@/components/live/ControlBar';
 import useMediasoup from '@/hooks/mediasoup/useMediasoup';
 
 import AudioPlayer from './AudioPlayer';
@@ -7,23 +9,71 @@ import VideoPlayer from './VideoPlayer';
 
 function MediaContainer() {
   const {
+    socketRef,
+
     remoteStreams,
     audioStream,
     videoStream,
     screenStream,
+
+    audioProducerRef,
+    videoProducerRef,
     screenProducerRef,
     startScreenStream,
     closeStream,
+
+    pauseStream,
+    resumeStream,
+
+    disconnect,
   } = useMediasoup();
+
+  const [isVideoPaused, setIsVideoPaused] = useState(false);
+  const [isAudioMuted, setIsAudioMuted] = useState(false);
   const [isScreenSharing, setIsScreenSharing] = useState(false);
 
-  const toggleScreenShare = () => {
-    if (isScreenSharing && screenStream) {
-      closeStream(screenStream, screenProducerRef);
-    } else {
-      startScreenStream();
+  const toggleScreenShare = async () => {
+    try {
+      if (isScreenSharing && screenStream) {
+        closeStream(screenStream, screenProducerRef);
+      } else {
+        await startScreenStream();
+      }
+
+      setIsScreenSharing((prev) => !prev);
+    } catch (_) {
+      setIsScreenSharing(false);
     }
-    setIsScreenSharing((prev) => !prev);
+  };
+
+  const toggleVideo = () => {
+    if (!videoStream) return;
+
+    if (isVideoPaused) {
+      resumeStream(videoStream, videoProducerRef);
+    } else {
+      pauseStream(videoStream, videoProducerRef);
+    }
+    setIsVideoPaused((prev) => !prev);
+  };
+
+  const toggleAudio = () => {
+    if (!audioStream) return;
+
+    if (isAudioMuted) {
+      resumeStream(audioStream, audioProducerRef);
+    } else {
+      pauseStream(audioStream, audioProducerRef);
+    }
+    setIsAudioMuted((prev) => !prev);
+  };
+
+  const handleExit = (isOwner: boolean) => {
+    if (isOwner) {
+      socketRef.current?.emit(SOCKET_EVENTS.closeRoom);
+    }
+
+    disconnect();
   };
 
   return (
@@ -34,8 +84,8 @@ function MediaContainer() {
           {videoStream && (
             <VideoPlayer
               stream={videoStream}
-              muted
-              className="aspect-video h-full w-full -scale-x-[1] rounded-lg"
+              muted={isVideoPaused}
+              className="aspect-video h-full w-full rounded-lg"
             />
           )}
           {screenStream && isScreenSharing && (
@@ -47,20 +97,20 @@ function MediaContainer() {
               />
             </div>
           )}
-          {audioStream && <AudioPlayer stream={audioStream} muted className="hidden" />}
+          {audioStream && <AudioPlayer stream={audioStream} muted className="" />}
           <div className="bg-black/50 absolute bottom-2 left-2 rounded px-2 py-1 text-sm text-white">
             나 (Local)
           </div>
-          {/* Media Controls */}
-          <div className="absolute bottom-2 right-2 flex gap-2">
-            <button
-              onClick={toggleScreenShare}
-              className="rounded bg-blue-500 px-3 py-1 text-white hover:bg-blue-600"
-            >
-              {isScreenSharing ? '화면 공유 중지' : '화면 공유'}
-            </button>
-          </div>
         </div>
+        <ControlBar
+          isVideoPaused={isVideoPaused}
+          isAudioMuted={isAudioMuted}
+          isScreenSharing={isScreenSharing}
+          toggleVideo={toggleVideo}
+          toggleAudio={toggleAudio}
+          toggleScreenShare={toggleScreenShare}
+          handleExit={handleExit}
+        />
       </div>
       {/* Remote Streams */}
       {remoteStreams.map((remote, index) => (
