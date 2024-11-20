@@ -30,8 +30,7 @@ export const CreateTicleSchema = z.object({
     .array(z.string())
     .min(1, '최소 1개 이상의 태그가 필요합니다')
     .max(4, '태그는 최대 4개까지 가능합니다')
-    .refine((items) => new Set(items).size === items.length, '중복된 태그는 사용할 수 없습니다')
-    .optional(),
+    .refine((items) => new Set(items).size === items.length, '중복된 태그는 사용할 수 없습니다'),
 });
 
 export type CreateTicleType = z.infer<typeof CreateTicleSchema>;
@@ -86,5 +85,5 @@ export class CreateTicleDto implements CreateTicleType {
     type: [String],
     required: false,
   })
-  tags?: string[];
+  tags: string[];
 }
