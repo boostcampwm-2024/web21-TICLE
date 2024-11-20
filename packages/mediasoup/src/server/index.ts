@@ -1,4 +1,5 @@
 import { types } from 'mediasoup';
+import { MediaTypes } from '../mediaTypes';
 
 export interface ConnectTransportDto {
   transportId: string;
@@ -15,7 +16,7 @@ export interface CreateProducerDto {
   kind: types.MediaKind;
   rtpParameters: types.RtpParameters;
   roomId: string;
-  appData:{isScreen:boolean};
+  appData:{mediaTypes: MediaTypes};
 }
 
 export interface CreateConsumerDto {
