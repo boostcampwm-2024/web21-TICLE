@@ -9,7 +9,6 @@ import { GetTicleListQueryDto } from './dto/getTicleListQueryDto';
 import { TickleDetailResponseDto } from './dto/ticleDetailDto';
 import { SortType } from './sortType.enum';
 import { TicleService } from './ticle.service';
-import { GetUserId } from '@/common/decorator/get-userId.decorator';
 
 @Controller('ticle')
 export class TicleController {
