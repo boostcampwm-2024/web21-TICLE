@@ -8,7 +8,7 @@ import { Worker } from 'mediasoup/node/lib/types';
 
 import { RoomService } from '@/room/room.service';
 
-import { MediaTypes, PRODUCER_STATUS, server } from '@repo/mediasoup';
+import { MediaTypes, server, STREAM_STATUS } from '@repo/mediasoup';
 import { MediasoupConfig } from './config';
 
 @Injectable()
@@ -184,7 +184,17 @@ export class MediasoupService implements OnModuleInit {
     const peer = room.peers.get(socketId);
     const producer = peer.getProducer(producerId);
 
-    status === PRODUCER_STATUS.pause ? producer.pause() : producer.resume();
+    status === STREAM_STATUS.pause ? producer.pause() : producer.resume();
+    return producerId;
+  }
+
+  changeConsumerStatus(socketId: string, changeProducerState: server.ChangeProducerStateDto) {
+    const { producerId, status, roomId } = changeProducerState;
+    const room = this.roomService.getRoom(roomId);
+    const peer = room.peers.get(socketId);
+    const producer = peer.getProducer(producerId);
+
+    status === STREAM_STATUS.pause ? producer.pause() : producer.resume();
     return producerId;
   }
 
