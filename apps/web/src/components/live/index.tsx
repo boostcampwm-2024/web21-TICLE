@@ -1,3 +1,4 @@
+import { video } from 'framer-motion/client';
 import { useState } from 'react';
 
 import useMediasoup from '@/hooks/mediasoup/useMediasoup';
@@ -16,6 +17,23 @@ function MediaContainer() {
     closeStream,
   } = useMediasoup();
   const [isScreenSharing, setIsScreenSharing] = useState(false);
+  const [cameraCount, setCameraCount] = useState(1);
+
+  const getRowCount = (count) => {
+    if (count <= 2) return 1;
+    if (count <= 6) return 2;
+    return 3;
+  };
+
+  const getItemWidth = (totalItems, rowCount) => {
+    if (totalItems === 3) {
+      return `calc((100% - 20px) / 2)`;
+    }
+
+    const itemsPerRow = Math.ceil(totalItems / rowCount);
+
+    return `calc((100% - ${(itemsPerRow - 1) * 20}px) / ${itemsPerRow})`;
+  };
 
   const toggleScreenShare = () => {
     if (isScreenSharing && screenStream) {
@@ -26,57 +44,43 @@ function MediaContainer() {
     setIsScreenSharing((prev) => !prev);
   };
 
+  const rows = getRowCount(cameraCount);
+  const width = getItemWidth(cameraCount, rows);
+
   return (
-    <div className="grid grid-cols-2 gap-4 p-4">
-      {/* Local Streams */}
-      <div className="col-span-2 mb-4">
-        <div className="relative aspect-video">
-          {videoStream && (
-            <VideoPlayer
-              stream={videoStream}
-              muted
-              className="aspect-video h-full w-full -scale-x-[1] rounded-lg"
-            />
-          )}
-          {screenStream && isScreenSharing && (
-            <div className="absolute right-0 top-0 aspect-video w-1/4">
-              <VideoPlayer
-                stream={screenStream}
-                muted
-                className="-full w-full rounded-lg border-2 border-blue-500 object-cover"
-              />
-            </div>
-          )}
-          {audioStream && <AudioPlayer stream={audioStream} muted className="hidden" />}
-          <div className="bg-black/50 absolute bottom-2 left-2 rounded px-2 py-1 text-sm text-white">
-            나 (Local)
-          </div>
-          {/* Media Controls */}
-          <div className="absolute bottom-2 right-2 flex gap-2">
-            <button
-              onClick={toggleScreenShare}
-              className="rounded bg-blue-500 px-3 py-1 text-white hover:bg-blue-600"
-            >
-              {isScreenSharing ? '화면 공유 중지' : '화면 공유'}
-            </button>
+    <div className="fixed inset-0 flex flex-col justify-between bg-black px-32">
+      <div className="flex h-full min-h-0 flex-1 items-center justify-center gap-5 rounded-lg">
+        <div className="flex-1 overflow-hidden">
+          <div className="flex flex-wrap content-center justify-center gap-5">
+            {Array.from({ length: cameraCount }).map((_, index) => (
+              <div
+                className="aspect-video"
+                key={index}
+                style={{
+                  width: width,
+                }}
+              >
+                <VideoPlayer stream={videoStream} />
+              </div>
+            ))}
           </div>
         </div>
       </div>
-      {/* Remote Streams */}
-      {remoteStreams.map((remote, index) => (
-        <div key={`${remote.socketId}-${index}`} className="relative aspect-video">
-          {remote.kind === 'video' && (
-            <VideoPlayer
-              stream={remote.stream}
-              className="aspect-video h-full w-full rounded-lg object-cover"
-            />
-          )}
-          {remote.kind === 'audio' && <AudioPlayer stream={remote.stream} className="hidden" />}
-          <div className="bg-black/50 absolute bottom-2 left-2 rounded px-2 py-1 text-sm text-white">
-            {remote.socketId}
-          </div>
-        </div>
-      ))}
+
+      <div className="flex justify-center gap-4">
+        <button
+          onClick={() => setCameraCount((prev) => prev + 1)}
+          className="rounded bg-primary px-4 py-2 text-white"
+        >
+          카메라 추가
+        </button>
+        <button
+          onClick={() => setCameraCount((prev) => Math.max(1, prev - 1))}
+          className="rounded bg-primary px-4 py-2 text-white"
+        >
+          카메라 삭제
+        </button>
+      </div>
     </div>
   );
 }

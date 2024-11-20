@@ -3,10 +3,9 @@ import { useEffect, useRef } from 'react';
 export interface MediaPlayerProps {
   stream: MediaStream | null;
   muted?: boolean;
-  className?: string;
 }
 
-function VideoPlayer({ stream, muted = true, className = '' }: MediaPlayerProps) {
+function VideoPlayer({ stream, muted = true }: MediaPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
@@ -15,7 +14,14 @@ function VideoPlayer({ stream, muted = true, className = '' }: MediaPlayerProps)
     }
   }, [stream]);
 
-  // eslint-disable-next-line jsx-a11y/media-has-caption
-  return <video ref={videoRef} autoPlay muted={muted} className={className} />;
+  return (
+    <video
+      ref={videoRef}
+      autoPlay
+      muted={muted}
+      className="h-full w-full rounded-lg object-cover"
+      preload="metadata"
+    />
+  );
 }
 export default VideoPlayer;
