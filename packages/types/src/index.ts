@@ -1,1 +1,1 @@
-export * from './formSchema';
+export * from './ticle';
