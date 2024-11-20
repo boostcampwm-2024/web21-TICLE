@@ -1,6 +1,5 @@
 import { WsException } from '@nestjs/websockets';
 import { Router } from 'mediasoup/node/lib/RouterTypes';
-import { types } from 'mediasoup';
 
 import { Peer } from './peer';
 
@@ -8,7 +7,6 @@ export class Room {
   id: string;
   router: Router;
   peers: Map<string, Peer>;
-  screenProducer: types.Producer;
 
   constructor(roomId: string, router: Router) {
     this.id = roomId;
@@ -46,22 +44,6 @@ export class Room {
       return true;
     }
     return false;
-  }
-
-  addScreenProducer(producer: types.Producer) {
-    if (this.screenProducer) {
-      console.log('@@@@@@ 이미 화면공유 중');
-      throw new WsException('이미 공유 중인 화면이 있습니다');
-    }
-    producer.on('transportclose', () => {
-      this.deleteScreenProducer();
-    });
-    this.screenProducer = producer;
-  }
-
-  deleteScreenProducer() {
-    console.log('@@@@@@ 화면공유 중단 발생');
-    this.screenProducer = null;
   }
 
   close() {

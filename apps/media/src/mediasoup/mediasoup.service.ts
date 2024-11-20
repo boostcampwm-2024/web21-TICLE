@@ -8,6 +8,7 @@ import { Worker } from 'mediasoup/node/lib/types';
 
 import { RoomService } from 'src/room/room.service';
 
+import { MediaTypes } from '@repo/mediasoup';
 import { MediasoupConfig } from './config';
 
 @Injectable()
@@ -46,10 +47,16 @@ export class MediasoupService implements OnModuleInit {
   }
 
   async createRoom(roomId: string) {
+    const isExistRoom = this.roomService.existRoom(roomId);
+    if (isExistRoom) {
+      return roomId;
+    }
+    
     const worker = this.getWorker();
     const router = await worker.createRouter({
       mediaCodecs: this.mediasoupConfig.router.mediaCodecs,
     });
+
     return this.roomService.createRoom(roomId, router);
   }
 
@@ -95,17 +102,13 @@ export class MediasoupService implements OnModuleInit {
     rtpParameters: types.RtpParameters,
     transportId: string,
     roomId: string,
-    appData: { isScreen: boolean }
+    appData: {mediaTypes: MediaTypes}
   ) {
     const room = this.roomService.getRoom(roomId);
     const peer = room.getPeer(socketId);
     const transport = peer.getTransport(transportId);
     
     const producer = await transport.produce({ kind, rtpParameters, appData });
-
-    if (appData.isScreen) {
-      room.addScreenProducer(producer);
-    }
 
     peer.addProducer(producer);
     return producer;
@@ -150,10 +153,11 @@ export class MediasoupService implements OnModuleInit {
     const filtered = peers.filter((peer) => peer.socketId !== socketId);
 
     const result = filtered.flatMap((peer) =>
-      [...peer.producers.values()].map(({ id, kind }) => ({
+      [...peer.producers.values()].map(({ id, kind, appData }) => ({
         producerId: id,
         kind,
         peerId: peer.socketId,
+        appData: appData
       }))
     );
 
