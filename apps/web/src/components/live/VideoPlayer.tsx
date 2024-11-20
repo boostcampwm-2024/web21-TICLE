@@ -26,9 +26,16 @@ export interface VideoPlayerProps {
   muted?: boolean;
   isMicOn?: boolean;
   isCamOn?: boolean;
+  avatarSize?: 'sm' | 'md' | 'lg';
 }
 
-function VideoPlayer({ stream, muted = true, isMicOn = false, isCamOn = false }: VideoPlayerProps) {
+function VideoPlayer({
+  stream,
+  muted = true,
+  isMicOn = false,
+  isCamOn = false,
+  avatarSize = 'md',
+}: VideoPlayerProps) {
   const NAME = '김티클'; // TODO: 이름 받아오기
   const [isLoading, setIsLoading] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -73,7 +80,7 @@ function VideoPlayer({ stream, muted = true, isMicOn = false, isCamOn = false }:
         />
       ) : (
         <div className="bg-altWeak flex h-full w-full items-center justify-center rounded-lg transition-opacity duration-300">
-          <Avatar size="md" />
+          <Avatar size={avatarSize} />
         </div>
       )}
     </div>
