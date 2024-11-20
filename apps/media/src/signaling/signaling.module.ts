@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { MediasoupModule } from 'src/mediasoup/mediasoup.module';
+import { MediasoupModule } from '@/mediasoup/mediasoup.module';
 
 import { SignalingGateway } from './signaling.gateway';
 

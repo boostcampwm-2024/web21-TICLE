@@ -9,6 +9,7 @@ import { GetTicleListQueryDto } from './dto/getTicleListQueryDto';
 import { TickleDetailResponseDto } from './dto/ticleDetailDto';
 import { SortType } from './sortType.enum';
 import { TicleService } from './ticle.service';
+import { GetUserId } from '@/common/decorator/get-userId.decorator';
 
 @Controller('ticle')
 export class TicleController {
@@ -37,12 +38,13 @@ export class TicleController {
   getTicleSearchList() {}
 
   @Get(':ticleId')
+  @UseGuards(JwtAuthGuard)
   getTicle(@Param('ticleId') ticleId: number): Promise<TickleDetailResponseDto> {
     return this.ticleService.getTicleByTicleId(ticleId);
   }
 
   @Post(':ticleId/apply')
-  applyToTicle(@Param('ticleId') ticleId: number, @Body() body: { userId: number }) {
-    return this.ticleService.applyTicle(ticleId, body.userId);
+  applyToTicle(@GetUserId() userId: number, @Param('ticleId') ticleId: number) {
+    return this.ticleService.applyTicle(ticleId, userId);
   }
 }

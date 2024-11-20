@@ -5,9 +5,10 @@ import { SOCKET_EVENTS } from '@repo/mediasoup';
 
 const useRoom = (socketRef: MutableRefObject<Socket | null>, roomId: string) => {
   const createRoom = async () => {
-    if (!socketRef.current) return;
-
     const socket = socketRef.current;
+
+    if (!socket) return;
+
     return new Promise<client.RtpCapabilities>((resolve) => {
       socket.emit(SOCKET_EVENTS.createRoom, { roomId }, () => {
         socket.emit(

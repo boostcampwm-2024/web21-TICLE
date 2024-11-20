@@ -30,7 +30,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       profileImageUrl: photos[0].value,
     };
 
-    await this.authService.checkSocialUser(user);
-    return user;
+    const socialUser = await this.authService.checkSocialUser(user);
+    return { id: socialUser.id };
   }
 }

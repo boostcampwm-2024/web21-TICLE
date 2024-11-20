@@ -1,13 +1,13 @@
-import { Body, Controller, Get, Post, Req, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Res, UseGuards } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Request as ExpressRequest } from 'express';
+import { Response } from 'express';
 
-import { User } from '@/entity/user.entity';
+import { GetUserId } from '@/common/decorator/get-userId.decorator';
 
 import { AuthService } from './auth.service';
 import { LocalLoginRequestDto } from './dto/localLoginRequest.dto';
 import { LocalSignupRequestDto } from './dto/localSignupRequest.dto';
-import { LoginSuccessResponseDto } from './dto/loginResponse.dto';
 import { SignupResponseDto } from './dto/signupResponse.dto';
 import { GitHubAuthGuard } from './github/github-auth.guard';
 import { GoogleAuthGuard } from './google/google-auth.guard';
@@ -16,7 +16,10 @@ import { LocalAuthGuard } from './local/local-auth.guard';
 @Controller('auth')
 @ApiTags('Auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private configService: ConfigService
+  ) {}
 
   @Post('signup')
   @ApiOperation({ summary: '회원가입' })
@@ -33,42 +36,55 @@ export class AuthController {
   @Post('login')
   @ApiOperation({ summary: '로컬 로그인' })
   @ApiBody({ type: LocalLoginRequestDto })
-  @ApiResponse({ status: 200, type: LoginSuccessResponseDto })
+  @ApiResponse({ status: 302, description: '홈으로 리다이렉션' })
   @ApiResponse({ status: 401 })
   @UseGuards(LocalAuthGuard)
-  async localLogin(@Request() req: ExpressRequest): Promise<LoginSuccessResponseDto> {
-    const jwtToken = await this.authService.createJWT(req.user as Omit<User, 'password'>);
-    return {
-      status: 'success',
-      data: jwtToken,
-    };
+  localLogin(@GetUserId() userId: number, @Res() response: Response) {
+    this.cookieInsertJWT(response, userId);
   }
 
   @Get('google/login')
+  @ApiOperation({ summary: '구글 OAuth 로그인' })
+  @ApiResponse({ status: 302, description: '홈으로 리다이렉션' })
+  @ApiResponse({ status: 401 })
   @UseGuards(GoogleAuthGuard)
   googleAuth() {}
 
   @Get('google/callback')
   @UseGuards(GoogleAuthGuard)
-  async googleAuthCallback(@Req() req: ExpressRequest): Promise<LoginSuccessResponseDto> {
-    const jwtToken = await this.authService.createJWT(req.user as Omit<User, 'password'>);
-    return {
-      status: 'success',
-      data: jwtToken,
-    };
+  googleAuthCallback(@GetUserId() userId: number, @Res() response: Response) {
+    this.cookieInsertJWT(response, userId);
   }
 
   @Get('github/login')
+  @ApiOperation({ summary: '깃허브 OAuth 로그인' })
+  @ApiResponse({ status: 302, description: '홈으로 리다이렉션' })
+  @ApiResponse({ status: 401 })
   @UseGuards(GitHubAuthGuard)
   githubAuth() {}
 
   @Get('github/callback')
   @UseGuards(GitHubAuthGuard)
-  async githubAuthCallback(@Req() req: ExpressRequest): Promise<LoginSuccessResponseDto> {
-    const jwtToken = await this.authService.createJWT(req.user as Omit<User, 'password'>);
-    return {
-      status: 'success',
-      data: jwtToken,
-    };
+  githubAuthCallback(@GetUserId() userId: number, @Res() response: Response) {
+    this.cookieInsertJWT(response, userId);
+  }
+
+  private setAuthCookie(response: Response, accessToken: string) {
+    response.cookie('accessToken', accessToken, {
+      httpOnly: true,
+      secure: this.configService.get<string>('NODE_ENV') === 'production',
+      sameSite: 'lax',
+      path: '/',
+    });
+  }
+
+  private async cookieInsertJWT(
+    response: Response,
+    userId: number,
+    redirectUrl: string = this.configService.get<string>('LOGIN_REDIRECT_URL')
+  ) {
+    const { accessToken } = await this.authService.createJWT(userId);
+    this.setAuthCookie(response, accessToken);
+    response.redirect(redirectUrl);
   }
 }
