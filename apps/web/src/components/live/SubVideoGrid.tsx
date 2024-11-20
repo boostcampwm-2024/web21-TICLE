@@ -10,7 +10,7 @@ interface SubVideoGridProps {
 
 function SubVideoGrid({ videoStreamData, onVideoClick, pinnedSocketId }: SubVideoGridProps) {
   return (
-    <div className="flex w-full justify-around">
+    <div className="absolute flex w-full justify-center gap-5">
       {videoStreamData.map(
         (streamData) =>
           streamData.socketId !== pinnedSocketId && (
@@ -20,7 +20,6 @@ function SubVideoGrid({ videoStreamData, onVideoClick, pinnedSocketId }: SubVide
               onClick={() => onVideoClick(streamData.socketId)}
             >
               <VideoPlayer stream={streamData.stream} avatarSize="sm" />
-              <span className="text-white">{streamData.socketId}</span>
             </div>
           )
       )}

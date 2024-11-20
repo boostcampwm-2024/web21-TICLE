@@ -10,7 +10,8 @@ import SubVideoGrid from './SubVideoGrid';
 import VideoGrid from './VideoGrid';
 import VideoPlayer from './VideoPlayer';
 
-const ITEMS_PER_PAGE = 9;
+const ITEMS_PER_GRID = 9;
+const ITEMS_PER_SUB_GRID = 6;
 
 export interface StreamData {
   consumer?: types.Consumer;
@@ -64,7 +65,13 @@ function MediaContainer() {
   const { paginatedItems: paginatedStreams, ...paginationControlsProps } =
     usePagination<StreamData>({
       totalItems: allVideoStreamData,
-      itemsPerPage: ITEMS_PER_PAGE,
+      itemsPerPage: ITEMS_PER_GRID,
+    });
+
+  const { paginatedItems: subPaginatedStreams, ...subPaginationControlsProps } =
+    usePagination<StreamData>({
+      totalItems: allVideoStreamData,
+      itemsPerPage: ITEMS_PER_SUB_GRID,
     });
 
   const isFixedGrid = allVideoStreamData.length >= 9;
@@ -82,13 +89,20 @@ function MediaContainer() {
     <div className="fixed inset-0 flex flex-col justify-between bg-black px-32">
       <div className="relative mt-5 flex h-full min-h-0 flex-1 items-center justify-center gap-5 rounded-lg">
         {pinnedSocketId && pinnedVideoStreamData ? (
-          <div className="flex h-full w-full flex-col gap-5">
-            <VideoPlayer stream={pinnedVideoStreamData.stream} />
-            <SubVideoGrid
-              videoStreamData={paginatedStreams}
-              onVideoClick={handleVideoPin}
-              pinnedSocketId={pinnedSocketId}
-            />
+          <div className="relative flex h-full w-full flex-col gap-5">
+            <div className="flex h-[80%] w-full justify-center self-center">
+              <div className="aspect-video">
+                <VideoPlayer stream={pinnedVideoStreamData.stream} />
+              </div>
+            </div>
+            <div className="relative">
+              <SubVideoGrid
+                videoStreamData={subPaginatedStreams}
+                onVideoClick={handleVideoPin}
+                pinnedSocketId={pinnedSocketId}
+              />
+              <PaginationControls {...subPaginationControlsProps} className="mt-8" />
+            </div>
           </div>
         ) : (
           <>
@@ -98,7 +112,7 @@ function MediaContainer() {
               columnCount={columnCount}
               onVideoClick={handleVideoPin}
             />
-            <PaginationControls {...paginationControlsProps} />
+            <PaginationControls {...paginationControlsProps} className="h-full" />
           </>
         )}
 

@@ -33,7 +33,7 @@ function VideoPlayer({
   stream,
   muted = true,
   isMicOn = false,
-  isCamOn = false,
+  isCamOn = true,
   avatarSize = 'md',
 }: VideoPlayerProps) {
   const NAME = '김티클'; // TODO: 이름 받아오기

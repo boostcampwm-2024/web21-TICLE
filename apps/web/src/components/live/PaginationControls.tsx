@@ -6,6 +6,7 @@ interface PaginationControlsProps {
   isLastPage: boolean;
   onNextPage: () => void;
   onPrevPage: () => void;
+  className?: string;
 }
 
 function PaginationControls({
@@ -13,9 +14,10 @@ function PaginationControls({
   isLastPage,
   onNextPage,
   onPrevPage,
+  className,
 }: PaginationControlsProps) {
   return (
-    <>
+    <div className={className}>
       {!isFirstPage && (
         <button
           type="button"
@@ -34,7 +36,7 @@ function PaginationControls({
           <ChevronRightIc />
         </button>
       )}
-    </>
+    </div>
   );
 }
 
