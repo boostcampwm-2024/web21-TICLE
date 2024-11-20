@@ -35,6 +35,8 @@ function MediaContainer() {
     closeStream,
   } = useMediasoup();
   const [isScreenSharing, setIsScreenSharing] = useState(false);
+  const [pinnedSocketId, setPinnedSocketId] = useState<string | null>(null);
+  const [pinnedVideoStreamData, setPinnedVideoSreamData] = useState<StreamData | null>(null);
 
   const toggleScreenShare = () => {
     if (isScreenSharing && localScreenStream) {
@@ -47,7 +49,7 @@ function MediaContainer() {
 
   const remoteAudioStreamData = remoteStreams.filter((stream) => stream.kind === 'audio');
   const remoteVideoStreamData = remoteStreams.filter((stream) => stream.kind === 'video');
-  const allVideoStreams: StreamData[] = [
+  const allVideoStreamData: StreamData[] = [
     {
       consumer: undefined,
       socketId: 'local',
@@ -60,22 +62,47 @@ function MediaContainer() {
 
   const { paginatedItems: paginatedStreams, ...paginationControlsProps } =
     usePagination<StreamData>({
-      totalItems: allVideoStreams,
+      totalItems: allVideoStreamData,
       itemsPerPage: ITEMS_PER_PAGE,
     });
 
-  const isFixedGrid = allVideoStreams.length >= 9;
+  const isFixedGrid = allVideoStreamData.length >= 9;
   const columnCount = getColumnCount(paginatedStreams.length);
+
+  const handleVideoPin = (socketId: string) => {
+    setPinnedSocketId(socketId);
+    const streamData = allVideoStreamData.find((streamData) => streamData.socketId === socketId);
+    if (!streamData) return;
+
+    setPinnedVideoSreamData(streamData);
+  };
 
   return (
     <div className="fixed inset-0 flex flex-col justify-between bg-black px-32">
       <div className="relative flex h-full min-h-0 flex-1 items-center justify-center gap-5 rounded-lg">
-        <SubVideoGrid videoStreamData={paginatedStreams} />
+        {pinnedSocketId ? (
+          <SubVideoGrid
+            videoStreamData={paginatedStreams}
+            onVideoClick={handleVideoPin}
+            pinnedSocketId={pinnedSocketId}
+          />
+        ) : (
+          <>
+            <VideoGrid
+              videoStreamData={paginatedStreams}
+              isFixedGrid={isFixedGrid}
+              columnCount={columnCount}
+              onVideoClick={handleVideoPin}
+            />
+            <PaginationControls {...paginationControlsProps} />
+          </>
+        )}
+
         {remoteAudioStreamData.map((streamData) => (
           <AudioPlayer key={streamData.socketId} stream={streamData.stream} />
         ))}
-        <PaginationControls {...paginationControlsProps} />
       </div>
+
       <footer className="flex h-[70px] justify-center gap-4 bg-primary pb-4 text-white">
         footer 자리
       </footer>

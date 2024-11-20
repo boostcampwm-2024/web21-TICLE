@@ -1,21 +1,29 @@
-import { cva } from 'class-variance-authority';
-
 import VideoPlayer from './VideoPlayer';
 
 import { StreamData } from '.';
 
 interface SubVideoGridProps {
   videoStreamData: StreamData[];
+  onVideoClick?: (socketId: string) => void;
+  pinnedSocketId?: string;
 }
 
-function SubVideoGrid({ videoStreamData }: SubVideoGridProps) {
+function SubVideoGrid({ videoStreamData, onVideoClick, pinnedSocketId }: SubVideoGridProps) {
   return (
     <div className="flex w-full justify-around">
-      {videoStreamData.map((streamData) => (
-        <div key={streamData.socketId} className="aspect-video w-44">
-          <VideoPlayer stream={streamData.stream} />
-        </div>
-      ))}
+      {videoStreamData.map(
+        (streamData) =>
+          streamData.socketId !== pinnedSocketId && (
+            <div
+              key={streamData.socketId}
+              className="aspect-video w-44"
+              onClick={() => onVideoClick(streamData.socketId)}
+            >
+              <VideoPlayer stream={streamData.stream} />
+              <span className="text-white">{streamData.socketId}</span>
+            </div>
+          )
+      )}
     </div>
   );
 }
