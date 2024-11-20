@@ -8,6 +8,7 @@ import AudioPlayer from './AudioPlayer';
 import PaginationControls from './PaginationControls';
 import SubVideoGrid from './SubVideoGrid';
 import VideoGrid from './VideoGrid';
+import VideoPlayer from './VideoPlayer';
 
 const ITEMS_PER_PAGE = 9;
 
@@ -79,13 +80,16 @@ function MediaContainer() {
 
   return (
     <div className="fixed inset-0 flex flex-col justify-between bg-black px-32">
-      <div className="relative flex h-full min-h-0 flex-1 items-center justify-center gap-5 rounded-lg">
-        {pinnedSocketId ? (
-          <SubVideoGrid
-            videoStreamData={paginatedStreams}
-            onVideoClick={handleVideoPin}
-            pinnedSocketId={pinnedSocketId}
-          />
+      <div className="relative mt-5 flex h-full min-h-0 flex-1 items-center justify-center gap-5 rounded-lg">
+        {pinnedSocketId && pinnedVideoStreamData ? (
+          <div className="flex h-full w-full flex-col gap-5">
+            <VideoPlayer stream={pinnedVideoStreamData.stream} />
+            <SubVideoGrid
+              videoStreamData={paginatedStreams}
+              onVideoClick={handleVideoPin}
+              pinnedSocketId={pinnedSocketId}
+            />
+          </div>
         ) : (
           <>
             <VideoGrid
