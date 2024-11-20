@@ -88,7 +88,7 @@ export class DashboardService {
       const totalPages = Math.ceil(totalItems / pageSize);
 
       return {
-        ticles,
+        ticles: ticles,
         meta: {
           page,
           take: pageSize,
