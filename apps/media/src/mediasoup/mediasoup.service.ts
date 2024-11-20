@@ -201,4 +201,12 @@ export class MediasoupService implements OnModuleInit {
     consumer.pause();
     return consumerId;
   }
+
+  resumeConsumer(roomId: string, consumerId: string, socketId: string) {
+    const room = this.roomService.getRoom(roomId);
+    const peer = room.peers.get(socketId);
+    const consumer = peer.getConsumer(consumerId);
+    consumer.pause();
+    return consumerId;
+  }
 }

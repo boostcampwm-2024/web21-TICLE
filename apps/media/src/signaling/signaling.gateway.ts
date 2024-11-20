@@ -132,6 +132,7 @@ export class SignalingGateway implements OnGatewayDisconnect {
   ) {
     this.mediasoupService.pauseProducer(roomId, producerId, client.id);
     client.to(roomId).emit(SOCKET_EVENTS.producerPaused, { producerId });
+    return { producerId };
   }
 
   @SubscribeMessage(SOCKET_EVENTS.resumeProducer)
@@ -142,6 +143,7 @@ export class SignalingGateway implements OnGatewayDisconnect {
   ) {
     this.mediasoupService.resumeProducer(roomId, producerId, client.id);
     client.to(roomId).emit(SOCKET_EVENTS.producerResumed, { producerId });
+    return { producerId };
   }
 
   @SubscribeMessage(SOCKET_EVENTS.pauseConsumer)
@@ -151,6 +153,16 @@ export class SignalingGateway implements OnGatewayDisconnect {
     @MessageBody('consumerId') consumerId: string
   ) {
     this.mediasoupService.pauseConsumer(roomId, consumerId, client.id);
-    client.to(roomId).emit(SOCKET_EVENTS.consumerPaused, { consumerId });
+    return consumerId;
+  }
+
+  @SubscribeMessage(SOCKET_EVENTS.resumeConsumer)
+  resumeConsumer(
+    @ConnectedSocket() client: Socket,
+    @MessageBody('roomId') roomId: string,
+    @MessageBody('consumerId') consumerId: string
+  ) {
+    this.mediasoupService.resumeConsumer(roomId, consumerId, client.id);
+    return consumerId;
   }
 }
