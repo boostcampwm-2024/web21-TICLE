@@ -19,22 +19,6 @@ function MediaContainer() {
   const [isScreenSharing, setIsScreenSharing] = useState(false);
   const [cameraCount, setCameraCount] = useState(1);
 
-  const getRowCount = (count) => {
-    if (count <= 2) return 1;
-    if (count <= 6) return 2;
-    return 3;
-  };
-
-  const getItemWidth = (totalItems, rowCount) => {
-    if (totalItems === 3) {
-      return `calc((100% - 20px) / 2)`;
-    }
-
-    const itemsPerRow = Math.ceil(totalItems / rowCount);
-
-    return `calc((100% - ${(itemsPerRow - 1) * 20}px) / ${itemsPerRow})`;
-  };
-
   const toggleScreenShare = () => {
     if (isScreenSharing && screenStream) {
       closeStream(screenStream, screenProducerRef);
@@ -44,8 +28,19 @@ function MediaContainer() {
     setIsScreenSharing((prev) => !prev);
   };
 
-  const rows = getRowCount(cameraCount);
-  const width = getItemWidth(cameraCount, rows);
+  const getRowCount = (count: number) => {
+    if (count <= 2) return 1;
+    if (count <= 6) return 2;
+    return 3;
+  };
+
+  const getItemWidth = (totalItemCount: number) => {
+    const rowCount = getRowCount(totalItemCount);
+    const columnCount = Math.ceil(totalItemCount / rowCount);
+    return `calc((100% - ${(columnCount - 1) * 20}px) / ${columnCount})`;
+  };
+
+  const videoWidth = getItemWidth(cameraCount);
 
   return (
     <div className="fixed inset-0 flex flex-col justify-between bg-black px-32">
@@ -57,7 +52,7 @@ function MediaContainer() {
                 className="aspect-video"
                 key={index}
                 style={{
-                  width: width,
+                  width: videoWidth,
                 }}
               >
                 <VideoPlayer stream={videoStream} />
