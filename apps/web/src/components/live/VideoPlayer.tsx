@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import MicOffIc from '@/assets/icons/mic-off.svg?react';
 import MicOnIc from '@/assets/icons/mic-on.svg?react';
 
+import Avatar from '../common/Avatar';
 import Badge from '../common/Badge';
 import Loading from '../common/Loading/Loading';
 
@@ -24,9 +25,10 @@ export interface VideoPlayerProps {
   stream: MediaStream | null;
   muted?: boolean;
   isMicOn?: boolean;
+  isCamOn?: boolean;
 }
 
-function VideoPlayer({ stream, muted = true, isMicOn = false }: VideoPlayerProps) {
+function VideoPlayer({ stream, muted = true, isMicOn = false, isCamOn = false }: VideoPlayerProps) {
   const NAME = '김티클'; // TODO: 이름 받아오기
   const [isLoading, setIsLoading] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -44,7 +46,7 @@ function VideoPlayer({ stream, muted = true, isMicOn = false }: VideoPlayerProps
 
   return (
     <div className="relative h-full w-full overflow-hidden rounded-lg">
-      {isLoading ? (
+      {isLoading && isCamOn ? (
         <div className="flex h-full items-center justify-center">
           <Loading />
         </div>
@@ -59,15 +61,21 @@ function VideoPlayer({ stream, muted = true, isMicOn = false }: VideoPlayerProps
         </>
       )}
 
-      <video
-        ref={videoRef}
-        autoPlay
-        playsInline
-        preload="metadata"
-        muted={muted}
-        className={videoVariants({ loading: isLoading })}
-        onLoadedData={onLoadedData}
-      />
+      {isCamOn ? (
+        <video
+          ref={videoRef}
+          autoPlay
+          playsInline
+          preload="metadata"
+          muted={muted}
+          className={videoVariants({ loading: isLoading })}
+          onLoadedData={onLoadedData}
+        />
+      ) : (
+        <div className="bg-altWeak flex h-full w-full items-center justify-center rounded-lg transition-opacity duration-300">
+          <Avatar size="lg" />
+        </div>
+      )}
     </div>
   );
 }
