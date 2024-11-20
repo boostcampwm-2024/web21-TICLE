@@ -79,7 +79,6 @@ function MediaContainer() {
         ))}
         <PaginationControls {...paginationControlsProps} />
       </div>
-
       <footer className="flex h-[70px] justify-center gap-4 bg-primary pb-4 text-white">
         footer 자리
       </footer>

@@ -19,6 +19,7 @@ const tailwindConfig: Config = {
         teritary: 'var(--purple-100)',
         alt: 'var(--grey-500)',
         weak: 'var(--grey-50)',
+        altWeak: 'var(--grey-700)',
         white: 'var(--white)',
         black: 'var(--black)',
         overlay: 'var(--black-alpha-60)',
