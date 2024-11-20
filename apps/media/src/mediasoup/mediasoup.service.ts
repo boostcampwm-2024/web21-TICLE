@@ -5,10 +5,10 @@ import { WsException } from '@nestjs/websockets';
 import * as mediasoup from 'mediasoup';
 import { types } from 'mediasoup';
 import { Worker } from 'mediasoup/node/lib/types';
+import { MediaTypes, server, STREAM_STATUS } from '@repo/mediasoup';
 
 import { RoomService } from '@/room/room.service';
 
-import { MediaTypes, server, STREAM_STATUS } from '@repo/mediasoup';
 import { MediasoupConfig } from './config';
 
 @Injectable()
@@ -184,7 +184,15 @@ export class MediasoupService implements OnModuleInit {
     const peer = room.peers.get(socketId);
     const producer = peer.getProducer(producerId);
 
-    status === STREAM_STATUS.pause ? producer.pause() : producer.resume();
+    const updateStatus = () => {
+      if (status === STREAM_STATUS.pause) {
+        producer.pause();
+      } else {
+        producer.resume();
+      }
+    };
+
+    updateStatus();
     return producerId;
   }
 
@@ -193,7 +201,16 @@ export class MediasoupService implements OnModuleInit {
     const room = this.roomService.getRoom(roomId);
     const peer = room.peers.get(socketId);
     const consumer = peer.getConsumer(consumerId);
-    status === STREAM_STATUS.pause ? consumer.pause() : consumer.resume();
+
+    const updateStatus = () => {
+      if (status === STREAM_STATUS.pause) {
+        consumer.pause();
+      } else {
+        consumer.resume();
+      }
+    };
+
+    updateStatus();
     return consumerId;
   }
 }

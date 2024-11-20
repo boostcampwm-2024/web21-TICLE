@@ -140,7 +140,7 @@ export class SignalingGateway implements OnGatewayDisconnect {
     @ConnectedSocket() client: Socket,
     @MessageBody() changeConsumerState: server.ChangeConsumerStateDto
   ) {
-    const { roomId, consumerId } = changeConsumerState;
+    const { consumerId } = changeConsumerState;
     this.mediasoupService.changeConsumerStatus(client.id, changeConsumerState);
     return consumerId;
   }
