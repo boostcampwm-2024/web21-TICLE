@@ -84,7 +84,7 @@ function MediaContainer() {
 
   return (
     <div className="fixed inset-0 flex flex-col justify-between bg-black px-32">
-      <div className="flex h-full min-h-0 flex-1 items-center justify-center gap-5 rounded-lg">
+      <div className="relative flex h-full min-h-0 flex-1 items-center justify-center gap-5 rounded-lg">
         <div className={containerVariants({ layout: isFixedGrid ? 'grid' : 'flex' })}>
           {paginatedStreams.map((stream) => (
             <div
@@ -100,26 +100,24 @@ function MediaContainer() {
             </div>
           ))}
         </div>
-      </div>
-      <div className="fixed inset-0 flex w-full justify-between">
-        <button
-          type="button"
-          onClick={() => setCurrentPage((prev) => Math.max(0, prev - 1))}
-          style={{
-            opacity: currentPage === 0 ? 0 : '100%',
-          }}
-        >
-          <ChevronLeftIc />
-        </button>
-        <button
-          type="button"
-          onClick={() => setCurrentPage((prev) => Math.min(totalPages - 1, prev + 1))}
-          style={{
-            opacity: currentPage === totalPages - 1 && totalPages !== 0 ? 0 : '100%',
-          }}
-        >
-          <ChevronRightIc />
-        </button>
+        {currentPage !== 0 && (
+          <button
+            type="button"
+            onClick={() => setCurrentPage((prev) => Math.max(0, prev - 1))}
+            className="absolute left-[-45px] flex h-full items-center"
+          >
+            <ChevronLeftIc />
+          </button>
+        )}
+        {currentPage !== totalPages - 1 && (
+          <button
+            type="button"
+            className="absolute right-[-45px] flex h-full items-center"
+            onClick={() => setCurrentPage((prev) => Math.min(totalPages - 1, prev + 1))}
+          >
+            <ChevronRightIc />
+          </button>
+        )}
       </div>
 
       <footer className="flex h-[70px] justify-center gap-4 bg-primary pb-4 text-white">
