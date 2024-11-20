@@ -1,22 +1,25 @@
-import { Body, Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query, UseGuards, UsePipes } from '@nestjs/common';
 
 import { JwtAuthGuard } from '@/auth/jwt/jwt-auth.guard';
+import { GetUserId } from '@/common/decorator/get-userId.decorator';
+import { ZodValidationPipe } from '@/zodpipevalidation';
 
-import { CreateTicleDto } from './dto/createTicleDto';
+import { CreateTicleDto, CreateTicleSchema } from './dto/createTicleDto';
 import { GetTicleListQueryDto } from './dto/getTicleListQueryDto';
 import { TickleDetailResponseDto } from './dto/ticleDetailDto';
 import { SortType } from './sortType.enum';
 import { TicleService } from './ticle.service';
-import { GetUserId } from '@/common/decorator/get-userId.decorator';
 
 @Controller('ticle')
 export class TicleController {
   constructor(private readonly ticleService: TicleService) {}
 
   @Post()
-  async createTicle(@Body() createTicleDto: CreateTicleDto) {
-    const newTicle = await this.ticleService.createTicle(createTicleDto);
-    return newTicle.id;
+  @UseGuards(JwtAuthGuard)
+  @UsePipes(new ZodValidationPipe(CreateTicleSchema))
+  async createTicle(@GetUserId() userId: number, @Body() createTicleDto: CreateTicleDto) {
+    const newTicle = await this.ticleService.createTicle(createTicleDto, userId);
+    return { ticleId: newTicle.id };
   }
 
   @Get('list')
