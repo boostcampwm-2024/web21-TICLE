@@ -22,18 +22,6 @@ const containerVariants = cva('flex-1 gap-5 overflow-hidden', {
   },
 });
 
-const videoVariants = cva('aspect-video', {
-  variants: {
-    type: {
-      video: '',
-      audio: 'hidden',
-    },
-  },
-  defaultVariants: {
-    type: 'video',
-  },
-});
-
 const getVideoWidth = (isFixedGrid: boolean, columnCount: number) => {
   return isFixedGrid ? '100%' : `calc((100% - ${columnCount * 20}px) /${columnCount})`;
 };
@@ -45,7 +33,7 @@ function VideoGrid({ videoStreamData, isFixedGrid, columnCount }: VideoGridProps
       {videoStreamData.map((streamData) => (
         <div
           key={streamData.socketId}
-          className={videoVariants({ type: streamData.kind })}
+          className="aspect-video flex-1"
           style={{ width: videoWidth }}
         >
           <VideoPlayer stream={streamData.stream} />

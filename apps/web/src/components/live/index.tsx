@@ -6,6 +6,7 @@ import usePagination from '@/hooks/usePagination';
 
 import AudioPlayer from './AudioPlayer';
 import PaginationControls from './PaginationControls';
+import SubVideoGrid from './SubVideoGrid';
 import VideoGrid from './VideoGrid';
 
 const ITEMS_PER_PAGE = 9;
@@ -69,11 +70,7 @@ function MediaContainer() {
   return (
     <div className="fixed inset-0 flex flex-col justify-between bg-black px-32">
       <div className="relative flex h-full min-h-0 flex-1 items-center justify-center gap-5 rounded-lg">
-        <VideoGrid
-          videoStreamData={paginatedStreams}
-          isFixedGrid={isFixedGrid}
-          columnCount={columnCount}
-        />
+        <SubVideoGrid videoStreamData={paginatedStreams} />
         {remoteAudioStreamData.map((streamData) => (
           <AudioPlayer key={streamData.socketId} stream={streamData.stream} />
         ))}

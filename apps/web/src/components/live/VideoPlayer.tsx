@@ -73,7 +73,7 @@ function VideoPlayer({ stream, muted = true, isMicOn = false, isCamOn = false }:
         />
       ) : (
         <div className="bg-altWeak flex h-full w-full items-center justify-center rounded-lg transition-opacity duration-300">
-          <Avatar size="lg" />
+          <Avatar size="md" />
         </div>
       )}
     </div>
