@@ -8,12 +8,15 @@ export const SOCKET_EVENTS = {
   reconnectFailed: 'reconnect_failed',
 
   // MediaSoup 관련 이벤트
+  closeRoom: 'close-room',
+  roomClosed: 'room-closed',
   newPeer: 'new-peer',
   newProducer: 'new-producer',
   peerLeft: 'peer-left',
   consumerClosed: 'consumer-closed',
   consumerPaused: 'consumer-paused',
   closeProducer: 'close-producer',
+  producerStatusChange: 'producer-status-change',
   producerPaused: 'producer-paused',
   producerClosed: 'producer-closed',
   createRoom: 'create-room',
