@@ -19,6 +19,7 @@
     "@repo/types": "workspace:*",
     "@tanstack/react-router": "^1.79.0",
     "@tanstack/router-vite-plugin": "^1.79.0",
+    "axios": "^1.7.7",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
