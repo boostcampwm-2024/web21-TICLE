@@ -1,6 +1,6 @@
 import { ProducerOptions } from 'mediasoup-client/lib/types';
 
-import { MediaTypes } from '../mediaTypes';
+import { MediaTypes } from '../types';
 
 import type { types } from 'mediasoup-client';
 

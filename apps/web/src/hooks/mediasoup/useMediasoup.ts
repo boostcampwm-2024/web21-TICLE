@@ -48,7 +48,7 @@ const useMediasoup = () => {
     socket.on(SOCKET_EVENTS.newProducer, ({ peerId, producerId, kind }) => {
       if (socket.id === peerId) return;
 
-      consume({ producerId, kind, peerId });
+      // consume({ producerId, kind, peerId });
     });
 
     socket.on(SOCKET_EVENTS.peerLeft, ({ peerId }) => {
