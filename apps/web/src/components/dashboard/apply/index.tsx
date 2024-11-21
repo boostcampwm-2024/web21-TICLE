@@ -46,6 +46,7 @@ function Apply() {
       {TICLE_INFO.map((ticle) => (
         <TicleInfoCard
           key={ticle.id}
+          ticleId={ticle.id}
           ticleTitle={ticle.title}
           ticleOwner={ticle.ticleOwner}
           startTime={ticle.startTime}

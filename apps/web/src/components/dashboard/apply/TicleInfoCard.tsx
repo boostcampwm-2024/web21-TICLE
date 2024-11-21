@@ -1,7 +1,10 @@
+import { Link } from '@tanstack/react-router';
+
 import Button from '@/components/common/Button';
 import { formatDateTimeRange } from '@/utils/date';
 
 interface TicleInfoCardProps {
+  ticleId: number;
   ticleOwner: string;
   ticleTitle: string;
   startTime: string;
@@ -9,7 +12,14 @@ interface TicleInfoCardProps {
   status: 'pending' | 'completed';
 }
 
-function TicleInfoCard({ ticleOwner, ticleTitle, startTime, endTime, status }: TicleInfoCardProps) {
+function TicleInfoCard({
+  ticleId,
+  ticleOwner,
+  ticleTitle,
+  startTime,
+  endTime,
+  status,
+}: TicleInfoCardProps) {
   const { dateStr, timeRangeStr } = formatDateTimeRange(startTime, endTime);
 
   return (
@@ -28,7 +38,9 @@ function TicleInfoCard({ ticleOwner, ticleTitle, startTime, endTime, status }: T
           <span className="text-body3 text-main">{`${dateStr} ${timeRangeStr}`}</span>
         </div>
       </div>
-      <Button disabled={status === 'completed'}>티클 참여하기</Button>
+      <Link to={`/live/${ticleId}`}>
+        <Button disabled={status === 'completed'}>티클 참여하기</Button>
+      </Link>
     </div>
   );
 }
