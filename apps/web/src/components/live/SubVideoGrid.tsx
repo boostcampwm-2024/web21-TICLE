@@ -6,20 +6,20 @@ import { StreamData } from '.';
 
 interface SubVideoGridProps {
   videoStreamData: StreamData[];
-  onVideoClick: (socketId: string) => void;
-  pinnedSocketId?: string;
+  onVideoClick: (consumerId?: string) => void;
+  pinnedConsumerId?: string;
 }
 
-function SubVideoGrid({ videoStreamData, onVideoClick, pinnedSocketId }: SubVideoGridProps) {
+function SubVideoGrid({ videoStreamData, onVideoClick, pinnedConsumerId }: SubVideoGridProps) {
   return (
     <div className="absolute flex w-full justify-center gap-5">
       {videoStreamData.map(
         (streamData) =>
-          streamData.socketId !== pinnedSocketId && (
+          streamData.consumer?.id !== pinnedConsumerId && (
             <div
-              key={streamData.socketId}
+              key={streamData.consumer?.id}
               className="aspect-video w-44"
-              onClick={() => onVideoClick(streamData.socketId)}
+              onClick={() => onVideoClick(streamData.consumer?.id)}
             >
               <VideoPlayer stream={streamData.stream} avatarSize="sm" muted={streamData.pause} />
             </div>

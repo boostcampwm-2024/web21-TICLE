@@ -90,20 +90,39 @@ const useMediasoup = (): UseMediasoupReturn => {
     });
 
     socket.on(SOCKET_EVENTS.producerPaused, ({ producerId }) => {
-      const idx = remoteStreams.findIndex((rs) => rs.consumer.producerId === producerId);
-      const newRemoteStreams = [...remoteStreams];
-      const remoteStream = { ...newRemoteStreams[idx] };
-      if (idx === -1 || !remoteStream) return;
-      remoteStream.pause = remoteStream.consumer?.paused;
-      setRemoteStreams(newRemoteStreams);
+      setRemoteStreams((prev) => {
+        const idx = prev.findIndex((rs) => rs.consumer.producerId === producerId);
+
+        const newRemoteStreams = [...prev];
+        const remoteStream = newRemoteStreams[idx];
+
+        if (idx === -1 || !remoteStream?.consumer) {
+          return prev;
+        }
+
+        remoteStream.consumer.pause();
+        remoteStream.pause = true;
+
+        return newRemoteStreams;
+      });
     });
+
     socket.on(SOCKET_EVENTS.producerResumed, ({ producerId }) => {
-      const idx = remoteStreams.findIndex((rs) => rs.consumer.producerId === producerId);
-      const newRemoteStreams = [...remoteStreams];
-      const remoteStream = { ...newRemoteStreams[idx] };
-      if (idx === -1 || !remoteStream) return;
-      remoteStream.pause = remoteStream.consumer?.paused;
-      setRemoteStreams(newRemoteStreams);
+      setRemoteStreams((prev) => {
+        const idx = prev.findIndex((rs) => rs.consumer.producerId === producerId);
+
+        const newRemoteStreams = [...prev];
+        const remoteStream = newRemoteStreams[idx];
+
+        if (idx === -1 || !remoteStream?.consumer) {
+          return prev;
+        }
+
+        remoteStream.consumer.resume();
+        remoteStream.pause = false;
+
+        return newRemoteStreams;
+      });
     });
   };
 

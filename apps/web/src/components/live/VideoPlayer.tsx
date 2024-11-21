@@ -38,18 +38,10 @@ function VideoPlayer({
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
-    if (!videoRef.current || !stream) return;
+    if (!videoRef.current || !stream || muted) return;
     videoRef.current.srcObject = stream;
     setIsLoading(false);
-  }, [stream]);
-
-  useEffect(() => {
-    if (!videoRef.current) return;
-
-    videoRef.current.muted = muted;
-
-    console.log(muted);
-  }, [muted]);
+  }, [stream, muted]);
 
   const onLoadedData = () => {
     setIsLoading(false);
@@ -78,7 +70,6 @@ function VideoPlayer({
           autoPlay
           playsInline
           preload="metadata"
-          muted
           className={videoVariants({ loading: isLoading })}
           onLoadedData={onLoadedData}
         >

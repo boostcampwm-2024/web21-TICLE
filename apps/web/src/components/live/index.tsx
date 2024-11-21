@@ -55,7 +55,7 @@ function MediaContainer() {
   const [isVideoPaused, setIsVideoPaused] = useState(false);
   const [isAudioMuted, setIsAudioMuted] = useState(false);
   const [isScreenSharing, setIsScreenSharing] = useState(false);
-  const [pinnedSocketId, setPinnedSocketId] = useState<string | null>(null);
+  const [pinnedConsumerId, setPinnedConsumerId] = useState<string | null>(null);
   const [pinnedVideoStreamData, setPinnedVideoSreamData] = useState<StreamData | null>(null);
 
   const toggleScreenShare = async () => {
@@ -110,7 +110,7 @@ function MediaContainer() {
       socketId: 'local',
       kind: 'video',
       stream: localVideoStream,
-      pause: false,
+      pause: isVideoPaused,
     },
     ...remoteVideoStreamData,
   ];
@@ -130,9 +130,13 @@ function MediaContainer() {
   const isFixedGrid = allVideoStreamData.length >= 9;
   const columnCount = getColumnCount(paginatedStreams.length);
 
-  const handleVideoPin = (socketId: string) => {
-    setPinnedSocketId(socketId);
-    const streamData = allVideoStreamData.find((streamData) => streamData.socketId === socketId);
+  const handleVideoPin = (consumerId?: string) => {
+    if (!consumerId) return;
+    setPinnedConsumerId(consumerId);
+    const streamData = allVideoStreamData.find((streamData) => {
+      return streamData.consumer?.id === consumerId;
+    });
+
     if (!streamData) return;
 
     setPinnedVideoSreamData(streamData);
@@ -141,18 +145,21 @@ function MediaContainer() {
   return (
     <div className="fixed inset-0 flex flex-col justify-between bg-black px-32">
       <div className="relative mt-5 flex h-full min-h-0 flex-1 items-center justify-center gap-5 rounded-lg">
-        {pinnedSocketId && pinnedVideoStreamData ? (
+        {pinnedConsumerId && pinnedVideoStreamData ? (
           <div className="relative flex h-full w-full flex-col gap-5">
             <div className="flex h-[80%] w-full justify-center self-center">
               <div className="aspect-video">
-                <VideoPlayer stream={pinnedVideoStreamData.stream} />
+                <VideoPlayer
+                  stream={pinnedVideoStreamData.stream}
+                  muted={pinnedVideoStreamData.pause}
+                />
               </div>
             </div>
             <div className="relative">
               <SubVideoGrid
                 videoStreamData={subPaginatedStreams}
                 onVideoClick={handleVideoPin}
-                pinnedSocketId={pinnedSocketId}
+                pinnedConsumerId={pinnedConsumerId}
               />
               <PaginationControls {...subPaginationControlsProps} className="mt-8" />
             </div>

@@ -31,17 +31,6 @@ const useProducerStream = ({ socketRef, sendTransportRef }: UseProducerStreamPar
   const videoProducerRef = useRef<types.Producer | null>(null);
   const screenProducerRef = useRef<types.Producer | null>(null);
 
-  const pauseStream = (stream: MediaStream, producerRef: ProducerRef) => {
-    const socket = socketRef.current;
-    const producer = producerRef.current;
-    if (!socket || !producer) return;
-
-    stream.getTracks().forEach((track) => {
-      track.enabled = false;
-      producer.pause();
-    });
-  };
-
   const closeStream = (stream: MediaStream, producerRef: ProducerRef) => {
     const socket = socketRef.current;
     const producer = producerRef.current;
@@ -54,6 +43,17 @@ const useProducerStream = ({ socketRef, sendTransportRef }: UseProducerStreamPar
       producerRef.current = null;
 
       socket.emit(SOCKET_EVENTS.closeProducer, { producerId: producer.id, roomId: ticleId });
+    });
+  };
+
+  const pauseStream = (stream: MediaStream, producerRef: ProducerRef) => {
+    const socket = socketRef.current;
+    const producer = producerRef.current;
+    if (!socket || !producer) return;
+
+    stream.getTracks().forEach((track) => {
+      track.enabled = false;
+      producer.pause();
     });
   };
 
