@@ -18,7 +18,7 @@ export const CreateTicleSchema = z.object({
   content: z
     .string()
     .min(1, '티클 상세 설명은 필수입니다.')
-    .max(1500, '티클 상세 설명은 1400자 이내여야 합니다.'),
+    .max(1500, '티클 상세 설명은 1500자 이내여야 합니다.'),
 
   startTime: z.coerce
     .date()
