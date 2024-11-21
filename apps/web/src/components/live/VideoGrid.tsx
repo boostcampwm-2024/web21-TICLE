@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 import { cva } from 'class-variance-authority';
 
 import VideoPlayer from './VideoPlayer';
@@ -24,7 +26,7 @@ interface VideoGridProps {
   videoStreamData: StreamData[];
   isFixedGrid: boolean;
   columnCount: number;
-  onVideoClick?: (socketId: string) => void;
+  onVideoClick: (socketId: string) => void;
 }
 
 function VideoGrid({ videoStreamData, isFixedGrid, columnCount, onVideoClick }: VideoGridProps) {
