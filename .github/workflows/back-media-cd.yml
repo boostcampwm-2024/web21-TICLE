@@ -86,10 +86,7 @@ jobs:
 
       - name: 🐳 media 컨테이너 실행
         run: |
-          docker run -dit --name media \
-            -p 3002:3002 \
-            -p 30000-49999:30000-49999 \ 
-            ${{secrets.DOCKER_REGISTRY_URL}}/media:${{ github.sha }}
+          docker run -dit --name media -p 3002:3002 -p 30000-49999:30000-49999 ${{secrets.DOCKER_REGISTRY_URL}}/media:${{ github.sha }}
 
       - name: 🐳 사용하지 않는 Docker 이미지 제거
         run: |
