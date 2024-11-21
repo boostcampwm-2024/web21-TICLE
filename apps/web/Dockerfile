@@ -23,7 +23,7 @@ FROM base AS installer
 
 RUN apk update
 
-RUN apk add --no-cache libc6-compat
+RUN apk add --no-cache libc6-compat python3 py3-pip build-base
 
 WORKDIR /app
 
