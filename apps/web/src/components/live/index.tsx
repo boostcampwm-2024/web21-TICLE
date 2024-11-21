@@ -84,7 +84,7 @@ function MediaContainer() {
           {videoStream && (
             <VideoPlayer
               stream={videoStream}
-              muted={isVideoPaused}
+              muted={false}
               className="aspect-video h-full w-full rounded-lg"
             />
           )}
