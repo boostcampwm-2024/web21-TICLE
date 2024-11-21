@@ -1,4 +1,4 @@
-import { useParams } from '@tanstack/react-router';
+import { useNavigate, useParams } from '@tanstack/react-router';
 import { useEffect } from 'react';
 import { SOCKET_EVENTS } from '@repo/mediasoup';
 
@@ -11,7 +11,27 @@ import useRoom from './useRoom';
 import useSocket from './useSocket';
 import useTransport from './useTransport';
 
-const useMediasoup = () => {
+type UseProducerStream = ReturnType<typeof useProducerStream>;
+type UseConsumerStream = ReturnType<typeof useConsumerStream>;
+
+interface UseMediasoupReturn {
+  socketRef: ReturnType<typeof useSocket>;
+  audioProducerRef: UseProducerStream['audioProducerRef'];
+  videoProducerRef: UseProducerStream['videoProducerRef'];
+  screenProducerRef: UseProducerStream['screenProducerRef'];
+  videoStream: UseProducerStream['videoStream'];
+  audioStream: UseProducerStream['audioStream'];
+  screenStream: UseProducerStream['screenStream'];
+  remoteStreams: UseConsumerStream['remoteStreams'];
+  startScreenStream: UseProducerStream['startScreenStream'];
+  closeStream: UseProducerStream['closeStream'];
+  pauseStream: UseProducerStream['pauseStream'];
+  resumeStream: UseProducerStream['resumeStream'];
+  disconnect: () => void;
+}
+
+const useMediasoup = (): UseMediasoupReturn => {
+  const navigate = useNavigate({ from: '/live/$ticleId' });
   const { ticleId } = useParams({ from: '/live/$ticleId' });
   const socketRef = useSocket(ENV.WS_URL);
   const { createRoom } = useRoom(socketRef, ticleId);
@@ -21,6 +41,8 @@ const useMediasoup = () => {
     useTransport(socketRef, ticleId);
 
   const {
+    audioProducerRef,
+    videoProducerRef,
     screenProducerRef,
     videoStream,
     audioStream,
@@ -45,6 +67,8 @@ const useMediasoup = () => {
 
     if (!socket) return;
 
+    socket.on(SOCKET_EVENTS.roomClosed, disconnect);
+
     socket.on(SOCKET_EVENTS.newProducer, ({ peerId, producerId, kind }) => {
       if (socket.id === peerId) return;
 
@@ -64,6 +88,15 @@ const useMediasoup = () => {
         return rs.consumer.producerId !== producerId;
       });
     });
+  };
+
+  const disconnect = () => {
+    const socket = socketRef.current;
+
+    if (!socket) return;
+
+    socket.disconnect();
+    navigate({ to: '/', replace: true });
   };
 
   const initMediasoup = async () => {
@@ -91,16 +124,20 @@ const useMediasoup = () => {
   }, []);
 
   return {
+    socketRef,
+    audioProducerRef,
+    videoProducerRef,
     screenProducerRef,
-    remoteStreams,
     videoStream,
     audioStream,
     screenStream,
+    remoteStreams,
     startScreenStream,
     closeStream,
     pauseStream,
     resumeStream,
-  };
+    disconnect,
+  } as const;
 };
 
 export default useMediasoup;

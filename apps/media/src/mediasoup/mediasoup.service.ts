@@ -5,7 +5,8 @@ import { WsException } from '@nestjs/websockets';
 import * as mediasoup from 'mediasoup';
 import { types } from 'mediasoup';
 import { Worker } from 'mediasoup/node/lib/types';
-import { MediaTypes } from '@repo/mediasoup';
+
+import { MediaTypes, server, STREAM_STATUS } from '@repo/mediasoup';
 
 import { RoomService } from '@/room/room.service';
 
@@ -176,5 +177,41 @@ export class MediasoupService implements OnModuleInit {
     const producer = peer.getProducer(producerId);
     producer.close();
     return producerId;
+  }
+
+  changeProducerStatus(socketId: string, changeProducerState: server.ChangeProducerStateDto) {
+    const { producerId, status, roomId } = changeProducerState;
+    const room = this.roomService.getRoom(roomId);
+    const peer = room.peers.get(socketId);
+    const producer = peer.getProducer(producerId);
+
+    const updateStatus = () => {
+      if (status === STREAM_STATUS.pause) {
+        producer.pause();
+      } else {
+        producer.resume();
+      }
+    };
+
+    updateStatus();
+    return producerId;
+  }
+
+  changeConsumerStatus(socketId: string, changeConsumerState: server.ChangeConsumerStateDto) {
+    const { consumerId, status, roomId } = changeConsumerState;
+    const room = this.roomService.getRoom(roomId);
+    const peer = room.peers.get(socketId);
+    const consumer = peer.getConsumer(consumerId);
+
+    const updateStatus = () => {
+      if (status === STREAM_STATUS.pause) {
+        consumer.pause();
+      } else {
+        consumer.resume();
+      }
+    };
+
+    updateStatus();
+    return consumerId;
   }
 }

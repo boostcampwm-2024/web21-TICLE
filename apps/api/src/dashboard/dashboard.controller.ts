@@ -1,10 +1,12 @@
 import { Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
+import { GetDashboardListQuerySchema } from '@repo/types';
 
 import { JwtAuthGuard } from '@/auth/jwt/jwt-auth.guard';
 import { GetUserId } from '@/common/decorator/get-userId.decorator';
-import { TicleStatus } from '@/entity/ticle.entity';
+import { ZodValidationPipe } from '@/zodValidationPipe';
 
 import { DashboardService } from './dashboard.service';
+import { GetDashboardListQueryDto } from './dto/getDashboardListQueryDto';
 
 @Controller('dashboard')
 export class DashboardController {
@@ -14,12 +16,10 @@ export class DashboardController {
   @UseGuards(JwtAuthGuard)
   async getTicleList(
     @GetUserId() userId: number,
-    @Query('isSpeaker') isSpeaker: boolean,
-    @Query('page') page: number = 1,
-    @Query('pageSize') pageSize: number = 10,
-    @Query('status') status?: TicleStatus
+    @Query(new ZodValidationPipe(GetDashboardListQuerySchema)) query: GetDashboardListQueryDto
   ) {
-    if (isSpeaker) {
+    const { page, pageSize, status } = query;
+    if (query.isSpeaker) {
       return this.dashboardService.getCreatedTicleList(userId, page, pageSize, status);
     } else {
       return this.dashboardService.getAppliedTicleList(userId, page, pageSize, status);
