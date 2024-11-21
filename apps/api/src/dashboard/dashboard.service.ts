@@ -1,9 +1,10 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { TicleStatus } from '@repo/types';
 
 import { Applicant } from '@/entity/applicant.entity';
-import { Ticle, TicleStatus } from '@/entity/ticle.entity';
+import { Ticle } from '@/entity/ticle.entity';
 
 @Injectable()
 export class DashboardService {
@@ -69,6 +70,7 @@ export class DashboardService {
         .select([
           'applicant.id',
           'ticle.id',
+          'ticle.speakerName',
           'ticle.title',
           'ticle.startTime',
           'ticle.endTime',
