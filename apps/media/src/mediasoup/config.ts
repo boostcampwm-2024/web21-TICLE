@@ -23,6 +23,10 @@ export class MediasoupConfig {
         mimeType: 'audio/opus',
         clockRate: 48000,
         channels: 2,
+        parameters: {
+          minptime: 10,
+          useinbandfec: 1,
+        },
       },
       {
         kind: 'video',
