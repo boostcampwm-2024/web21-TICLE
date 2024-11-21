@@ -39,7 +39,7 @@ function MediaContainer() {
 
     videoStream: localVideoStream,
     screenStream: localScreenStream,
-    audioStream,
+    audioStream: localAudioStream,
 
     audioProducerRef,
     videoProducerRef,
@@ -86,12 +86,12 @@ function MediaContainer() {
   };
 
   const toggleAudio = () => {
-    if (!audioStream) return;
+    if (!localAudioStream) return;
 
     if (isAudioMuted) {
-      resumeStream(audioStream, audioProducerRef);
+      resumeStream(localAudioStream, audioProducerRef);
     } else {
-      pauseStream(audioStream, audioProducerRef);
+      pauseStream(localAudioStream, audioProducerRef);
     }
     setIsAudioMuted((prev) => !prev);
   };
@@ -105,6 +105,16 @@ function MediaContainer() {
   };
 
   const remoteAudioStreamData = remoteStreams.filter((stream) => stream.kind === 'audio');
+  const allAudioStreamData: StreamData[] = [
+    {
+      consumer: undefined,
+      socketId: 'local',
+      kind: 'audio',
+      stream: localAudioStream,
+      pause: isAudioMuted,
+    },
+    ...remoteAudioStreamData,
+  ];
   const remoteVideoStreamData = remoteStreams.filter((stream) => stream.kind === 'video');
   const allVideoStreamData: StreamData[] = [
     {
@@ -150,6 +160,16 @@ function MediaContainer() {
     setPinnedVideoSreamData(null);
   };
 
+  const getAudioMutedState = (socketId?: string): boolean => {
+    const targetAudioStream = allAudioStreamData.find(
+      (streamData) => streamData.socketId === socketId
+    );
+    const isPaused = targetAudioStream?.pause;
+
+    if (isPaused === undefined) return false;
+    return !isPaused;
+  };
+
   useEffect(() => {
     const pinnedStream = remoteStreams.find((stream) => stream.consumer.id === pinnedConsumerId);
     if (pinnedStream) return;
@@ -168,6 +188,7 @@ function MediaContainer() {
                 <VideoPlayer
                   stream={pinnedVideoStreamData.stream}
                   muted={pinnedVideoStreamData.pause}
+                  isMicOn={getAudioMutedState(pinnedConsumerId)}
                 />
               </div>
             </div>
@@ -176,6 +197,7 @@ function MediaContainer() {
                 videoStreamData={subPaginatedStreams}
                 onVideoClick={addPinnedVideo}
                 pinnedConsumerId={pinnedConsumerId}
+                getAudioMutedState={getAudioMutedState}
               />
               <PaginationControls {...subPaginationControlsProps} className="mt-8" />
             </div>
@@ -187,6 +209,7 @@ function MediaContainer() {
               isFixedGrid={isFixedGrid}
               columnCount={columnCount}
               onVideoClick={addPinnedVideo}
+              getAudioMutedState={getAudioMutedState}
             />
             <PaginationControls {...paginationControlsProps} className="h-full" />
           </>

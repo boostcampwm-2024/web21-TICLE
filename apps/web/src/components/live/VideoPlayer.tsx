@@ -48,7 +48,7 @@ function VideoPlayer({
   };
 
   return (
-    <div className="relative h-full w-full overflow-hidden rounded-lg">
+    <div className="relative h-full w-full cursor-pointer overflow-hidden rounded-lg">
       {isLoading && !muted ? (
         <div className="flex h-full items-center justify-center">
           <Loading />

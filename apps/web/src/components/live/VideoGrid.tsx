@@ -28,9 +28,16 @@ interface VideoGridProps {
   isFixedGrid: boolean;
   columnCount: number;
   onVideoClick: (consumerId?: string) => void;
+  getAudioMutedState: (socketId?: string) => boolean;
 }
 
-function VideoGrid({ videoStreamData, isFixedGrid, columnCount, onVideoClick }: VideoGridProps) {
+function VideoGrid({
+  videoStreamData,
+  isFixedGrid,
+  columnCount,
+  onVideoClick,
+  getAudioMutedState,
+}: VideoGridProps) {
   const videoWidth = getVideoWidth(isFixedGrid, columnCount);
 
   return (
@@ -42,7 +49,11 @@ function VideoGrid({ videoStreamData, isFixedGrid, columnCount, onVideoClick }: 
           style={{ width: videoWidth }}
           onClick={() => onVideoClick(streamData.consumer?.id)}
         >
-          <VideoPlayer stream={streamData.stream} muted={streamData.pause} />
+          <VideoPlayer
+            stream={streamData.stream}
+            muted={streamData.pause}
+            isMicOn={getAudioMutedState(streamData.socketId)}
+          />
         </div>
       ))}
     </div>

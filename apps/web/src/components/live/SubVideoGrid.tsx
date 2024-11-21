@@ -8,9 +8,15 @@ interface SubVideoGridProps {
   videoStreamData: StreamData[];
   onVideoClick: (consumerId?: string) => void;
   pinnedConsumerId?: string;
+  getAudioMutedState: (socketId?: string) => boolean;
 }
 
-function SubVideoGrid({ videoStreamData, onVideoClick, pinnedConsumerId }: SubVideoGridProps) {
+function SubVideoGrid({
+  videoStreamData,
+  onVideoClick,
+  pinnedConsumerId,
+  getAudioMutedState,
+}: SubVideoGridProps) {
   return (
     <div className="absolute flex w-full justify-center gap-5">
       {videoStreamData.map(
@@ -21,7 +27,12 @@ function SubVideoGrid({ videoStreamData, onVideoClick, pinnedConsumerId }: SubVi
               className="aspect-video w-44"
               onClick={() => onVideoClick(streamData.consumer?.id)}
             >
-              <VideoPlayer stream={streamData.stream} avatarSize="sm" muted={streamData.pause} />
+              <VideoPlayer
+                stream={streamData.stream}
+                avatarSize="sm"
+                muted={streamData.pause}
+                isMicOn={getAudioMutedState(streamData.socketId)}
+              />
             </div>
           )
       )}
