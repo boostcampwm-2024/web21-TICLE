@@ -6,7 +6,7 @@ import ChevronUpIc from '@/assets/icons/chevron-up.svg?react';
 import useOutsideClick from '@/hooks/useOutsideClick';
 
 const selectVariants = cva(
-  'flex w-full cursor-pointer items-center justify-between gap-3.5 rounded-base px-3.5 py-2.5 text-body1 text-main',
+  'flex w-full cursor-pointer items-center justify-between gap-3.5 rounded-base bg-white px-3.5 py-2.5 text-body1 text-main',
   {
     variants: {
       isOpen: {

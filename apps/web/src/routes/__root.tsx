@@ -14,7 +14,7 @@ function RootComponent() {
   const hasHeader = !NO_HEADER_PATHS.some((path) => currentPath.startsWith(path));
 
   return (
-    <div className="h-full min-h-dvh">
+    <div className="h-full min-h-dvh bg-weak">
       {hasHeader && <Header />}
       <Outlet />
     </div>
