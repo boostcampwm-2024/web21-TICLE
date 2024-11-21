@@ -30,7 +30,7 @@ function SubVideoGrid({
               <VideoPlayer
                 stream={streamData.stream}
                 avatarSize="sm"
-                muted={streamData.pause}
+                muted={streamData.paused}
                 isMicOn={getAudioMutedState(streamData.socketId)}
               />
             </div>

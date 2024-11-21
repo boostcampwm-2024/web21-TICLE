@@ -51,7 +51,7 @@ function VideoGrid({
         >
           <VideoPlayer
             stream={streamData.stream}
-            muted={streamData.pause}
+            muted={streamData.paused}
             isMicOn={getAudioMutedState(streamData.socketId)}
           />
         </div>

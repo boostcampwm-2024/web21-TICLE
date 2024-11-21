@@ -21,7 +21,8 @@ export interface CreateProducerRes {
   kind: types.MediaKind;
   peerId: string;
   producerId: string;
-  appData: { mediaTypes: MediaTypes };
+  paused: boolean;
+  appData?: { mediaTypes: MediaTypes };
 }
 
 export interface CreateTransportRes {
@@ -43,7 +44,7 @@ export interface RemoteStream {
   stream: MediaStream;
   consumer: types.Consumer;
   kind: types.MediaKind;
-  pause: boolean;
+  paused: boolean;
 }
 
 export interface GetProducersRes {

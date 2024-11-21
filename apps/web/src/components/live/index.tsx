@@ -22,7 +22,7 @@ export interface StreamData {
   socketId: string;
   kind: types.MediaKind;
   stream: MediaStream | null;
-  pause: boolean;
+  paused: boolean;
 }
 
 const getColumnCount = (count: number) => {
@@ -111,7 +111,7 @@ function MediaContainer() {
       socketId: 'local',
       kind: 'audio',
       stream: localAudioStream,
-      pause: isAudioMuted,
+      paused: isAudioMuted,
     },
     ...remoteAudioStreamData,
   ];
@@ -122,7 +122,7 @@ function MediaContainer() {
       socketId: 'local',
       kind: 'video',
       stream: localVideoStream,
-      pause: isVideoPaused,
+      paused: isVideoPaused,
     },
     ...remoteVideoStreamData,
   ];
@@ -164,7 +164,7 @@ function MediaContainer() {
     const targetAudioStream = allAudioStreamData.find(
       (streamData) => streamData.socketId === socketId
     );
-    const isPaused = targetAudioStream?.pause;
+    const isPaused = targetAudioStream?.paused;
 
     if (isPaused === undefined) return false;
     return !isPaused;
@@ -187,7 +187,7 @@ function MediaContainer() {
               <div className="aspect-video" onClick={removePinnedVideo}>
                 <VideoPlayer
                   stream={pinnedVideoStreamData.stream}
-                  muted={pinnedVideoStreamData.pause}
+                  muted={pinnedVideoStreamData.paused}
                   isMicOn={getAudioMutedState(pinnedConsumerId)}
                 />
               </div>
@@ -219,7 +219,7 @@ function MediaContainer() {
           <AudioPlayer
             key={streamData.socketId}
             stream={streamData.stream}
-            muted={streamData.pause}
+            muted={streamData.paused}
           />
         ))}
       </div>

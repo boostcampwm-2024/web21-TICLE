@@ -101,7 +101,7 @@ const useMediasoup = (): UseMediasoupReturn => {
         }
 
         remoteStream.consumer.pause();
-        remoteStream.pause = true;
+        remoteStream.paused = true;
 
         return newRemoteStreams;
       });
@@ -119,7 +119,7 @@ const useMediasoup = (): UseMediasoupReturn => {
         }
 
         remoteStream.consumer.resume();
-        remoteStream.pause = false;
+        remoteStream.paused = false;
 
         return newRemoteStreams;
       });

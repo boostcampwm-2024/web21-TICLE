@@ -41,7 +41,7 @@ const useConsumerStream = ({ socketRef, deviceRef, recvTransportRef }: UseProduc
         socketId: peerId,
         kind,
         stream,
-        pause: paused,
+        paused,
       };
 
       setRemoteStreams((prev) => [...prev, newRemoteStream]);
