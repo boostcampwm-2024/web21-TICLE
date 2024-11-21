@@ -56,7 +56,7 @@ const useMediasoup = (): UseMediasoupReturn => {
     resumeStream,
   } = useProducerStream({ socketRef, sendTransportRef });
 
-  const { remoteStreams, consume, closeConsumer } = useConsumerStream({
+  const { remoteStreams, consume, closeConsumer, setRemoteStreams } = useConsumerStream({
     socketRef,
     deviceRef,
     recvTransportRef,
@@ -87,6 +87,23 @@ const useMediasoup = (): UseMediasoupReturn => {
       closeConsumer((rs) => {
         return rs.consumer.producerId !== producerId;
       });
+    });
+
+    socket.on(SOCKET_EVENTS.producerPaused, ({ producerId }) => {
+      const idx = remoteStreams.findIndex((rs) => rs.consumer.producerId === producerId);
+      const newRemoteStreams = [...remoteStreams];
+      const remoteStream = { ...newRemoteStreams[idx] };
+      if (idx === -1 || !remoteStream) return;
+      remoteStream.pause = remoteStream.consumer?.paused;
+      setRemoteStreams(newRemoteStreams);
+    });
+    socket.on(SOCKET_EVENTS.producerResumed, ({ producerId }) => {
+      const idx = remoteStreams.findIndex((rs) => rs.consumer.producerId === producerId);
+      const newRemoteStreams = [...remoteStreams];
+      const remoteStream = { ...newRemoteStreams[idx] };
+      if (idx === -1 || !remoteStream) return;
+      remoteStream.pause = remoteStream.consumer?.paused;
+      setRemoteStreams(newRemoteStreams);
     });
   };
 

@@ -54,7 +54,7 @@ const useConsumerStream = ({ socketRef, deviceRef, recvTransportRef }: UseProduc
     setRemoteStreams((prev) => prev.filter(cb));
   };
 
-  return { remoteStreams, consume, closeConsumer };
+  return { remoteStreams, consume, closeConsumer, setRemoteStreams };
 };
 
 export default useConsumerStream;

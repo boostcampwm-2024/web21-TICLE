@@ -47,6 +47,8 @@ function VideoPlayer({
     if (!videoRef.current) return;
 
     videoRef.current.muted = muted;
+
+    console.log(muted);
   }, [muted]);
 
   const onLoadedData = () => {
