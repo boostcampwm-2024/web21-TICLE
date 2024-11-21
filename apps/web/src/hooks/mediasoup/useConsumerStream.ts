@@ -15,7 +15,7 @@ const useConsumerStream = ({ socketRef, deviceRef, recvTransportRef }: UseProduc
 
   const [remoteStreams, setRemoteStreams] = useState<client.RemoteStream[]>([]);
 
-  const consume = async ({ producerId, peerId, kind }: client.CreateProducerRes) => {
+  const consume = async ({ producerId, peerId, kind, paused }: client.CreateProducerRes) => {
     const socket = socketRef.current;
     const device = deviceRef.current;
     const transport = recvTransportRef.current;
@@ -41,12 +41,14 @@ const useConsumerStream = ({ socketRef, deviceRef, recvTransportRef }: UseProduc
         socketId: peerId,
         kind,
         stream,
-        pause: false,
+        pause: paused,
       };
 
       setRemoteStreams((prev) => [...prev, newRemoteStream]);
 
-      consumer.resume();
+      if (paused) {
+        consumer.pause();
+      }
     });
   };
 

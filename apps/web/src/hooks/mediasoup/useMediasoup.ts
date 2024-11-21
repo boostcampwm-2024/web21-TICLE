@@ -69,10 +69,10 @@ const useMediasoup = (): UseMediasoupReturn => {
 
     socket.on(SOCKET_EVENTS.roomClosed, disconnect);
 
-    socket.on(SOCKET_EVENTS.newProducer, ({ peerId, producerId, kind }) => {
+    socket.on(SOCKET_EVENTS.newProducer, ({ peerId, producerId, kind, paused }) => {
       if (socket.id === peerId) return;
 
-      consume({ producerId, kind, peerId });
+      consume({ producerId, kind, peerId, paused });
     });
 
     socket.on(SOCKET_EVENTS.peerLeft, ({ peerId }) => {
@@ -148,7 +148,6 @@ const useMediasoup = (): UseMediasoupReturn => {
     await Promise.all([startVideoStream(), startAudioStream()]);
 
     const remoteProducers = await connectExistProducer();
-
     if (!remoteProducers || remoteProducers.length === 0) return;
 
     remoteProducers.forEach(consume);

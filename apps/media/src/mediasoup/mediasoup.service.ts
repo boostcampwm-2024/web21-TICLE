@@ -5,7 +5,6 @@ import { WsException } from '@nestjs/websockets';
 import * as mediasoup from 'mediasoup';
 import { types } from 'mediasoup';
 import { Worker } from 'mediasoup/node/lib/types';
-
 import { MediaTypes, server, STREAM_STATUS } from '@repo/mediasoup';
 
 import { RoomService } from '@/room/room.service';
@@ -125,6 +124,7 @@ export class MediasoupService implements OnModuleInit {
     const room = this.roomService.getRoom(roomId);
     const peer = room.getPeer(socketId);
     const transport = peer.getTransport(transportId);
+
     const consumer = await transport.consume({
       producerId,
       rtpCapabilities,
@@ -154,12 +154,15 @@ export class MediasoupService implements OnModuleInit {
     const filtered = peers.filter((peer) => peer.socketId !== socketId);
 
     const result = filtered.flatMap((peer) =>
-      [...peer.producers.values()].map(({ id, kind, appData }) => ({
-        producerId: id,
-        kind,
-        peerId: peer.socketId,
-        appData: appData,
-      }))
+      [...peer.producers.values()].map(({ id, kind, appData, paused }) => {
+        return {
+          producerId: id,
+          kind,
+          paused,
+          peerId: peer.socketId,
+          appData: appData,
+        };
+      })
     );
 
     return [...new Set(result)];

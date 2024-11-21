@@ -74,6 +74,7 @@ export class SignalingGateway implements OnGatewayDisconnect {
       peerId: client.id,
       kind,
       appData,
+      paused: producer.paused,
     };
 
     client.to(roomId).emit(SOCKET_EVENTS.newProducer, createProducerRes);
@@ -102,7 +103,7 @@ export class SignalingGateway implements OnGatewayDisconnect {
   async getProducers(
     @ConnectedSocket() client: Socket,
     @MessageBody() getProducerDto: server.GetProducersDto
-  ): Promise<client.GetProducersRes[]> {
+  ) {
     const { roomId } = getProducerDto;
     return this.mediasoupService.getProducers(roomId, client.id);
   }

@@ -156,7 +156,6 @@ const useProducerStream = ({ socketRef, sendTransportRef }: UseProducerStreamPar
             p.producerId !== audioProducer.id &&
             (screenProducer ? p.producerId !== screenProducer.id : true)
         );
-
         resolve(filtered);
       });
     });
