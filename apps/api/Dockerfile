@@ -30,8 +30,6 @@ WORKDIR /app
 COPY --from=builder /app/out/json/ .
 COPY --from=builder /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
 
-RUN ls -al
-
 RUN npm install -g pnpm
 
 RUN pnpm install --frozen-lockfile
@@ -46,4 +44,4 @@ EXPOSE 3001
 
 ENV NODE_ENV=production
 
-CMD ["node", "/app/apps/api/dist/main.js"]
+CMD ["node", "/app/apps/api/dist/src/main.js"]
