@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/media-has-caption */
 import { cva } from 'class-variance-authority';
 import { useEffect, useRef, useState } from 'react';
 
@@ -25,7 +24,6 @@ export interface VideoPlayerProps {
   stream: MediaStream | null;
   muted?: boolean;
   isMicOn?: boolean;
-  isCamOn?: boolean;
   avatarSize?: 'sm' | 'md' | 'lg';
 }
 
@@ -33,7 +31,6 @@ function VideoPlayer({
   stream,
   muted = true,
   isMicOn = false,
-  isCamOn = true,
   avatarSize = 'md',
 }: VideoPlayerProps) {
   const NAME = '김티클'; // TODO: 이름 받아오기
@@ -41,11 +38,16 @@ function VideoPlayer({
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
-    if (videoRef.current && stream) {
-      videoRef.current.srcObject = stream;
-      setIsLoading(true);
-    }
+    if (!videoRef.current || !stream) return;
+    videoRef.current.srcObject = stream;
+    setIsLoading(false);
   }, [stream]);
+
+  useEffect(() => {
+    if (!videoRef.current) return;
+
+    videoRef.current.muted = muted;
+  }, [muted]);
 
   const onLoadedData = () => {
     setIsLoading(false);
@@ -53,7 +55,7 @@ function VideoPlayer({
 
   return (
     <div className="relative h-full w-full overflow-hidden rounded-lg">
-      {isLoading && isCamOn ? (
+      {isLoading && !muted ? (
         <div className="flex h-full items-center justify-center">
           <Loading />
         </div>
@@ -68,16 +70,21 @@ function VideoPlayer({
         </>
       )}
 
-      {isCamOn ? (
+      {!muted ? (
         <video
           ref={videoRef}
           autoPlay
           playsInline
           preload="metadata"
-          muted={muted}
+          muted
           className={videoVariants({ loading: isLoading })}
           onLoadedData={onLoadedData}
-        />
+        >
+          <track default kind="captions" srcLang="en" src="SUBTITLE_PATH" />
+          <source src="content.mp4" type="video/mp4" />
+          <source src="content.webm" type="video/webm" />
+          Your browser does not support the video.
+        </video>
       ) : (
         <div className="flex h-full w-full items-center justify-center rounded-lg bg-altWeak transition-opacity duration-300">
           <Avatar size={avatarSize} />

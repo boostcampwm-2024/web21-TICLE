@@ -34,7 +34,6 @@ const useProducerStream = ({ socketRef, sendTransportRef }: UseProducerStreamPar
   const pauseStream = (stream: MediaStream, producerRef: ProducerRef) => {
     const socket = socketRef.current;
     const producer = producerRef.current;
-
     if (!socket || !producer) return;
 
     stream.getTracks().forEach((track) => {
@@ -90,6 +89,8 @@ const useProducerStream = ({ socketRef, sendTransportRef }: UseProducerStreamPar
       ...producerOptions,
     });
 
+    initProducerEvent(producer);
+
     return producer;
   };
 
@@ -108,6 +109,8 @@ const useProducerStream = ({ socketRef, sendTransportRef }: UseProducerStreamPar
 
     const stream = await navigator.mediaDevices.getUserMedia({
       audio: {
+        sampleRate: 48000,
+        sampleSize: 16,
         echoCancellation: true,
         noiseSuppression: true,
         autoGainControl: true,
@@ -155,6 +158,28 @@ const useProducerStream = ({ socketRef, sendTransportRef }: UseProducerStreamPar
         );
 
         resolve(filtered);
+      });
+    });
+  };
+
+  const initProducerEvent = (producer: types.Producer) => {
+    const socket = socketRef.current;
+
+    if (!socket) return;
+
+    producer.observer.on('pause', () => {
+      socket.emit(SOCKET_EVENTS.producerStatusChange, {
+        producerId: producer.id,
+        status: 'pause',
+        roomId: ticleId,
+      });
+    });
+
+    producer.observer.on('resume', () => {
+      socket.emit(SOCKET_EVENTS.producerStatusChange, {
+        producerId: producer.id,
+        status: 'resume',
+        roomId: ticleId,
       });
     });
   };

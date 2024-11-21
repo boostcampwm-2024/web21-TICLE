@@ -1,6 +1,8 @@
 import { types } from 'mediasoup-client';
 import { useState } from 'react';
+import { SOCKET_EVENTS } from '@repo/mediasoup';
 
+import ControlBar from '@/components/live/ControlBar';
 import useMediasoup from '@/hooks/mediasoup/useMediasoup';
 import usePagination from '@/hooks/usePagination';
 
@@ -29,24 +31,75 @@ const getColumnCount = (count: number) => {
 
 function MediaContainer() {
   const {
+    socketRef,
+
     remoteStreams,
+
     videoStream: localVideoStream,
     screenStream: localScreenStream,
+    audioStream,
+
+    audioProducerRef,
+    videoProducerRef,
+
     screenProducerRef,
     startScreenStream,
     closeStream,
+
+    pauseStream,
+    resumeStream,
+
+    disconnect,
   } = useMediasoup();
+
+  const [isVideoPaused, setIsVideoPaused] = useState(false);
+  const [isAudioMuted, setIsAudioMuted] = useState(false);
   const [isScreenSharing, setIsScreenSharing] = useState(false);
   const [pinnedSocketId, setPinnedSocketId] = useState<string | null>(null);
   const [pinnedVideoStreamData, setPinnedVideoSreamData] = useState<StreamData | null>(null);
 
-  const toggleScreenShare = () => {
-    if (isScreenSharing && localScreenStream) {
-      closeStream(localScreenStream, screenProducerRef);
-    } else {
-      startScreenStream();
+  const toggleScreenShare = async () => {
+    try {
+      if (isScreenSharing && localScreenStream) {
+        closeStream(localScreenStream, screenProducerRef);
+      } else {
+        await startScreenStream();
+      }
+
+      setIsScreenSharing((prev) => !prev);
+    } catch (_) {
+      setIsScreenSharing(false);
     }
-    setIsScreenSharing(!isScreenSharing);
+  };
+
+  const toggleVideo = () => {
+    if (!localVideoStream) return;
+
+    if (isVideoPaused) {
+      resumeStream(localVideoStream, videoProducerRef);
+    } else {
+      pauseStream(localVideoStream, videoProducerRef);
+    }
+    setIsVideoPaused((prev) => !prev);
+  };
+
+  const toggleAudio = () => {
+    if (!audioStream) return;
+
+    if (isAudioMuted) {
+      resumeStream(audioStream, audioProducerRef);
+    } else {
+      pauseStream(audioStream, audioProducerRef);
+    }
+    setIsAudioMuted((prev) => !prev);
+  };
+
+  const handleExit = (isOwner: boolean) => {
+    if (isOwner) {
+      socketRef.current?.emit(SOCKET_EVENTS.closeRoom);
+    }
+
+    disconnect();
   };
 
   const remoteAudioStreamData = remoteStreams.filter((stream) => stream.kind === 'audio');
@@ -117,12 +170,24 @@ function MediaContainer() {
         )}
 
         {remoteAudioStreamData.map((streamData) => (
-          <AudioPlayer key={streamData.socketId} stream={streamData.stream} />
+          <AudioPlayer
+            key={streamData.socketId}
+            stream={streamData.stream}
+            muted={streamData.pause}
+          />
         ))}
       </div>
 
-      <footer className="flex h-[70px] justify-center gap-4 bg-primary pb-4 text-white">
-        footer 자리
+      <footer className="flex h-[70px] w-full justify-end gap-4 pb-4 text-white">
+        <ControlBar
+          isVideoPaused={isVideoPaused}
+          isAudioMuted={isAudioMuted}
+          isScreenSharing={isScreenSharing}
+          toggleVideo={toggleVideo}
+          toggleAudio={toggleAudio}
+          toggleScreenShare={toggleScreenShare}
+          handleExit={handleExit}
+        />
       </footer>
     </div>
   );

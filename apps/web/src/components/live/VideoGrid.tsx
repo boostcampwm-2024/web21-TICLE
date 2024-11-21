@@ -40,7 +40,7 @@ function VideoGrid({ videoStreamData, isFixedGrid, columnCount, onVideoClick }: 
           style={{ width: videoWidth }}
           onClick={() => onVideoClick(streamData.socketId)}
         >
-          <VideoPlayer stream={streamData.stream} />
+          <VideoPlayer stream={streamData.stream} muted={streamData.pause} />
         </div>
       ))}
     </div>

@@ -16,6 +16,8 @@ function PaginationControls({
   onPrevPage,
   className,
 }: PaginationControlsProps) {
+  if (isFirstPage && isLastPage) return;
+
   return (
     <div className={className}>
       {!isFirstPage && (

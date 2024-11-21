@@ -1,5 +1,7 @@
 import { ProducerOptions } from 'mediasoup-client/lib/types';
 
+import { MediaTypes } from '../types';
+
 import type { types } from 'mediasoup-client';
 
 export type Device = types.Device;
@@ -19,6 +21,7 @@ export interface CreateProducerRes {
   kind: types.MediaKind;
   peerId: string;
   producerId: string;
+  appData: { mediaTypes: MediaTypes };
 }
 
 export interface CreateTransportRes {

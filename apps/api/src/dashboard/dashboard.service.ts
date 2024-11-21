@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { Applicant } from '@/entity/applicant.entity';
-import { Ticle } from '@/entity/ticle.entity';
+import { Ticle, TicleStatus } from '@/entity/ticle.entity';
 
 @Injectable()
 export class DashboardService {
@@ -14,31 +14,89 @@ export class DashboardService {
     private readonly applicantRepository: Repository<Applicant>
   ) {}
 
-  async getCreatedTicleList(speakerId: number) {
+  async getCreatedTicleList(
+    speakerId: number,
+    page: number,
+    pageSize: number,
+    status?: TicleStatus
+  ) {
+    const skip = (page - 1) * pageSize;
+
     try {
-      return await this.ticleRepository.find({
-        where: { speaker: { id: speakerId } },
-        select: ['title', 'startTime', 'endTime', 'ticleStatus'],
-      });
+      const queryBuilder = this.ticleRepository
+        .createQueryBuilder('ticle')
+        .select([
+          'ticle.id',
+          'ticle.title',
+          'ticle.startTime',
+          'ticle.endTime',
+          'ticle.ticleStatus',
+        ])
+        .where('ticle.speaker = :speakerId', { speakerId })
+        .skip(skip)
+        .take(pageSize);
+
+      if (status) {
+        queryBuilder.andWhere('ticle.ticleStatus = :status', { status });
+      }
+
+      const [ticles, totalItems] = await queryBuilder.getManyAndCount();
+
+      const totalPages = Math.ceil(totalItems / pageSize);
+
+      return {
+        ticles,
+        meta: {
+          page,
+          take: pageSize,
+          totalItems,
+          totalPages,
+          hasNextPage: page < totalPages,
+        },
+      };
     } catch (error) {
       throw new BadRequestException('개설한 티클 조회에 실패했습니다.');
     }
   }
 
-  async getAppliedTicleList(userId: number) {
+  async getAppliedTicleList(userId: number, page: number, pageSize: number, status?: TicleStatus) {
+    const skip = (page - 1) * pageSize;
+
     try {
-      return await this.applicantRepository.find({
-        where: { user: { id: userId } },
-        relations: ['ticle'],
-        select: {
-          ticle: {
-            title: true,
-            startTime: true,
-            endTime: true,
-            ticleStatus: true,
-          },
+      const queryBuilder = this.applicantRepository
+        .createQueryBuilder('applicant')
+        .leftJoinAndSelect('applicant.ticle', 'ticle')
+        .select([
+          'applicant.id',
+          'ticle.id',
+          'ticle.title',
+          'ticle.startTime',
+          'ticle.endTime',
+          'ticle.ticleStatus',
+        ])
+        .where('applicant.user = :userId', { userId })
+        .skip(skip)
+        .take(pageSize);
+
+      if (status) {
+        queryBuilder.andWhere('ticle.ticleStatus = :status', { status });
+      }
+
+      const [applicants, totalItems] = await queryBuilder.getManyAndCount();
+
+      const ticles = applicants.map((applicant) => applicant.ticle);
+      const totalPages = Math.ceil(totalItems / pageSize);
+
+      return {
+        ticles,
+        meta: {
+          page,
+          take: pageSize,
+          totalItems,
+          totalPages,
+          hasNextPage: page < totalPages,
         },
-      });
+      };
     } catch (error) {
       throw new BadRequestException('신청한 티클 조회에 실패했습니다.');
     }

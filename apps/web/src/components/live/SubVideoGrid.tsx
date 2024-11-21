@@ -21,7 +21,7 @@ function SubVideoGrid({ videoStreamData, onVideoClick, pinnedSocketId }: SubVide
               className="aspect-video w-44"
               onClick={() => onVideoClick(streamData.socketId)}
             >
-              <VideoPlayer stream={streamData.stream} avatarSize="sm" />
+              <VideoPlayer stream={streamData.stream} avatarSize="sm" muted={streamData.pause} />
             </div>
           )
       )}
