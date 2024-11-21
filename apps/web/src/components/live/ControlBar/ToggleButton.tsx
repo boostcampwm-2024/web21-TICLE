@@ -52,7 +52,7 @@ const ToggleButton = ({
   type = 'default',
   isActivated = false,
   onToggle,
-  ...props
+  ...rest
 }: ToggleButtonProps) => {
   const handleClick = () => {
     onToggle?.(!isActivated);
@@ -62,7 +62,7 @@ const ToggleButton = ({
     <button
       className={cn(buttonVariants({ active: isActivated, type }), className)}
       onClick={handleClick}
-      {...props}
+      {...rest}
     >
       {isActivated ? (
         <ActiveIcon className="fill-white text-white" />
