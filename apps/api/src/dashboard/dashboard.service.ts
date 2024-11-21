@@ -3,7 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { Applicant } from '@/entity/applicant.entity';
-import { Ticle, TicleStatus } from '@/entity/ticle.entity';
+import { Ticle } from '@/entity/ticle.entity';
+import { TicleStatus } from '@repo/types';
 
 @Injectable()
 export class DashboardService {

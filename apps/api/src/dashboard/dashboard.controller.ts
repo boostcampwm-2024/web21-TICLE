@@ -5,10 +5,9 @@ import { JwtAuthGuard } from '@/auth/jwt/jwt-auth.guard';
 import { DashboardService } from './dashboard.service';
 import { GetUserId } from '@/common/decorator/get-userId.decorator';
 import { ZodValidationPipe } from '@/zodValidationPipe';
-import {
-  GetDashboardListQueryDto,
-  GetDashboardListQuerySchema,
-} from './dto/getDashboardListQueryDto';
+import { GetDashboardListQueryDto } from './dto/getDashboardListQueryDto';
+
+import { GetDashboardListQuerySchema } from '@repo/types';
 
 @Controller('dashboard')
 export class DashboardController {

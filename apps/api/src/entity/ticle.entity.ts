@@ -16,11 +16,7 @@ import { Applicant } from './applicant.entity';
 import { Summary } from './summary.entity';
 import { Tag } from './tag.entity';
 import { User } from './user.entity';
-
-export enum TicleStatus {
-  OPEN = 'open',
-  CLOSED = 'closed',
-}
+import { TicleStatus } from '@repo/types';
 
 @Entity('ticle')
 @Index('idx_fulltext_search', ['title', 'content'], { fulltext: true })
