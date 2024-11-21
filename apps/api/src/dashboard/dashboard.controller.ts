@@ -16,8 +16,10 @@ export class DashboardController {
 
   @Get()
   @UseGuards(JwtAuthGuard)
-  @UsePipes(new ZodValidationPipe(GetDashboardListQuerySchema))
-  async getTicleList(@GetUserId() userId: number, @Query() query: GetDashboardListQueryDto) {
+  async getTicleList(
+    @GetUserId() userId: number,
+    @Query(new ZodValidationPipe(GetDashboardListQuerySchema)) query: GetDashboardListQueryDto
+  ) {
     if (query.isSpeaker) {
       return this.dashboardService.getCreatedTicleList(
         userId,

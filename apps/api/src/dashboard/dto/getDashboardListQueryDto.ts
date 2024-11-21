@@ -5,13 +5,15 @@ import { TicleStatus } from '@/entity/ticle.entity';
 export const GetDashboardListQuerySchema = z.object({
   isSpeaker: z.enum(['true', 'false']).transform((val) => val === 'true'),
   page: z
-    .string()
-    .transform((val) => (val ? parseInt(val, 10) : 1))
-    .refine((val) => !isNaN(val) && val > 0, '페이지 번호는 0보다 커야 합니다'),
+    .number()
+    .optional()
+    .default(1)
+    .refine((val) => val > 0, '페이지 번호는 0보다 커야 합니다'),
   pageSize: z
-    .string()
-    .transform((val) => (val ? parseInt(val, 10) : 10))
-    .refine((val) => !isNaN(val) && val > 0, '페이지 크기는 0보다 커야 합니다'),
+    .number()
+    .optional()
+    .default(10)
+    .refine((val) => val > 0, '페이지 크기는 0보다 커야 합니다'),
   status: z
     .nativeEnum(TicleStatus)
     .optional()
@@ -25,10 +27,10 @@ export class GetDashboardListQueryDto implements GetDashboardListQueryType {
   isSpeaker: boolean;
 
   @ApiProperty({ example: 1, description: '페이지 번호', default: 1 })
-  page: number;
+  page?: number;
 
   @ApiProperty({ example: 10, description: '페이지 크기', default: 10 })
-  pageSize: number;
+  pageSize?: number;
 
   @ApiProperty({
     example: TicleStatus.OPEN,
