@@ -47,7 +47,7 @@ jobs:
         with:
           issue-number: ${{ github.event.pull_request.number }}
           comment-author: 'github-actions[bot]'
-          body-includes: 🎨 스토리북 Preview 확인하기
+          body-includes: 🎨 스토리북 확인하기
 
       - name: Create or update comment
         if: github.event_name == 'pull_request'
