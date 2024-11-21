@@ -56,4 +56,4 @@ EXPOSE 3002
 
 ENV NODE_ENV=production
 
-CMD ["node", "/app/apps/media/dist/src/main.js"]
+CMD ["node", "/app/apps/media/dist/main.js"]
