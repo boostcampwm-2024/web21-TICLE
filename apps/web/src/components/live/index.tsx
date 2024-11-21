@@ -1,5 +1,5 @@
 import { types } from 'mediasoup-client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { SOCKET_EVENTS } from '@repo/mediasoup';
 
 import ControlBar from '@/components/live/ControlBar';
@@ -130,7 +130,7 @@ function MediaContainer() {
   const isFixedGrid = allVideoStreamData.length >= 9;
   const columnCount = getColumnCount(paginatedStreams.length);
 
-  const handleVideoPin = (consumerId?: string) => {
+  const addPinnedVideo = (consumerId?: string) => {
     if (!consumerId) return;
     setPinnedConsumerId(consumerId);
     const streamData = allVideoStreamData.find((streamData) => {
@@ -141,6 +141,14 @@ function MediaContainer() {
 
     setPinnedVideoSreamData(streamData);
   };
+
+  useEffect(() => {
+    const pinnedStream = remoteStreams.find((stream) => stream.consumer.id === pinnedConsumerId);
+    if (pinnedStream) return;
+
+    setPinnedVideoSreamData(null);
+    setPinnedConsumerId(null);
+  }, [remoteStreams, pinnedConsumerId]);
 
   return (
     <div className="fixed inset-0 flex flex-col justify-between bg-black px-32">
@@ -158,7 +166,7 @@ function MediaContainer() {
             <div className="relative">
               <SubVideoGrid
                 videoStreamData={subPaginatedStreams}
-                onVideoClick={handleVideoPin}
+                onVideoClick={addPinnedVideo}
                 pinnedConsumerId={pinnedConsumerId}
               />
               <PaginationControls {...subPaginationControlsProps} className="mt-8" />
@@ -170,7 +178,7 @@ function MediaContainer() {
               videoStreamData={paginatedStreams}
               isFixedGrid={isFixedGrid}
               columnCount={columnCount}
-              onVideoClick={handleVideoPin}
+              onVideoClick={addPinnedVideo}
             />
             <PaginationControls {...paginationControlsProps} className="h-full" />
           </>
