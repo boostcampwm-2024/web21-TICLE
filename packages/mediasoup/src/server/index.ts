@@ -1,5 +1,7 @@
 import { types } from 'mediasoup';
 
+import { MediaTypes, StreamStatus } from '../types';
+
 export interface ConnectTransportDto {
   transportId: string;
   dtlsParameters: types.DtlsParameters;
@@ -15,6 +17,7 @@ export interface CreateProducerDto {
   kind: types.MediaKind;
   rtpParameters: types.RtpParameters;
   roomId: string;
+  appData: { mediaTypes: MediaTypes };
 }
 
 export interface CreateConsumerDto {
@@ -25,5 +28,17 @@ export interface CreateConsumerDto {
 }
 
 export interface GetProducersDto {
+  roomId: string;
+}
+
+export interface ChangeProducerStateDto {
+  producerId: string;
+  status: StreamStatus;
+  roomId: string;
+}
+
+export interface ChangeConsumerStateDto {
+  consumerId: string;
+  status: StreamStatus;
   roomId: string;
 }

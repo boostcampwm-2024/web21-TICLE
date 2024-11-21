@@ -7,6 +7,7 @@ export class Room {
   id: string;
   router: Router;
   peers: Map<string, Peer>;
+
   constructor(roomId: string, router: Router) {
     this.id = roomId;
     this.router = router;
