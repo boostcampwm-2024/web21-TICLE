@@ -43,17 +43,19 @@ function Apply() {
   return (
     <main className="mt-14 flex w-full flex-col gap-12">
       <Select options={FILTER_OPTIONS} selectedOption={selectedOption} onChange={onOptionChange} />
-      {TICLE_INFO.map((ticle) => (
-        <TicleInfoCard
-          key={ticle.id}
-          ticleId={ticle.id}
-          ticleTitle={ticle.title}
-          ticleOwner={ticle.ticleOwner}
-          startTime={ticle.startTime}
-          endTime={ticle.endTime}
-          status={ticle.status}
-        />
-      ))}
+      <div className="flex flex-col gap-6">
+        {TICLE_INFO.map((ticle) => (
+          <TicleInfoCard
+            key={ticle.id}
+            ticleId={ticle.id}
+            ticleTitle={ticle.title}
+            ticleOwner={ticle.ticleOwner}
+            startTime={ticle.startTime}
+            endTime={ticle.endTime}
+            status={ticle.status}
+          />
+        ))}
+      </div>
     </main>
   );
 }
