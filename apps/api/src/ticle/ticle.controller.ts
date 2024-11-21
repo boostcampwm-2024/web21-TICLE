@@ -45,6 +45,7 @@ export class TicleController {
   }
 
   @Post(':ticleId/apply')
+  @UseGuards(JwtAuthGuard)
   applyToTicle(@GetUserId() userId: number, @Param('ticleId') ticleId: number) {
     return this.ticleService.applyTicle(ticleId, userId);
   }
