@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-
 import { TicleStatus, GetDashboardListQueryType } from '@repo/types';
 
 export class GetDashboardListQueryDto implements GetDashboardListQueryType {

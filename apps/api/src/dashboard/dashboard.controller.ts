@@ -1,13 +1,12 @@
-import { Controller, Get, Param, Post, Query, UseGuards, UsePipes } from '@nestjs/common';
+import { Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
+import { GetDashboardListQuerySchema } from '@repo/types';
 
 import { JwtAuthGuard } from '@/auth/jwt/jwt-auth.guard';
-
-import { DashboardService } from './dashboard.service';
 import { GetUserId } from '@/common/decorator/get-userId.decorator';
 import { ZodValidationPipe } from '@/zodValidationPipe';
-import { GetDashboardListQueryDto } from './dto/getDashboardListQueryDto';
 
-import { GetDashboardListQuerySchema } from '@repo/types';
+import { DashboardService } from './dashboard.service';
+import { GetDashboardListQueryDto } from './dto/getDashboardListQueryDto';
 
 @Controller('dashboard')
 export class DashboardController {

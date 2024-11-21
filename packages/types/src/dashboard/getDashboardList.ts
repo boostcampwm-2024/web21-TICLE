@@ -1,4 +1,5 @@
 import { z } from 'zod';
+
 import { TicleStatus } from '../ticle/ticleStatus';
 
 export const GetDashboardListQuerySchema = z.object({
