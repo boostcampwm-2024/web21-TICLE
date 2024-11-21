@@ -16,8 +16,10 @@ export class TicleController {
 
   @Post()
   @UseGuards(JwtAuthGuard)
-  @UsePipes(new ZodValidationPipe(CreateTicleSchema))
-  async createTicle(@GetUserId() userId: number, @Body() createTicleDto: CreateTicleDto) {
+  async createTicle(
+    @GetUserId() userId: number,
+    @Body(new ZodValidationPipe(CreateTicleSchema)) createTicleDto: CreateTicleDto
+  ) {
     const newTicle = await this.ticleService.createTicle(createTicleDto, userId);
     return { ticleId: newTicle.id };
   }
