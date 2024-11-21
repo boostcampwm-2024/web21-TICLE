@@ -17,13 +17,13 @@ RUN pnpm install -g turbo@^2.2.3
 
 COPY . .
 
-RUN turbo prune @app/api --docker
+RUN turbo prune @app/media --docker
 
 FROM base AS runner
 
 RUN apk update
 
-RUN apk add --no-cache libc6-compat
+RUN apk add --no-cache libc6-compat python3 py3-pip build-base
 
 WORKDIR /app
 
@@ -36,12 +36,12 @@ RUN pnpm install --frozen-lockfile
 
 COPY --from=builder /app/out/full/ .
 
-RUN pnpm build:api
+RUN pnpm build:media
 
-COPY --from=builder /app/apps/api/.env /app/apps/api/dist/.env
+COPY --from=builder /app/apps/media/.env /app/apps/media/dist/.env
 
-EXPOSE 3001
+EXPOSE 3002
 
 ENV NODE_ENV=production
 
-CMD ["node", "/app/apps/api/dist/src/main.js"]
+CMD ["node", "/app/apps/media/dist/src/main.js"]
