@@ -201,6 +201,9 @@ importers:
       '@repo/mediasoup':
         specifier: workspace:*
         version: link:../../packages/mediasoup
+      '@repo/tsconfig':
+        specifier: workspace:*
+        version: link:../../packages/tsconfig
       mediasoup:
         specifier: ^3.15.0
         version: 3.15.1
