@@ -3,7 +3,7 @@ import { CreateTicleSchema } from '@repo/types';
 
 import { JwtAuthGuard } from '@/auth/jwt/jwt-auth.guard';
 import { GetUserId } from '@/common/decorator/get-userId.decorator';
-import { ZodValidationPipe } from '@/zodpipevalidation';
+import { ZodValidationPipe } from '@/zodValidationPipe';
 
 import { CreateTicleDto } from './dto/createTicleDto';
 import { GetTicleListQueryDto } from './dto/getTicleListQueryDto';
@@ -17,8 +17,10 @@ export class TicleController {
 
   @Post()
   @UseGuards(JwtAuthGuard)
-  @UsePipes(new ZodValidationPipe(CreateTicleSchema))
-  async createTicle(@GetUserId() userId: number, @Body() createTicleDto: CreateTicleDto) {
+  async createTicle(
+    @GetUserId() userId: number,
+    @Body(new ZodValidationPipe(CreateTicleSchema)) createTicleDto: CreateTicleDto
+  ) {
     const newTicle = await this.ticleService.createTicle(createTicleDto, userId);
     return { ticleId: newTicle.id };
   }
@@ -44,6 +46,7 @@ export class TicleController {
   }
 
   @Post(':ticleId/apply')
+  @UseGuards(JwtAuthGuard)
   applyToTicle(@GetUserId() userId: number, @Param('ticleId') ticleId: number) {
     return this.ticleService.applyTicle(ticleId, userId);
   }

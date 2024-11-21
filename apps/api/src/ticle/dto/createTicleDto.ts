@@ -51,5 +51,5 @@ export class CreateTicleDto implements CreateTicleType {
     type: [String],
     required: false,
   })
-  tags?: string[];
+  tags: string[];
 }

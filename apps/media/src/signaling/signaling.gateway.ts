@@ -6,7 +6,7 @@ import {
   WebSocketGateway,
 } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
-import { SOCKET_EVENTS } from '@repo/mediasoup';
+import { SOCKET_EVENTS, STREAM_STATUS } from '@repo/mediasoup';
 import type { client, server } from '@repo/mediasoup';
 
 import { MediasoupService } from '@/mediasoup/mediasoup.service';
@@ -122,5 +122,32 @@ export class SignalingGateway implements OnGatewayDisconnect {
     this.mediasoupService.disconnectProducer(roomId, producerId, client.id);
 
     client.to(roomId).emit(SOCKET_EVENTS.producerClosed, { producerId });
+  }
+
+  @SubscribeMessage(SOCKET_EVENTS.producerStatusChange)
+  pauseProducer(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() changeProducerState: server.ChangeProducerStateDto
+  ) {
+    const { roomId, producerId, status } = changeProducerState;
+    this.mediasoupService.changeProducerStatus(client.id, changeProducerState);
+
+    if (status === STREAM_STATUS.pause) {
+      client.to(roomId).emit(SOCKET_EVENTS.producerPaused, { producerId });
+    } else {
+      client.to(roomId).emit(SOCKET_EVENTS.producerResumed, { producerId });
+    }
+
+    return { producerId };
+  }
+
+  @SubscribeMessage(SOCKET_EVENTS.consumerStatusChange)
+  pauseConsumer(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() changeConsumerState: server.ChangeConsumerStateDto
+  ) {
+    const { consumerId } = changeConsumerState;
+    this.mediasoupService.changeConsumerStatus(client.id, changeConsumerState);
+    return consumerId;
   }
 }

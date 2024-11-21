@@ -17,11 +17,13 @@ const tailwindConfig: Config = {
         primary: 'var(--purple-500)',
         secondary: 'var(--purple-200)',
         teritary: 'var(--purple-100)',
+        darkAlt: 'var(--grey-700)',
         alt: 'var(--grey-500)',
         weak: 'var(--grey-50)',
         white: 'var(--white)',
         black: 'var(--black)',
         overlay: 'var(--black-alpha-60)',
+        error: 'var(--red)',
       },
       textColor: {
         main: 'var(--black)',

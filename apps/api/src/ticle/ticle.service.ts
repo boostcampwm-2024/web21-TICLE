@@ -1,10 +1,11 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
+import { TicleStatus } from '@repo/types';
 
 import { Applicant } from '@/entity/applicant.entity';
 import { Tag } from '@/entity/tag.entity';
-import { Ticle, TicleStatus } from '@/entity/ticle.entity';
+import { Ticle } from '@/entity/ticle.entity';
 import { User } from '@/entity/user.entity';
 
 import { CreateTicleDto } from './dto/createTicleDto';
