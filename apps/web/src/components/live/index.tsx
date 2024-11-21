@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 import { types } from 'mediasoup-client';
 import { useEffect, useState } from 'react';
 import { SOCKET_EVENTS } from '@repo/mediasoup';
@@ -132,6 +134,7 @@ function MediaContainer() {
 
   const addPinnedVideo = (consumerId?: string) => {
     if (!consumerId) return;
+
     setPinnedConsumerId(consumerId);
     const streamData = allVideoStreamData.find((streamData) => {
       return streamData.consumer?.id === consumerId;
@@ -140,6 +143,11 @@ function MediaContainer() {
     if (!streamData) return;
 
     setPinnedVideoSreamData(streamData);
+  };
+
+  const removePinnedVideo = () => {
+    setPinnedConsumerId(null);
+    setPinnedVideoSreamData(null);
   };
 
   useEffect(() => {
@@ -156,7 +164,7 @@ function MediaContainer() {
         {pinnedConsumerId && pinnedVideoStreamData ? (
           <div className="relative flex h-full w-full flex-col gap-5">
             <div className="flex h-[80%] w-full justify-center self-center">
-              <div className="aspect-video">
+              <div className="aspect-video" onClick={removePinnedVideo}>
                 <VideoPlayer
                   stream={pinnedVideoStreamData.stream}
                   muted={pinnedVideoStreamData.pause}
