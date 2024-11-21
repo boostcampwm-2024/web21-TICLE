@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from '@tanstack/react-router';
 import { useForm } from 'react-hook-form';
-import { CreateTicleSchema, CreateTicleType } from '@repo/types';
+import { CreateTicleFormSchema, CreateTicleFormType } from '@repo/types';
 
 import Button from '@/components/common/Button';
 import TextArea from '@/components/common/TextArea';
@@ -18,16 +18,17 @@ function Open() {
     handleSubmit,
     control,
     formState: { errors, isSubmitting },
-  } = useForm<CreateTicleType & { hashtagInput: string }>({
-    resolver: zodResolver(CreateTicleSchema),
+  } = useForm<CreateTicleFormType>({
+    resolver: zodResolver(CreateTicleFormSchema),
     mode: 'onChange',
-    errors: { hashtagInput: { type: 'maxLength', message: '태그는 최대 7자까지 가능합니다' } },
-    defaultValues: { tags: [] },
+    defaultValues: { tags: [], hashtagInput: '' },
   });
 
   const navigate = useNavigate();
-  const onSubmit = (inputs: CreateTicleType) => {
+  const onSubmit = (inputs: CreateTicleFormType) => {
     // TODO: API
+    // hastagInput은 제외하고 전송
+    const { hashtagInput, ...submitData } = inputs;
     navigate({ to: '/' }); // TODO: 생성된 티클로 redirect -> post시 응답값으로 ticleId가 필요
   };
 

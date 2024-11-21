@@ -1,6 +1,6 @@
 import { forwardRef, useId, Ref, KeyboardEvent } from 'react';
 import { Control, useController } from 'react-hook-form';
-import { CreateTicleType } from '@repo/types';
+import { CreateTicleFormType } from '@repo/types';
 
 import CloseCircleIc from '@/assets/icons/close-circle.svg?react';
 import ExclamationIc from '@/assets/icons/exclamation.svg?react';
@@ -8,7 +8,7 @@ import Badge from '@/components/common/Badge';
 
 interface HashtagInputProps {
   required?: boolean;
-  control: Control<CreateTicleType & { hashtagInput: string }>;
+  control: Control<CreateTicleFormType>;
   maxLength?: number;
 }
 
@@ -28,7 +28,6 @@ function HashtagInput({ required, control }: HashtagInputProps, ref: Ref<HTMLInp
     fieldState: { error: inputError },
   } = useController({
     name: 'hashtagInput',
-    rules: { maxLength: 7, required: false },
     control,
   });
 

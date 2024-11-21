@@ -34,3 +34,9 @@ export const CreateTicleSchema = z.object({
 });
 
 export type CreateTicleType = z.infer<typeof CreateTicleSchema>;
+
+export const CreateTicleFormSchema = CreateTicleSchema.extend({
+  hashtagInput: z.string().max(7, '태그는 최대 7자까지 가능합니다').optional(),
+});
+
+export type CreateTicleFormType = z.infer<typeof CreateTicleFormSchema>;

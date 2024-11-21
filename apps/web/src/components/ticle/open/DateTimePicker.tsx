@@ -2,7 +2,7 @@ import { isSameDay } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import DatePicker from 'react-datepicker';
 import { Control, useController } from 'react-hook-form';
-import { CreateTicleType } from '@repo/types';
+import { CreateTicleFormType } from '@repo/types';
 
 import ExclamationIc from '@/assets/icons/exclamation.svg?react';
 
@@ -10,7 +10,7 @@ const todayDate = new Date();
 
 interface DateTimePickerProps {
   required?: boolean;
-  control: Control<CreateTicleType & { hashtagInput: string }>;
+  control: Control<CreateTicleFormType>;
 }
 
 function DateTimePicker({ required, control }: DateTimePickerProps) {
