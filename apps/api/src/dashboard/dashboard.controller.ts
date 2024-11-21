@@ -20,20 +20,11 @@ export class DashboardController {
     @GetUserId() userId: number,
     @Query(new ZodValidationPipe(GetDashboardListQuerySchema)) query: GetDashboardListQueryDto
   ) {
+    const { page, pageSize, status } = query;
     if (query.isSpeaker) {
-      return this.dashboardService.getCreatedTicleList(
-        userId,
-        query.page,
-        query.pageSize,
-        query.status
-      );
+      return this.dashboardService.getCreatedTicleList(userId, page, pageSize, status);
     } else {
-      return this.dashboardService.getAppliedTicleList(
-        userId,
-        query.page,
-        query.pageSize,
-        query.status
-      );
+      return this.dashboardService.getAppliedTicleList(userId, page, pageSize, status);
     }
   }
 
