@@ -1,9 +1,9 @@
 /* eslint-disable jsx-a11y/media-has-caption */
 import { useEffect, useRef } from 'react';
 
-import { MediaPlayerProps } from './VideoPlayer';
+import { VideoPlayerProps } from './VideoPlayer';
 
-function AudioPlayer({ stream, muted = false, className = '' }: MediaPlayerProps) {
+function AudioPlayer({ stream, muted = false }: VideoPlayerProps) {
   const audioRef = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
@@ -12,7 +12,7 @@ function AudioPlayer({ stream, muted = false, className = '' }: MediaPlayerProps
     }
   }, [stream]);
 
-  return <audio ref={audioRef} autoPlay muted={muted} className={className} />;
+  return <audio ref={audioRef} autoPlay muted={muted} />;
 }
 
 export default AudioPlayer;

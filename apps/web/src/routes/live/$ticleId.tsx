@@ -7,6 +7,5 @@ export const Route = createFileRoute('/live/$ticleId')({
 });
 
 function RouteComponent() {
-  const { ticleId } = Route.useParams();
   return <MediaContainer />;
 }

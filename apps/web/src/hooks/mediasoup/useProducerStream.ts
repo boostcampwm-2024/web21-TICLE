@@ -31,17 +31,6 @@ const useProducerStream = ({ socketRef, sendTransportRef }: UseProducerStreamPar
   const videoProducerRef = useRef<types.Producer | null>(null);
   const screenProducerRef = useRef<types.Producer | null>(null);
 
-  const pauseStream = (stream: MediaStream, producerRef: ProducerRef) => {
-    const socket = socketRef.current;
-    const producer = producerRef.current;
-    if (!socket || !producer) return;
-
-    stream.getTracks().forEach((track) => {
-      track.enabled = false;
-      producer.pause();
-    });
-  };
-
   const closeStream = (stream: MediaStream, producerRef: ProducerRef) => {
     const socket = socketRef.current;
     const producer = producerRef.current;
@@ -54,6 +43,17 @@ const useProducerStream = ({ socketRef, sendTransportRef }: UseProducerStreamPar
       producerRef.current = null;
 
       socket.emit(SOCKET_EVENTS.closeProducer, { producerId: producer.id, roomId: ticleId });
+    });
+  };
+
+  const pauseStream = (stream: MediaStream, producerRef: ProducerRef) => {
+    const socket = socketRef.current;
+    const producer = producerRef.current;
+    if (!socket || !producer) return;
+
+    stream.getTracks().forEach((track) => {
+      track.enabled = false;
+      producer.pause();
     });
   };
 
@@ -111,7 +111,6 @@ const useProducerStream = ({ socketRef, sendTransportRef }: UseProducerStreamPar
       audio: {
         sampleRate: 48000,
         sampleSize: 16,
-        channelCount: 2,
         echoCancellation: true,
         noiseSuppression: true,
         autoGainControl: true,
@@ -157,7 +156,6 @@ const useProducerStream = ({ socketRef, sendTransportRef }: UseProducerStreamPar
             p.producerId !== audioProducer.id &&
             (screenProducer ? p.producerId !== screenProducer.id : true)
         );
-
         resolve(filtered);
       });
     });

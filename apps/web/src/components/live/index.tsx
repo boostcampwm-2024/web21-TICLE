@@ -1,23 +1,49 @@
-import { useState } from 'react';
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+import { types } from 'mediasoup-client';
+import { useEffect, useState } from 'react';
 import { SOCKET_EVENTS } from '@repo/mediasoup';
 
 import ControlBar from '@/components/live/ControlBar';
 import useMediasoup from '@/hooks/mediasoup/useMediasoup';
+import usePagination from '@/hooks/usePagination';
 
 import AudioPlayer from './AudioPlayer';
+import PaginationControls from './PaginationControls';
+import SubVideoGrid from './SubVideoGrid';
+import VideoGrid from './VideoGrid';
 import VideoPlayer from './VideoPlayer';
+
+const ITEMS_PER_GRID = 9;
+const ITEMS_PER_SUB_GRID = 6;
+
+export interface StreamData {
+  consumer?: types.Consumer;
+  socketId: string;
+  kind: types.MediaKind;
+  stream: MediaStream | null;
+  paused: boolean;
+}
+
+const getColumnCount = (count: number) => {
+  if (count <= 2) return count;
+  if (count <= 6) return Math.ceil(count / 2);
+  return Math.ceil(count / 3);
+};
 
 function MediaContainer() {
   const {
     socketRef,
 
     remoteStreams,
-    audioStream,
-    videoStream,
-    screenStream,
+
+    videoStream: localVideoStream,
+    screenStream: localScreenStream,
+    audioStream: localAudioStream,
 
     audioProducerRef,
     videoProducerRef,
+
     screenProducerRef,
     startScreenStream,
     closeStream,
@@ -31,11 +57,13 @@ function MediaContainer() {
   const [isVideoPaused, setIsVideoPaused] = useState(false);
   const [isAudioMuted, setIsAudioMuted] = useState(false);
   const [isScreenSharing, setIsScreenSharing] = useState(false);
+  const [pinnedConsumerId, setPinnedConsumerId] = useState<string | null>(null);
+  const [pinnedVideoStreamData, setPinnedVideoSreamData] = useState<StreamData | null>(null);
 
   const toggleScreenShare = async () => {
     try {
-      if (isScreenSharing && screenStream) {
-        closeStream(screenStream, screenProducerRef);
+      if (isScreenSharing && localScreenStream) {
+        closeStream(localScreenStream, screenProducerRef);
       } else {
         await startScreenStream();
       }
@@ -47,23 +75,23 @@ function MediaContainer() {
   };
 
   const toggleVideo = () => {
-    if (!videoStream) return;
+    if (!localVideoStream) return;
 
     if (isVideoPaused) {
-      resumeStream(videoStream, videoProducerRef);
+      resumeStream(localVideoStream, videoProducerRef);
     } else {
-      pauseStream(videoStream, videoProducerRef);
+      pauseStream(localVideoStream, videoProducerRef);
     }
     setIsVideoPaused((prev) => !prev);
   };
 
   const toggleAudio = () => {
-    if (!audioStream) return;
+    if (!localAudioStream) return;
 
     if (isAudioMuted) {
-      resumeStream(audioStream, audioProducerRef);
+      resumeStream(localAudioStream, audioProducerRef);
     } else {
-      pauseStream(audioStream, audioProducerRef);
+      pauseStream(localAudioStream, audioProducerRef);
     }
     setIsAudioMuted((prev) => !prev);
   };
@@ -76,32 +104,127 @@ function MediaContainer() {
     disconnect();
   };
 
+  const remoteAudioStreamData = remoteStreams.filter((stream) => stream.kind === 'audio');
+  const allAudioStreamData: StreamData[] = [
+    {
+      consumer: undefined,
+      socketId: 'local',
+      kind: 'audio',
+      stream: localAudioStream,
+      paused: isAudioMuted,
+    },
+    ...remoteAudioStreamData,
+  ];
+  const remoteVideoStreamData = remoteStreams.filter((stream) => stream.kind === 'video');
+  const allVideoStreamData: StreamData[] = [
+    {
+      consumer: undefined,
+      socketId: 'local',
+      kind: 'video',
+      stream: localVideoStream,
+      paused: isVideoPaused,
+    },
+    ...remoteVideoStreamData,
+  ];
+
+  const { paginatedItems: paginatedStreams, ...paginationControlsProps } =
+    usePagination<StreamData>({
+      totalItems: allVideoStreamData,
+      itemsPerPage: ITEMS_PER_GRID,
+    });
+
+  const { paginatedItems: subPaginatedStreams, ...subPaginationControlsProps } =
+    usePagination<StreamData>({
+      totalItems: allVideoStreamData,
+      itemsPerPage: ITEMS_PER_SUB_GRID,
+    });
+
+  const isFixedGrid = allVideoStreamData.length >= 9;
+  const columnCount = getColumnCount(paginatedStreams.length);
+
+  const addPinnedVideo = (consumerId?: string) => {
+    if (!consumerId) return;
+
+    setPinnedConsumerId(consumerId);
+    const streamData = allVideoStreamData.find((streamData) => {
+      return streamData.consumer?.id === consumerId;
+    });
+
+    if (!streamData) return;
+
+    setPinnedVideoSreamData(streamData);
+  };
+
+  const removePinnedVideo = () => {
+    setPinnedConsumerId(null);
+    setPinnedVideoSreamData(null);
+  };
+
+  const getAudioMutedState = (socketId?: string): boolean => {
+    const targetAudioStream = allAudioStreamData.find(
+      (streamData) => streamData.socketId === socketId
+    );
+    const isPaused = targetAudioStream?.paused;
+
+    if (isPaused === undefined) return false;
+    return !isPaused;
+  };
+
+  useEffect(() => {
+    const pinnedStream = remoteStreams.find((stream) => stream.consumer.id === pinnedConsumerId);
+    if (pinnedStream) return;
+
+    setPinnedVideoSreamData(null);
+    setPinnedConsumerId(null);
+  }, [remoteStreams, pinnedConsumerId]);
+
   return (
-    <div className="grid grid-cols-2 gap-4 p-4">
-      {/* Local Streams */}
-      <div className="col-span-2 mb-4">
-        <div className="relative aspect-video">
-          {videoStream && (
-            <VideoPlayer
-              stream={videoStream}
-              muted={false}
-              className="aspect-video h-full w-full rounded-lg"
-            />
-          )}
-          {screenStream && isScreenSharing && (
-            <div className="absolute right-0 top-0 aspect-video w-1/4">
-              <VideoPlayer
-                stream={screenStream}
-                muted
-                className="-full w-full rounded-lg border-2 border-blue-500 object-cover"
-              />
+    <div className="fixed inset-0 flex flex-col justify-between bg-black px-32">
+      <div className="relative mt-5 flex h-full min-h-0 flex-1 items-center justify-center gap-5 rounded-lg">
+        {pinnedConsumerId && pinnedVideoStreamData ? (
+          <div className="relative flex h-full w-full flex-col gap-5">
+            <div className="flex h-[80%] w-full justify-center self-center">
+              <div className="aspect-video" onClick={removePinnedVideo}>
+                <VideoPlayer
+                  stream={pinnedVideoStreamData.stream}
+                  muted={pinnedVideoStreamData.paused}
+                  isMicOn={getAudioMutedState(pinnedConsumerId)}
+                />
+              </div>
             </div>
-          )}
-          {audioStream && <AudioPlayer stream={audioStream} muted className="" />}
-          <div className="bg-black/50 absolute bottom-2 left-2 rounded px-2 py-1 text-sm text-white">
-            나 (Local)
+            <div className="relative">
+              <SubVideoGrid
+                videoStreamData={subPaginatedStreams}
+                onVideoClick={addPinnedVideo}
+                pinnedConsumerId={pinnedConsumerId}
+                getAudioMutedState={getAudioMutedState}
+              />
+              <PaginationControls {...subPaginationControlsProps} className="mt-8" />
+            </div>
           </div>
-        </div>
+        ) : (
+          <>
+            <VideoGrid
+              videoStreamData={paginatedStreams}
+              isFixedGrid={isFixedGrid}
+              columnCount={columnCount}
+              onVideoClick={addPinnedVideo}
+              getAudioMutedState={getAudioMutedState}
+            />
+            <PaginationControls {...paginationControlsProps} className="h-full" />
+          </>
+        )}
+
+        {remoteAudioStreamData.map((streamData) => (
+          <AudioPlayer
+            key={streamData.socketId}
+            stream={streamData.stream}
+            muted={streamData.paused}
+          />
+        ))}
+      </div>
+
+      <footer className="flex h-[70px] w-full justify-end gap-4 pb-4 text-white">
         <ControlBar
           isVideoPaused={isVideoPaused}
           isAudioMuted={isAudioMuted}
@@ -111,22 +234,7 @@ function MediaContainer() {
           toggleScreenShare={toggleScreenShare}
           handleExit={handleExit}
         />
-      </div>
-      {/* Remote Streams */}
-      {remoteStreams.map((remote, index) => (
-        <div key={`${remote.socketId}-${index}`} className="relative aspect-video">
-          {remote.kind === 'video' && (
-            <VideoPlayer
-              stream={remote.stream}
-              className="aspect-video h-full w-full rounded-lg object-cover"
-            />
-          )}
-          {remote.kind === 'audio' && <AudioPlayer stream={remote.stream} className="hidden" />}
-          <div className="bg-black/50 absolute bottom-2 left-2 rounded px-2 py-1 text-sm text-white">
-            {remote.socketId}
-          </div>
-        </div>
-      ))}
+      </footer>
     </div>
   );
 }

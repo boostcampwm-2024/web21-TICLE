@@ -10,18 +10,21 @@ const AVATAR_SIZE = {
   lg: 'lg',
 } as const;
 
-const avatarVariants = cva('flex items-center justify-center overflow-hidden rounded-full bg-alt', {
-  variants: {
-    size: {
-      [AVATAR_SIZE.sm]: 'h-[50px] w-[50px]',
-      [AVATAR_SIZE.md]: 'h-[84px] w-[84px]',
-      [AVATAR_SIZE.lg]: 'h-[100px] w-[100px]',
+const avatarVariants = cva(
+  'flex items-center justify-center overflow-hidden rounded-full border border-main bg-alt',
+  {
+    variants: {
+      size: {
+        [AVATAR_SIZE.sm]: 'h-[50px] w-[50px]',
+        [AVATAR_SIZE.md]: 'h-[84px] w-[84px]',
+        [AVATAR_SIZE.lg]: 'h-[100px] w-[100px]',
+      },
     },
-  },
-  defaultVariants: {
-    size: AVATAR_SIZE.sm,
-  },
-});
+    defaultVariants: {
+      size: AVATAR_SIZE.sm,
+    },
+  }
+);
 
 interface AvatarProps extends HTMLAttributes<HTMLDivElement> {
   src?: string;

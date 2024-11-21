@@ -56,7 +56,7 @@ const useMediasoup = (): UseMediasoupReturn => {
     resumeStream,
   } = useProducerStream({ socketRef, sendTransportRef });
 
-  const { remoteStreams, consume, closeConsumer } = useConsumerStream({
+  const { remoteStreams, consume, closeConsumer, setRemoteStreams } = useConsumerStream({
     socketRef,
     deviceRef,
     recvTransportRef,
@@ -69,10 +69,10 @@ const useMediasoup = (): UseMediasoupReturn => {
 
     socket.on(SOCKET_EVENTS.roomClosed, disconnect);
 
-    socket.on(SOCKET_EVENTS.newProducer, ({ peerId, producerId, kind }) => {
+    socket.on(SOCKET_EVENTS.newProducer, ({ peerId, producerId, kind, paused }) => {
       if (socket.id === peerId) return;
 
-      consume({ producerId, kind, peerId });
+      consume({ producerId, kind, peerId, paused });
     });
 
     socket.on(SOCKET_EVENTS.peerLeft, ({ peerId }) => {
@@ -86,6 +86,42 @@ const useMediasoup = (): UseMediasoupReturn => {
     socket.on(SOCKET_EVENTS.producerClosed, ({ producerId }) => {
       closeConsumer((rs) => {
         return rs.consumer.producerId !== producerId;
+      });
+    });
+
+    socket.on(SOCKET_EVENTS.producerPaused, ({ producerId }) => {
+      setRemoteStreams((prev) => {
+        const idx = prev.findIndex((rs) => rs.consumer.producerId === producerId);
+
+        const newRemoteStreams = [...prev];
+        const remoteStream = newRemoteStreams[idx];
+
+        if (idx === -1 || !remoteStream?.consumer) {
+          return prev;
+        }
+
+        remoteStream.consumer.pause();
+        remoteStream.paused = true;
+
+        return newRemoteStreams;
+      });
+    });
+
+    socket.on(SOCKET_EVENTS.producerResumed, ({ producerId }) => {
+      setRemoteStreams((prev) => {
+        const idx = prev.findIndex((rs) => rs.consumer.producerId === producerId);
+
+        const newRemoteStreams = [...prev];
+        const remoteStream = newRemoteStreams[idx];
+
+        if (idx === -1 || !remoteStream?.consumer) {
+          return prev;
+        }
+
+        remoteStream.consumer.resume();
+        remoteStream.paused = false;
+
+        return newRemoteStreams;
       });
     });
   };
@@ -112,7 +148,6 @@ const useMediasoup = (): UseMediasoupReturn => {
     await Promise.all([startVideoStream(), startAudioStream()]);
 
     const remoteProducers = await connectExistProducer();
-
     if (!remoteProducers || remoteProducers.length === 0) return;
 
     remoteProducers.forEach(consume);

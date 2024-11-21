@@ -20,6 +20,7 @@ const tailwindConfig: Config = {
         darkAlt: 'var(--grey-700)',
         alt: 'var(--grey-500)',
         weak: 'var(--grey-50)',
+        altWeak: 'var(--grey-700)',
         white: 'var(--white)',
         black: 'var(--black)',
         overlay: 'var(--black-alpha-60)',
