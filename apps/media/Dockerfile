@@ -2,9 +2,16 @@ FROM node:18-bullseye-slim AS base
 
 FROM base AS builder
 
-RUN apk update
-
-RUN apk add --no-cache python3 py3-pip build-base linux-headers libgcc libstdc++ ninja-build
+RUN apt-get update \
+    && apt-get install -y \
+    python3 \
+    python3-pip \
+    build-essential \
+    linux-headers-amd64 \
+    libgcc1 \
+    libstdc++6 \
+    ninja-build \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
@@ -21,9 +28,13 @@ RUN turbo prune @app/media --docker
 
 FROM base AS runner
 
-RUN apk update
-
-RUN apk add --no-cache libc6-compat python3 py3-pip build-base
+RUN apt-get update \
+    && apt-get install -y \
+    libc6-dev \
+    python3 \
+    python3-pip \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
