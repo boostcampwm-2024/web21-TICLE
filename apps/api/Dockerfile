@@ -39,6 +39,7 @@ COPY --from=builder /app/out/full/ .
 RUN pnpm build:api
 
 COPY --from=builder /app/apps/api/.env /app/apps/api/dist/.env
+COPY --from=builder /app/apps/api/.env /app/.env
 
 EXPOSE 3001
 

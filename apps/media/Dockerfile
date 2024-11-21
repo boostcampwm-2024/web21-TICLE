@@ -4,7 +4,7 @@ FROM base AS builder
 
 RUN apk update
 
-RUN apk add --no-cache libc6-compat
+RUN apk add --no-cache python3 py3-pip build-base linux-headers libgcc libstdc++
 
 WORKDIR /app
 
@@ -39,6 +39,7 @@ COPY --from=builder /app/out/full/ .
 RUN pnpm build:media
 
 COPY --from=builder /app/apps/media/.env /app/apps/media/dist/.env
+COPY --from=builder /app/apps/media/.env /app/.env
 
 EXPOSE 3002
 
