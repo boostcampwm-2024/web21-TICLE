@@ -1,4 +1,4 @@
-name: 백엔드 @app/api CD
+name: 백엔드 @app/media CD
 
 on:
   push:
@@ -33,7 +33,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: 📦 프로젝트 빌드
-        run: pnpm build:api
+        run: pnpm build:media
 
   build:
     runs-on: ubuntu-latest
@@ -48,7 +48,7 @@ jobs:
       - name: .env 파일 생성
         run: |
           jq -r 'to_entries|map("\(.key)=\(.value|tostring)")|.[]' <<< "$SECRETS_CONTEXT" > .env
-          mv .env apps/api/.env
+          mv .env apps/media/.env
         env:
           SECRETS_CONTEXT: ${{ toJson(secrets) }}
 
@@ -60,11 +60,11 @@ jobs:
           password: ${{secrets.DOCKER_REGISTRY_SECRET_KEY}}
 
       - name: 🐳 Docker 빌드 및 푸시
-        run: docker buildx build -f apps/api/Dockerfile . -t ${{secrets.DOCKER_REGISTRY_URL}}/api:${{ github.sha }} -t ${{secrets.DOCKER_REGISTRY_URL}}/api:latest --push
+        run: docker buildx build -f apps/media/Dockerfile . -t ${{secrets.DOCKER_REGISTRY_URL}}/media:${{ github.sha }} -t ${{secrets.DOCKER_REGISTRY_URL}}/media:latest --push
 
   deploy:
     needs: build
-    name: Deploy api
+    name: Deploy media
     runs-on: [ticle-main]
 
     steps:
@@ -77,18 +77,19 @@ jobs:
 
       - name: 🐳 Docker 이미지 다운로드
         run: |
-          docker pull ${{secrets.DOCKER_REGISTRY_URL}}/api:${{ github.sha }}
+          docker pull ${{secrets.DOCKER_REGISTRY_URL}}/media:${{ github.sha }}
 
       - name: 🐳 Docker 기존 컨테이너 종료
         run: |
-          docker stop api || true
-          docker rm api || true
+          docker stop media || true
+          docker rm media || true
 
-      - name: 🐳 api 컨테이너 실행
+      - name: 🐳 media 컨테이너 실행
         run: |
-          docker run -dit --name api \
-            -p 3001:3001 \
-            ${{secrets.DOCKER_REGISTRY_URL}}/api:${{ github.sha }}
+          docker run -dit --name media \
+            -p 3002:3002 \
+            -p 30000-49999:30000-49999 \ 
+            ${{secrets.DOCKER_REGISTRY_URL}}/media:${{ github.sha }}
 
       - name: 🐳 사용하지 않는 Docker 이미지 제거
         run: |

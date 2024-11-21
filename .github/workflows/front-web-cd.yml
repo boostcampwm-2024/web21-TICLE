@@ -65,7 +65,7 @@ jobs:
   deploy:
     needs: build
     name: Deploy Web
-    runs-on: [ticle-web]
+    runs-on: [ticle-main]
 
     steps:
       - name: 🐳 Docker 로그인
@@ -89,3 +89,7 @@ jobs:
           docker run -dit --name web \
             -p 3000:3000 \
             ${{secrets.DOCKER_REGISTRY_URL}}/web:${{ github.sha }}
+
+      - name: 🐳 사용하지 않는 Docker 이미지 제거
+        run: |
+          docker image prune --all --force
