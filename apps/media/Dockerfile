@@ -35,6 +35,7 @@ WORKDIR /app
 COPY --from=builder /app/out/full/ .
 
 COPY --from=builder /app/apps/media/.env /app/apps/media/dist/.env
+COPY --from=builder /app/apps/media/.env /app/.env
 
 EXPOSE 3002
 
