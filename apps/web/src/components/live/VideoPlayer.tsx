@@ -59,7 +59,7 @@ function VideoPlayer({
         </div>
       ) : (
         <>
-          <div className="bg-altWeak absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full p-1">
+          <div className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-altWeak p-1">
             {isMicOn ? <MicOnIc className="text-white" /> : <MicOffIc className="fill-white" />}
           </div>
           <div className="absolute bottom-3 left-3">
@@ -79,7 +79,7 @@ function VideoPlayer({
           onLoadedData={onLoadedData}
         />
       ) : (
-        <div className="bg-altWeak flex h-full w-full items-center justify-center rounded-lg transition-opacity duration-300">
+        <div className="flex h-full w-full items-center justify-center rounded-lg bg-altWeak transition-opacity duration-300">
           <Avatar size={avatarSize} />
         </div>
       )}
