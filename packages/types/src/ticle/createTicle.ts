@@ -19,10 +19,14 @@ export const CreateTicleSchema = z.object({
 
   startTime: z.coerce
     .date()
+    .or(z.undefined())
+    .refine((date) => date !== undefined, '시작 시간을 선택해주세요')
     .refine((date) => date > new Date(), '시작 시간은 현재 시간 이후여야 합니다'),
 
   endTime: z.coerce
     .date()
+    .or(z.undefined())
+    .refine((date) => date !== undefined, '종료 시간을 선택해주세요')
     .refine((date) => date > new Date(), '종료 시간은 현재 시간 이후여야 합니다'),
 
   tags: z
