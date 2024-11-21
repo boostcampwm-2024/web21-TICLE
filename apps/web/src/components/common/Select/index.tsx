@@ -21,7 +21,7 @@ const selectVariants = cva(
 );
 interface Select {
   options: string[];
-  placeholder: string;
+  placeholder?: string;
   selectedOption?: string;
   onChange?: (value: string) => void;
 }
