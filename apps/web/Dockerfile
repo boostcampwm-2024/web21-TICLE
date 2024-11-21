@@ -4,7 +4,7 @@ FROM base AS builder
 
 RUN apk update
 
-RUN apk add --no-cache libc6-compat
+RUN apk add --no-cache python3 py3-pip build-base linux-headers libgcc libstdc++
 
 WORKDIR /app
 
