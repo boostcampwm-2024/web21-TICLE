@@ -1,6 +1,7 @@
 import { cva } from 'class-variance-authority';
-import { FunctionComponent, HTMLAttributes, SVGProps, useState } from 'react';
-import { twMerge } from 'tailwind-merge';
+import { FunctionComponent, HTMLAttributes, SVGProps } from 'react';
+
+import cn from '@/utils/cn';
 
 const BUTTON_TYPE = {
   default: 'default',
@@ -59,7 +60,7 @@ const ToggleButton = ({
 
   return (
     <button
-      className={twMerge(buttonVariants({ active: isActivated, type }), className)}
+      className={cn(buttonVariants({ active: isActivated, type }), className)}
       onClick={handleClick}
       {...props}
     >
