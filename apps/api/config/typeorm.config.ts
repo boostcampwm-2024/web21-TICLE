@@ -2,6 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
 
+import { Applicant } from '@/entity/applicant.entity';
+import { Summary } from '@/entity/summary.entity';
+import { Tag } from '@/entity/tag.entity';
+import { Ticle } from '@/entity/ticle.entity';
+import { User } from '@/entity/user.entity';
+
 @Injectable()
 export class TypeOrmConfigService implements TypeOrmOptionsFactory {
   constructor(private configService: ConfigService) {}
@@ -20,6 +26,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
       logging: nodeEnv !== 'production',
       supportBigNumbers: true,
       bigNumberStrings: false,
+      entities: [Applicant, Summary, Tag, Ticle, User],
     };
   }
 }
