@@ -19,6 +19,7 @@ export const SOCKET_EVENTS = {
   producerStatusChange: 'producer-status-change',
   consumerStatusChange: 'consumer-status-change',
   producerPaused: 'producer-paused',
+  producerResumed: 'producer-resumed',
   producerClosed: 'producer-closed',
   createRoom: 'create-room',
   joinRoom: 'join-room',
