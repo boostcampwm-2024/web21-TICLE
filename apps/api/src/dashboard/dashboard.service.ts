@@ -70,6 +70,7 @@ export class DashboardService {
         .select([
           'applicant.id',
           'ticle.id',
+          'ticle.speakerName',
           'ticle.title',
           'ticle.startTime',
           'ticle.endTime',
