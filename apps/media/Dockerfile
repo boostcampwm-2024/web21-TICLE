@@ -1,10 +1,10 @@
-FROM node:18-alpine AS base
+FROM node:18-bullseye-slim AS base
 
 FROM base AS builder
 
 RUN apk update
 
-RUN apk add --no-cache python3 py3-pip build-base linux-headers libgcc libstdc++
+RUN apk add --no-cache python3 py3-pip build-base linux-headers libgcc libstdc++ ninja-build
 
 WORKDIR /app
 
