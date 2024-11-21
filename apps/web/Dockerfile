@@ -3,12 +3,13 @@ FROM node:18-bullseye-slim AS base
 FROM base AS builder
 
 # Debian 이미지에서는 apk 대신 apt-get 사용
-RUN apt-get update && apt-get install -y \
+RUN apt-get update \
+    && apt-get install -y \
     python3 \
     python3-pip \
     build-essential \
-    linux-headers-$(uname -r) \
-    libgcc-s1 \
+    linux-headers-amd64 \
+    libgcc1 \
     libstdc++6 \
     ninja-build \
     && rm -rf /var/lib/apt/lists/*
@@ -28,8 +29,8 @@ RUN turbo prune @app/web --docker
 
 FROM base AS installer
 
-# Debian 이미지에서는 apk 대신 apt-get 사용
-RUN apt-get update && apt-get install -y \
+RUN apt-get update \
+    && apt-get install -y \
     libc6-dev \
     python3 \
     python3-pip \
