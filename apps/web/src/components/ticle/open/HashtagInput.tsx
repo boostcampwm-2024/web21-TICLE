@@ -1,6 +1,6 @@
 import { forwardRef, useId, Ref, KeyboardEvent } from 'react';
 import { Control, useController } from 'react-hook-form';
-import { OpenFormInputs } from '@repo/types';
+import { CreateTicleFormType } from '@repo/types';
 
 import CloseCircleIc from '@/assets/icons/close-circle.svg?react';
 import ExclamationIc from '@/assets/icons/exclamation.svg?react';
@@ -8,7 +8,7 @@ import Badge from '@/components/common/Badge';
 
 interface HashtagInputProps {
   required?: boolean;
-  control: Control<OpenFormInputs>;
+  control: Control<CreateTicleFormType>;
   maxLength?: number;
 }
 
@@ -16,10 +16,10 @@ function HashtagInput({ required, control }: HashtagInputProps, ref: Ref<HTMLInp
   const ariaId = useId();
 
   const {
-    field: { value: hashtags = [], onChange: onHashtagsChange },
-    fieldState: { error: hashtagsError },
+    field: { value: tags = [], onChange: onTagsChange },
+    fieldState: { error: tagsError },
   } = useController({
-    name: 'hashtags',
+    name: 'tags',
     control,
   });
 
@@ -43,20 +43,20 @@ function HashtagInput({ required, control }: HashtagInputProps, ref: Ref<HTMLInp
     const newHashag = input.trim();
     if (!newHashag || newHashag.length > 7) return;
 
-    onHashtagsChange([...hashtags, newHashag]);
+    onTagsChange([...tags, newHashag]);
     onInputChange('');
   };
 
   const handleDeleteTag = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key !== 'Backspace' || input !== '') return;
 
-    const newTags = hashtags.slice(0, hashtags.length - 1);
-    onHashtagsChange(newTags);
+    const newTags = tags.slice(0, tags.length - 1);
+    onTagsChange(newTags);
   };
 
   const handleDeleteBtnClick = (indexToRemove: number) => {
-    const newTags = hashtags.filter((_, idx) => idx !== indexToRemove);
-    onHashtagsChange(newTags);
+    const newTags = tags.filter((_, idx) => idx !== indexToRemove);
+    onTagsChange(newTags);
   };
 
   return (
@@ -70,7 +70,7 @@ function HashtagInput({ required, control }: HashtagInputProps, ref: Ref<HTMLInp
         )}
       </label>
       <div className="flex w-full items-center gap-2 rounded-base border bg-white px-3.5 py-2.5 text-body1 text-main placeholder:text-weak">
-        {hashtags.map((tag, idx) => (
+        {tags.map((tag, idx) => (
           <Badge key={`${tag}-${idx}`} className="flex flex-shrink-0 gap-1">
             {tag}
             <button type="button" onClick={() => handleDeleteBtnClick(idx)}>
@@ -89,10 +89,10 @@ function HashtagInput({ required, control }: HashtagInputProps, ref: Ref<HTMLInp
           placeholder="작성 후 Enter 키를 눌러 추가해 주세요."
         />
       </div>
-      {(inputError || hashtagsError) && (
+      {(inputError || tagsError) && (
         <p className="flex items-center gap-1 text-label1 text-error" id={`${ariaId}-error`}>
           <ExclamationIc className="fill-error" width={9} height={9} aria-hidden />
-          {inputError?.message || hashtagsError?.message}
+          {inputError?.message || tagsError?.message}
         </p>
       )}
     </div>

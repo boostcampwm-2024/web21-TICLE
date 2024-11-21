@@ -2,7 +2,7 @@ import { isSameDay } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import DatePicker from 'react-datepicker';
 import { Control, useController } from 'react-hook-form';
-import { OpenFormInputs } from '@repo/types';
+import { CreateTicleFormType } from '@repo/types';
 
 import ExclamationIc from '@/assets/icons/exclamation.svg?react';
 
@@ -10,7 +10,7 @@ const todayDate = new Date();
 
 interface DateTimePickerProps {
   required?: boolean;
-  control: Control<OpenFormInputs>;
+  control: Control<CreateTicleFormType>;
 }
 
 function DateTimePicker({ required, control }: DateTimePickerProps) {
@@ -18,7 +18,7 @@ function DateTimePicker({ required, control }: DateTimePickerProps) {
     field: { value: startDate, onChange: setStartDate },
     fieldState: { error: startDateError },
   } = useController({
-    name: 'startDate',
+    name: 'startTime',
     control,
   });
 
@@ -26,7 +26,7 @@ function DateTimePicker({ required, control }: DateTimePickerProps) {
     field: { value: endDate, onChange: setEndDate },
     fieldState: { error: endDateError },
   } = useController({
-    name: 'endDate',
+    name: 'endTime',
     control,
   });
 

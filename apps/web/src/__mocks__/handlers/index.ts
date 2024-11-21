@@ -1,7 +1,12 @@
 import { http } from 'msw';
 
 import { logIn, signUp } from '@/__mocks__/handlers/auth';
-import { getAppliedTicleList } from '@/__mocks__/handlers/dashboard';
+import {
+  getApplicants,
+  getAppliedTicleList,
+  joinTicle,
+  startTicle,
+} from '@/__mocks__/handlers/dashboard';
 import { applyTicle, createTicle, getTicle, getTicleList } from '@/__mocks__/handlers/ticle';
 import { ENV } from '@/constants/env';
 
@@ -16,9 +21,9 @@ export const handlers = [
 
   // dashboard handlers
   http.get(`${API_URL}/dashboard`, getAppliedTicleList),
-  http.post(`${API_URL}/dashboard/start`, getAppliedTicleList),
-  http.post(`${API_URL}/dashboard/join`, getAppliedTicleList),
-  http.get(`${API_URL}/dashboard/:ticleId/applicants`, getAppliedTicleList),
+  http.post(`${API_URL}/dashboard/start`, startTicle),
+  http.post(`${API_URL}/dashboard/join`, joinTicle),
+  http.get(`${API_URL}/dashboard/:ticleId/applicants`, getApplicants),
 
   // auth handlers
   http.get(`${API_URL}/auth/google/login`, logIn),
