@@ -1,0 +1,104 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    font-family:
+      'Pretendard Variable',
+      Pretendard,
+      -apple-system,
+      BlinkMacSystemFont,
+      system-ui,
+      Roboto,
+      'Helvetica Neue',
+      'Segoe UI',
+      'Apple SD Gothic Neo',
+      'Noto Sans KR',
+      'Malgun Gothic',
+      'Apple Color Emoji',
+      'Segoe UI Emoji',
+      'Segoe UI Symbol',
+      sans-serif;
+
+    /* colors */
+    --purple-700: #452bd9;
+    --purple-600: #5031ff;
+    --purple-500: #7057ff;
+    --purple-400: #917eff;
+    --purple-300: #b4a7ff;
+    --purple-200: #d5ceff;
+    --purple-100: #eeebff;
+
+    --black: #1e1e1e;
+    --black-alpha-60: rgba(30, 30, 30, 0.6);
+    --grey-900: #5b5d60;
+    --grey-800: #777a7d;
+    --grey-700: #999ea2;
+    --grey-500: #d8dee4;
+    --grey-400: #e0e5e9;
+    --grey-300: #e5e9ed;
+    --grey-200: #edf0f3;
+    --grey-100: #f3f5f7;
+    --grey-50: #fbfcfc;
+    --white: #ffffff;
+
+    --red: #f45c55;
+    --yellow: #ffe04c;
+    --green: #2ddd93;
+  }
+
+  * {
+    @apply transition-colors duration-200 ease-in-out;
+  }
+
+  input:focus,
+  textarea:focus {
+    outline: none;
+  }
+
+  /* input type='search'의 기본 css 제거 */
+  input::-ms-clear,
+  input::-ms-reveal {
+    opacity: 0;
+  }
+  input::-webkit-search-decoration,
+  input::-webkit-search-cancel-button,
+  input::-webkit-search-results-button,
+  input::-webkit-search-results-decoration {
+    opacity: 0;
+  }
+
+  .loader {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: #fff;
+    box-shadow:
+      32px 0 #fff,
+      -32px 0 #fff;
+    position: relative;
+    animation: flash 0.5s ease-out infinite alternate;
+  }
+
+  @keyframes flash {
+    0% {
+      background-color: #fff2;
+      box-shadow:
+        32px 0 #fff2,
+        -32px 0 #fff;
+    }
+    50% {
+      background-color: #fff;
+      box-shadow:
+        32px 0 #fff2,
+        -32px 0 #fff2;
+    }
+    100% {
+      background-color: #fff2;
+      box-shadow:
+        32px 0 #fff,
+        -32px 0 #fff2;
+    }
+  }
+}

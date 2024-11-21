@@ -1,0 +1,13 @@
+[
+  {
+    "id": 1,
+    "speakerName": "김철수",
+    "speakerEmail": "kim@example.com",
+    "speakerIntroduce": "10년차 프론트엔드 개발자이며 현재 네이버에서 근무중입니다.",
+    "title": "모던 리액트와 상태관리 전략",
+    "content": "이번 세션에서는 React 18의 새로운 기능과 효과적인 상태관리 방법에 대해 다루겠습니다. Redux, Recoil, Zustand 등 다양한 상태관리 라이브러리의 장단점을 비교해보고, 실제 프로젝트에서의 적용 사례를 공유하겠습니다.",
+    "startTime": "2024-12-01T14:00:00.000Z",
+    "endTime": "2024-12-01T16:00:00.000Z",
+    "tags": ["React", "Frontend", "State Management", "Nest", "Web Development"]
+  }
+]

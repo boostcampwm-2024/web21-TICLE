@@ -1,0 +1,32 @@
+{
+  "name": "web21",
+  "private": true,
+  "scripts": {
+    "dev": "turbo dev",
+    "dev:web": "turbo dev --filter=@app/web",
+    "dev:api": "turbo dev --filter=@app/api",
+    "dev:media": "turbo dev --filter=@app/media",
+    "lint": "turbo lint",
+    "typecheck": "turbo typecheck",
+    "build": "turbo run build",
+    "build:web": "turbo run build --filter=@app/web",
+    "build:api": "turbo run build --filter=@app/api",
+    "build:media": "turbo run build --filter=@app/media",
+    "build:apps": "turbo run build --filter=./apps/*",
+    "build:packages": "turbo run build --filter=./packages/*",
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
+    "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json,md}\"",
+    "prepare": "husky",
+    "check": "turbo run lint typecheck format:check --parallel"
+  },
+  "devDependencies": {
+    "husky": "^9.1.6",
+    "prettier": "^3.3.3",
+    "turbo": "^2.0.7",
+    "typescript": "^5.6.3"
+  },
+  "packageManager": "pnpm@8.15.6",
+  "engines": {
+    "node": ">=18"
+  }
+}
