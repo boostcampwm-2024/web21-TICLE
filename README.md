@@ -6,9 +6,20 @@
 <img width="600" alt="메인 배너" src="https://github.com/user-attachments/assets/eb4c89c8-6870-4114-bddc-796b51bd7163">
 <br/>
 
-### [:ledger: 팀 노션](https://www.notion.so/simeunseo/9-Ticle-12e599a6f0d2804682ccd2251248a435?pvs=4) | [:mag: 위키](https://github.com/boostcampwm-2024/web21-boostproject/wiki) | [🎨 피그마](https://www.figma.com/design/nw74detTvjXGrDP2cfdmwp/TICLE-%EB%94%94%EC%9E%90%EC%9D%B8?node-id=32-4477&t=3FCCnBpgQXMZs63X-1) | [🗓️ 스프린트 백로그](https://github.com/orgs/boostcampwm-2024/projects/82/views/7)
+### [:ledger: 팀 노션](https://www.notion.so/simeunseo/9-Ticle-12e599a6f0d2804682ccd2251248a435?pvs=4) | [:mag: 위키](https://github.com/boostcampwm-2024/web21-boostproject/wiki) | [🎨 피그마](https://www.figma.com/design/nw74detTvjXGrDP2cfdmwp/TICLE-%EB%94%94%EC%9E%90%EC%9D%B8?node-id=32-4477&t=3FCCnBpgQXMZs63X-1) | [🗓️ 스프린트 백로그](https://github.com/orgs/boostcampwm-2024/projects/82/views/7) | [🧪 스토리북](https://673a0cccd15a760db778c591-kxdpixadfg.chromatic.com/?path=/docs/common-dialog--docs)
 
 </div>
+
+# 🖧 시스템 아키텍처
+
+<img width="6176" alt="아키텍처" src="https://github.com/user-attachments/assets/dc0a4690-e906-4068-b391-f15f6fcdc9a6">
+
+# 🏃 작업 진행 상황
+
+- [🆕 4주차 발표자료](https://simeunseo.notion.site/4-1ccf63bab4b14fd8b249f5d7c7cd7e53?pvs=4)
+- [3주차 발표자료](https://simeunseo.notion.site/3-0df689ca7cd3407b89a93284854a54b8?pvs=4)
+- [2주차 발표자료](https://simeunseo.notion.site/2-137599a6f0d2809fa498fa1cc31d97f9?pvs=4)
+- [1주차 발표자료](https://simeunseo.notion.site/1-130599a6f0d2804597e0c55e8ee33920?pvs=4)
 
 # 💡 핵심 기능
 
@@ -39,16 +50,6 @@
 ### **✔️ AI 요약 기능**
 
     CLOVA API를 이용해 티클 내용을 요약하여 제공합니다.
-
-# 📽️ 스트리밍 구현 흐름
-
-### Producer(미디어 전송 엔드포인트)
-
-<img width="2768" alt="mediasoup sequence diagram - producer" src="https://github.com/user-attachments/assets/8b10a0be-c0c4-4e41-b3a9-462b5fc78be6">
-
-### Consumer(미디어 수신 엔드포인트)
-
-<img width="2768" alt="mediasoup sequence diagram - consumer" src="https://github.com/user-attachments/assets/fd5d2819-bc96-4598-9875-18cb67abb20d">
 
 # ✍️ 학습 정리
 
