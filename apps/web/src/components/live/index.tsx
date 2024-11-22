@@ -43,11 +43,10 @@ function MediaContainer() {
 
     audioProducerRef,
     videoProducerRef,
-
     screenProducerRef,
+
     startScreenStream,
     closeStream,
-
     pauseStream,
     resumeStream,
 
