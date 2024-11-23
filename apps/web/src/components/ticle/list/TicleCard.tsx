@@ -21,7 +21,7 @@ const TicleCard = ({
   speakerProfileImg,
 }: TicleCardProps) => {
   return (
-    <article className="flex w-[19rem] flex-col gap-14 rounded-lg border border-main bg-white px-6 py-8 shadow-normal">
+    <article className="flex w-[19rem] cursor-pointer flex-col gap-14 rounded-lg border border-main bg-white px-6 py-8 shadow-normal hover:-translate-y-3 hover:border-primary hover:shadow-up">
       <div className="flex flex-col gap-4">
         <h3 className="text-head3 text-main">{title}</h3>
         <div className="flex gap-2">
