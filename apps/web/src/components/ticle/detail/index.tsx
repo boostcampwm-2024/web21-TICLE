@@ -1,4 +1,4 @@
-import { useParams } from '@tanstack/react-router';
+import { useNavigate, useParams } from '@tanstack/react-router';
 
 import CalendarIc from '@/assets/icons/calendar.svg?react';
 import ClockIc from '@/assets/icons/clock.svg?react';
@@ -10,13 +10,14 @@ import { formatDateTimeRange } from '@/utils/date';
 
 function Detail() {
   const { ticleId } = useParams({ from: '/ticle/$ticleId' });
-
+  const navigate = useNavigate({ from: `/ticle/${ticleId}` });
   const { data, isLoading } = useTicle(ticleId);
 
   const { mutate } = useApplyTicle();
 
   const handleApplyButtonClick = () => {
     mutate(ticleId);
+    navigate({ to: `/dashboard/apply` });
   };
   // TODO: 티클 신청 완료시 alert띄우기
 
