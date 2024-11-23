@@ -6,6 +6,7 @@ import { CreateTicleFormSchema, CreateTicleFormType } from '@repo/types';
 import Button from '@/components/common/Button';
 import TextArea from '@/components/common/TextArea';
 import TextInput from '@/components/common/TextInput';
+import { useCreateTicle } from '@/hooks/api/ticle';
 
 import DateTimePicker from './DateTimePicker';
 import FormBox from './FormBox';
@@ -25,11 +26,19 @@ function Open() {
   });
 
   const navigate = useNavigate();
-  const onSubmit = (inputs: CreateTicleFormType) => {
-    // TODO: API
-    // hastagInput은 제외하고 전송
+
+  const { mutateAsync } = useCreateTicle();
+
+  const onSubmit = async (inputs: CreateTicleFormType) => {
     const { hashtagInput, ...submitData } = inputs;
-    navigate({ to: '/' }); // TODO: 생성된 티클로 redirect -> post시 응답값으로 ticleId가 필요
+
+    try {
+      const { data } = await mutateAsync(submitData);
+      navigate({ to: `/ticle/${data.ticleId}` });
+    } catch (error) {
+      // TODO: 에러 토스트
+      console.error('티클 생성 실패:', error);
+    }
   };
 
   return (
