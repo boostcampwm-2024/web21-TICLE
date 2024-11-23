@@ -14,6 +14,7 @@ export const useTicleList = (params: GetTicleListParams = {}) => {
     queryKey: ['ticleList', params],
     queryFn: () => getTitleList(params),
     staleTime: 1000 * 60 * 5,
+    placeholderData: (previousData) => previousData,
   });
 };
 
