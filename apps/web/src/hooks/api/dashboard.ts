@@ -1,14 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { GetDashboardListQueryType } from '@repo/types';
 
-import {
-  getDashboardTicleList,
-  getApplicantsTicle,
-  startTicle,
-  joinTicle,
-  GetDashboardTicleListParams,
-} from '@/api/dashboard';
+import { getDashboardTicleList, getApplicantsTicle, startTicle, joinTicle } from '@/api/dashboard';
 
-export const useDashboardTicleList = (params: GetDashboardTicleListParams) => {
+export const useDashboardTicleList = (params: GetDashboardListQueryType) => {
   return useQuery({
     queryKey: ['dashboardTicleList', params],
     queryFn: () => getDashboardTicleList(params),
