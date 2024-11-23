@@ -45,3 +45,16 @@ export const DashboardListResponseSchema = z.object({
 });
 
 export type DashboardListResponse = z.infer<typeof DashboardListResponseSchema>;
+
+export const DashboardApplicantsResponseSchema = z.array(
+  z.object({
+    createdAt: z.string().datetime(),
+    id: z.number(),
+    user: z.object({
+      nickname: z.string(),
+      profileImageUrl: z.string().url(),
+    }),
+  })
+);
+
+export type DashboardApplicantsResponse = z.infer<typeof DashboardApplicantsResponseSchema>;
