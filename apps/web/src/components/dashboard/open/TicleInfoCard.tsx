@@ -18,6 +18,7 @@ interface TicleInfoCardProps {
 
 function TicleInfoCard({ ticleId, ticleTitle, startTime, endTime, status }: TicleInfoCardProps) {
   const { isOpen, onOpen, onClose } = useModal();
+
   const { data: applicantsData, isLoading } = useApplicantsTicle(ticleId.toString());
   const { dateStr, timeRangeStr } = formatDateTimeRange(startTime, endTime);
 
@@ -41,9 +42,7 @@ function TicleInfoCard({ ticleId, ticleTitle, startTime, endTime, status }: Ticl
           onClick={onOpen}
         >
           <span className="text-title2 text-primary">신청자 목록</span>
-          {isOpen && (
-            <ApplicantsDialog onClose={onClose} isOpen={isOpen} applicants={applicantsData} />
-          )}
+
           <div>
             <PersonFilledIc className="fill-primary" />
           </div>
@@ -52,6 +51,7 @@ function TicleInfoCard({ ticleId, ticleTitle, startTime, endTime, status }: Ticl
           <Button disabled={status === 'closed'}>티클 시작하기</Button>
         </Link>
       </div>
+      {isOpen && <ApplicantsDialog onClose={onClose} isOpen={isOpen} applicants={applicantsData} />}
     </div>
   );
 }
