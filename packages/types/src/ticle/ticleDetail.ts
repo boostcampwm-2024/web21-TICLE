@@ -8,10 +8,10 @@ export const TicleDetailResponseSchema = z.object({
   speakerIntroduce: z.string(),
   title: z.string(),
   content: z.string(),
-  startTime: z.string().date(),
-  endTime: z.string().date(),
+  startTime: z.string().datetime(),
+  endTime: z.string().datetime(),
   ticleStatus: z.enum([TicleStatus.CLOSED, TicleStatus.OPEN]),
-  createdAt: z.string().date(),
+  createdAt: z.string().datetime(),
   tags: z.array(z.string()),
   speakerImgUrl: z.string().url(),
 });
