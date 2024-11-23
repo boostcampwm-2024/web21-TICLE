@@ -1,4 +1,10 @@
-import { CreateTicleType, TicleListResponse, TicleListResponseSchema } from '@repo/types';
+import {
+  CreateTicleType,
+  TicleListResponse,
+  TicleListResponseSchema,
+  TicleDetailResponse,
+  TicleDetailResponseSchema,
+} from '@repo/types';
 
 import axiosInstance from '@/api/axios';
 import request from '@/hooks/api/request';
@@ -22,9 +28,11 @@ const getTitleList = async (params: GetTicleListParams = {}) => {
 };
 
 const getTicle = async (ticleId: string) => {
-  const { data } = await axiosInstance.get(`/ticle/${ticleId}`);
-
-  return data;
+  return request<TicleDetailResponse>({
+    method: 'GET',
+    url: `/ticle/${ticleId}`,
+    schema: TicleDetailResponseSchema,
+  });
 };
 
 const createTicle = async (body: CreateTicleType) => {
