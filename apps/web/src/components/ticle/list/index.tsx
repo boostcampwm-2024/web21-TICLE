@@ -2,6 +2,7 @@ import { Link } from '@tanstack/react-router';
 import { useState } from 'react';
 
 import Loading from '@/components/common/Loading/Loading';
+import SearchInput from '@/components/common/SearchInput';
 import Select, { Option } from '@/components/common/Select';
 import { useTicleList } from '@/hooks/api/ticle';
 import { formatDateTimeRange } from '@/utils/date';
@@ -44,7 +45,14 @@ function TicleList() {
     <div>
       <Banner />
       <div className="mt-14 flex w-[80rem] flex-col gap-12 justify-self-center">
-        <Select options={SORT_OPTIONS} selectedOption={sortOption} onChange={handleOptionChange} />
+        <div className="flex w-full justify-between">
+          <SearchInput placeholder="검색 기능은 준비 중입니다!" />
+          <Select
+            options={SORT_OPTIONS}
+            selectedOption={sortOption}
+            onChange={handleOptionChange}
+          />
+        </div>
         <main className="my-12 flex flex-wrap gap-5">
           {ticles.map((ticle) => (
             <Link key={ticle.id} to="/ticle/$ticleId" params={{ ticleId: ticle.id.toString() }}>

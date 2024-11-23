@@ -11,10 +11,10 @@ import type { InputHTMLAttributes, KeyboardEvent, ChangeEvent, Ref } from 'react
 
 interface SearchInputProps
   extends Pick<InputHTMLAttributes<HTMLInputElement>, 'placeholder' | 'className'> {
-  value: string;
-  onChange: (value: string) => void;
-  onClear: () => void;
-  onSearch: (value: string) => void;
+  value?: string;
+  onChange?: (value: string) => void;
+  onClear?: () => void;
+  onSearch?: (value: string) => void;
   size?: keyof typeof SIZE_VARIANTS;
 }
 
