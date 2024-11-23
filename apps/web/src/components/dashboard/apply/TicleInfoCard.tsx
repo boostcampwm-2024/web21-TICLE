@@ -25,17 +25,17 @@ function TicleInfoCard({
   return (
     <div className="flex items-center justify-between rounded-lg border border-main bg-white p-6 shadow-normal">
       <div className="flex gap-5">
-        <div className="flex gap-3">
+        <div className="flex items-center gap-3">
           <h3 className="text-title2 text-main">개설자</h3>
-          <span className="text-body3 text-main">{speakerName}</span>
+          <span className="text-body1 text-main">{speakerName}</span>
         </div>
-        <div className="flex gap-3">
+        <div className="flex items-center gap-3">
           <h3 className="text-title2 text-main">티클명</h3>
-          <span className="w-72 text-body3 text-main">{ticleTitle}</span>
+          <span className="w-80 text-body1 text-main">{ticleTitle}</span>
         </div>
-        <div className="flex gap-3">
+        <div className="flex items-center gap-3">
           <h3 className="text-title2 text-main">진행 일시</h3>
-          <span className="text-body3 text-main">{`${dateStr} ${timeRangeStr}`}</span>
+          <span className="text-body1 text-main">{`${dateStr} ${timeRangeStr}`}</span>
         </div>
       </div>
       <Link to={`/live/${ticleId}`}>

@@ -18,18 +18,18 @@ function TicleInfoCard({ ticleId, ticleTitle, startTime, endTime, status }: Ticl
   return (
     <div className="flex items-center justify-between rounded-lg border border-main bg-white p-6 shadow-normal">
       <div className="flex gap-5">
-        <div className="flex gap-3">
+        <div className="flex items-center gap-3">
           <h3 className="text-title2 text-main">티클명</h3>
-          <span className="w-72 text-body3 text-main">{ticleTitle}</span>
+          <span className="w-80 text-body1 text-main">{ticleTitle}</span>
         </div>
-        <div className="flex gap-3">
+        <div className="flex items-center gap-3">
           <h3 className="text-title2 text-main">진행 일시</h3>
-          <span className="text-body3 text-main">{`${dateStr} ${timeRangeStr}`}</span>
+          <span className="text-body1 text-main">{`${dateStr} ${timeRangeStr}`}</span>
         </div>
       </div>
-      <div>
-        <button className="flex gap-2 rounded-md p-2.5 hover:bg-teritary">
-          <span>신청자 목록</span>
+      <div className="flex gap-9">
+        <button className="flex items-center gap-2 rounded-md p-2.5 hover:bg-teritary">
+          <span className="text-title2 text-primary">신청자 목록</span>
           <div>
             <PersonFilledIc className="fill-primary" />
           </div>
