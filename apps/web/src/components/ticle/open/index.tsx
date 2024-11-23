@@ -35,9 +35,8 @@ function Open() {
     try {
       const { data } = await mutateAsync(submitData);
       navigate({ to: `/ticle/${data.ticleId}` });
-    } catch (error) {
+    } catch (_) {
       // TODO: 에러 토스트
-      console.error('티클 생성 실패:', error);
     }
   };
 
