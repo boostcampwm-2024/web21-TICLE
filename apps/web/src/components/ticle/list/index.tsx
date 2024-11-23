@@ -46,7 +46,7 @@ function TicleList() {
       <Banner />
       <div className="mt-14 flex w-[80rem] flex-col gap-12 justify-self-center">
         <div className="flex w-full justify-between">
-          <SearchInput placeholder="검색 기능은 준비 중입니다!" />
+          <SearchInput placeholder="검색 기능은 준비 중입니다!" className="w-96" />
           <Select
             options={SORT_OPTIONS}
             selectedOption={sortOption}
