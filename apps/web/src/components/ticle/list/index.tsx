@@ -1,3 +1,5 @@
+import { Link } from '@tanstack/react-router';
+
 import Loading from '@/components/common/Loading/Loading';
 import { useTicleList } from '@/hooks/api/ticle';
 import { formatDateTimeRange } from '@/utils/date';
@@ -18,14 +20,15 @@ function TicleList() {
       <Banner />
       <main className="my-12 flex flex-wrap justify-center gap-5">
         {ticles.map((ticle) => (
-          <TicleCard
-            key={ticle.id}
-            title={ticle.title}
-            tags={ticle.tags}
-            date={getDateString(ticle.startTime, ticle.endTime)}
-            speaker={ticle.speakerName}
-            applicantsCount={ticle.applicantsCount}
-          />
+          <Link key={ticle.id} to="/ticle/$ticleId" params={{ ticleId: ticle.id.toString() }}>
+            <TicleCard
+              title={ticle.title}
+              tags={ticle.tags}
+              date={getDateString(ticle.startTime, ticle.endTime)}
+              speaker={ticle.speakerName}
+              applicantsCount={ticle.applicantsCount}
+            />
+          </Link>
         ))}
       </main>
     </>
