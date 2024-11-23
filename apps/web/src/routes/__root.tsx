@@ -1,4 +1,4 @@
-import { Outlet, createRootRoute, useLocation } from '@tanstack/react-router';
+import { Outlet, ScrollRestoration, createRootRoute, useLocation } from '@tanstack/react-router';
 
 import Header from '@/components/Header';
 
@@ -15,6 +15,7 @@ function RootComponent() {
 
   return (
     <div className="h-full min-h-dvh bg-weak">
+      <ScrollRestoration />
       {hasHeader && <Header />}
       <Outlet />
     </div>
