@@ -1,13 +1,13 @@
 import axiosInstance from '@/api/axios';
 
-interface GetAppliedTicleListParams {
+export interface GetDashboardTicleListParams {
   isSpeaker: boolean;
   page: number;
   pageSize: number;
   status: 'open' | 'close';
 }
 
-const getAppliedTicleList = async (params: GetAppliedTicleListParams) => {
+const getDashboardTicleList = async (params: GetDashboardTicleListParams) => {
   const { data } = await axiosInstance.get('/dashboard', { params });
 
   return data;
@@ -31,4 +31,4 @@ const joinTicle = async (ticleId: string) => {
   return data;
 };
 
-export { getAppliedTicleList, startTicle, joinTicle, getApplicantsTicle };
+export { getDashboardTicleList, startTicle, joinTicle, getApplicantsTicle };
