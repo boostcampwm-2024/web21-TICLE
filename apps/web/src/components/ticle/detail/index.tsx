@@ -5,15 +5,22 @@ import ClockIc from '@/assets/icons/clock.svg?react';
 import Avatar from '@/components/common/Avatar';
 import Badge from '@/components/common/Badge';
 import Button from '@/components/common/Button';
-import { useTicle } from '@/hooks/api/ticle';
+import { useApplyTicle, useTicle } from '@/hooks/api/ticle';
 import { formatDateTimeRange } from '@/utils/date';
 
 function Detail() {
   const { ticleId } = useParams({ from: '/ticle/$ticleId' });
 
   const { data, isLoading } = useTicle(ticleId);
-  if (!data) return;
 
+  const { mutate } = useApplyTicle();
+
+  const handleApplyButtonClick = () => {
+    mutate(ticleId);
+  };
+  // TODO: 티클 신청 완료시 alert띄우기
+
+  if (!data) return;
   const { dateStr, timeRangeStr } = formatDateTimeRange(data.startTime, data.endTime);
   return (
     <div className="flex flex-col items-end gap-9">
@@ -56,7 +63,7 @@ function Detail() {
           </div>
         </div>
       </div>
-      <Button>티클 신청하기</Button>
+      <Button onClick={handleApplyButtonClick}>티클 신청하기</Button>
     </div>
   );
 }
