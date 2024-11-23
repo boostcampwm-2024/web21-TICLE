@@ -1,16 +1,19 @@
+import {
+  DashboardListResponse,
+  DashboardListResponseSchema,
+  GetDashboardListQueryType,
+} from '@repo/types';
+
 import axiosInstance from '@/api/axios';
+import request from '@/hooks/api/request';
 
-export interface GetDashboardTicleListParams {
-  isSpeaker: boolean;
-  page: number;
-  pageSize: number;
-  status: 'open' | 'close';
-}
-
-const getDashboardTicleList = async (params: GetDashboardTicleListParams) => {
-  const { data } = await axiosInstance.get('/dashboard', { params });
-
-  return data;
+const getDashboardTicleList = async (params: GetDashboardListQueryType) => {
+  return request<DashboardListResponse>({
+    method: 'GET',
+    url: '/dashboard',
+    params,
+    schema: DashboardListResponseSchema,
+  });
 };
 
 const getApplicantsTicle = async (ticleId: string) => {
