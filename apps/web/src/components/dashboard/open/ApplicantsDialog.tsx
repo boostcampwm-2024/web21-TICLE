@@ -14,7 +14,7 @@ function ApplicantsDialog({ isOpen, onClose, applicants }: ApplicantsDialogProps
     <Dialog.Root isOpen={isOpen} onClose={onClose}>
       <Dialog.Title align="center">신청자 목록</Dialog.Title>
       <Dialog.Close onClose={onClose} />
-      <Dialog.Content className="h-56 overflow-y-scroll">
+      <Dialog.Content className="custom-scrollbar h-56 overflow-y-scroll">
         <ul className="flex flex-col gap-4">
           {applicants.map((applicant) => (
             <li key={applicant.id} className="flex items-center gap-2.5">
