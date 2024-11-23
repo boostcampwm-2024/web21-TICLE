@@ -7,6 +7,7 @@ export const useDashboardTicleList = (params: GetDashboardListQueryType) => {
   return useQuery({
     queryKey: ['dashboardTicleList', params],
     queryFn: () => getDashboardTicleList(params),
+    placeholderData: (previousData) => previousData,
   });
 };
 
