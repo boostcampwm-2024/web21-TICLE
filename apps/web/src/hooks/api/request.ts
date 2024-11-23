@@ -7,10 +7,9 @@ const request = async <T>({
   schema,
   ...config
 }: AxiosRequestConfig & {
-  schema: z.ZodType<T>;
-}) => {
+  schema: z.ZodSchema<T>;
+}): Promise<T> => {
   const { data: response } = await axiosInstance.request(config);
-
   const validation = schema.safeParse(response.data);
 
   if (!validation.success) {
