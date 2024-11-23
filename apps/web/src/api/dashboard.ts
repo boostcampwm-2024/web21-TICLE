@@ -1,4 +1,6 @@
 import {
+  DashboardApplicantsResponse,
+  DashboardApplicantsResponseSchema,
   DashboardListResponse,
   DashboardListResponseSchema,
   GetDashboardListQueryType,
@@ -17,9 +19,11 @@ const getDashboardTicleList = async (params: GetDashboardListQueryType) => {
 };
 
 const getApplicantsTicle = async (ticleId: string) => {
-  const { data } = await axiosInstance.get(`/dashboard/${ticleId}/applicants`);
-
-  return data;
+  return request<DashboardApplicantsResponse>({
+    method: 'GET',
+    url: `/dashboard/${ticleId}/applicants`,
+    schema: DashboardApplicantsResponseSchema,
+  });
 };
 
 const startTicle = async (ticleId: string) => {

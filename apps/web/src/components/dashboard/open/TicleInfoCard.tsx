@@ -2,7 +2,11 @@ import { Link } from '@tanstack/react-router';
 
 import PersonFilledIc from '@/assets/icons/person-filled.svg?react';
 import Button from '@/components/common/Button';
+import { useApplicantsTicle } from '@/hooks/api/dashboard';
+import useModal from '@/hooks/useModal';
 import { formatDateTimeRange } from '@/utils/date';
+
+import ApplicantsDialog from './ApplicantsDialog';
 
 interface TicleInfoCardProps {
   ticleId: number;
@@ -13,7 +17,11 @@ interface TicleInfoCardProps {
 }
 
 function TicleInfoCard({ ticleId, ticleTitle, startTime, endTime, status }: TicleInfoCardProps) {
+  const { isOpen, onOpen, onClose } = useModal();
+  const { data: applicantsData, isLoading } = useApplicantsTicle(ticleId.toString());
   const { dateStr, timeRangeStr } = formatDateTimeRange(startTime, endTime);
+
+  if (!applicantsData) return;
 
   return (
     <div className="flex items-center justify-between rounded-lg border border-main bg-white p-6 shadow-normal">
@@ -28,8 +36,14 @@ function TicleInfoCard({ ticleId, ticleTitle, startTime, endTime, status }: Ticl
         </div>
       </div>
       <div className="flex gap-9">
-        <button className="flex items-center gap-2 rounded-md p-2.5 hover:bg-teritary">
+        <button
+          className="flex items-center gap-2 rounded-md p-2.5 hover:bg-teritary"
+          onClick={onOpen}
+        >
           <span className="text-title2 text-primary">신청자 목록</span>
+          {isOpen && (
+            <ApplicantsDialog onClose={onClose} isOpen={isOpen} applicants={applicantsData} />
+          )}
           <div>
             <PersonFilledIc className="fill-primary" />
           </div>
