@@ -14,7 +14,7 @@ interface SearchInputProps
   value?: string;
   onChange?: (value: string) => void;
   onClear?: () => void;
-  onSearch?: (value: string) => void;
+  onSearch?: (value?: string) => void;
   size?: keyof typeof SIZE_VARIANTS;
 }
 
@@ -23,14 +23,14 @@ function SearchInput(
   ref: Ref<HTMLInputElement>
 ) {
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    onChange(e.target.value);
+    onChange?.(e.target.value);
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key !== 'Enter') {
       return;
     }
-    onSearch(value);
+    onSearch?.(value);
   };
 
   return (
@@ -50,7 +50,7 @@ function SearchInput(
             <CloseCircleIc className="fill-main" aria-hidden />
           </button>
         ) : (
-          <button type="button" onClick={() => onSearch(value)} aria-label="검색하기">
+          <button type="button" onClick={() => onSearch?.(value)} aria-label="검색하기">
             <SearchIc className="fill-main" aria-hidden />
           </button>
         )}
