@@ -16,29 +16,21 @@ export class UserService {
   ) {}
 
   async createLocalUser(createUserDto: CreateLocalUserDto) {
-    try {
-      await this.throwIfExistUsername(createUserDto.username);
-      const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
-      const user = this.userRepository.create({
-        ...createUserDto,
-        password: hashedPassword,
-      });
-      await this.userRepository.save(user);
-      const { password, ...result } = user;
-      return result;
-    } catch {
-      throw new InternalServerErrorException();
-    }
+    await this.throwIfExistUsername(createUserDto.username);
+    const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
+    const user = this.userRepository.create({
+      ...createUserDto,
+      password: hashedPassword,
+    });
+    await this.userRepository.save(user);
+    const { password, ...result } = user;
+    return result;
   }
 
   async createSocialUser(socialUserData: CreateSocialUserDto) {
-    try {
-      const user = this.userRepository.create(socialUserData);
-      await this.userRepository.save(user);
-      return user;
-    } catch {
-      throw new InternalServerErrorException();
-    }
+    const user = this.userRepository.create(socialUserData);
+    await this.userRepository.save(user);
+    return user;
   }
 
   async throwIfExistUsername(username: string) {
