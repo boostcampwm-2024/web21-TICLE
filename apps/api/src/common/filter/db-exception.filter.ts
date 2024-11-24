@@ -9,7 +9,6 @@ export class DBExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
 
     const status = HttpStatus.INTERNAL_SERVER_ERROR;
-
     const errorResponse = {
       status: 'error',
       error: {

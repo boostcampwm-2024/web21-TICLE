@@ -27,25 +27,21 @@ export class TicleService {
   ) {}
 
   async createTicle(createTicleDto: CreateTicleDto, userId: number): Promise<Ticle> {
-    try {
-      const user = await this.userRepository.findOne({ where: { id: userId } });
+    const user = await this.userRepository.findOne({ where: { id: userId } });
 
-      const { existingTags, tagsToCreate } = await this.findExistingTags(createTicleDto.tags);
-      const newTags = await this.createNewTags(tagsToCreate);
+    const { existingTags, tagsToCreate } = await this.findExistingTags(createTicleDto.tags);
+    const newTags = await this.createNewTags(tagsToCreate);
 
-      const tags = [...existingTags, ...newTags];
-      const newTicle = this.ticleRepository.create({
-        ...createTicleDto,
-        speaker: user,
-        applicants: [],
-        summary: null,
-        tags: tags,
-      });
+    const tags = [...existingTags, ...newTags];
+    const newTicle = this.ticleRepository.create({
+      ...createTicleDto,
+      speaker: user,
+      applicants: [],
+      summary: null,
+      tags: tags,
+    });
 
-      return await this.ticleRepository.save(newTicle);
-    } catch (error) {
-      throw new BadRequestException(`Failed to create ticle `);
-    }
+    return await this.ticleRepository.save(newTicle);
   }
 
   async findExistingTags(tags: string[]) {
