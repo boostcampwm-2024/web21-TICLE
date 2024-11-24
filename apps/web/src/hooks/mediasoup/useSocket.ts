@@ -1,25 +1,65 @@
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
+import { SOCKET_EVENTS } from '@repo/mediasoup';
+
+import { ENV } from '@/constants/env';
+import { useMediasoupAction } from '@/contexts/mediasoup/context';
+
+const SOCKET_OPTIONS = {
+  transports: ['websocket', 'polling'],
+  withCredentials: true,
+  autoConnect: true,
+  reconnection: true,
+  reconnectionAttempts: 5,
+  reconnectionDelay: 1000,
+};
 
 type SocketType = Socket;
 
-const useSocket = (url: string) => {
-  const socketRef = useRef<SocketType | null>(null);
+const useSocket = () => {
+  const { dispatch } = useMediasoupAction();
 
-  // TODO: io 옵션 확인
-  useEffect(() => {
-    socketRef.current = io(url, {
-      withCredentials: true,
-      transports: ['websocket', 'polling'],
-      autoConnect: true,
+  const [isConnected, setIsConnected] = useState(false);
+  const [isError, setIsError] = useState<Error | null>(null);
+
+  const initSocket = useCallback(() => {
+    const socket = io(ENV.WS_URL, SOCKET_OPTIONS);
+
+    dispatch({ type: 'SET_SOCKET', payload: socket });
+
+    return socket;
+  }, [dispatch]);
+
+  const initSocketEvents = useCallback((socket: SocketType) => {
+    socket.on(SOCKET_EVENTS.connect, () => {
+      setIsConnected(true);
+      setIsError(null);
     });
 
-    return () => {
-      socketRef.current?.disconnect();
-    };
-  }, [url]);
+    socket.on(SOCKET_EVENTS.disconnect, () => {
+      setIsConnected(false);
+      setIsError(null);
+    });
 
-  return socketRef;
+    socket.on(SOCKET_EVENTS.connectError, (error) => {
+      setIsConnected(false);
+      setIsError(new Error(`socket connection error: ${error}`));
+    });
+  }, []);
+
+  useEffect(() => {
+    const socket = initSocket();
+
+    if (socket) {
+      initSocketEvents(socket);
+    }
+
+    return () => {
+      socket?.disconnect();
+    };
+  }, [initSocket, initSocketEvents]);
+
+  return { isConnected, isError };
 };
 
 export default useSocket;
