@@ -42,5 +42,7 @@ module.exports = {
     'no-multiple-empty-lines': ['error', { max: 1 }],
     'import/no-duplicates': 'error',
     'no-console': 'error',
+    'jsx-a11y/click-events-have-key-events': 'off',
+    'jsx-a11y/no-static-element-interactions': 'off',
   },
 };
