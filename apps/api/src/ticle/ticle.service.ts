@@ -166,14 +166,14 @@ export class TicleService {
         'ticle.speakerName',
         'ticle.createdAt',
       ])
+      .addSelect('GROUP_CONCAT(DISTINCT tags.name)', 'tagNames')
+      .addSelect('COUNT(DISTINCT applicant.id)', 'applicantCount')
+      .leftJoin('ticle.tags', 'tags')
+      .leftJoin('ticle.applicants', 'applicant')
       .where('ticle.ticleStatus = :status', {
         status: isOpen ? TicleStatus.OPEN : TicleStatus.CLOSED,
       })
-      .leftJoin('ticle.tags', 'tags')
-      .addSelect('GROUP_CONCAT(tags.name)', 'tagNames')
-      .groupBy('ticle.id')
-      .addSelect('COUNT(DISTINCT applicant.id)', 'applicantCount')
-      .leftJoin('ticle.applicants', 'applicant');
+      .groupBy('ticle.id');
 
     switch (sort) {
       case SortType.OLDEST:
