@@ -166,47 +166,48 @@ export class TicleService {
         'ticle.speakerName',
         'ticle.createdAt',
       ])
+      .addSelect('GROUP_CONCAT(DISTINCT tags.name)', 'tagNames')
+      .addSelect('COUNT(DISTINCT applicant.id)', 'applicantCount')
+      .leftJoin('ticle.tags', 'tags')
+      .leftJoin('ticle.applicants', 'applicant')
       .where('ticle.ticleStatus = :status', {
         status: isOpen ? TicleStatus.OPEN : TicleStatus.CLOSED,
       })
-      .leftJoin('ticle.tags', 'tags')
-      .addSelect('tags.name')
-      .loadRelationCountAndMap('ticle.applicantsCount', 'ticle.applicants')
-      .skip(skip)
-      .take(pageSize);
+      .groupBy('ticle.id');
 
     switch (sort) {
       case SortType.OLDEST:
         queryBuilder.orderBy('ticle.createdAt', 'ASC');
         break;
       case SortType.TRENDING:
-        queryBuilder.orderBy('ticle.applicantsCount', 'DESC');
+        queryBuilder.orderBy('applicantCount', 'DESC').addOrderBy('ticle.createdAt', 'DESC');
         break;
       case SortType.NEWEST:
       default:
         queryBuilder.orderBy('ticle.createdAt', 'DESC');
     }
-    const [ticles, totalItems] = await queryBuilder.getManyAndCount();
+
+    const ticles = await queryBuilder.offset(skip).limit(pageSize).getRawMany();
 
     const formattedTicles = ticles.map((ticle) => ({
-      id: ticle.id,
-      title: ticle.title,
-      tags: ticle.tags.map((tag) => tag.name),
-      startTime: ticle.startTime,
-      endTime: ticle.endTime,
-      speakerName: ticle.speakerName,
-      applicantsCount: (ticle as any).applicantsCount || 0,
-      createdAt: ticle.createdAt,
+      id: ticle.ticle_id,
+      title: ticle.ticle_title,
+      tags: ticle.tagNames ? ticle.tagNames.split(',') : [],
+      startTime: ticle.ticle_start_time,
+      endTime: ticle.ticle_end_time,
+      speakerName: ticle.ticle_speaker_name,
+      applicantsCount: ticle.applicantCount,
+      createdAt: ticle.ticle_created_at,
     }));
 
-    const totalPages = Math.ceil(totalItems / pageSize);
+    const totalPages = Math.ceil(ticles.length / pageSize);
 
     return {
       ticles: formattedTicles,
       meta: {
         page,
         take: pageSize,
-        totalItems,
+        totalItems: ticles.length,
         totalPages,
         hasNextPage: page < totalPages,
       },
