@@ -5,7 +5,8 @@ import cookieParser from 'cookie-parser';
 
 import { AppModule } from '@/app.module';
 
-import { HttpExceptionFilter } from './httpexception.filter';
+import { DBExceptionFilter } from './common/filter/db-exception.filter';
+import { HttpExceptionFilter } from './common/filter/http-exception.filter';
 import { ResponseInterceptor } from './response.interceptor';
 
 async function bootstrap() {
@@ -23,7 +24,7 @@ async function bootstrap() {
   SwaggerModule.setup('api-doc', app, document);
 
   app.useGlobalInterceptors(new ResponseInterceptor());
-  app.useGlobalFilters(new HttpExceptionFilter());
+  app.useGlobalFilters(new HttpExceptionFilter(), new DBExceptionFilter());
   app.setGlobalPrefix('api');
 
   const configService = app.get(ConfigService);
