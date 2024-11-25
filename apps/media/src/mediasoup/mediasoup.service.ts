@@ -6,6 +6,7 @@ import * as mediasoup from 'mediasoup';
 import { types } from 'mediasoup';
 import { Worker } from 'mediasoup/node/lib/types';
 import { MediaTypes, server, STREAM_STATUS } from '@repo/mediasoup';
+import { ErrorMessage } from '@repo/types';
 
 import { RoomService } from '@/room/room.service';
 
@@ -63,7 +64,7 @@ export class MediasoupService implements OnModuleInit {
   joinRoom(roomId: string, socketId: string, nickname: string) {
     const room = this.roomService.getRoom(roomId);
     if (room.hasPeer(socketId)) {
-      throw new WsException(`Peer ${socketId} already exists`);
+      throw new WsException(ErrorMessage.PEER_ALREADY_EXISTS_IN_ROOM);
     }
     room.addPeer(socketId, nickname);
 

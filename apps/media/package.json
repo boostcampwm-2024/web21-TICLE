@@ -28,6 +28,7 @@
     "@nestjs/websockets": "^10.4.7",
     "@repo/tsconfig": "workspace:*",
     "@repo/mediasoup": "workspace:*",
+    "@repo/types": "workspace:*",
     "mediasoup": "^3.15.0",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1",

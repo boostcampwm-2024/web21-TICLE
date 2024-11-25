@@ -1,5 +1,6 @@
 import { ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { ErrorMessage } from '@repo/types';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
@@ -9,7 +10,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     const token = cookies['accessToken'];
 
     if (!token) {
-      throw new UnauthorizedException('로그인이 필요합니다.');
+      throw new UnauthorizedException(ErrorMessage.LOGIN_REQUIRED);
     }
     req.headers.authorization = `Bearer ${token}`;
 
@@ -18,7 +19,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
   handleRequest(err: any, user: any) {
     if (err || !user) {
-      throw new UnauthorizedException('잘못된 인증 정보입니다.');
+      throw new UnauthorizedException(ErrorMessage.INVALID_AUTHENTICATION_INFORMATION);
     }
     return user;
   }
