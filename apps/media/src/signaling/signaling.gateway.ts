@@ -73,6 +73,7 @@ export class SignalingGateway implements OnGatewayDisconnect {
     const createProducerRes = {
       producerId: producer.id,
       peerId: client.id,
+      nickname: producer.nickname,
       kind,
       appData,
       paused: producer.paused,
