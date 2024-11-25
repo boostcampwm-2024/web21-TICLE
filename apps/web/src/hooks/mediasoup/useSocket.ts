@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useNavigate } from '@tanstack/react-router';
+import { MutableRefObject, useCallback, useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { SOCKET_EVENTS } from '@repo/mediasoup';
 
 import { ENV } from '@/constants/env';
-import { useMediasoupAction } from '@/contexts/mediasoup/context';
 
 const SOCKET_OPTIONS = {
   transports: ['websocket', 'polling'],
@@ -14,10 +14,16 @@ const SOCKET_OPTIONS = {
   reconnectionDelay: 1000,
 };
 
-type SocketType = Socket;
+interface UseSocketReturn {
+  socketRef: MutableRefObject<Socket | null>;
+  isConnected: boolean;
+  isError: Error | null;
+}
 
-const useSocket = () => {
-  const { dispatch } = useMediasoupAction();
+const useSocket = (): UseSocketReturn => {
+  const navigate = useNavigate({ from: '/live/$ticleId' });
+
+  const socketRef = useRef<Socket | null>(null);
 
   const [isConnected, setIsConnected] = useState(false);
   const [isError, setIsError] = useState<Error | null>(null);
@@ -25,41 +31,43 @@ const useSocket = () => {
   const initSocket = useCallback(() => {
     const socket = io(ENV.WS_URL, SOCKET_OPTIONS);
 
-    dispatch({ type: 'SET_SOCKET', payload: socket });
+    socketRef.current = socket;
 
     return socket;
-  }, [dispatch]);
-
-  const initSocketEvents = useCallback((socket: SocketType) => {
-    socket.on(SOCKET_EVENTS.connect, () => {
-      setIsConnected(true);
-      setIsError(null);
-    });
-
-    socket.on(SOCKET_EVENTS.disconnect, () => {
-      setIsConnected(false);
-      setIsError(null);
-    });
-
-    socket.on(SOCKET_EVENTS.connectError, (error) => {
-      setIsConnected(false);
-      setIsError(new Error(`socket connection error: ${error}`));
-    });
   }, []);
+
+  const initSocketEvents = useCallback(
+    (socket: Socket) => {
+      socket.on(SOCKET_EVENTS.connect, () => {
+        setIsConnected(true);
+        setIsError(null);
+      });
+
+      socket.on(SOCKET_EVENTS.disconnect, () => {
+        navigate({ to: '/', replace: true });
+        setIsConnected(false);
+        setIsError(null);
+      });
+
+      socket.on(SOCKET_EVENTS.connectError, (error) => {
+        setIsConnected(false);
+        setIsError(new Error(`socket connection error: ${error}`));
+      });
+    },
+    [navigate]
+  );
 
   useEffect(() => {
     const socket = initSocket();
 
-    if (socket) {
-      initSocketEvents(socket);
-    }
+    initSocketEvents(socket);
 
     return () => {
-      socket?.disconnect();
+      socket.disconnect();
     };
   }, [initSocket, initSocketEvents]);
 
-  return { isConnected, isError };
+  return { socketRef, isConnected, isError };
 };
 
 export default useSocket;
