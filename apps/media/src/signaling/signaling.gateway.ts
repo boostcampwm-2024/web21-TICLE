@@ -4,14 +4,18 @@ import {
   OnGatewayDisconnect,
   SubscribeMessage,
   WebSocketGateway,
+  WsException,
 } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { SOCKET_EVENTS, STREAM_STATUS } from '@repo/mediasoup';
 import type { client, server } from '@repo/mediasoup';
 
 import { MediasoupService } from '@/mediasoup/mediasoup.service';
+import { UseFilters } from '@nestjs/common';
+import { WSExceptionFilter } from '@/wsException.filter';
 
 @WebSocketGateway()
+@UseFilters(WSExceptionFilter)
 export class SignalingGateway implements OnGatewayDisconnect {
   constructor(private mediasoupService: MediasoupService) {}
 
