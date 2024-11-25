@@ -31,6 +31,19 @@ export class AuthService {
     return result;
   }
 
+  async createGuestUser() {
+    const randomNum = Math.floor(Math.random() * 10000);
+    const guestUser = {
+      username: `guest_${randomNum}`,
+      password: `guest_password_${randomNum}`,
+      email: `guet_email@guest.com`,
+      nickname: `guest_${randomNum}`,
+      introduce: `게스트 사용자입니다. `,
+      profileImageUrl: `https://static.nid.naver.com/images/web/user/default.png?type=s160`,
+    };
+    return this.userService.createLocalUser({ provider: 'local', ...guestUser });
+  }
+
   async checkSocialUser(socialUserData: CreateSocialUserDto) {
     const user = await this.userService.findUserBySocialIdAndProvider(
       socialUserData.socialId,
@@ -42,7 +55,7 @@ export class AuthService {
     return user;
   }
 
-  async createJWT(userId: number) {
+  createJWT(userId: number) {
     const payload = { sub: userId };
     return {
       accessToken: this.jwtService.sign(payload),
