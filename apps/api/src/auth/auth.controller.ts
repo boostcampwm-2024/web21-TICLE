@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Post, Res, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ThrottlerGuard } from '@nestjs/throttler';
 import { Response } from 'express';
 
 import { GetUserId } from '@/common/decorator/get-userId.decorator';
@@ -43,6 +44,7 @@ export class AuthController {
   @Post('guest/login')
   @ApiOperation({ summary: '게스트 로그인' })
   @ApiResponse({ status: 302, description: '홈으로 리다이렉션' })
+  @UseGuards(ThrottlerGuard)
   async guestLogin(@Res() response: Response) {
     const guestUser = await this.authService.createGuestUser();
     this.cookieInsertJWT(response, guestUser.id);
