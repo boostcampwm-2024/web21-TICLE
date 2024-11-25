@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 
 import BasicLayout from '@/components/common/BasicLayout';
+import Header from '@/components/Header';
 import Detail from '@/components/ticle/detail';
 
 export const Route = createFileRoute('/ticle/$ticleId')({
@@ -9,8 +10,11 @@ export const Route = createFileRoute('/ticle/$ticleId')({
 
 function RouteComponent() {
   return (
-    <BasicLayout>
-      <Detail />
-    </BasicLayout>
+    <>
+      <Header />
+      <BasicLayout>
+        <Detail />
+      </BasicLayout>
+    </>
   );
 }

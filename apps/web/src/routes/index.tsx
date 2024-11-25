@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 
+import Header from '@/components/Header';
 import TicleList from '@/components/ticle/list';
 
 export const Route = createFileRoute('/')({
@@ -7,5 +8,10 @@ export const Route = createFileRoute('/')({
 });
 
 function IndexPage() {
-  return <TicleList />;
+  return (
+    <>
+      <Header />
+      <TicleList />
+    </>
+  );
 }
