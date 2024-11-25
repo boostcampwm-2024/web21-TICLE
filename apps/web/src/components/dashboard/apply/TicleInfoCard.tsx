@@ -1,4 +1,5 @@
-import { Link } from '@tanstack/react-router';
+import { Link, useNavigate } from '@tanstack/react-router';
+import { MouseEvent } from 'react';
 
 import Button from '@/components/common/Button';
 import { formatDateTimeRange } from '@/utils/date';
@@ -21,6 +22,12 @@ function TicleInfoCard({
   status,
 }: TicleInfoCardProps) {
   const { dateStr, timeRangeStr } = formatDateTimeRange(startTime, endTime);
+  const navigate = useNavigate();
+
+  const handleTicleParticipate = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    navigate({ to: `/live/${ticleId}` });
+  };
 
   return (
     <Link to={`/ticle/${ticleId}`}>
@@ -39,9 +46,10 @@ function TicleInfoCard({
             <span className="text-body1 text-main">{`${dateStr} ${timeRangeStr}`}</span>
           </div>
         </div>
-        <Link to={`/live/${ticleId}`}>
-          <Button disabled={status === 'closed'}>티클 참여하기</Button>
-        </Link>
+
+        <Button disabled={status === 'closed'} onClick={handleTicleParticipate}>
+          티클 참여하기
+        </Button>
       </div>
     </Link>
   );

@@ -1,4 +1,5 @@
-import { Link } from '@tanstack/react-router';
+import { Link, useNavigate } from '@tanstack/react-router';
+import { MouseEvent } from 'react';
 
 import PersonFilledIc from '@/assets/icons/person-filled.svg?react';
 import Button from '@/components/common/Button';
@@ -22,7 +23,14 @@ function TicleInfoCard({ ticleId, ticleTitle, startTime, endTime, status }: Ticl
   const { data: applicantsData } = useApplicantsTicle(ticleId.toString());
   const { dateStr, timeRangeStr } = formatDateTimeRange(startTime, endTime);
 
+  const navigate = useNavigate();
+
   if (!applicantsData) return;
+
+  const handleTicleParticipate = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    navigate({ to: `/live/${ticleId}` });
+  };
 
   return (
     <Link to={`/ticle/${ticleId}`}>
@@ -48,9 +56,9 @@ function TicleInfoCard({ ticleId, ticleTitle, startTime, endTime, status }: Ticl
               <PersonFilledIc className="fill-primary" />
             </div>
           </button>
-          <Link to={`/live/${ticleId}`}>
-            <Button disabled={status === 'closed'}>티클 시작하기</Button>
-          </Link>
+          <Button disabled={status === 'closed'} onClick={handleTicleParticipate}>
+            티클 시작하기
+          </Button>
         </div>
         {isOpen && (
           <ApplicantsDialog onClose={onClose} isOpen={isOpen} applicants={applicantsData} />
