@@ -1,5 +1,4 @@
-import { useNavigate } from '@tanstack/react-router';
-import { useState } from 'react';
+import { useMatch, useNavigate } from '@tanstack/react-router';
 
 import Tab, { TabData } from '../common/Tab';
 
@@ -15,7 +14,8 @@ const DASHBOARD_ROUTES = {
 
 function DashboardTab() {
   const navigate = useNavigate();
-  const [selectedTab, setSelectedTab] = useState<keyof typeof DASHBOARD_TAB>('APPLIED');
+  const isOpenedMatch = useMatch({ from: '/dashboard/open', shouldThrow: false });
+  const selectedTab = isOpenedMatch ? 'OPENED' : 'APPLIED';
 
   const DASHBOARD_TAB_DATA: TabData<keyof typeof DASHBOARD_TAB>[] = [
     {
@@ -23,7 +23,6 @@ function DashboardTab() {
       label: DASHBOARD_TAB.APPLIED,
       onClick: () => {
         navigate({ to: DASHBOARD_ROUTES.APPLIED });
-        setSelectedTab('APPLIED');
       },
     },
     {
@@ -31,7 +30,6 @@ function DashboardTab() {
       label: DASHBOARD_TAB.OPENED,
       onClick: () => {
         navigate({ to: DASHBOARD_ROUTES.OPENED });
-        setSelectedTab('OPENED');
       },
     },
   ];
