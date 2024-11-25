@@ -3,10 +3,9 @@ import { useEffect, useRef, useState } from 'react';
 
 import MicOffIc from '@/assets/icons/mic-off.svg?react';
 import MicOnIc from '@/assets/icons/mic-on.svg?react';
-
-import Avatar from '../../common/Avatar';
-import Badge from '../../common/Badge';
-import Loading from '../../common/Loading/Loading';
+import Avatar from '@/components/common/Avatar';
+import Badge from '@/components/common/Badge';
+import Loading from '@/components/common/Loading/Loading';
 
 const videoVariants = cva('h-full w-full rounded-lg object-cover transition-opacity duration-300', {
   variants: {
