@@ -4,6 +4,8 @@ import { Socket } from 'socket.io-client';
 import { client, MediaTypes } from '@repo/mediasoup';
 
 export interface MediasoupState {
+  isConnected: boolean;
+  isError: Error | null;
   socketRef: MutableRefObject<Socket | null>;
   deviceRef: MutableRefObject<client.Device | null>;
   transportsRef: MutableRefObject<{

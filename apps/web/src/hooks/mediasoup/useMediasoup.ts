@@ -6,12 +6,10 @@ import { useMediasoupAction, useMediasoupState } from '@/contexts/mediasoup/cont
 import { useRemoteStreamAction } from '@/contexts/remoteStream/context';
 
 import useRoom from './useRoom';
-import useSocket from './useSocket';
 
 const useMediasoup = () => {
-  const { socketRef } = useMediasoupState();
+  const { socketRef, isConnected, isError } = useMediasoupState();
 
-  const { isConnected, isError } = useSocket();
   const { createRoom } = useRoom();
   const {
     createRecvTransport,
@@ -20,7 +18,7 @@ const useMediasoup = () => {
     connectExistProducer,
     disconnect,
   } = useMediasoupAction();
-  const { startCameraStream, startMicStream, closeStream } = useLocalStreamAction();
+  const { startCameraStream, startMicStream } = useLocalStreamAction();
   const { consume, filterRemoteStream, pauseRemoteStream, resumeRemoteStream } =
     useRemoteStreamAction();
 

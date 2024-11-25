@@ -45,6 +45,8 @@ export const MediasoupProvider = ({ children }: MediasoupProviderProps) => {
     deviceRef,
     transportsRef,
     producersRef,
+    isConnected,
+    isError,
   };
 
   const actions = {
