@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { In, QueryBuilder, Repository } from 'typeorm';
 import { TicleStatus } from '@repo/types';
 
 import { Applicant } from '@/entity/applicant.entity';
@@ -184,6 +184,13 @@ export class TicleService {
     }
 
     const ticles = await queryBuilder.offset(skip).limit(pageSize).getRawMany();
+    const countQuery = this.ticleRepository
+      .createQueryBuilder('ticle')
+      .select('COUNT(*) as count')
+      .where('ticle.ticleStatus = :status', {
+        status: isOpen ? TicleStatus.OPEN : TicleStatus.CLOSED,
+      });
+    const totalTicleCount = await countQuery.getRawOne();
 
     const formattedTicles = ticles.map((ticle) => ({
       id: ticle.ticle_id,
@@ -196,14 +203,14 @@ export class TicleService {
       createdAt: ticle.ticle_created_at,
     }));
 
-    const totalPages = Math.ceil(ticles.length / pageSize);
+    const totalPages = Math.ceil(totalTicleCount.count / pageSize);
 
     return {
       ticles: formattedTicles,
       meta: {
         page,
         take: pageSize,
-        totalItems: ticles.length,
+        totalItems: totalTicleCount.count,
         totalPages,
         hasNextPage: page < totalPages,
       },
