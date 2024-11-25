@@ -18,8 +18,8 @@ export class Room {
     return this.router;
   }
 
-  addPeer(socketId: string) {
-    const peer = new Peer(socketId);
+  addPeer(socketId: string, nickname: string) {
+    const peer = new Peer(socketId, nickname);
     this.peers.set(socketId, peer);
     return peer;
   }

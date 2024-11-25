@@ -1,4 +1,5 @@
 import { z } from 'zod';
+
 import { TicleStatus } from './ticleStatus';
 
 export const TicleDetailResponseSchema = z.object({

@@ -60,12 +60,12 @@ export class MediasoupService implements OnModuleInit {
     return this.roomService.createRoom(roomId, router);
   }
 
-  joinRoom(roomId: string, socketId: string) {
+  joinRoom(roomId: string, socketId: string, nickname: string) {
     const room = this.roomService.getRoom(roomId);
     if (room.hasPeer(socketId)) {
       throw new WsException(`Peer ${socketId} already exists`);
     }
-    room.addPeer(socketId);
+    room.addPeer(socketId, nickname);
 
     return room.getRouter().rtpCapabilities;
   }
@@ -111,7 +111,7 @@ export class MediasoupService implements OnModuleInit {
     const producer = await transport.produce({ kind, rtpParameters, appData });
 
     peer.addProducer(producer);
-    return producer;
+    return { nickname: peer.nickname, producerId: producer.id, paused: producer.paused };
   }
 
   async consume(
@@ -146,7 +146,7 @@ export class MediasoupService implements OnModuleInit {
     };
   }
 
-  async getProducers(roomId: string, socketId: string) {
+  getProducers(roomId: string, socketId: string) {
     const room = this.roomService.getRoom(roomId);
 
     const peers = [...room.peers.values()];
@@ -157,10 +157,11 @@ export class MediasoupService implements OnModuleInit {
       [...peer.producers.values()].map(({ id, kind, appData, paused }) => {
         return {
           producerId: id,
-          kind,
-          paused,
           peerId: peer.socketId,
+          nickname: peer.nickname,
+          kind,
           appData: appData,
+          paused,
         };
       })
     );
