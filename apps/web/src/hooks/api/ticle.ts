@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
+import { useNavigate } from '@tanstack/react-router';
 
 import { getTitleList, getTicle, createTicle, applyTicle } from '@/api/ticle';
 
@@ -47,10 +48,13 @@ export const useCreateTicle = () => {
 
 export const useApplyTicle = () => {
   const queryClient = useQueryClient();
+  const navigate = useNavigate({ from: '/ticle/$ticleId' });
 
   return useMutation({
     mutationFn: applyTicle,
     onSuccess: (_, ticleId) => {
+      alert('티클 신청이 완료되었습니다.'); // TODO: toast로 교체
+      navigate({ to: `/dashboard/apply` });
       queryClient.invalidateQueries({ queryKey: ['ticleList'] });
       queryClient.invalidateQueries({ queryKey: ['dashboardTicleList'] });
       queryClient.invalidateQueries({ queryKey: ['applicantsTicle', ticleId] });
