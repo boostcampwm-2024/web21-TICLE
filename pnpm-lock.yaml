@@ -349,6 +349,9 @@ importers:
       tailwind-merge:
         specifier: ^2.5.4
         version: 2.5.4
+      zod:
+        specifier: ^3.23.8
+        version: 3.23.8
     devDependencies:
       '@chromatic-com/storybook':
         specifier: ^3.2.2
