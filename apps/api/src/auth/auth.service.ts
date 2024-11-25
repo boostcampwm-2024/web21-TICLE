@@ -27,8 +27,7 @@ export class AuthService {
     if (!isPasswordValid) {
       throw new UnauthorizedException('잘못된 로그인 정보');
     }
-    const { password, ...result } = user;
-    return result;
+    return user;
   }
 
   async createGuestUser() {
@@ -41,7 +40,11 @@ export class AuthService {
       introduce: `게스트 사용자입니다. `,
       profileImageUrl: `https://static.nid.naver.com/images/web/user/default.png?type=s160`,
     };
-    return this.userService.createLocalUser({ provider: 'local', ...guestUser });
+    const user = await this.userService.findUserByUsername(guestUser.username);
+    if (!user) {
+      return this.userService.createLocalUser({ provider: 'guest', ...guestUser });
+    }
+    return user;
   }
 
   async checkSocialUser(socialUserData: CreateSocialUserDto) {
