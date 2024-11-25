@@ -3,13 +3,14 @@ import { types } from 'mediasoup';
 
 export class Peer {
   socketId: string;
-
+  nickname: string;
   transports: Map<string, types.Transport>;
   producers: Map<string, types.Producer>;
   consumers: Map<string, types.Consumer>;
 
-  constructor(socketId: string) {
+  constructor(socketId: string, nickname: string) {
     this.socketId = socketId;
+    this.nickname = nickname;
     this.transports = new Map();
     this.producers = new Map();
     this.consumers = new Map();
