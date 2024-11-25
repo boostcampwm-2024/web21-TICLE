@@ -15,21 +15,23 @@ const DASHBOARD_ROUTES = {
 
 function DashboardTab() {
   const navigate = useNavigate();
-  const [selectedTab, setSelectedTab] = useState<string>(DASHBOARD_TAB.APPLIED);
+  const [selectedTab, setSelectedTab] = useState<keyof typeof DASHBOARD_TAB>('APPLIED');
 
-  const DASHBOARD_TAB_DATA: TabData[] = [
+  const DASHBOARD_TAB_DATA: TabData<keyof typeof DASHBOARD_TAB>[] = [
     {
-      name: DASHBOARD_TAB.APPLIED,
+      value: 'APPLIED',
+      label: DASHBOARD_TAB.APPLIED,
       onClick: () => {
         navigate({ to: DASHBOARD_ROUTES.APPLIED });
-        setSelectedTab(DASHBOARD_TAB.APPLIED);
+        setSelectedTab('APPLIED');
       },
     },
     {
-      name: DASHBOARD_TAB.OPENED,
+      value: 'OPENED',
+      label: DASHBOARD_TAB.OPENED,
       onClick: () => {
         navigate({ to: DASHBOARD_ROUTES.OPENED });
-        setSelectedTab(DASHBOARD_TAB.OPENED);
+        setSelectedTab('OPENED');
       },
     },
   ];
