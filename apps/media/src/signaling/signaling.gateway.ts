@@ -89,14 +89,13 @@ export class SignalingGateway implements OnGatewayDisconnect {
   ): Promise<client.CreateConsumerRes> {
     const { transportId, producerId, roomId, rtpCapabilities } = createConsumerDto;
 
-    const createConsumerRes = this.mediasoupService.consume(
+    return this.mediasoupService.consume(
       client.id,
       producerId,
       roomId,
       transportId,
       rtpCapabilities
     );
-    return createConsumerRes;
   }
 
   @SubscribeMessage(SOCKET_EVENTS.getProducer)
@@ -131,6 +130,7 @@ export class SignalingGateway implements OnGatewayDisconnect {
     @MessageBody() changeProducerState: server.ChangeProducerStateDto
   ) {
     const { roomId, producerId, status } = changeProducerState;
+
     this.mediasoupService.changeProducerStatus(client.id, changeProducerState);
 
     if (status === STREAM_STATUS.pause) {

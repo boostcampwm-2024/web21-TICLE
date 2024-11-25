@@ -27,6 +27,18 @@ export class Peer {
     return transport;
   }
 
+  checkConsumerByProducerId(producerId: string) {
+    const consumer = Array.from(this.consumers.values()).find(
+      (consumer) => consumer.producerId === producerId
+    );
+
+    if (!consumer) {
+      return true;
+    }
+
+    return false;
+  }
+
   addProducer(producer: types.Producer) {
     this.producers.set(producer.id, producer);
   }

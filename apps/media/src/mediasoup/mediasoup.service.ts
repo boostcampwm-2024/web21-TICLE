@@ -108,9 +108,15 @@ export class MediasoupService implements OnModuleInit {
     const peer = room.getPeer(socketId);
     const transport = peer.getTransport(transportId);
 
-    const producer = await transport.produce({ kind, rtpParameters, appData });
+    const producer = await transport.produce({
+      kind,
+      rtpParameters,
+      appData,
+      paused: appData.mediaTypes !== 'screen',
+    });
 
     peer.addProducer(producer);
+
     return producer;
   }
 
@@ -125,10 +131,15 @@ export class MediasoupService implements OnModuleInit {
     const peer = room.getPeer(socketId);
     const transport = peer.getTransport(transportId);
 
+    const isExistConsumer = peer.checkConsumerByProducerId(producerId);
+
+    if (!isExistConsumer) {
+      return;
+    }
+
     const consumer = await transport.consume({
       producerId,
       rtpCapabilities,
-      paused: false,
     });
 
     consumer.on('producerclose', () => {
