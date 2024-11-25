@@ -102,7 +102,7 @@ export class SignalingGateway implements OnGatewayDisconnect {
   }
 
   @SubscribeMessage(SOCKET_EVENTS.getProducer)
-  async getProducers(
+  getProducers(
     @ConnectedSocket() client: Socket,
     @MessageBody() getProducerDto: server.GetProducersDto
   ) {

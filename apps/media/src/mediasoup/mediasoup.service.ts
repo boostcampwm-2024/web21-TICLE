@@ -146,7 +146,7 @@ export class MediasoupService implements OnModuleInit {
     };
   }
 
-  async getProducers(roomId: string, socketId: string) {
+  getProducers(roomId: string, socketId: string) {
     const room = this.roomService.getRoom(roomId);
 
     const peers = [...room.peers.values()];
@@ -157,10 +157,11 @@ export class MediasoupService implements OnModuleInit {
       [...peer.producers.values()].map(({ id, kind, appData, paused }) => {
         return {
           producerId: id,
-          kind,
-          paused,
           peerId: peer.socketId,
+          nickname: peer.nickname,
+          kind,
           appData: appData,
+          paused,
         };
       })
     );
