@@ -1,9 +1,8 @@
 import { Link } from '@tanstack/react-router';
 import { useState } from 'react';
 
-import Loading from '@/components/common/Loading/Loading';
-import SearchInput from '@/components/common/SearchInput';
 import Select, { Option } from '@/components/common/Select';
+import Tab, { TabData } from '@/components/common/Tab';
 import { useTicleList } from '@/hooks/api/ticle';
 import { formatDateTimeRange } from '@/utils/date';
 
@@ -30,8 +29,28 @@ const SORT_OPTIONS: Option[] = [
   },
 ];
 
+const TICLE_LIST_TAB = {
+  OPENED: '진행 예정 티클',
+  CLOSED: '종료된 티클',
+} as const;
+
 function TicleList() {
   const [sortOption, setSortOption] = useState<Option>(SORT_OPTIONS[0] as Option);
+
+  const [selectedTab, setSelectedTab] = useState<keyof typeof TICLE_LIST_TAB>('OPENED');
+
+  const TICLE_LIST_TAB_DATA: TabData<keyof typeof TICLE_LIST_TAB>[] = [
+    {
+      value: 'OPENED',
+      label: TICLE_LIST_TAB.OPENED,
+      onClick: () => setSelectedTab('OPENED'),
+    },
+    {
+      value: 'CLOSED',
+      label: TICLE_LIST_TAB.CLOSED,
+      onClick: () => setSelectedTab('CLOSED'),
+    },
+  ];
 
   const handleOptionChange = (option: Option) => {
     setSortOption(option);
@@ -46,7 +65,7 @@ function TicleList() {
       <Banner />
       <div className="mt-14 flex w-[80rem] flex-col gap-12 justify-self-center">
         <div className="flex w-full justify-between">
-          <SearchInput placeholder="검색 기능은 준비 중입니다!" className="w-96" />
+          <Tab tabItems={TICLE_LIST_TAB_DATA} selectedTab={selectedTab} />
           <Select
             options={SORT_OPTIONS}
             selectedOption={sortOption}
