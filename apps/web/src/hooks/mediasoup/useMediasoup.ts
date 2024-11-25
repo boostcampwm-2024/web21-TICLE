@@ -13,9 +13,13 @@ const useMediasoup = () => {
 
   const { isConnected, isError } = useSocket();
   const { createRoom } = useRoom();
-
-  const { createRecvTransport, createSendTransport, createDevice, connectExistProducer } =
-    useMediasoupAction();
+  const {
+    createRecvTransport,
+    createSendTransport,
+    createDevice,
+    connectExistProducer,
+    disconnect,
+  } = useMediasoupAction();
   const { startCameraStream, startMicStream, closeStream } = useLocalStreamAction();
   const { consume, filterRemoteStream, pauseRemoteStream, resumeRemoteStream } =
     useRemoteStreamAction();
@@ -81,9 +85,7 @@ const useMediasoup = () => {
 
   useEffect(() => {
     return () => {
-      closeStream('audio');
-      closeStream('video');
-      closeStream('screen');
+      disconnect();
     };
   }, []);
 };
