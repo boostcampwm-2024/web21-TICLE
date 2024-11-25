@@ -27,7 +27,7 @@ function TicleInfoCard({
       <div className="flex gap-5">
         <div className="flex items-center gap-3">
           <h3 className="text-title2 text-main">개설자</h3>
-          <span className="text-body1 text-main">{speakerName}</span>
+          <span className="w-36 text-body1 text-main">{speakerName}</span>
         </div>
         <div className="flex items-center gap-3">
           <h3 className="text-title2 text-main">티클명</h3>
