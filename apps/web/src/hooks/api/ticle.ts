@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
 
 import { getTitleList, getTicle, createTicle, applyTicle } from '@/api/ticle';
 
@@ -10,11 +10,18 @@ interface GetTicleListParams {
 }
 
 export const useTicleList = (params: GetTicleListParams = {}) => {
-  return useQuery({
+  return useInfiniteQuery({
     queryKey: ['ticleList', params],
-    queryFn: () => getTitleList(params),
-    staleTime: 1000 * 60 * 5,
-    placeholderData: (previousData) => previousData,
+    queryFn: ({ pageParam = 1 }) =>
+      getTitleList({
+        ...params,
+        page: pageParam,
+      }),
+    getNextPageParam: (lastPage) => {
+      if (!lastPage.meta.hasNextPage) return undefined;
+      return lastPage.meta.page + 1;
+    },
+    initialPageParam: 1,
   });
 };
 
