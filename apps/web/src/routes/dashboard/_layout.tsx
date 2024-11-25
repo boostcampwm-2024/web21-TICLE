@@ -2,7 +2,7 @@ import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
 
 import BasicLayout from '@/components/common/BasicLayout';
 import DashboardTab from '@/components/dashboard/DashboardTab';
-import Header from '@/components/Header';
+import Header from '@/components/common/Header';
 
 export const Route = createFileRoute('/dashboard')({
   component: RouteComponent,

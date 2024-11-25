@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router';
 import { Fragment, useState } from 'react';
 
+import Empty from '@/components/common/Empty';
 import Loading from '@/components/common/Loading';
 import Select, { Option } from '@/components/common/Select';
 import Tab, { TabData } from '@/components/common/Tab';
@@ -79,6 +80,8 @@ function TicleList() {
           <div className="flex h-80 w-full items-center justify-center">
             <Loading color="primary" />
           </div>
+        ) : data?.pages.length === 0 ? (
+          <Empty />
         ) : (
           data?.pages.map((page) => (
             <Fragment key={page.meta.page}>

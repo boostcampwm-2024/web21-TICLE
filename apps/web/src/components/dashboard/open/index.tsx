@@ -1,5 +1,6 @@
 import { Fragment, useState } from 'react';
 
+import Empty from '@/components/common/Empty';
 import Loading from '@/components/common/Loading';
 import Select, { Option } from '@/components/common/Select';
 import { useDashboardTicleList } from '@/hooks/api/dashboard';
@@ -45,10 +46,12 @@ function Open() {
   return (
     <main className="mt-14 flex w-full flex-col gap-12">
       <Select options={FILTER_OPTIONS} selectedOption={selectedOption} onChange={onOptionChange} />
-      {isLoading ? (
+      {isLoading || !data ? (
         <div className="flex h-80 w-full items-center justify-center">
           <Loading color="primary" />
         </div>
+      ) : !data.pages[0]?.ticles?.length ? (
+        <Empty />
       ) : (
         <div className="flex flex-col gap-6">
           {data?.pages.map((page) => (

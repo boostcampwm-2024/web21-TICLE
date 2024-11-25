@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 
 import BasicLayout from '@/components/common/BasicLayout';
-import Header from '@/components/Header';
+import Header from '@/components/common/Header';
 import Detail from '@/components/ticle/detail';
 
 export const Route = createFileRoute('/ticle/$ticleId')({

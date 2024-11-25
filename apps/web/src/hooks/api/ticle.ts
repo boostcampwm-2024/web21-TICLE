@@ -22,6 +22,7 @@ export const useTicleList = (params: GetTicleListParams = {}) => {
       return lastPage.meta.page + 1;
     },
     initialPageParam: 1,
+    placeholderData: (previousData) => previousData,
   });
 };
 
