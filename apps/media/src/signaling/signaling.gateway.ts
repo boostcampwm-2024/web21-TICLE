@@ -61,7 +61,7 @@ export class SignalingGateway implements OnGatewayDisconnect {
     @MessageBody() createProducerDto: server.CreateProducerDto
   ): Promise<client.CreateProducerRes> {
     const { transportId, kind, rtpParameters, roomId, appData } = createProducerDto;
-    const producer = await this.mediasoupService.produce(
+    const producerData = await this.mediasoupService.produce(
       client.id,
       kind,
       rtpParameters,
@@ -71,12 +71,12 @@ export class SignalingGateway implements OnGatewayDisconnect {
     );
 
     const createProducerRes = {
-      producerId: producer.id,
+      producerId: producerData.producerId,
       peerId: client.id,
-      nickname: producer.nickname,
+      nickname: producerData.nickname,
       kind,
       appData,
-      paused: producer.paused,
+      paused: producerData.paused,
     };
 
     client.to(roomId).emit(SOCKET_EVENTS.newProducer, createProducerRes);

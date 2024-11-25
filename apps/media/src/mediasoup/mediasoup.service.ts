@@ -111,7 +111,7 @@ export class MediasoupService implements OnModuleInit {
     const producer = await transport.produce({ kind, rtpParameters, appData });
 
     peer.addProducer(producer);
-    return { nickname: peer.nickname, ...producer };
+    return { nickname: peer.nickname, producerId: producer.id, paused: producer.paused };
   }
 
   async consume(
