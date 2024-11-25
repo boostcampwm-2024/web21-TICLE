@@ -8,7 +8,6 @@ import { useTicleList } from '@/hooks/api/ticle';
 import useIntersectionObserver from '@/hooks/useIntersectionObserver';
 import { formatDateTimeRange } from '@/utils/date';
 
-import Banner from './Banner';
 import TicleCard from './TicleCard';
 
 const getDateString = (startTime: string, endTime: string) => {
@@ -70,52 +69,41 @@ function TicleList() {
   });
 
   return (
-    <div>
-      <Banner />
-      <div className="mt-20 flex w-[80rem] flex-col gap-12 justify-self-center">
-        <div className="flex w-full justify-between">
-          <Tab tabItems={TICLE_LIST_TAB_DATA} selectedTab={selectedTab} />
-          <Select
-            options={SORT_OPTIONS}
-            selectedOption={sortOption}
-            onChange={handleOptionChange}
-          />
-        </div>
-        <main className="mb-16 mt-5 flex flex-wrap gap-5">
-          {isLoading ? (
-            <div className="flex h-80 w-full items-center justify-center">
-              <Loading color="primary" />
-            </div>
-          ) : (
-            data?.pages.map((page) => (
-              <Fragment key={page.meta.page}>
-                {page.ticles.map((ticle) => (
-                  <Link
-                    key={ticle.id}
-                    to="/ticle/$ticleId"
-                    params={{ ticleId: ticle.id.toString() }}
-                  >
-                    <TicleCard
-                      title={ticle.title}
-                      tags={ticle.tags}
-                      date={getDateString(ticle.startTime, ticle.endTime)}
-                      speaker={ticle.speakerName}
-                      applicantsCount={ticle.applicantsCount}
-                    />
-                  </Link>
-                ))}
-              </Fragment>
-            ))
-          )}
-
-          <div ref={intersectionRef} className="h-10 w-full" aria-hidden />
-          {isFetchingNextPage && (
-            <div className="flex w-full justify-center">
-              <Loading color="primary" />
-            </div>
-          )}
-        </main>
+    <div className="mt-20 flex w-[80rem] flex-col gap-12 justify-self-center">
+      <div className="flex w-full justify-between">
+        <Tab tabItems={TICLE_LIST_TAB_DATA} selectedTab={selectedTab} />
+        <Select options={SORT_OPTIONS} selectedOption={sortOption} onChange={handleOptionChange} />
       </div>
+      <main className="mb-16 mt-5 flex flex-wrap gap-5">
+        {isLoading ? (
+          <div className="flex h-80 w-full items-center justify-center">
+            <Loading color="primary" />
+          </div>
+        ) : (
+          data?.pages.map((page) => (
+            <Fragment key={page.meta.page}>
+              {page.ticles.map((ticle) => (
+                <Link key={ticle.id} to="/ticle/$ticleId" params={{ ticleId: ticle.id.toString() }}>
+                  <TicleCard
+                    title={ticle.title}
+                    tags={ticle.tags}
+                    date={getDateString(ticle.startTime, ticle.endTime)}
+                    speaker={ticle.speakerName}
+                    applicantsCount={ticle.applicantsCount}
+                  />
+                </Link>
+              ))}
+            </Fragment>
+          ))
+        )}
+
+        <div ref={intersectionRef} className="h-10 w-full" aria-hidden />
+        {isFetchingNextPage && (
+          <div className="flex w-full justify-center">
+            <Loading color="primary" />
+          </div>
+        )}
+      </main>
     </div>
   );
 }
