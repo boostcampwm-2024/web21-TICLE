@@ -4,7 +4,7 @@ export const CreateTicleSchema = z.object({
   speakerName: z
     .string()
     .min(1, '발표자 이름은 필수입니다.')
-    .max(10, '발표자 이름은 10자 이내여야 합니다.'),
+    .max(7, '발표자 이름은 7자 이내여야 합니다.'),
 
   speakerEmail: z.string().min(1, '이메일은 필수입니다.').email('올바른 이메일 형식이 아닙니다.'),
 

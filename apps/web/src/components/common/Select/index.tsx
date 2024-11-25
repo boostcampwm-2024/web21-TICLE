@@ -19,17 +19,22 @@ const selectVariants = cva(
     },
   }
 );
+
+export interface Option {
+  label: string;
+  value: string;
+}
 interface Select {
-  options: string[];
+  options: Option[];
   placeholder?: string;
-  selectedOption?: string;
-  onChange?: (value: string) => void;
+  selectedOption?: Option;
+  onChange?: (value: Option) => void;
 }
 
 function Select({ options, placeholder, selectedOption, onChange }: Select) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
-  const handleOptionChange = (option: string) => {
+  const handleOptionChange = (option: Option) => {
     onChange?.(option);
     setIsOpen(false);
   };
@@ -42,7 +47,7 @@ function Select({ options, placeholder, selectedOption, onChange }: Select) {
     setIsOpen((prev) => !prev);
   };
 
-  const handleOptionKeyDown = (e: KeyboardEvent, option: string) => {
+  const handleOptionKeyDown = (e: KeyboardEvent, option: Option) => {
     if (e.key !== 'Enter') {
       return;
     }
@@ -60,25 +65,25 @@ function Select({ options, placeholder, selectedOption, onChange }: Select) {
         onClick={handleSelectToggle}
         aria-expanded={isOpen}
       >
-        <span>{selectedOption || placeholder}</span>
+        <span>{selectedOption?.label || placeholder}</span>
         {isOpen ? <ChevronUpIc aria-hidden="true" /> : <ChevronDownIc aria-hidden="true" />}
       </button>
       {isOpen && (
         <ul
           role="listbox"
-          className="absolute right-0 mt-2 flex w-full flex-col items-center gap-1.5 rounded-base border border-main bg-white p-2"
+          className="absolute right-0 mt-2 flex w-full flex-col items-center gap-1.5 rounded-base border border-main bg-white p-2 shadow-normal"
         >
           {options.map((option) => (
             <li
               className="w-full cursor-pointer rounded-base px-6 py-2.5 text-center hover:bg-teritary"
-              key={option}
+              key={option.value}
               role="option"
               aria-selected={option === selectedOption}
               tabIndex={0}
               onClick={() => handleOptionChange(option)}
               onKeyDown={(e) => handleOptionKeyDown(e, option)}
             >
-              {option}
+              {option.label}
             </li>
           ))}
         </ul>
