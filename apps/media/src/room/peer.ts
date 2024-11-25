@@ -32,11 +32,7 @@ export class Peer {
       (consumer) => consumer.producerId === producerId
     );
 
-    if (!consumer) {
-      return true;
-    }
-
-    return false;
+    return !Boolean(consumer);
   }
 
   addProducer(producer: types.Producer) {
