@@ -50,7 +50,6 @@
 
   * {
     @apply transition-colors duration-200 ease-in-out;
-    @apply transition-transform duration-500 ease-in-out;
   }
 
   input:focus,
@@ -120,5 +119,21 @@
     to {
       transform: translate(0, -0px);
     }
+  }
+}
+
+@layer utilities {
+  *::-webkit-scrollbar {
+    @apply w-2;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: var(--grey-200);
+  }
+
+  *::-webkit-scrollbar-thumb {
+    @apply rounded-full;
+    background: var(--purple-200);
+    cursor: pointer;
   }
 }

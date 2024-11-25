@@ -20,14 +20,14 @@ const FILTER_OPTIONS: Option[] = [
   },
 ];
 
-function Apply() {
+function Open() {
   const [selectedOption, setSelectedOption] = useState<Option>(FILTER_OPTIONS[0] as Option);
   const onOptionChange = (option: Option) => {
     setSelectedOption(option);
   };
 
   const { data: { ticles, meta } = { ticles: [], meta: {} }, isLoading } = useDashboardTicleList({
-    isSpeaker: false,
+    isSpeaker: true,
     page: 1,
     pageSize: 10,
     ...(selectedOption.value && { status: selectedOption.value as 'open' | 'closed' }),
@@ -42,7 +42,6 @@ function Apply() {
             key={ticle.id}
             ticleId={ticle.id}
             ticleTitle={ticle.title}
-            speakerName={ticle.speakerName as string}
             startTime={ticle.startTime}
             endTime={ticle.endTime}
             status={ticle.ticleStatus}
@@ -53,4 +52,4 @@ function Apply() {
   );
 }
 
-export default Apply;
+export default Open;
