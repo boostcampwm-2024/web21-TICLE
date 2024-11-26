@@ -79,6 +79,13 @@ const useLocalStream = () => {
     if (!track) {
       return;
     }
+
+    track.onended = () => {
+      track.stop();
+      closeStream('screen');
+      closeProducer('screen');
+    };
+
     setScreen({ stream, paused: true });
 
     return createProducer('screen', track);
