@@ -107,4 +107,11 @@ export class StreamService {
       throw new Error('Failed to summarize audio with Clova Studio');
     }
   }
+
+  async getSummaryText(ticleId: number) {
+    const summary = await this.summaryRepository.findOne({
+      where: { ticle: { id: ticleId } },
+    });
+    return summary.summaryText;
+  }
 }
