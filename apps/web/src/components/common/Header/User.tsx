@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { Link } from '@tanstack/react-router';
 import axios from 'axios';
 import { Provider } from '@repo/types';
@@ -9,7 +10,7 @@ import useModal from '@/hooks/useModal';
 import Avatar from '../Avatar';
 import Button from '../Button';
 
-const LOGIN_TYPE: Record<Provider, string> = {
+export const LOGIN_TYPE: Record<Provider, string> = {
   github: 'Github 로그인',
   google: 'Google 로그인',
   guest: '게스트 로그인',

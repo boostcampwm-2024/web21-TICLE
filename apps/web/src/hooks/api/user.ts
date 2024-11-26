@@ -14,5 +14,6 @@ export const useUserProfile = (userId: number) => {
   return useQuery({
     queryKey: ['userProfile', userId],
     queryFn: () => getUserProfileByUserId(userId),
+    enabled: !!userId,
   });
 };
