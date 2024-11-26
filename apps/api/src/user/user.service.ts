@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
@@ -8,6 +8,7 @@ import { User } from '@/entity/user.entity';
 
 import { CreateLocalUserDto } from './dto/createLocalUser.dto';
 import { CreateSocialUserDto } from './dto/createSocialUser.dto';
+import { UserProfileDto } from './dto/userProfileDto';
 
 @Injectable()
 export class UserService {
@@ -62,6 +63,19 @@ export class UserService {
     if (!user) {
       return null;
     }
+    return user;
+  }
+
+  async findUserProfileByUserId(userId: number): Promise<UserProfileDto> {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      select: ['id', 'nickname', 'profileImageUrl', 'provider'],
+    });
+
+    if (!user) {
+      throw new NotFoundException(ErrorMessage.USER_NOT_FOUND);
+    }
+
     return user;
   }
 }
