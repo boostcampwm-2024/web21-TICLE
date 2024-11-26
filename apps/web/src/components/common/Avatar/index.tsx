@@ -36,14 +36,7 @@ interface AvatarProps extends HTMLAttributes<HTMLDivElement> {
 
 function Avatar({ alt = 'avatar', src, size, className, ...rest }: AvatarProps) {
   return (
-    <div
-      style={{
-        width: `${size}px`,
-        height: `${size}px`,
-      }}
-      className={cn(avatarVariants({ size }), className)}
-      {...rest}
-    >
+    <div className={cn(avatarVariants({ size }), className)} {...rest}>
       {src && <img src={src} alt={alt} className="h-full w-full object-cover" />}
       {!src && <PersonIc className="h-full w-full fill-weak text-weak" />}
     </div>

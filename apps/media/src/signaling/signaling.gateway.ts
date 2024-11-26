@@ -4,14 +4,18 @@ import {
   OnGatewayDisconnect,
   SubscribeMessage,
   WebSocketGateway,
+  WsException,
 } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { SOCKET_EVENTS, STREAM_STATUS } from '@repo/mediasoup';
 import type { client, server } from '@repo/mediasoup';
 
 import { MediasoupService } from '@/mediasoup/mediasoup.service';
+import { UseFilters } from '@nestjs/common';
+import { WSExceptionFilter } from '@/wsException.filter';
 
 @WebSocketGateway()
+@UseFilters(WSExceptionFilter)
 export class SignalingGateway implements OnGatewayDisconnect {
   constructor(private mediasoupService: MediasoupService) {}
 
@@ -91,14 +95,13 @@ export class SignalingGateway implements OnGatewayDisconnect {
   ): Promise<client.CreateConsumerRes> {
     const { transportId, producerId, roomId, rtpCapabilities } = createConsumerDto;
 
-    const createConsumerRes = this.mediasoupService.consume(
+    return this.mediasoupService.consume(
       client.id,
       producerId,
       roomId,
       transportId,
       rtpCapabilities
     );
-    return createConsumerRes;
   }
 
   @SubscribeMessage(SOCKET_EVENTS.getProducer)
@@ -133,6 +136,7 @@ export class SignalingGateway implements OnGatewayDisconnect {
     @MessageBody() changeProducerState: server.ChangeProducerStateDto
   ) {
     const { roomId, producerId, status } = changeProducerState;
+
     this.mediasoupService.changeProducerStatus(client.id, changeProducerState);
 
     if (status === STREAM_STATUS.pause) {
