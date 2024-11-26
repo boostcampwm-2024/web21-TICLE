@@ -4,9 +4,10 @@ import cn from '@/utils/cn';
 interface EmptyProps {
   title?: string;
   className?: string;
+  imageSize?: number;
 }
 
-function Empty({ title = '항목이 비어있어요!', className }: EmptyProps) {
+function Empty({ title = '항목이 비어있어요!', className, imageSize = 180 }: EmptyProps) {
   return (
     <div
       className={cn(
@@ -18,8 +19,8 @@ function Empty({ title = '항목이 비어있어요!', className }: EmptyProps) 
         src={TicleCharacter}
         alt="흑백 티클 캐릭터"
         className="grayscale"
-        width={180}
-        height={180}
+        width={imageSize}
+        height={imageSize}
       />
       <h1 className="text-head2 text-weak">{title}</h1>
     </div>
