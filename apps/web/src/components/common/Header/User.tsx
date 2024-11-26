@@ -16,8 +16,8 @@ const LOGIN_TYPE: Record<Provider, string> = {
   local: '티클 로그인',
 };
 
-function UserInfo() {
-  const { data, error, isLoading } = useUserProfileOfMe();
+function User() {
+  const { data, error } = useUserProfileOfMe();
   const { isOpen, onOpen, onClose } = useModal();
 
   const isUnauthorized = axios.isAxiosError(error) && error.response?.status === 401;
@@ -52,9 +52,9 @@ function UserInfo() {
 
   return (
     <aside className="flex gap-3">
-      {isUnauthorized || isLoading ? <UnauthorizedContent /> : <AuthorizedContent />}
+      {isUnauthorized ? <UnauthorizedContent /> : <AuthorizedContent />}
     </aside>
   );
 }
 
-export default UserInfo;
+export default User;

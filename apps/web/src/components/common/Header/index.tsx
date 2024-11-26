@@ -2,7 +2,7 @@ import { Link } from '@tanstack/react-router';
 
 import TicleLogo from '@/assets/ticle.svg?react';
 
-import UserInfo from './UserInfo';
+import User from './User';
 
 const NAV_STYLE = 'hover:text-hover text-title1 text-alt transition [&.active]:text-primary';
 
@@ -21,7 +21,7 @@ function Header() {
         </Link>
       </nav>
       {/* TODO: User 로그인시 핸들링 */}
-      <UserInfo />
+      <User />
     </header>
   );
 }
