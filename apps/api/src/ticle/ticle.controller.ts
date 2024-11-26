@@ -36,13 +36,13 @@ export class TicleController {
     return this.ticleService.getTicleList(parsedQuery);
   }
 
-  @Get('search')
-  getTicleSearchList() {}
-
   @Get(':ticleId')
   @UseGuards(JwtAuthGuard)
-  getTicle(@Param('ticleId') ticleId: number): Promise<TickleDetailResponseDto> {
-    return this.ticleService.getTicleByTicleId(ticleId);
+  getTicle(
+    @GetUserId() userId: number,
+    @Param('ticleId') ticleId: number
+  ): Promise<TickleDetailResponseDto> {
+    return this.ticleService.getTicleByTicleId(userId, ticleId);
   }
 
   @Post(':ticleId/apply')
