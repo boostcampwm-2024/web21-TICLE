@@ -10,9 +10,10 @@ interface UserProfileOfMeProps {
   isOpen: boolean;
   onClose: () => void;
   speakerId: number;
+  nickname: string;
 }
 
-function UserProfileDialog({ isOpen, onClose, speakerId }: UserProfileOfMeProps) {
+function UserProfileDialog({ isOpen, onClose, speakerId, nickname }: UserProfileOfMeProps) {
   const { data } = useUserProfile(speakerId);
   const navigate = useNavigate({ from: '/ticle/$ticleId' });
 
@@ -26,7 +27,7 @@ function UserProfileDialog({ isOpen, onClose, speakerId }: UserProfileOfMeProps)
   const loginType = data?.provider && LOGIN_TYPE[data.provider];
   return (
     <Dialog.Root isOpen={isOpen} onClose={onClose} className="w-96">
-      <Dialog.Title align="center">{data.nickname}님의 프로필</Dialog.Title>
+      <Dialog.Title align="center">{nickname}님의 프로필</Dialog.Title>
       <Dialog.Close onClose={onClose} />
       <Dialog.Content className="w-full">
         <div className="flex flex-col gap-6">

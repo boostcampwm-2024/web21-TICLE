@@ -12,7 +12,7 @@ function UserInfo({ profileImageUrl, nickname, loginType }: UserInfoProps) {
       <Avatar size="md" src={profileImageUrl} />
       <div className="flex flex-col gap-2.5">
         <div className="flex gap-2.5">
-          <span className="text-title2 text-main">이름</span>
+          <span className="text-title2 text-main">아이디</span>
           <span className="text-body3 text-main">{nickname}</span>
         </div>
         <div className="flex gap-2.5">

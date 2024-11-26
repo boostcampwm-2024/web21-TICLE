@@ -61,11 +61,16 @@ function Detail() {
               className="flex cursor-pointer flex-col items-center gap-3"
               onClick={handleProfileClick}
             >
-              <Avatar size="lg" />
+              <Avatar size="lg" src={data.speakerImgUrl} />
               <span className="text-title2 text-main">{data.speakerName}</span>
             </div>
             {isOpen && (
-              <UserProfileDialog isOpen={isOpen} onClose={onClose} speakerId={data.speakerId} />
+              <UserProfileDialog
+                isOpen={isOpen}
+                onClose={onClose}
+                speakerId={data.speakerId}
+                nickname={data.speakerName}
+              />
             )}
             <div className="w-full rounded-lg bg-teritary p-4 text-body2 text-main">
               {data.speakerIntroduce}
