@@ -1,6 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { Provider } from '@repo/types';
 
 import { CreateSocialUserDto } from '@/user/dto/createSocialUser.dto';
 import { UserService } from '@/user/user.service';
@@ -15,7 +16,7 @@ export class AuthService {
   ) {}
 
   async signupLocal(signupRequestDto: LocalSignupRequestDto) {
-    return this.userService.createLocalUser({ provider: 'local', ...signupRequestDto });
+    return this.userService.createLocalUser({ provider: Provider.local, ...signupRequestDto });
   }
 
   async validateLocalLogin(username: string, inputPassword: string) {
@@ -45,7 +46,7 @@ export class AuthService {
     };
     const user = await this.userService.findUserByUsername(guestUser.username);
     if (!user) {
-      return this.userService.createLocalUser({ provider: 'guest', ...guestUser });
+      return this.userService.createLocalUser({ provider: Provider.guest, ...guestUser });
     }
     return user;
   }
