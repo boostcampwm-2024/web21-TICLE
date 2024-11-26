@@ -10,16 +10,13 @@ import { formatDateTimeRange } from '@/utils/date';
 
 function Detail() {
   const { ticleId } = useParams({ from: '/ticle/$ticleId' });
-  const navigate = useNavigate({ from: `/ticle/${ticleId}` });
-  const { data, isLoading } = useTicle(ticleId);
+  const { data } = useTicle(ticleId);
 
   const { mutate } = useApplyTicle();
 
   const handleApplyButtonClick = () => {
     mutate(ticleId);
-    navigate({ to: `/dashboard/apply` });
   };
-  // TODO: 티클 신청 완료시 alert띄우기
 
   if (!data) return;
   const { dateStr, timeRangeStr } = formatDateTimeRange(data.startTime, data.endTime);

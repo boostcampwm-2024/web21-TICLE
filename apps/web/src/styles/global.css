@@ -69,39 +69,6 @@
     opacity: 0;
   }
 
-  .loader {
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background-color: #fff;
-    box-shadow:
-      32px 0 #fff,
-      -32px 0 #fff;
-    position: relative;
-    animation: flash 0.5s ease-out infinite alternate;
-  }
-
-  @keyframes flash {
-    0% {
-      background-color: #fff2;
-      box-shadow:
-        32px 0 #fff2,
-        -32px 0 #fff;
-    }
-    50% {
-      background-color: #fff;
-      box-shadow:
-        32px 0 #fff2,
-        -32px 0 #fff2;
-    }
-    100% {
-      background-color: #fff2;
-      box-shadow:
-        32px 0 #fff,
-        -32px 0 #fff2;
-    }
-  }
-
   .floating {
     animation-name: floating;
     animation-duration: 3s;
@@ -120,6 +87,20 @@
       transform: translate(0, -0px);
     }
   }
+}
+
+.custom-dashed {
+  position: relative;
+  border-radius: 8px;
+  background-clip: padding-box;
+}
+
+.custom-dashed::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  border: 3px dashed var(--grey-300);
 }
 
 @layer utilities {
