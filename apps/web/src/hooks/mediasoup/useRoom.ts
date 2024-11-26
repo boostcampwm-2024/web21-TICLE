@@ -1,23 +1,28 @@
-import { MutableRefObject } from 'react';
-import { Socket } from 'socket.io-client';
+import { useParams } from '@tanstack/react-router';
 import type { client } from '@repo/mediasoup';
 import { SOCKET_EVENTS } from '@repo/mediasoup';
 
-const useRoom = (socketRef: MutableRefObject<Socket | null>, roomId: string) => {
+import { useMediasoupState } from '@/contexts/mediasoup/context';
+
+interface JoinRoomRes {
+  rtpCapabilities: client.RtpCapabilities;
+}
+const useRoom = () => {
+  const { socketRef } = useMediasoupState();
+  const { ticleId: roomId } = useParams({ from: '/live/$ticleId' });
+
   const createRoom = async () => {
     const socket = socketRef.current;
 
     if (!socket) return;
 
+    const data = { roomId };
+
     return new Promise<client.RtpCapabilities>((resolve) => {
-      socket.emit(SOCKET_EVENTS.createRoom, { roomId }, () => {
-        socket.emit(
-          SOCKET_EVENTS.joinRoom,
-          { roomId },
-          async ({ rtpCapabilities }: { rtpCapabilities: client.RtpCapabilities }) => {
-            resolve(rtpCapabilities);
-          }
-        );
+      socket.emit(SOCKET_EVENTS.createRoom, data, () => {
+        socket.emit(SOCKET_EVENTS.joinRoom, data, ({ rtpCapabilities }: JoinRoomRes) => {
+          resolve(rtpCapabilities);
+        });
       });
     });
   };

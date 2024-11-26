@@ -1,25 +1,73 @@
-import { useEffect, useRef } from 'react';
+import { useNavigate } from '@tanstack/react-router';
+import { MutableRefObject, useCallback, useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
+import { SOCKET_EVENTS } from '@repo/mediasoup';
 
-type SocketType = Socket;
+import { ENV } from '@/constants/env';
 
-const useSocket = (url: string) => {
-  const socketRef = useRef<SocketType | null>(null);
+const SOCKET_OPTIONS = {
+  transports: ['websocket', 'polling'],
+  withCredentials: true,
+  autoConnect: true,
+  reconnection: true,
+  reconnectionAttempts: 5,
+  reconnectionDelay: 1000,
+};
 
-  // TODO: io 옵션 확인
+interface UseSocketReturn {
+  socketRef: MutableRefObject<Socket | null>;
+  isConnected: boolean;
+  isError: Error | null;
+}
+
+const useSocket = (): UseSocketReturn => {
+  const navigate = useNavigate({ from: '/live/$ticleId' });
+
+  const socketRef = useRef<Socket | null>(null);
+
+  const [isConnected, setIsConnected] = useState(false);
+  const [isError, setIsError] = useState<Error | null>(null);
+
+  const initSocket = useCallback(() => {
+    const socket = io(ENV.WS_URL, SOCKET_OPTIONS);
+
+    socketRef.current = socket;
+
+    return socket;
+  }, []);
+
+  const initSocketEvents = useCallback(
+    (socket: Socket) => {
+      socket.on(SOCKET_EVENTS.connect, () => {
+        setIsConnected(true);
+        setIsError(null);
+      });
+
+      socket.on(SOCKET_EVENTS.disconnect, () => {
+        navigate({ to: '/', replace: true });
+        setIsConnected(false);
+        setIsError(null);
+      });
+
+      socket.on(SOCKET_EVENTS.connectError, (error) => {
+        setIsConnected(false);
+        setIsError(new Error(`socket connection error: ${error}`));
+      });
+    },
+    [navigate]
+  );
+
   useEffect(() => {
-    socketRef.current = io(url, {
-      withCredentials: true,
-      transports: ['websocket', 'polling'],
-      autoConnect: true,
-    });
+    const socket = initSocket();
+
+    initSocketEvents(socket);
 
     return () => {
-      socketRef.current?.disconnect();
+      socket.disconnect();
     };
-  }, [url]);
+  }, [initSocket, initSocketEvents]);
 
-  return socketRef;
+  return { socketRef, isConnected, isError };
 };
 
 export default useSocket;

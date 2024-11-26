@@ -1,11 +1,8 @@
-/* eslint-disable jsx-a11y/no-static-element-interactions */
-/* eslint-disable jsx-a11y/click-events-have-key-events */
 import { cva } from 'class-variance-authority';
-import { useEffect } from 'react';
+
+import { StreamData } from '@/components/live/StreamView';
 
 import VideoPlayer from './VideoPlayer';
-
-import { StreamData } from '.';
 
 const containerVariants = cva('flex-1 gap-5 overflow-hidden', {
   variants: {
@@ -42,9 +39,9 @@ function VideoGrid({
 
   return (
     <div className={containerVariants({ layout: isFixedGrid ? 'grid' : 'flex' })}>
-      {videoStreamData.map((streamData) => (
+      {videoStreamData.map((streamData, idx) => (
         <div
-          key={streamData.consumer?.id}
+          key={`${streamData.consumer?.id}${idx}`}
           className="aspect-video"
           style={{ width: videoWidth }}
           onClick={() => onVideoClick(streamData.consumer?.id)}

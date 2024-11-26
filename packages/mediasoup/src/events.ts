@@ -1,6 +1,7 @@
 export const SOCKET_EVENTS = {
   // Socket.IO 기본 연결 이벤트
   connect: 'connect',
+  connectError: 'connect_error',
   disconnect: 'disconnect',
   error: 'error',
   reconnect: 'reconnect',
