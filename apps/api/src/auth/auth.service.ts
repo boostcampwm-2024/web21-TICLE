@@ -38,7 +38,7 @@ export class AuthService {
       email: `guet_email@guest.com`,
       nickname: `guest_${randomNum}`,
       introduce: `게스트 사용자입니다. `,
-      profileImageUrl: `https://static.nid.naver.com/images/web/user/default.png?type=s160`,
+      profileImageUrl: `https://cataas.com/cat?${Date.now()}`,
     };
     const user = await this.userService.findUserByUsername(guestUser.username);
     if (!user) {
