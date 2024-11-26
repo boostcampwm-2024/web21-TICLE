@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
-import { TicleStatus } from '@repo/types';
+import { ErrorMessage, TicleStatus } from '@repo/types';
 
 import { Applicant } from '@/entity/applicant.entity';
 import { Tag } from '@/entity/tag.entity';
@@ -73,7 +73,7 @@ export class TicleService {
     const ticle = await this.getTicleWithSpeakerIdByTicleId(ticleId);
     const user = await this.getUserById(userId);
     if (ticle.speaker.id === userId) {
-      throw new BadRequestException('speaker cannot apply their ticle');
+      throw new BadRequestException(ErrorMessage.CANNOT_REQUEST_OWN_TICLE);
     }
     await this.throwIfExistApplicant(ticleId, userId);
 
@@ -94,7 +94,7 @@ export class TicleService {
     });
 
     if (existingApplication) {
-      throw new BadRequestException('already applied to this ticle');
+      throw new BadRequestException(ErrorMessage.TICLE_ALREADY_REQUESTED);
     }
     return;
   }
@@ -112,7 +112,7 @@ export class TicleService {
       },
     });
     if (!ticle) {
-      throw new NotFoundException(`cannot found ticle`);
+      throw new NotFoundException(ErrorMessage.TICLE_NOT_FOUND);
     }
     return ticle;
   }
@@ -123,7 +123,7 @@ export class TicleService {
     });
 
     if (!user) {
-      throw new NotFoundException(`cannot found user`);
+      throw new NotFoundException(ErrorMessage.USER_NOT_FOUND);
     }
     return user;
   }
@@ -138,7 +138,7 @@ export class TicleService {
       .getOne();
 
     if (!ticle) {
-      throw new NotFoundException('티클을 찾을 수 없습니다.');
+      throw new NotFoundException(ErrorMessage.TICLE_NOT_FOUND);
     }
     const { tags, speaker, ...ticleData } = ticle;
 
@@ -184,6 +184,13 @@ export class TicleService {
     }
 
     const ticles = await queryBuilder.offset(skip).limit(pageSize).getRawMany();
+    const countQuery = this.ticleRepository
+      .createQueryBuilder('ticle')
+      .select('COUNT(*) as count')
+      .where('ticle.ticleStatus = :status', {
+        status: isOpen ? TicleStatus.OPEN : TicleStatus.CLOSED,
+      });
+    const totalTicleCount = await countQuery.getRawOne();
 
     const formattedTicles = ticles.map((ticle) => ({
       id: ticle.ticle_id,
@@ -196,14 +203,14 @@ export class TicleService {
       createdAt: ticle.ticle_created_at,
     }));
 
-    const totalPages = Math.ceil(ticles.length / pageSize);
+    const totalPages = Math.ceil(totalTicleCount.count / pageSize);
 
     return {
       ticles: formattedTicles,
       meta: {
         page,
         take: pageSize,
-        totalItems: ticles.length,
+        totalItems: totalTicleCount.count,
         totalPages,
         hasNextPage: page < totalPages,
       },

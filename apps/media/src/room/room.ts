@@ -2,6 +2,7 @@ import { WsException } from '@nestjs/websockets';
 import { Router } from 'mediasoup/node/lib/RouterTypes';
 
 import { Peer } from './peer';
+import { ErrorMessage } from '@repo/types';
 
 export class Room {
   id: string;
@@ -28,7 +29,7 @@ export class Room {
     const peer = this.peers.get(socketId);
 
     if (!peer) {
-      throw new WsException(`방에 피어가 존재하지 않습니다.`);
+      throw new WsException(ErrorMessage.PEER_NOT_FOUND_IN_ROOM);
     }
 
     return peer;

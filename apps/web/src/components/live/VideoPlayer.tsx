@@ -6,7 +6,7 @@ import MicOnIc from '@/assets/icons/mic-on.svg?react';
 
 import Avatar from '../common/Avatar';
 import Badge from '../common/Badge';
-import Loading from '../common/Loading/Loading';
+import Loading from '../common/Loading';
 
 const videoVariants = cva('h-full w-full rounded-lg object-cover transition-opacity duration-300', {
   variants: {

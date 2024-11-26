@@ -21,10 +21,10 @@ const TicleCard = ({
   speakerProfileImg,
 }: TicleCardProps) => {
   return (
-    <article className="flex w-[19rem] cursor-pointer flex-col gap-14 rounded-lg border border-main bg-white px-6 py-8 shadow-normal transition-transform duration-500 ease-in-out hover:-translate-y-3 hover:border-primary hover:shadow-up">
+    <article className="flex h-[23rem] w-[19rem] cursor-pointer flex-col justify-between gap-14 rounded-lg border border-main bg-white px-6 py-8 shadow-normal transition-transform duration-500 ease-in-out hover:-translate-y-3 hover:border-primary hover:shadow-up">
       <div className="flex flex-col gap-4">
         <h3 className="text-head3 text-main">{title}</h3>
-        <div className="flex gap-2">
+        <div className="flex h-20 flex-wrap gap-2">
           {tags.map((tag) => (
             <Badge key={tag}>{tag}</Badge>
           ))}

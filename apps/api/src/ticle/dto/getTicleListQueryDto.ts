@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 
 import { SortType } from '../sortType.enum';
 
@@ -25,7 +26,8 @@ export class GetTicleListQueryDto {
     default: true,
     required: false,
   })
-  isOpen?: boolean = true;
+  @Transform(({ value }) => value === 'true')
+  isOpen?: boolean;
 
   @ApiProperty({
     enum: SortType,

@@ -3,6 +3,7 @@ import { WsException } from '@nestjs/websockets';
 import { Router } from 'mediasoup/node/lib/RouterTypes';
 
 import { Room } from './room';
+import { ErrorMessage } from '@repo/types';
 
 @Injectable()
 export class RoomService {
@@ -23,7 +24,7 @@ export class RoomService {
   getRoom(roomId: string) {
     const room = this.rooms.get(roomId);
     if (!room) {
-      throw new WsException(`방이 존재하지 않습니다.`);
+      throw new WsException(ErrorMessage.ROOM_NOT_FOUND);
     }
     return room;
   }
