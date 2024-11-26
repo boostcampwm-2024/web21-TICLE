@@ -128,7 +128,7 @@ export class TicleService {
     return user;
   }
 
-  async getTicleByTicleId(ticleId: number): Promise<TickleDetailResponseDto> {
+  async getTicleByTicleId(userId: number, ticleId: number): Promise<TickleDetailResponseDto> {
     const ticle = await this.ticleRepository
       .createQueryBuilder('ticle')
       .leftJoinAndSelect('ticle.tags', 'tags')
@@ -146,6 +146,7 @@ export class TicleService {
       ...ticleData,
       tags: tags.map((tag) => tag.name),
       speakerImgUrl: speaker.profileImageUrl,
+      isOwner: speaker.id === userId,
     };
   }
 

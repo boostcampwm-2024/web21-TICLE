@@ -56,4 +56,10 @@ export class TickleDetailResponseDto {
     description: '발표자 프로필 이미지 Url',
   })
   speakerImgUrl: string;
+
+  @ApiProperty({
+    example: 'true',
+    description: '티클의 호스트 여부',
+  })
+  isOwner: boolean;
 }
