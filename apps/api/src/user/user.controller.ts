@@ -9,7 +9,7 @@ import { UserService } from './user.service';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Get()
+  @Get('me')
   @UseGuards(JwtAuthGuard)
   async getUserProfile(@GetUserId() userId: number) {
     return await this.userService.findUserProfileOfMeByUserId(userId);
