@@ -133,7 +133,8 @@ export class TicleService {
       .createQueryBuilder('ticle')
       .leftJoinAndSelect('ticle.tags', 'tags')
       .leftJoinAndSelect('ticle.speaker', 'speaker')
-      .select(['ticle', 'tags', 'speaker.id', 'speaker.profileImageUrl'])
+      .leftJoinAndSelect('ticle.applicants', 'applicants')
+      .select(['ticle', 'tags', 'speaker.id', 'speaker.profileImageUrl', 'applicants'])
       .where('ticle.id = :id', { id: ticleId })
       .getOne();
 
@@ -142,11 +143,14 @@ export class TicleService {
     }
     const { tags, speaker, ...ticleData } = ticle;
 
+    const alreadyApplied = ticle.applicants.some((applicnat) => applicnat.id === userId);
+
     return {
       ...ticleData,
       tags: tags.map((tag) => tag.name),
       speakerImgUrl: speaker.profileImageUrl,
       isOwner: speaker.id === userId,
+      alreadyApplied: alreadyApplied,
     };
   }
 

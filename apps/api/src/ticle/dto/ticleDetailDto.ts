@@ -62,4 +62,10 @@ export class TickleDetailResponseDto {
     description: '티클의 호스트 여부',
   })
   isOwner: boolean;
+
+  @ApiProperty({
+    example: 'true',
+    description: '이미 참가신청을 했는지 여부',
+  })
+  alreadyApplied: boolean;
 }
