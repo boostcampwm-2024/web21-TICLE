@@ -42,6 +42,7 @@ export const useCreateTicle = () => {
     mutationFn: createTicle,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['ticleList'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboardTicleList'] });
     },
   });
 };
