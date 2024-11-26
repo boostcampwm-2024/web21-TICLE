@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 
-import { logIn, signUp, oauthLogin, signOut } from '@/api/auth';
+import { logIn, signUp, signOut } from '@/api/auth';
 
 export const useLogIn = () => {
   const navigate = useNavigate();
@@ -33,11 +33,5 @@ export const useSignOut = () => {
     onSuccess: () => {
       navigate({ to: '/' });
     },
-  });
-};
-
-export const useOauthLogin = () => {
-  return useMutation({
-    mutationFn: (provider: 'google' | 'github') => oauthLogin(provider),
   });
 };
