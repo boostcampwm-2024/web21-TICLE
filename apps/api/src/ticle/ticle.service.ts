@@ -39,6 +39,7 @@ export class TicleService {
       applicants: [],
       summary: null,
       tags: tags,
+      profileImageUrl: user.profileImageUrl,
     });
 
     return await this.ticleRepository.save(newTicle);
@@ -162,6 +163,7 @@ export class TicleService {
         'ticle.endTime',
         'ticle.speakerName',
         'ticle.createdAt',
+        'ticle.profileImageUrl',
       ])
       .addSelect('GROUP_CONCAT(DISTINCT tags.name)', 'tagNames')
       .addSelect('COUNT(DISTINCT applicant.id)', 'applicantCount')
@@ -202,6 +204,7 @@ export class TicleService {
       speakerName: ticle.ticle_speaker_name,
       applicantsCount: ticle.applicantCount,
       createdAt: ticle.ticle_created_at,
+      profileImageUrl: ticle.ticle_profile_image_url,
     }));
 
     const totalPages = Math.ceil(totalTicleCount.count / pageSize);

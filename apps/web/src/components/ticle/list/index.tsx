@@ -93,6 +93,7 @@ function TicleList() {
                     date={getDateString(ticle.startTime, ticle.endTime)}
                     speaker={ticle.speakerName}
                     applicantsCount={ticle.applicantsCount}
+                    speakerProfileImg={ticle.profileImageUrl}
                   />
                 </Link>
               ))}
