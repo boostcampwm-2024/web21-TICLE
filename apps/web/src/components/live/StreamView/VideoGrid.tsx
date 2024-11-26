@@ -4,11 +4,11 @@ import { StreamData } from '@/components/live/StreamView';
 
 import VideoPlayer from './VideoPlayer';
 
-const containerVariants = cva('flex-1 gap-5 overflow-hidden', {
+const containerVariants = cva('h-full flex-1 justify-center gap-5 overflow-hidden', {
   variants: {
     layout: {
-      grid: `grid grid-cols-3`,
-      flex: 'flex flex-wrap content-center justify-center',
+      grid: `grid grid-cols-3 items-center justify-center gap-5`,
+      flex: 'flex flex-wrap items-center justify-center',
     },
   },
   defaultVariants: {
@@ -16,34 +16,19 @@ const containerVariants = cva('flex-1 gap-5 overflow-hidden', {
   },
 });
 
-const getVideoWidth = (isFixedGrid: boolean, columnCount: number) => {
-  return isFixedGrid ? '100%' : `calc((100% - ${columnCount * 20}px) /${columnCount})`;
-};
-
 interface VideoGridProps {
   videoStreamData: StreamData[];
-  isFixedGrid: boolean;
-  columnCount: number;
   onVideoClick: (consumerId?: string) => void;
   getAudioMutedState: (socketId?: string) => boolean;
 }
 
-function VideoGrid({
-  videoStreamData,
-  isFixedGrid,
-  columnCount,
-  onVideoClick,
-  getAudioMutedState,
-}: VideoGridProps) {
-  const videoWidth = getVideoWidth(isFixedGrid, columnCount);
-
+function VideoGrid({ videoStreamData, onVideoClick, getAudioMutedState }: VideoGridProps) {
   return (
-    <div className={containerVariants({ layout: isFixedGrid ? 'grid' : 'flex' })}>
+    <div className={containerVariants({ layout: videoStreamData.length > 3 ? 'grid' : 'flex' })}>
       {videoStreamData.map((streamData, idx) => (
         <div
           key={`${streamData.consumer?.id}${idx}`}
-          className="aspect-video"
-          style={{ width: videoWidth }}
+          className="h-full w-full flex-1 overflow-hidden"
           onClick={() => onVideoClick(streamData.consumer?.id)}
         >
           <VideoPlayer
