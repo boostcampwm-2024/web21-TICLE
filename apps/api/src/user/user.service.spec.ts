@@ -16,7 +16,6 @@ jest.mock('bcrypt', () => ({
 
 describe('UserService', () => {
   let service: UserService;
-  let userRepository: Repository<User>;
 
   // Mock Repository
   const mockUserRepository = {
@@ -38,7 +37,6 @@ describe('UserService', () => {
     }).compile();
 
     service = module.get<UserService>(UserService);
-    userRepository = module.get<Repository<User>>(getRepositoryToken(User));
 
     // Clear all mocks before each test
     jest.clearAllMocks();

@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 
@@ -15,10 +15,6 @@ export class AuthService {
   ) {}
 
   async signupLocal(signupRequestDto: LocalSignupRequestDto) {
-    const existingUser = await this.userService.findUserByUsername(signupRequestDto.username);
-    if (existingUser) {
-      throw new BadRequestException('이미 사용 중인 사용자 이름입니다.');
-    }
     return this.userService.createLocalUser({ provider: 'local', ...signupRequestDto });
   }
 

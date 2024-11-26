@@ -1,6 +1,13 @@
-import { CreateTicleType } from '@repo/types';
+import {
+  CreateTicleType,
+  TicleListResponse,
+  TicleListResponseSchema,
+  TicleDetailResponse,
+  TicleDetailResponseSchema,
+} from '@repo/types';
 
 import axiosInstance from '@/api/axios';
+import request from '@/hooks/api/request';
 
 type SortType = 'newest' | 'oldest' | 'trending';
 
@@ -12,15 +19,20 @@ interface GetTicleListParams {
 }
 
 const getTitleList = async (params: GetTicleListParams = {}) => {
-  const { data } = await axiosInstance.get('/ticle/list', { params });
-
-  return data;
+  return request<TicleListResponse>({
+    method: 'GET',
+    url: '/ticle/list',
+    params,
+    schema: TicleListResponseSchema,
+  });
 };
 
 const getTicle = async (ticleId: string) => {
-  const { data } = await axiosInstance.get(`/ticle/${ticleId}`);
-
-  return data;
+  return request<TicleDetailResponse>({
+    method: 'GET',
+    url: `/ticle/${ticleId}`,
+    schema: TicleDetailResponseSchema,
+  });
 };
 
 const createTicle = async (body: CreateTicleType) => {

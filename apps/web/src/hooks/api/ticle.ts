@@ -14,6 +14,7 @@ export const useTicleList = (params: GetTicleListParams = {}) => {
     queryKey: ['ticleList', params],
     queryFn: () => getTitleList(params),
     staleTime: 1000 * 60 * 5,
+    placeholderData: (previousData) => previousData,
   });
 };
 
@@ -42,7 +43,9 @@ export const useApplyTicle = () => {
   return useMutation({
     mutationFn: applyTicle,
     onSuccess: (_, ticleId) => {
-      queryClient.invalidateQueries({ queryKey: ['ticle', ticleId] });
+      queryClient.invalidateQueries({ queryKey: ['ticleList'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboardTicleList'] });
+      queryClient.invalidateQueries({ queryKey: ['applicantsTicle', ticleId] });
     },
   });
 };
