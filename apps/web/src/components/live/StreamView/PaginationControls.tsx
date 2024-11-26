@@ -1,12 +1,19 @@
+import { ReactNode } from 'react';
+
 import ChevronLeftIc from '@/assets/icons/chevron-left.svg?react';
 import ChevronRightIc from '@/assets/icons/chevron-right.svg?react';
+import cn from '@/utils/cn';
 
 interface PaginationControlsProps {
   isFirstPage: boolean;
   isLastPage: boolean;
   onNextPage: () => void;
   onPrevPage: () => void;
-  className?: string;
+
+  leftClassName?: string;
+  rightClassName?: string;
+
+  children: ReactNode;
 }
 
 function PaginationControls({
@@ -14,31 +21,38 @@ function PaginationControls({
   isLastPage,
   onNextPage,
   onPrevPage,
-  className,
+  leftClassName,
+  rightClassName,
+  children,
 }: PaginationControlsProps) {
-  if (isFirstPage && isLastPage) return;
-
   return (
-    <div className={className}>
+    <>
       {!isFirstPage && (
         <button
           type="button"
           onClick={onPrevPage}
-          className="absolute left-[-45px] flex h-full items-center"
+          className={cn([
+            'absolute left-0 top-1/2 flex -translate-y-1/2 transform items-center',
+            leftClassName,
+          ])}
         >
           <ChevronLeftIc />
         </button>
       )}
+      {children}
       {!isLastPage && (
         <button
           type="button"
-          className="absolute right-[-45px] flex h-full items-center"
+          className={cn([
+            'absolute right-0 top-1/2 flex -translate-y-1/2 transform items-center',
+            rightClassName,
+          ])}
           onClick={onNextPage}
         >
           <ChevronRightIc />
         </button>
       )}
-    </div>
+    </>
   );
 }
 
