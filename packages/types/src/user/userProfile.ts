@@ -6,7 +6,12 @@ export const UserProfileSchema = z.object({
   nickname: z.string(),
   profileImageUrl: z.string().url(),
   provider: z.enum([Provider.github, Provider.google, Provider.guest]),
-  ticles: z.array(z.string()),
+  ticleInfo: z.array(
+    z.object({
+      title: z.string(),
+      ticleId: z.number(),
+    })
+  ),
 });
 
 export type UserProfileResponse = z.infer<typeof UserProfileSchema>;

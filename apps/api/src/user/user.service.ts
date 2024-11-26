@@ -84,7 +84,7 @@ export class UserService {
     const user = await this.userRepository
       .createQueryBuilder('user')
       .leftJoin('user.ticles', 'ticles')
-      .addSelect('ticles.title')
+      .addSelect(['ticles.title', 'ticles.id'])
       .where('user.id = :userId', { userId: userId })
       .getOne();
 
@@ -92,13 +92,17 @@ export class UserService {
       throw new NotFoundException(ErrorMessage.USER_NOT_FOUND);
     }
 
-    const ticles = user.ticles || [];
+    const ticleInfo = user.ticles.map((ticle) => ({
+      title: ticle.title,
+      ticleId: ticle.id,
+    }));
+
     return {
       id: user.id,
       nickname: user.nickname,
       profileImageUrl: user.profileImageUrl,
       provider: user.provider,
-      ticles: ticles.map((ticle) => ticle.title),
+      ticleInfo: ticleInfo,
     };
   }
 }

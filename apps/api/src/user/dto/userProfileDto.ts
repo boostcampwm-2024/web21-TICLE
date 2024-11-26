@@ -1,6 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Provider } from '@repo/types';
 
+interface TicleInfo {
+  title: string;
+  ticleId: number;
+}
 export class UserProfileDto {
   @ApiProperty({
     example: '1',
@@ -27,8 +31,13 @@ export class UserProfileDto {
   provider: Provider;
 
   @ApiProperty({
-    example: ['개발자를 위한 피그마', '야, 너도 부캠할 수 있어'],
+    example: [
+      {
+        title: '야, 너두 부캠할 수 있어',
+        ticleId: 1,
+      },
+    ],
     description: '유저가 개설한 티클 목록',
   })
-  ticles: string[];
+  ticleInfo: TicleInfo[];
 }
