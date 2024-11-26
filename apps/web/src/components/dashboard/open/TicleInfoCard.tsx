@@ -32,6 +32,11 @@ function TicleInfoCard({ ticleId, ticleTitle, startTime, endTime, status }: Ticl
     navigate({ to: `/live/${ticleId}` });
   };
 
+  const handleApplicantsDialogOpen = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    onOpen();
+  };
+
   return (
     <Link to={`/ticle/${ticleId}`}>
       <div className="flex items-center justify-between rounded-lg border border-main bg-white p-6 shadow-normal">
@@ -48,7 +53,7 @@ function TicleInfoCard({ ticleId, ticleTitle, startTime, endTime, status }: Ticl
         <div className="flex gap-9">
           <button
             className="flex items-center gap-2 rounded-md p-2.5 hover:bg-teritary"
-            onClick={onOpen}
+            onClick={handleApplicantsDialogOpen}
           >
             <span className="text-title2 text-primary">신청자 목록</span>
 
