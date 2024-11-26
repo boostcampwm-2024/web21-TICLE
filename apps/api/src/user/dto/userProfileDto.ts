@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Provider } from '@repo/types';
 
 export class UserProfileDto {
   @ApiProperty({
@@ -23,7 +24,7 @@ export class UserProfileDto {
     example: 'github',
     description: '유저 소셜 로그인 프로바이더',
   })
-  provider: string;
+  provider: Provider;
 
   @ApiProperty({
     example: ['개발자를 위한 피그마', '야, 너도 부캠할 수 있어'],

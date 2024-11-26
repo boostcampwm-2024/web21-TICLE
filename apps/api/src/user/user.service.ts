@@ -2,7 +2,7 @@ import { ConflictException, Injectable, NotFoundException } from '@nestjs/common
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
-import { ErrorMessage } from '@repo/types';
+import { ErrorMessage, Provider } from '@repo/types';
 
 import { User } from '@/entity/user.entity';
 
@@ -57,7 +57,7 @@ export class UserService {
     return user;
   }
 
-  async findUserBySocialIdAndProvider(socialId: string, provider: string): Promise<User | null> {
+  async findUserBySocialIdAndProvider(socialId: string, provider: Provider): Promise<User | null> {
     const user = await this.userRepository.findOne({
       where: { socialId, provider },
     });
