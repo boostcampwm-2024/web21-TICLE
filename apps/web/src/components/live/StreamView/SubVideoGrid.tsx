@@ -1,7 +1,5 @@
-/* eslint-disable jsx-a11y/click-events-have-key-events */
-/* eslint-disable jsx-a11y/no-static-element-interactions */
-import { StreamData } from '..';
-import VideoPlayer from './VideoPlayer';
+import { StreamData } from '@/components/live';
+import VideoPlayer from '@/components/live/StreamView/VideoPlayer';
 
 interface SubVideoGridProps {
   videoStreamData: StreamData[];
@@ -12,18 +10,18 @@ interface SubVideoGridProps {
 
 function SubVideoGrid({
   videoStreamData,
-  onVideoClick,
   pinnedConsumerId,
+  onVideoClick,
   getAudioMutedState,
 }: SubVideoGridProps) {
   return (
-    <div className="absolute flex w-full justify-center gap-5">
+    <div className="flex h-full w-full justify-center gap-5 px-10">
       {videoStreamData.map(
         (streamData) =>
           streamData.consumer?.id !== pinnedConsumerId && (
             <div
               key={streamData.consumer?.id}
-              className="aspect-video w-44"
+              className="aspect-video h-full"
               onClick={() => onVideoClick(streamData.consumer?.id)}
             >
               <VideoPlayer

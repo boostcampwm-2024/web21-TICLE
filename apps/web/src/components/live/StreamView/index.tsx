@@ -11,14 +11,7 @@ import { useRemoteStreamState } from '@/contexts/remoteStream/context';
 import usePagination from '@/hooks/usePagination';
 
 const ITEMS_PER_GRID = 9;
-const ITEMS_PER_SUB_GRID = 6;
-
-const getColumnCount = (count: number) => {
-  if (count <= 2) return count;
-  if (count <= 6) return Math.ceil(count / 2);
-  return Math.ceil(count / 3);
-};
-
+const ITEMS_PER_SUB_GRID = 4;
 export interface StreamData {
   consumer?: types.Consumer;
   socketId: string;
@@ -64,8 +57,6 @@ const StreamView = () => {
       totalItems: allVideoStreamData,
       itemsPerPage: ITEMS_PER_SUB_GRID,
     });
-  const isFixedGrid = allVideoStreamData.length >= 9;
-  const columnCount = getColumnCount(paginatedStreams.length);
 
   const addPinnedVideo = (consumerId?: string) => {
     if (!consumerId) return;
@@ -106,11 +97,11 @@ const StreamView = () => {
   }, [videoStreams, pinnedConsumerId]);
 
   return (
-    <div className="relative mt-5 flex h-full min-h-0 flex-1 items-center justify-center gap-5 rounded-lg">
+    <div className="relative flex h-full flex-1 items-center justify-center gap-5 px-12 pt-8">
       {pinnedConsumerId && pinnedVideoStreamData ? (
         <div className="relative flex h-full w-full flex-col gap-5">
           <div className="flex h-[80%] w-full justify-center self-center">
-            <div className="aspect-video" onClick={removePinnedVideo}>
+            <div className="w-full" onClick={removePinnedVideo}>
               <VideoPlayer
                 stream={pinnedVideoStreamData.stream}
                 muted={pinnedVideoStreamData.paused}
@@ -118,27 +109,33 @@ const StreamView = () => {
               />
             </div>
           </div>
-          <div className="relative">
-            <SubVideoGrid
-              videoStreamData={subPaginatedStreams}
-              onVideoClick={addPinnedVideo}
-              pinnedConsumerId={pinnedConsumerId}
-              getAudioMutedState={getAudioMutedState}
-            />
-            <PaginationControls {...subPaginationControlsProps} className="mt-8" />
+          <div className="relative flex flex-1">
+            <PaginationControls
+              {...subPaginationControlsProps}
+              leftClassName="left-2"
+              rightClassName="right-2"
+            >
+              <SubVideoGrid
+                videoStreamData={subPaginatedStreams}
+                pinnedConsumerId={pinnedConsumerId}
+                onVideoClick={addPinnedVideo}
+                getAudioMutedState={getAudioMutedState}
+              />
+            </PaginationControls>
           </div>
         </div>
       ) : (
-        <>
+        <PaginationControls
+          {...paginationControlsProps}
+          leftClassName="left-2"
+          rightClassName="right-2"
+        >
           <VideoGrid
             videoStreamData={paginatedStreams}
-            isFixedGrid={isFixedGrid}
-            columnCount={columnCount}
             onVideoClick={addPinnedVideo}
             getAudioMutedState={getAudioMutedState}
           />
-          <PaginationControls {...paginationControlsProps} className="h-full" />
-        </>
+        </PaginationControls>
       )}
 
       {audioStreams.map((streamData) => (
