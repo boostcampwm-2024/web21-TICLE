@@ -49,12 +49,6 @@ function VideoPlayer({
     setIsLoading(false);
   };
 
-  useEffect(() => {
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
-  }, []);
-
   return (
     <div className="relative flex h-full w-full cursor-pointer items-center justify-center overflow-hidden bg-darkAlt">
       {!stream && (
