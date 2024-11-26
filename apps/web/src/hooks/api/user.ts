@@ -6,6 +6,7 @@ export const useUserProfileOfMe = () => {
   return useQuery({
     queryKey: ['userProfileOfMe'],
     queryFn: getUserProfileOfMe,
+    retry: 0,
   });
 };
 
