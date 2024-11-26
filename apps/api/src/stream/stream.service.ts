@@ -69,4 +69,42 @@ export class StreamService {
       throw new Error('Failed to transcribe audio with Clova Speech Recognition');
     }
   }
+
+  async summaryAudio(text: string) {
+    const studioEndpoint = this.configService.get<string>('CLOVASTUDIO_ENDPOINT');
+
+    const body = {
+      texts: [text],
+      segMinSize: 300,
+      includeAiFilters: true,
+      autoSentenceSplitter: true,
+      segCount: -1,
+      segMaxSize: 1000,
+    };
+
+    try {
+      const response = await fetch(studioEndpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-NCP-CLOVASTUDIO-API-KEY': this.configService.get<string>('CLOVASTUDIO_API_KEY'),
+          'X-NCP-APIGW-API-KEY': this.configService.get<string>('CLOVASTUDIO_APIGW_API_KEY'),
+        },
+        body: JSON.stringify(body),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Error response:', errorText);
+        throw new Error(`API error: ${response.status} - ${response.statusText}`);
+      }
+
+      const data = await response.json();
+
+      return data.result.text;
+    } catch (error) {
+      console.error('Failed to summarize audio:', error);
+      throw new Error('Failed to summarize audio with Clova Studio');
+    }
+  }
 }
