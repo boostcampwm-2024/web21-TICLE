@@ -8,7 +8,12 @@ interface EmptyProps {
 
 function Empty({ title = '항목이 비어있어요!', className }: EmptyProps) {
   return (
-    <div className={cn('flex h-96 w-full flex-col items-center justify-center gap-8', className)}>
+    <div
+      className={cn(
+        'custom-dashed flex h-96 w-full flex-col items-center justify-center gap-8',
+        className
+      )}
+    >
       <img
         src={TicleCharacter}
         alt="흑백 티클 캐릭터"
