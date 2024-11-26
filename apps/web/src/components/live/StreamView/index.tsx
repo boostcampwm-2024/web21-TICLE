@@ -23,16 +23,9 @@ export interface StreamData {
 const StreamView = () => {
   const { video, audio } = useLocalStreamState();
 
-  const { streams } = useRemoteStreamState();
-
-  const remoteStreams = useMemo(() => streams, [streams]);
-
+  const { videoStreams, audioStreams } = useRemoteStreamState();
   const [pinnedConsumerId, setPinnedConsumerId] = useState<string | null>(null);
   const [pinnedVideoStreamData, setPinnedVideoStreamData] = useState<StreamData | null>(null);
-
-  const remoteAudioStreamData = remoteStreams.filter((stream) => stream.kind === 'audio');
-  const remoteVideoStreamData = remoteStreams.filter((stream) => stream.kind === 'video');
-
   const allAudioStreamData: StreamData[] = [
     {
       consumer: undefined,
@@ -41,7 +34,7 @@ const StreamView = () => {
       stream: audio.stream,
       paused: audio.paused,
     },
-    ...remoteAudioStreamData,
+    ...audioStreams,
   ];
   const allVideoStreamData: StreamData[] = [
     {
@@ -51,7 +44,7 @@ const StreamView = () => {
       stream: video.stream,
       paused: video.paused,
     },
-    ...remoteVideoStreamData,
+    ...videoStreams,
   ];
   const { paginatedItems: paginatedStreams, ...paginationControlsProps } =
     usePagination<StreamData>({
@@ -95,12 +88,13 @@ const StreamView = () => {
   };
 
   useEffect(() => {
-    const pinnedStream = remoteStreams.find((stream) => stream.consumer.id === pinnedConsumerId);
+    const pinnedStream = videoStreams.find((stream) => stream.consumer.id === pinnedConsumerId);
+
     if (pinnedStream) return;
 
     setPinnedVideoStreamData(null);
     setPinnedConsumerId(null);
-  }, [remoteStreams, pinnedConsumerId]);
+  }, [videoStreams, pinnedConsumerId]);
 
   return (
     <div className="relative flex h-full flex-1 items-center justify-center gap-5 px-12 pt-8">
@@ -144,7 +138,7 @@ const StreamView = () => {
         </PaginationControls>
       )}
 
-      {remoteAudioStreamData.map((streamData) => (
+      {audioStreams.map((streamData) => (
         <AudioPlayer
           key={streamData.socketId}
           stream={streamData.stream}

@@ -22,10 +22,11 @@ export class SignalingGateway implements OnGatewayDisconnect {
   }
 
   @SubscribeMessage(SOCKET_EVENTS.joinRoom)
-  joinRoom(@ConnectedSocket() client: Socket, @MessageBody('roomId') roomId: string) {
+  joinRoom(@ConnectedSocket() client: Socket, @MessageBody() joinRoomDto: server.JoinRoomDto) {
+    const { roomId, nickname } = joinRoomDto;
     client.join(roomId);
-    const rtpCapabilities = this.mediasoupService.joinRoom(roomId, client.id);
-    client.to(roomId).emit('new-peer', { peerId: client.id });
+    const rtpCapabilities = this.mediasoupService.joinRoom(roomId, client.id, nickname);
+    client.to(roomId).emit(SOCKET_EVENTS.newPeer, { peerId: client.id });
     return { rtpCapabilities };
   }
 
@@ -60,7 +61,7 @@ export class SignalingGateway implements OnGatewayDisconnect {
     @MessageBody() createProducerDto: server.CreateProducerDto
   ): Promise<client.CreateProducerRes> {
     const { transportId, kind, rtpParameters, roomId, appData } = createProducerDto;
-    const producer = await this.mediasoupService.produce(
+    const producerData = await this.mediasoupService.produce(
       client.id,
       kind,
       rtpParameters,
@@ -70,11 +71,12 @@ export class SignalingGateway implements OnGatewayDisconnect {
     );
 
     const createProducerRes = {
-      producerId: producer.id,
+      producerId: producerData.producerId,
       peerId: client.id,
+      nickname: producerData.nickname,
       kind,
       appData,
-      paused: producer.paused,
+      paused: producerData.paused,
     };
 
     client.to(roomId).emit(SOCKET_EVENTS.newProducer, createProducerRes);
@@ -99,7 +101,7 @@ export class SignalingGateway implements OnGatewayDisconnect {
   }
 
   @SubscribeMessage(SOCKET_EVENTS.getProducer)
-  async getProducers(
+  getProducers(
     @ConnectedSocket() client: Socket,
     @MessageBody() getProducerDto: server.GetProducersDto
   ) {

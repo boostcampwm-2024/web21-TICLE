@@ -2,7 +2,8 @@ import { createContext, useContext } from 'react';
 import { client } from '@repo/mediasoup';
 
 interface RemoteStreamState {
-  streams: client.RemoteStream[];
+  videoStreams: client.RemoteStream[];
+  audioStreams: client.RemoteStream[];
 }
 
 interface MediasoupActionContextProps {

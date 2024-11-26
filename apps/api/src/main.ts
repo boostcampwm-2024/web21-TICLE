@@ -1,3 +1,4 @@
+import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
@@ -5,7 +6,8 @@ import cookieParser from 'cookie-parser';
 
 import { AppModule } from '@/app.module';
 
-import { HttpExceptionFilter } from './httpexception.filter';
+import { DBExceptionFilter } from './common/filter/db-exception.filter';
+import { HttpExceptionFilter } from './common/filter/http-exception.filter';
 import { ResponseInterceptor } from './response.interceptor';
 
 async function bootstrap() {
@@ -22,8 +24,13 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api-doc', app, document);
 
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+    })
+  );
   app.useGlobalInterceptors(new ResponseInterceptor());
-  app.useGlobalFilters(new HttpExceptionFilter());
+  app.useGlobalFilters(new HttpExceptionFilter(), new DBExceptionFilter());
   app.setGlobalPrefix('api');
 
   const configService = app.get(ConfigService);

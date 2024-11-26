@@ -1,4 +1,5 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
+import { useNavigate } from '@tanstack/react-router';
 
 import { getTitleList, getTicle, createTicle, applyTicle } from '@/api/ticle';
 
@@ -10,10 +11,19 @@ interface GetTicleListParams {
 }
 
 export const useTicleList = (params: GetTicleListParams = {}) => {
-  return useQuery({
+  return useInfiniteQuery({
     queryKey: ['ticleList', params],
-    queryFn: () => getTitleList(params),
-    staleTime: 1000 * 60 * 5,
+    queryFn: ({ pageParam = 1 }) =>
+      getTitleList({
+        ...params,
+        page: pageParam,
+      }),
+    getNextPageParam: (lastPage) => {
+      if (!lastPage.meta.hasNextPage) return undefined;
+      return lastPage.meta.page + 1;
+    },
+    initialPageParam: 1,
+    placeholderData: (previousData) => previousData,
   });
 };
 
@@ -32,17 +42,23 @@ export const useCreateTicle = () => {
     mutationFn: createTicle,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['ticleList'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboardTicleList'] });
     },
   });
 };
 
 export const useApplyTicle = () => {
   const queryClient = useQueryClient();
+  const navigate = useNavigate({ from: '/ticle/$ticleId' });
 
   return useMutation({
     mutationFn: applyTicle,
     onSuccess: (_, ticleId) => {
-      queryClient.invalidateQueries({ queryKey: ['ticle', ticleId] });
+      alert('티클 신청이 완료되었습니다.'); // TODO: toast로 교체
+      navigate({ to: `/dashboard/apply` });
+      queryClient.invalidateQueries({ queryKey: ['ticleList'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboardTicleList'] });
+      queryClient.invalidateQueries({ queryKey: ['applicantsTicle', ticleId] });
     },
   });
 };

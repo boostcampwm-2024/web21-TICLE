@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Post, Res, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ThrottlerGuard } from '@nestjs/throttler';
 import { Response } from 'express';
 
 import { GetUserId } from '@/common/decorator/get-userId.decorator';
@@ -22,7 +23,7 @@ export class AuthController {
   ) {}
 
   @Post('signup')
-  @ApiOperation({ summary: '회원가입' })
+  @ApiOperation({ summary: '로컬 회원가입' })
   @ApiResponse({ status: 201, type: SignupResponseDto })
   @ApiResponse({ status: 409 })
   async signup(@Body() createUserDto: LocalSignupRequestDto): Promise<SignupResponseDto> {
@@ -38,6 +39,15 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   localLogin(@GetUserId() userId: number, @Res() response: Response) {
     this.cookieInsertJWT(response, userId);
+  }
+
+  @Post('guest/login')
+  @ApiOperation({ summary: '게스트 로그인' })
+  @ApiResponse({ status: 302, description: '홈으로 리다이렉션' })
+  @UseGuards(ThrottlerGuard)
+  async guestLogin(@Res() response: Response) {
+    const guestUser = await this.authService.createGuestUser();
+    this.cookieInsertJWT(response, guestUser.id);
   }
 
   @Get('google/login')
@@ -75,12 +85,12 @@ export class AuthController {
     });
   }
 
-  private async cookieInsertJWT(
+  private cookieInsertJWT(
     response: Response,
     userId: number,
     redirectUrl: string = this.configService.get<string>('LOGIN_REDIRECT_URL')
   ) {
-    const { accessToken } = await this.authService.createJWT(userId);
+    const { accessToken } = this.authService.createJWT(userId);
     this.setAuthCookie(response, accessToken);
     response.redirect(redirectUrl);
   }

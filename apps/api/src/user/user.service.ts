@@ -1,7 +1,8 @@
-import { ConflictException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
+import { ErrorMessage } from '@repo/types';
 
 import { User } from '@/entity/user.entity';
 
@@ -16,29 +17,21 @@ export class UserService {
   ) {}
 
   async createLocalUser(createUserDto: CreateLocalUserDto) {
-    try {
-      await this.throwIfExistUsername(createUserDto.username);
-      const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
-      const user = this.userRepository.create({
-        ...createUserDto,
-        password: hashedPassword,
-      });
-      await this.userRepository.save(user);
-      const { password, ...result } = user;
-      return result;
-    } catch {
-      throw new InternalServerErrorException();
-    }
+    await this.throwIfExistUsername(createUserDto.username);
+    const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
+    const user = this.userRepository.create({
+      ...createUserDto,
+      password: hashedPassword,
+    });
+    await this.userRepository.save(user);
+    const { password, ...result } = user;
+    return result;
   }
 
   async createSocialUser(socialUserData: CreateSocialUserDto) {
-    try {
-      const user = this.userRepository.create(socialUserData);
-      await this.userRepository.save(user);
-      return user;
-    } catch {
-      throw new InternalServerErrorException();
-    }
+    const user = this.userRepository.create(socialUserData);
+    await this.userRepository.save(user);
+    return user;
   }
 
   async throwIfExistUsername(username: string) {
@@ -48,7 +41,7 @@ export class UserService {
       },
     });
     if (existingUser) {
-      throw new ConflictException('이미 사용 중인 사용자 이름입니다.');
+      throw new ConflictException(ErrorMessage.USER_NAME_ALREADY_IN_USE);
     }
   }
 

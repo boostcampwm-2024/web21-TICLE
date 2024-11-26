@@ -1,22 +1,29 @@
+import {
+  DashboardApplicantsResponse,
+  DashboardApplicantsResponseSchema,
+  DashboardListResponse,
+  DashboardListResponseSchema,
+  GetDashboardListQueryType,
+} from '@repo/types';
+
 import axiosInstance from '@/api/axios';
+import request from '@/hooks/api/request';
 
-interface GetAppliedTicleListParams {
-  isSpeaker: boolean;
-  page: number;
-  pageSize: number;
-  status: 'open' | 'close';
-}
-
-const getAppliedTicleList = async (params: GetAppliedTicleListParams) => {
-  const { data } = await axiosInstance.get('/dashboard', { params });
-
-  return data;
+const getDashboardTicleList = async (params: GetDashboardListQueryType) => {
+  return request<DashboardListResponse>({
+    method: 'GET',
+    url: '/dashboard',
+    params,
+    schema: DashboardListResponseSchema,
+  });
 };
 
 const getApplicantsTicle = async (ticleId: string) => {
-  const { data } = await axiosInstance.get(`/dashboard/${ticleId}/applicants`);
-
-  return data;
+  return request<DashboardApplicantsResponse>({
+    method: 'GET',
+    url: `/dashboard/${ticleId}/applicants`,
+    schema: DashboardApplicantsResponseSchema,
+  });
 };
 
 const startTicle = async (ticleId: string) => {
@@ -31,4 +38,4 @@ const joinTicle = async (ticleId: string) => {
   return data;
 };
 
-export { getAppliedTicleList, startTicle, joinTicle, getApplicantsTicle };
+export { getDashboardTicleList, startTicle, joinTicle, getApplicantsTicle };

@@ -9,8 +9,8 @@ export const formatDateTimeRange = (startTime: string, endTime: string) => {
   const startDate = parseISO(startTime);
   const endDate = parseISO(endTime);
 
-  const dateStr = format(startDate, 'yyyy년 MM월 dd일 (E)', { locale: ko });
-  const timeRangeStr = `${format(startDate, 'HH:mm')} - ${format(endDate, 'HH:mm')}`;
+  const dateStr = format(startDate, 'yyyy.MM.dd(E)', { locale: ko });
+  const timeRangeStr = `${format(startDate, 'HH:mm')}-${format(endDate, 'HH:mm')}`;
 
   return { dateStr, timeRangeStr };
 };

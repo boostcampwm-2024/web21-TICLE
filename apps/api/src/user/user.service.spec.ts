@@ -2,7 +2,6 @@ import { ConflictException, InternalServerErrorException } from '@nestjs/common'
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
-import { Repository } from 'typeorm';
 
 import { User } from '@/entity/user.entity';
 
@@ -16,7 +15,6 @@ jest.mock('bcrypt', () => ({
 
 describe('UserService', () => {
   let service: UserService;
-  let userRepository: Repository<User>;
 
   // Mock Repository
   const mockUserRepository = {
@@ -38,7 +36,6 @@ describe('UserService', () => {
     }).compile();
 
     service = module.get<UserService>(UserService);
-    userRepository = module.get<Repository<User>>(getRepositoryToken(User));
 
     // Clear all mocks before each test
     jest.clearAllMocks();
@@ -57,7 +54,7 @@ describe('UserService', () => {
     });
 
     it('should throw InternalServerErrorException on database error', async () => {
-      mockUserRepository.exists.mockRejectedValue(new Error('DB Error'));
+      mockUserRepository.exists.mockRejectedValue(new InternalServerErrorException());
 
       await expect(service.createLocalUser(createLocalUserDto)).rejects.toThrow(
         InternalServerErrorException
@@ -90,7 +87,7 @@ describe('UserService', () => {
 
     it('should throw InternalServerErrorException on database error', async () => {
       mockUserRepository.create.mockReturnValue(createSocialUserDto);
-      mockUserRepository.save.mockRejectedValue(new Error('DB Error'));
+      mockUserRepository.save.mockRejectedValue(new InternalServerErrorException());
 
       await expect(service.createSocialUser(createSocialUserDto)).rejects.toThrow(
         InternalServerErrorException
