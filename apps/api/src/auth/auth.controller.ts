@@ -41,7 +41,7 @@ export class AuthController {
     this.cookieInsertJWT(response, userId);
   }
 
-  @Post('guest/login')
+  @Get('guest/login')
   @ApiOperation({ summary: '게스트 로그인' })
   @ApiResponse({ status: 302, description: '홈으로 리다이렉션' })
   @UseGuards(ThrottlerGuard)

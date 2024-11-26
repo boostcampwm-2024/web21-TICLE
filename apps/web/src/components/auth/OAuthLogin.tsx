@@ -28,10 +28,8 @@ interface OAuthLoginProps {
 }
 
 function OAuthLogin({ type }: OAuthLoginProps) {
-  const { handleOauthLogin } = oauthLogin();
-
   const onLoginBtnClick = (type: OAuthType) => {
-    handleOauthLogin(type);
+    oauthLogin(type);
   };
 
   return (

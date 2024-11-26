@@ -24,12 +24,12 @@ const signOut = async () => {
   await axiosInstance.post('/auth/logout');
 };
 
-const oauthLogin = () => {
-  const handleOauthLogin = (provider: 'google' | 'github') => {
-    window.location.href = `${ENV.API_URL}/auth/${provider}/login`;
-  };
-
-  return { handleOauthLogin };
+const guestLogin = () => {
+  window.location.href = `${ENV.API_URL}/auth/guest/login`;
 };
 
-export { logIn, signUp, oauthLogin, signOut };
+const oauthLogin = (provider: 'google' | 'github') => {
+  window.location.href = `${ENV.API_URL}/auth/${provider}/login`;
+};
+
+export { logIn, signUp, oauthLogin, guestLogin, signOut };
