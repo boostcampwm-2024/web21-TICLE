@@ -12,7 +12,7 @@ export class UserController {
   @Get()
   @UseGuards(JwtAuthGuard)
   async getUserProfile(@GetUserId() userId: number) {
-    return await this.userService.findUserProfileByUserId(userId);
+    return await this.userService.findUserProfileOfMeByUserId(userId);
   }
 
   @Patch('edit/:userId')

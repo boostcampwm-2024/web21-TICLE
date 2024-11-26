@@ -8,7 +8,7 @@ import { User } from '@/entity/user.entity';
 
 import { CreateLocalUserDto } from './dto/createLocalUser.dto';
 import { CreateSocialUserDto } from './dto/createSocialUser.dto';
-import { UserProfileDto } from './dto/userProfileDto';
+import { UserProfileOfMeDto } from './dto/userProfileOfMeDto';
 
 @Injectable()
 export class UserService {
@@ -66,7 +66,7 @@ export class UserService {
     return user;
   }
 
-  async findUserProfileByUserId(userId: number): Promise<UserProfileDto> {
+  async findUserProfileOfMeByUserId(userId: number): Promise<UserProfileOfMeDto> {
     const user = await this.userRepository.findOne({
       where: { id: userId },
       select: ['id', 'nickname', 'profileImageUrl', 'provider'],
