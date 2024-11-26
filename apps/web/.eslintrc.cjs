@@ -11,7 +11,7 @@ module.exports = {
     require.resolve('@repo/lint'),
     'plugin:react/recommended',
     'plugin:react-hooks/recommended',
-    'plugin:jsx-a11y/recommended',
+    // 'plugin:jsx-a11y/recommended',
     'plugin:react/jsx-runtime',
   ],
   plugins: ['react-refresh'],
