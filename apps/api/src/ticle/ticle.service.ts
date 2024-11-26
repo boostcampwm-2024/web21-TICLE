@@ -169,8 +169,10 @@ export class TicleService {
       ])
       .addSelect('GROUP_CONCAT(DISTINCT tags.name)', 'tagNames')
       .addSelect('COUNT(DISTINCT applicant.id)', 'applicantCount')
+      .addSelect('speaker.profile_image_url')
       .leftJoin('ticle.tags', 'tags')
       .leftJoin('ticle.applicants', 'applicant')
+      .leftJoin('ticle.speaker', 'speaker')
       .where('ticle.ticleStatus = :status', {
         status: isOpen ? TicleStatus.OPEN : TicleStatus.CLOSED,
       })
@@ -206,6 +208,7 @@ export class TicleService {
       speakerName: ticle.ticle_speaker_name,
       applicantsCount: ticle.applicantCount,
       createdAt: ticle.ticle_created_at,
+      speakerProfileImageUrl: ticle.profile_image_url,
     }));
 
     const totalPages = Math.ceil(totalTicleCount.count / pageSize);
