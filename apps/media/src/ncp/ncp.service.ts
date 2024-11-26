@@ -10,7 +10,6 @@ import { NcpConfig } from './ncp.config';
 @Injectable()
 export class NcpService {
   private s3: S3Client;
-  private endpoint: string;
 
   constructor(
     private ncpConfig: NcpConfig,
