@@ -8,7 +8,8 @@ const useRemoteStream = () => {
   const { ticleId } = useParams({ from: '/live/$ticleId' });
   const { socketRef, transportsRef, deviceRef } = useMediasoupState();
 
-  const [streams, setStreams] = useState<client.RemoteStream[]>([]);
+  const [videoStreams, setVideoStreams] = useState<client.RemoteStream[]>([]);
+  const [audioStreams, setAudioStreams] = useState<client.RemoteStream[]>([]);
 
   const consume = async ({ producerId, peerId, kind, paused }: client.CreateProducerRes) => {
     const socket = socketRef.current;
@@ -50,64 +51,73 @@ const useRemoteStream = () => {
   };
 
   const setRemoteStream = (remoteStream: client.RemoteStream) => {
-    setStreams((prevStreams) => {
-      const stream = prevStreams.find(
-        (s) => s.consumer.producerId === remoteStream.consumer.producerId
+    const getNewStreams = (prevStreams: client.RemoteStream[]) => {
+      const isExist = prevStreams.some(
+        (stream) => stream.consumer.producerId === remoteStream.consumer.producerId
       );
-      const newStreams = [...prevStreams];
 
-      if (stream) {
-        return newStreams;
+      if (isExist) {
+        return prevStreams;
       }
 
-      newStreams.push(remoteStream);
+      return [...prevStreams, remoteStream];
+    };
 
-      return newStreams;
-    });
+    if (remoteStream.kind === 'video') {
+      setVideoStreams((prevStreams) => getNewStreams(prevStreams));
+    }
+
+    if (remoteStream.kind === 'audio') {
+      setAudioStreams((prevStreams) => getNewStreams(prevStreams));
+    }
   };
 
   const filterRemoteStream = (cb: (remoteStream: client.RemoteStream) => boolean) => {
-    setStreams((prevStreams) => prevStreams.filter(cb));
+    setVideoStreams((prevStreams) => prevStreams.filter(cb));
+    setAudioStreams((prevStreams) => prevStreams.filter(cb));
   };
 
   const pauseRemoteStream = (producerId: string) => {
-    setStreams((prevStreams) => {
-      const idx = prevStreams.findIndex((stream) => stream.consumer.producerId === producerId);
+    const getNewStreams = (prevStreams: client.RemoteStream[]) => {
       const newStreams = [...prevStreams];
+      const stream = newStreams.find((stream) => stream.consumer.producerId === producerId);
 
-      const stream = prevStreams[idx];
-
-      if (!stream || !stream.consumer) {
-        return newStreams;
+      if (!stream) {
+        return prevStreams;
       }
 
       stream.consumer.pause();
       stream.paused = true;
 
       return newStreams;
-    });
+    };
+
+    setVideoStreams((prevStreams) => getNewStreams(prevStreams));
+    setAudioStreams((prevStreams) => getNewStreams(prevStreams));
   };
 
   const resumeRemoteStream = (producerId: string) => {
-    setStreams((prevStreams) => {
-      const idx = prevStreams.findIndex((stream) => stream.consumer.producerId === producerId);
+    const getNewStreams = (prevStreams: client.RemoteStream[]) => {
       const newStreams = [...prevStreams];
+      const stream = newStreams.find((stream) => stream.consumer.producerId === producerId);
 
-      const stream = prevStreams[idx];
-
-      if (!stream || !stream.consumer) {
-        return newStreams;
+      if (!stream) {
+        return prevStreams;
       }
 
       stream.consumer.resume();
       stream.paused = false;
 
       return newStreams;
-    });
+    };
+
+    setVideoStreams((prevStreams) => getNewStreams(prevStreams));
+    setAudioStreams((prevStreams) => getNewStreams(prevStreams));
   };
 
   return {
-    streams,
+    videoStreams,
+    audioStreams,
     consume,
     filterRemoteStream,
     pauseRemoteStream,

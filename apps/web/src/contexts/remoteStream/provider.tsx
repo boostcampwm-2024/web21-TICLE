@@ -11,10 +11,16 @@ interface RemoteStreamProviderProps {
 }
 
 export const RemoteStreamProvider = ({ children }: RemoteStreamProviderProps) => {
-  const { streams, consume, filterRemoteStream, pauseRemoteStream, resumeRemoteStream } =
-    useRemoteStream();
+  const {
+    audioStreams,
+    videoStreams,
+    consume,
+    filterRemoteStream,
+    pauseRemoteStream,
+    resumeRemoteStream,
+  } = useRemoteStream();
 
-  const state = { streams };
+  const state = { audioStreams, videoStreams };
 
   const actions = {
     consume,
