@@ -1,4 +1,4 @@
-import { Controller, Get, Patch, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Patch, UseGuards } from '@nestjs/common';
 
 import { JwtAuthGuard } from '@/auth/jwt/jwt-auth.guard';
 import { GetUserId } from '@/common/decorator/get-userId.decorator';
@@ -15,6 +15,8 @@ export class UserController {
     return await this.userService.findUserProfileOfMeByUserId(userId);
   }
 
-  @Patch('edit/:userId')
-  patchUserProfile() {}
+  @Get(':userId')
+  async patchUserProfile(@Param('userId') userId: number) {
+    return await this.userService.findUserProfileByUserId(userId);
+  }
 }

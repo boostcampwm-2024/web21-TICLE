@@ -8,6 +8,7 @@ import { User } from '@/entity/user.entity';
 
 import { CreateLocalUserDto } from './dto/createLocalUser.dto';
 import { CreateSocialUserDto } from './dto/createSocialUser.dto';
+import { UserProfileDto } from './dto/userProfileDto';
 import { UserProfileOfMeDto } from './dto/userProfileOfMeDto';
 
 @Injectable()
@@ -77,5 +78,27 @@ export class UserService {
     }
 
     return user;
+  }
+
+  async findUserProfileByUserId(userId: number): Promise<UserProfileDto> {
+    const user = await this.userRepository
+      .createQueryBuilder('user')
+      .leftJoin('user.ticles', 'ticles')
+      .addSelect('ticles.title')
+      .where('user.id = :userId', { userId: userId })
+      .getOne();
+
+    if (!user) {
+      throw new NotFoundException(ErrorMessage.USER_NOT_FOUND);
+    }
+
+    const ticles = user.ticles || [];
+    return {
+      id: user.id,
+      nickname: user.nickname,
+      profileImageUrl: user.profileImageUrl,
+      provider: user.provider,
+      ticles: ticles.map((ticle) => ticle.title),
+    };
   }
 }
