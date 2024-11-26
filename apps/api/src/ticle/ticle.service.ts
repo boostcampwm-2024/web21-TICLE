@@ -39,7 +39,6 @@ export class TicleService {
       applicants: [],
       summary: null,
       tags: tags,
-      profileImageUrl: user.profileImageUrl,
     });
 
     return await this.ticleRepository.save(newTicle);

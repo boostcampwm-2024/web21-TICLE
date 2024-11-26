@@ -9,6 +9,7 @@ const TicleSchema = z.object({
   speakerName: z.string(),
   applicantsCount: z.number(),
   createdAt: z.string().datetime(),
+  speakerProfileImageUrl: z.string().url(),
 });
 
 const MetaSchema = z.object({
