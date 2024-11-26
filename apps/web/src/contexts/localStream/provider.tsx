@@ -18,6 +18,7 @@ export const LocalStreamProvider = ({ children }: StreamProviderProps) => {
     pauseStream,
     resumeStream,
     closeStream,
+    closeScreenStream,
   } = useLocalStream();
 
   const state = { video, audio, screen };
@@ -29,6 +30,7 @@ export const LocalStreamProvider = ({ children }: StreamProviderProps) => {
     pauseStream,
     resumeStream,
     closeStream,
+    closeScreenStream,
   } as const;
 
   return (
