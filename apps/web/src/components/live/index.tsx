@@ -16,9 +16,9 @@ function MediaContainer() {
   useMediasoup();
 
   return (
-    <div className="fixed inset-0 flex flex-col justify-between bg-black px-32">
+    <div className="flex h-dvh flex-col justify-between gap-y-4 bg-black">
       <StreamView />
-      <footer className="flex h-[70px] w-full justify-end gap-4 pb-4 text-white">
+      <footer className="flex w-full justify-end gap-4 px-8 pb-4 text-white">
         <ControlBar />
       </footer>
     </div>
