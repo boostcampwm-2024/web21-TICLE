@@ -20,6 +20,7 @@ export interface ConsumerTransports {
 export interface CreateProducerRes {
   kind: types.MediaKind;
   peerId: string;
+  nickname: string;
   producerId: string;
   paused: boolean;
   appData?: { mediaTypes: MediaTypes };

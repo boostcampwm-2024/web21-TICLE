@@ -2,6 +2,11 @@ import { types } from 'mediasoup';
 
 import { MediaTypes, StreamStatus } from '../types';
 
+export interface JoinRoomDto {
+  roomId: string;
+  nickname: string;
+}
+
 export interface ConnectTransportDto {
   transportId: string;
   dtlsParameters: types.DtlsParameters;
