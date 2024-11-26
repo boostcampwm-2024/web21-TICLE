@@ -27,8 +27,24 @@ export class AuthService {
     if (!isPasswordValid) {
       throw new UnauthorizedException('잘못된 로그인 정보');
     }
-    const { password, ...result } = user;
-    return result;
+    return user;
+  }
+
+  async createGuestUser() {
+    const randomNum = Math.floor(Math.random() * 10000);
+    const guestUser = {
+      username: `guest_${randomNum}`,
+      password: `guest_password_${randomNum}`,
+      email: `guet_email@guest.com`,
+      nickname: `guest_${randomNum}`,
+      introduce: `게스트 사용자입니다. `,
+      profileImageUrl: `https://cataas.com/cat?${Date.now()}`,
+    };
+    const user = await this.userService.findUserByUsername(guestUser.username);
+    if (!user) {
+      return this.userService.createLocalUser({ provider: 'guest', ...guestUser });
+    }
+    return user;
   }
 
   async checkSocialUser(socialUserData: CreateSocialUserDto) {
@@ -42,7 +58,7 @@ export class AuthService {
     return user;
   }
 
-  async createJWT(userId: number) {
+  createJWT(userId: number) {
     const payload = { sub: userId };
     return {
       accessToken: this.jwtService.sign(payload),
