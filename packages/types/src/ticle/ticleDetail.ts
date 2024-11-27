@@ -16,6 +16,8 @@ export const TicleDetailResponseSchema = z.object({
   createdAt: z.string().datetime(),
   tags: z.array(z.string()),
   speakerImgUrl: z.string().url(),
+  isOwner: z.boolean(),
+  alreadyApplied: z.boolean(),
 });
 
 export type TicleDetailResponse = z.infer<typeof TicleDetailResponseSchema>;
