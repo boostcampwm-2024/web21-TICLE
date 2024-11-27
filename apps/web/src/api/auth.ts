@@ -33,4 +33,3 @@ const oauthLogin = (provider: 'google' | 'github') => {
 };
 
 export { logIn, signUp, oauthLogin, guestLogin, logOut };
-
