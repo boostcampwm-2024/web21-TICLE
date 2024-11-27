@@ -10,7 +10,7 @@ interface TransportRef {
 }
 
 const useTransport = (socketRef: MutableRefObject<Socket | null>) => {
-  const { ticleId: roomId } = useParams({ from: '/live/$ticleId' });
+  const { ticleId: roomId } = useParams({ from: '/_authenticated/live/$ticleId' });
 
   const transportsRef = useRef<TransportRef>({
     sendTransport: null,

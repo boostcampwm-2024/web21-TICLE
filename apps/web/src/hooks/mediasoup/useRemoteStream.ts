@@ -5,7 +5,7 @@ import { client, SOCKET_EVENTS } from '@repo/mediasoup';
 import { useMediasoupState } from '@/contexts/mediasoup/context';
 
 const useRemoteStream = () => {
-  const { ticleId } = useParams({ from: '/live/$ticleId' });
+  const { ticleId } = useParams({ from: '/_authenticated/live/$ticleId' });
   const { socketRef, transportsRef, deviceRef } = useMediasoupState();
 
   const [videoStreams, setVideoStreams] = useState<client.RemoteStream[]>([]);

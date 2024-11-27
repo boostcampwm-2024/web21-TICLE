@@ -1,12 +1,12 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute } from '@tanstack/react-router'
 
-import BasicLayout from '@/components/common/BasicLayout';
-import Header from '@/components/common/Header';
-import Open from '@/components/ticle/open';
+import BasicLayout from '@/components/common/BasicLayout'
+import Header from '@/components/common/Header'
+import Open from '@/components/ticle/open'
 
 export const Route = createFileRoute('/_authenticated/ticle/open')({
   component: RouteComponent,
-});
+})
 
 function RouteComponent() {
   return (
@@ -16,5 +16,5 @@ function RouteComponent() {
         <Open />
       </BasicLayout>
     </>
-  );
+  )
 }

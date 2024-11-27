@@ -11,7 +11,7 @@ import useModal from '@/hooks/useModal';
 import { formatDateTimeRange } from '@/utils/date';
 
 function Detail() {
-  const { ticleId } = useParams({ from: '/ticle/$ticleId' });
+  const { ticleId } = useParams({ from: '/_authenticated/ticle/$ticleId' });
   const { data } = useTicle(ticleId);
   const { mutate } = useApplyTicle();
 

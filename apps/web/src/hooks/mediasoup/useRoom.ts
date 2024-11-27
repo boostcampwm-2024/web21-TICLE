@@ -9,7 +9,7 @@ interface JoinRoomRes {
 }
 const useRoom = () => {
   const { socketRef } = useMediasoupState();
-  const { ticleId: roomId } = useParams({ from: '/live/$ticleId' });
+  const { ticleId: roomId } = useParams({ from: '/_authenticated/live/$ticleId' });
 
   const createRoom = async () => {
     const socket = socketRef.current;
