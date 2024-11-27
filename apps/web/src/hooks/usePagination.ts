@@ -53,7 +53,7 @@ const usePagination = ({ itemsPerPage }: PaginationParams) => {
   const totalPages = Math.ceil(streamLength / itemsPerPage);
 
   useEffect(() => {
-    if (paginatedItems.length !== 0) return;
+    if (paginatedItems.length !== 0 || currentPage <= 0) return;
 
     setCurrentPage(currentPage - 1);
   }, [paginatedItems]);
