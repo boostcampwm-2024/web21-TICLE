@@ -29,12 +29,20 @@ async function bootstrap() {
       transform: true,
     })
   );
+
   app.useGlobalInterceptors(new ResponseInterceptor());
   app.useGlobalFilters(new HttpExceptionFilter(), new DBExceptionFilter());
   app.setGlobalPrefix('api');
 
   const configService = app.get(ConfigService);
-  const port = configService.get<number>('API_SERVER_PORT') ?? 3000;
+
+  const clientUrl = configService.get<string>('CLIENT_URL') ?? 'http://localhost:5173';
+  const port = configService.get<number>('API_SERVER_PORT') ?? 3065;
+
+  app.enableCors({
+    origin: [clientUrl],
+    credentials: true,
+  });
 
   await app.listen(port);
 }
