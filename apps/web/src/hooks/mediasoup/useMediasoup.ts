@@ -19,8 +19,7 @@ const useMediasoup = () => {
     disconnect,
   } = useMediasoupAction();
   const { startCameraStream, startMicStream } = useLocalStreamAction();
-  const { consume, filterRemoteStream, pauseRemoteStream, resumeRemoteStream } =
-    useRemoteStreamAction();
+  const { consume, filterRemoteStream, pauseRemoteStream } = useRemoteStreamAction();
 
   const initSocketEvent = () => {
     const socket = socketRef.current;
@@ -43,10 +42,6 @@ const useMediasoup = () => {
 
     socket.on(SOCKET_EVENTS.producerPaused, ({ producerId }) => {
       pauseRemoteStream(producerId);
-    });
-
-    socket.on(SOCKET_EVENTS.producerResumed, ({ producerId }) => {
-      resumeRemoteStream(producerId);
     });
 
     socket.on(SOCKET_EVENTS.newProducer, ({ peerId, producerId, kind, paused }) => {
