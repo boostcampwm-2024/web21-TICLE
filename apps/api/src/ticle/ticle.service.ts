@@ -167,6 +167,7 @@ export class TicleService {
         'ticle.endTime',
         'ticle.speakerName',
         'ticle.createdAt',
+        'ticle.profileImageUrl',
       ])
       .addSelect('GROUP_CONCAT(DISTINCT tags.name)', 'tagNames')
       .addSelect('COUNT(DISTINCT applicant.id)', 'applicantCount')

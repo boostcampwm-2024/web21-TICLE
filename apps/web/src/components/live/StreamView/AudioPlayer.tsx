@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/media-has-caption */
 import { useEffect, useRef } from 'react';
 
 import { VideoPlayerProps } from './VideoPlayer';

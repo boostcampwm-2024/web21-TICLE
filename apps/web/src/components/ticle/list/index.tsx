@@ -76,7 +76,7 @@ function TicleList() {
         <Select options={SORT_OPTIONS} selectedOption={sortOption} onChange={handleOptionChange} />
       </div>
       <main className="mb-16 mt-5 flex flex-wrap gap-5">
-        {isLoading ? (
+        {isLoading || !data?.pages[0] ? (
           <div className="flex h-80 w-full items-center justify-center">
             <Loading color="primary" />
           </div>
@@ -93,6 +93,7 @@ function TicleList() {
                     date={getDateString(ticle.startTime, ticle.endTime)}
                     speaker={ticle.speakerName}
                     applicantsCount={ticle.applicantsCount}
+                    speakerProfileImg={ticle.speakerProfileImageUrl}
                   />
                 </Link>
               ))}

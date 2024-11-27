@@ -2,7 +2,7 @@ import { ConflictException, Injectable, NotFoundException } from '@nestjs/common
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
-import { ErrorMessage } from '@repo/types';
+import { ErrorMessage, Provider } from '@repo/types';
 
 import { User } from '@/entity/user.entity';
 
@@ -57,7 +57,7 @@ export class UserService {
     return user;
   }
 
-  async findUserBySocialIdAndProvider(socialId: string, provider: string): Promise<User | null> {
+  async findUserBySocialIdAndProvider(socialId: string, provider: Provider): Promise<User | null> {
     const user = await this.userRepository.findOne({
       where: { socialId, provider },
     });
@@ -84,7 +84,7 @@ export class UserService {
     const user = await this.userRepository
       .createQueryBuilder('user')
       .leftJoin('user.ticles', 'ticles')
-      .addSelect('ticles.title')
+      .addSelect(['ticles.title', 'ticles.id'])
       .where('user.id = :userId', { userId: userId })
       .getOne();
 
@@ -92,13 +92,17 @@ export class UserService {
       throw new NotFoundException(ErrorMessage.USER_NOT_FOUND);
     }
 
-    const ticles = user.ticles || [];
+    const ticleInfo = user.ticles.map((ticle) => ({
+      title: ticle.title,
+      ticleId: ticle.id,
+    }));
+
     return {
       id: user.id,
       nickname: user.nickname,
       profileImageUrl: user.profileImageUrl,
       provider: user.provider,
-      ticles: ticles.map((ticle) => ticle.title),
+      ticleInfo: ticleInfo,
     };
   }
 }

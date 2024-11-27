@@ -9,10 +9,10 @@ const meta: Meta<typeof Avatar> = {
   argTypes: {
     size: {
       control: 'inline-radio',
-      options: ['sm', 'md', 'lg'],
+      options: ['xs', 'sm', 'md', 'lg'],
       description: '아바타의 크기를 지정합니다.',
       table: {
-        type: { summary: 'sm | md | lg' },
+        type: { summary: 'xs | sm | md | lg' },
       },
     },
     src: {
@@ -45,6 +45,7 @@ import Avatar from '@/components/common/Avatar';
 />
 
 // Different sizes
+<Avatar size="xs" />
 <Avatar size="sm" />
 <Avatar size="md" />
 <Avatar size="lg" />
@@ -77,7 +78,7 @@ export const Size: Story = {
     controls: { disable: true },
   },
   render: () => {
-    const sizes = ['sm', 'md', 'lg'] as const;
+    const sizes = ['xs', 'sm', 'md', 'lg'] as const;
     return (
       <div className="flex items-center gap-4">
         {sizes.map((size) => (
@@ -96,7 +97,7 @@ export const WithAndWithoutImage: Story = {
     controls: { disable: true },
   },
   render: () => {
-    const sizes = ['sm', 'md', 'lg'] as const;
+    const sizes = ['xs', 'sm', 'md', 'lg'] as const;
     return (
       <div className="flex flex-col gap-8">
         <div className="flex items-center gap-4">

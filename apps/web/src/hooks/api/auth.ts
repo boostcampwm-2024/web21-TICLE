@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 
-import { logIn, signUp, signOut } from '@/api/auth';
+import { logIn, signUp } from '@/api/auth';
 
 export const useLogIn = () => {
   const navigate = useNavigate();
@@ -21,17 +21,6 @@ export const useSignUp = () => {
     mutationFn: signUp,
     onSuccess: () => {
       navigate({ to: '/auth/login' });
-    },
-  });
-};
-
-export const useSignOut = () => {
-  const navigate = useNavigate();
-
-  return useMutation({
-    mutationFn: signOut,
-    onSuccess: () => {
-      navigate({ to: '/' });
     },
   });
 };

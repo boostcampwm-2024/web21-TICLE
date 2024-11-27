@@ -20,8 +20,8 @@ const signUp = async (body: SignUpDto) => {
   return data;
 };
 
-const signOut = async () => {
-  await axiosInstance.post('/auth/logout');
+const logOut = () => {
+  window.location.href = `${ENV.API_URL}/auth/logout`;
 };
 
 const guestLogin = () => {
@@ -32,4 +32,4 @@ const oauthLogin = (provider: 'google' | 'github') => {
   window.location.href = `${ENV.API_URL}/auth/${provider}/login`;
 };
 
-export { logIn, signUp, oauthLogin, guestLogin, signOut };
+export { logIn, signUp, oauthLogin, guestLogin, logOut };
