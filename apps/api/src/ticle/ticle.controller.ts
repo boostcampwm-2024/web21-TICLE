@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { CreateTicleSchema } from '@repo/types';
 
 import { JwtAuthGuard } from '@/auth/jwt/jwt-auth.guard';
@@ -49,5 +49,11 @@ export class TicleController {
   @UseGuards(JwtAuthGuard)
   applyToTicle(@GetUserId() userId: number, @Param('ticleId') ticleId: number) {
     return this.ticleService.applyTicle(ticleId, userId);
+  }
+
+  @Delete(':ticleId')
+  @UseGuards(JwtAuthGuard)
+  deleteTicle(@GetUserId() userId: number, @Param('ticleId') ticleId: number) {
+    return this.ticleService.deleteTicle(ticleId, userId);
   }
 }
