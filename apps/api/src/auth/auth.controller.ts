@@ -82,7 +82,7 @@ export class AuthController {
     this.loginProcess(response, userId);
   }
 
-  @Post('logout')
+  @Get('logout')
   @ApiOperation({ summary: '로그아웃' })
   @ApiResponse({ status: 302, description: '홈으로 리다이렉션' })
   logout(@Res() response: Response) {
