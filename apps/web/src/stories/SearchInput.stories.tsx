@@ -115,8 +115,8 @@ const SearchInputWithHooks = ({
     action('onClear')();
   };
 
-  const handleSearch = (searchValue: string) => {
-    action('onSearch')(searchValue);
+  const handleSearch = (value?: string) => {
+    action('onSearch')(value);
   };
 
   return (
