@@ -48,6 +48,7 @@ function Select({ options, placeholder, selectedOption, onChange }: Select) {
   });
 
   const selectRef = useRef<HTMLDivElement>(null);
+  const optionRef = useRef<HTMLUListElement>(null);
 
   const updatePosition = () => {
     if (!selectRef.current) return;
@@ -98,7 +99,7 @@ function Select({ options, placeholder, selectedOption, onChange }: Select) {
     handleOptionChange(option);
   };
 
-  useOutsideClick(selectRef, handleSelectClose);
+  useOutsideClick(optionRef, handleSelectClose);
 
   return (
     <div ref={selectRef} className="relative w-32">
@@ -113,6 +114,7 @@ function Select({ options, placeholder, selectedOption, onChange }: Select) {
       {isOpen && (
         <Portal portalId="select">
           <ul
+            ref={optionRef}
             role="listbox"
             className="absolute right-0 mt-2 flex w-full flex-col items-center gap-1.5 rounded-base border border-main bg-white p-2 shadow-normal"
             style={{
