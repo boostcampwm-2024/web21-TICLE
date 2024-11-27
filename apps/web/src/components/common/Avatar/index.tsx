@@ -5,6 +5,7 @@ import PersonIc from '@/assets/icons/person.svg?react';
 import cn from '@/utils/cn';
 
 const AVATAR_SIZE = {
+  xs: 'xs',
   sm: 'sm',
   md: 'md',
   lg: 'lg',
@@ -15,6 +16,7 @@ const avatarVariants = cva(
   {
     variants: {
       size: {
+        [AVATAR_SIZE.xs]: 'h-[30px] w-[30px]',
         [AVATAR_SIZE.sm]: 'h-[50px] w-[50px]',
         [AVATAR_SIZE.md]: 'h-[84px] w-[84px]',
         [AVATAR_SIZE.lg]: 'h-[100px] w-[100px]',
@@ -34,14 +36,7 @@ interface AvatarProps extends HTMLAttributes<HTMLDivElement> {
 
 function Avatar({ alt = 'avatar', src, size, className, ...rest }: AvatarProps) {
   return (
-    <div
-      style={{
-        width: `${size}px`,
-        height: `${size}px`,
-      }}
-      className={cn(avatarVariants({ size }), className)}
-      {...rest}
-    >
+    <div className={cn(avatarVariants({ size }), className)} {...rest}>
       {src && <img src={src} alt={alt} className="h-full w-full object-cover" />}
       {!src && <PersonIc className="h-full w-full fill-weak text-weak" />}
     </div>

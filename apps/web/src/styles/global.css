@@ -69,36 +69,52 @@
     opacity: 0;
   }
 
-  .loader {
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background-color: #fff;
-    box-shadow:
-      32px 0 #fff,
-      -32px 0 #fff;
-    position: relative;
-    animation: flash 0.5s ease-out infinite alternate;
+  .floating {
+    animation-name: floating;
+    animation-duration: 3s;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-in-out;
   }
 
-  @keyframes flash {
-    0% {
-      background-color: #fff2;
-      box-shadow:
-        32px 0 #fff2,
-        -32px 0 #fff;
+  @keyframes floating {
+    from {
+      transform: translate(0, 0px);
     }
-    50% {
-      background-color: #fff;
-      box-shadow:
-        32px 0 #fff2,
-        -32px 0 #fff2;
+    65% {
+      transform: translate(0, 15px);
     }
-    100% {
-      background-color: #fff2;
-      box-shadow:
-        32px 0 #fff,
-        -32px 0 #fff2;
+    to {
+      transform: translate(0, -0px);
     }
+  }
+}
+
+.custom-dashed {
+  position: relative;
+  border-radius: 8px;
+  background-clip: padding-box;
+}
+
+.custom-dashed::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  border: 3px dashed var(--grey-300);
+}
+
+@layer utilities {
+  *::-webkit-scrollbar {
+    @apply w-2;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: var(--grey-200);
+  }
+
+  *::-webkit-scrollbar-thumb {
+    @apply rounded-full;
+    background: var(--purple-200);
+    cursor: pointer;
   }
 }

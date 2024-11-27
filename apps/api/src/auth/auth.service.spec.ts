@@ -17,7 +17,7 @@ jest.mock('bcrypt', () => ({
 
 describe('AuthService', () => {
   let service: AuthService;
-  let userService: UserService;
+
   let jwtService: JwtService;
 
   // Mock UserService
@@ -49,7 +49,7 @@ describe('AuthService', () => {
     }).compile();
 
     service = module.get<AuthService>(AuthService);
-    userService = module.get<UserService>(UserService);
+
     jwtService = module.get<JwtService>(JwtService);
 
     // Clear all mocks before each test
@@ -61,13 +61,6 @@ describe('AuthService', () => {
     const loginCredentials = {
       username: 'testuser',
       password: 'password123',
-    };
-
-    const mockUser = {
-      id: 1,
-      username: 'testuser',
-      password: 'hashedPassword',
-      email: 'test@example.com',
     };
 
     it('should throw UnauthorizedException if user is not found', async () => {

@@ -1,14 +1,19 @@
+import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import cookieParser from 'cookie-parser';
 
 import { AppModule } from '@/app.module';
 
-import { HttpExceptionFilter } from './httpexception.filter';
+import { DBExceptionFilter } from './common/filter/db-exception.filter';
+import { HttpExceptionFilter } from './common/filter/http-exception.filter';
 import { ResponseInterceptor } from './response.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  app.use(cookieParser());
 
   //swagger setting
   const config = new DocumentBuilder()
@@ -19,12 +24,25 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api-doc', app, document);
 
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+    })
+  );
+
   app.useGlobalInterceptors(new ResponseInterceptor());
-  app.useGlobalFilters(new HttpExceptionFilter());
+  app.useGlobalFilters(new HttpExceptionFilter(), new DBExceptionFilter());
   app.setGlobalPrefix('api');
 
   const configService = app.get(ConfigService);
-  const port = configService.get<number>('API_SERVER_PORT') ?? 3000;
+
+  const clientUrl = configService.get<string>('CLIENT_URL') ?? 'http://localhost:5173';
+  const port = configService.get<number>('API_SERVER_PORT') ?? 3065;
+
+  app.enableCors({
+    origin: [clientUrl],
+    credentials: true,
+  });
 
   await app.listen(port);
 }

@@ -1,178 +1,108 @@
-import { useNavigate, useParams } from '@tanstack/react-router';
 import { useEffect } from 'react';
-import { SOCKET_EVENTS } from '@repo/mediasoup';
+import { client, SOCKET_EVENTS } from '@repo/mediasoup';
 
-import { ENV } from '@/constants/env';
-import useConsumerStream from '@/hooks/mediasoup/useConsumerStream';
-import useProducerStream from '@/hooks/mediasoup/useProducerStream';
+import { useLocalStreamAction } from '@/contexts/localStream/context';
+import { useMediasoupAction, useMediasoupState } from '@/contexts/mediasoup/context';
+import { useRemoteStreamAction } from '@/contexts/remoteStream/context';
 
-import useDevice from './useDevice';
 import useRoom from './useRoom';
-import useSocket from './useSocket';
-import useTransport from './useTransport';
 
-type UseProducerStream = ReturnType<typeof useProducerStream>;
-type UseConsumerStream = ReturnType<typeof useConsumerStream>;
+const useMediasoup = () => {
+  const { socketRef, isConnected, isError } = useMediasoupState();
 
-interface UseMediasoupReturn {
-  socketRef: ReturnType<typeof useSocket>;
-  audioProducerRef: UseProducerStream['audioProducerRef'];
-  videoProducerRef: UseProducerStream['videoProducerRef'];
-  screenProducerRef: UseProducerStream['screenProducerRef'];
-  videoStream: UseProducerStream['videoStream'];
-  audioStream: UseProducerStream['audioStream'];
-  screenStream: UseProducerStream['screenStream'];
-  remoteStreams: UseConsumerStream['remoteStreams'];
-  startScreenStream: UseProducerStream['startScreenStream'];
-  closeStream: UseProducerStream['closeStream'];
-  pauseStream: UseProducerStream['pauseStream'];
-  resumeStream: UseProducerStream['resumeStream'];
-  disconnect: () => void;
-}
-
-const useMediasoup = (): UseMediasoupReturn => {
-  const navigate = useNavigate({ from: '/live/$ticleId' });
-  const { ticleId } = useParams({ from: '/live/$ticleId' });
-  const socketRef = useSocket(ENV.WS_URL);
-  const { createRoom } = useRoom(socketRef, ticleId);
-  const { deviceRef, createDevice } = useDevice();
-
-  const { sendTransportRef, recvTransportRef, createSendTransport, createRecvTransport } =
-    useTransport(socketRef, ticleId);
-
+  const { createRoom } = useRoom();
   const {
-    audioProducerRef,
-    videoProducerRef,
-    screenProducerRef,
-    videoStream,
-    audioStream,
-    screenStream,
+    createRecvTransport,
+    createSendTransport,
+    createDevice,
     connectExistProducer,
-    startVideoStream,
-    startAudioStream,
-    startScreenStream,
-    closeStream,
-    pauseStream,
-    resumeStream,
-  } = useProducerStream({ socketRef, sendTransportRef });
-
-  const { remoteStreams, consume, closeConsumer, setRemoteStreams } = useConsumerStream({
-    socketRef,
-    deviceRef,
-    recvTransportRef,
-  });
+    disconnect,
+  } = useMediasoupAction();
+  const { startCameraStream, startMicStream } = useLocalStreamAction();
+  const { consume, filterRemoteStream, pauseRemoteStream, resumeRemoteStream } =
+    useRemoteStreamAction();
 
   const initSocketEvent = () => {
     const socket = socketRef.current;
 
     if (!socket) return;
 
-    socket.on(SOCKET_EVENTS.roomClosed, disconnect);
+    // TODO: new peer 이벤트시 목록에 추가하고 stream은 없다고 표시
+
+    socket.on(SOCKET_EVENTS.peerLeft, ({ peerId }) => {
+      filterRemoteStream((rs) => rs.socketId !== peerId);
+    });
+
+    socket.on(SOCKET_EVENTS.consumerClosed, ({ consumerId }) => {
+      filterRemoteStream((rs) => rs.consumer.id !== consumerId);
+    });
+
+    socket.on(SOCKET_EVENTS.producerClosed, ({ producerId }) => {
+      filterRemoteStream((rs) => rs.consumer.producerId !== producerId);
+    });
+
+    socket.on(SOCKET_EVENTS.producerPaused, ({ producerId }) => {
+      pauseRemoteStream(producerId);
+    });
+
+    socket.on(SOCKET_EVENTS.producerResumed, ({ producerId }) => {
+      resumeRemoteStream(producerId);
+    });
 
     socket.on(SOCKET_EVENTS.newProducer, ({ peerId, producerId, kind, paused }) => {
       if (socket.id === peerId) return;
 
-      consume({ producerId, kind, peerId, paused });
-    });
-
-    socket.on(SOCKET_EVENTS.peerLeft, ({ peerId }) => {
-      closeConsumer((rs) => rs.socketId !== peerId);
-    });
-
-    socket.on(SOCKET_EVENTS.consumerClosed, ({ consumerId }) => {
-      closeConsumer((rs) => rs.consumer.id !== consumerId);
-    });
-
-    socket.on(SOCKET_EVENTS.producerClosed, ({ producerId }) => {
-      closeConsumer((rs) => {
-        return rs.consumer.producerId !== producerId;
-      });
-    });
-
-    socket.on(SOCKET_EVENTS.producerPaused, ({ producerId }) => {
-      setRemoteStreams((prev) => {
-        const idx = prev.findIndex((rs) => rs.consumer.producerId === producerId);
-
-        const newRemoteStreams = [...prev];
-        const remoteStream = newRemoteStreams[idx];
-
-        if (idx === -1 || !remoteStream?.consumer) {
-          return prev;
-        }
-
-        remoteStream.consumer.pause();
-        remoteStream.paused = true;
-
-        return newRemoteStreams;
-      });
-    });
-
-    socket.on(SOCKET_EVENTS.producerResumed, ({ producerId }) => {
-      setRemoteStreams((prev) => {
-        const idx = prev.findIndex((rs) => rs.consumer.producerId === producerId);
-
-        const newRemoteStreams = [...prev];
-        const remoteStream = newRemoteStreams[idx];
-
-        if (idx === -1 || !remoteStream?.consumer) {
-          return prev;
-        }
-
-        remoteStream.consumer.resume();
-        remoteStream.paused = false;
-
-        return newRemoteStreams;
-      });
+      // TODO: nickname 추가
+      consume({ producerId, kind, peerId, paused, nickname: '변경' });
     });
   };
 
-  const disconnect = () => {
-    const socket = socketRef.current;
+  const setLocalStream = async (device: client.Device) => {
+    try {
+      await createSendTransport(device);
 
-    if (!socket) return;
+      await Promise.all([startCameraStream(), startMicStream()]);
+    } catch (_) {
+      // TODO: Error
+    }
+  };
 
-    socket.disconnect();
-    navigate({ to: '/', replace: true });
+  const setRemoteStream = async (device: client.Device) => {
+    await createRecvTransport(device);
+
+    const remoteProducers = await connectExistProducer();
+
+    if (!remoteProducers || remoteProducers.length === 0) return;
+
+    remoteProducers.forEach(consume);
   };
 
   const initMediasoup = async () => {
+    const socket = socketRef.current;
+
+    if (!socket) return;
     const rtpCapabilities = await createRoom();
 
     if (!rtpCapabilities) return;
 
     const device = await createDevice(rtpCapabilities);
 
-    createSendTransport(device);
-    createRecvTransport(device);
-
-    await Promise.all([startVideoStream(), startAudioStream()]);
-
-    const remoteProducers = await connectExistProducer();
-    if (!remoteProducers || remoteProducers.length === 0) return;
-
-    remoteProducers.forEach(consume);
+    await setLocalStream(device);
+    await setRemoteStream(device);
   };
 
   useEffect(() => {
+    if (!isConnected || isError) return;
+
     initSocketEvent();
     initMediasoup();
-  }, []);
+  }, [isConnected, isError]);
 
-  return {
-    socketRef,
-    audioProducerRef,
-    videoProducerRef,
-    screenProducerRef,
-    videoStream,
-    audioStream,
-    screenStream,
-    remoteStreams,
-    startScreenStream,
-    closeStream,
-    pauseStream,
-    resumeStream,
-    disconnect,
-  } as const;
+  useEffect(() => {
+    return () => {
+      disconnect();
+    };
+  }, []);
 };
 
 export default useMediasoup;

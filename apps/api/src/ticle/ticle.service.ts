@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
-import { TicleStatus } from '@repo/types';
+import { ErrorMessage, TicleStatus } from '@repo/types';
 
 import { Applicant } from '@/entity/applicant.entity';
 import { Tag } from '@/entity/tag.entity';
@@ -27,25 +27,21 @@ export class TicleService {
   ) {}
 
   async createTicle(createTicleDto: CreateTicleDto, userId: number): Promise<Ticle> {
-    try {
-      const user = await this.userRepository.findOne({ where: { id: userId } });
+    const user = await this.userRepository.findOne({ where: { id: userId } });
 
-      const { existingTags, tagsToCreate } = await this.findExistingTags(createTicleDto.tags);
-      const newTags = await this.createNewTags(tagsToCreate);
+    const { existingTags, tagsToCreate } = await this.findExistingTags(createTicleDto.tags);
+    const newTags = await this.createNewTags(tagsToCreate);
 
-      const tags = [...existingTags, ...newTags];
-      const newTicle = this.ticleRepository.create({
-        ...createTicleDto,
-        speaker: user,
-        applicants: [],
-        summary: null,
-        tags: tags,
-      });
+    const tags = [...existingTags, ...newTags];
+    const newTicle = this.ticleRepository.create({
+      ...createTicleDto,
+      speaker: user,
+      applicants: [],
+      summary: null,
+      tags: tags,
+    });
 
-      return await this.ticleRepository.save(newTicle);
-    } catch (error) {
-      throw new BadRequestException(`Failed to create ticle `);
-    }
+    return await this.ticleRepository.save(newTicle);
   }
 
   async findExistingTags(tags: string[]) {
@@ -77,7 +73,7 @@ export class TicleService {
     const ticle = await this.getTicleWithSpeakerIdByTicleId(ticleId);
     const user = await this.getUserById(userId);
     if (ticle.speaker.id === userId) {
-      throw new BadRequestException('speaker cannot apply their ticle');
+      throw new BadRequestException(ErrorMessage.CANNOT_REQUEST_OWN_TICLE);
     }
     await this.throwIfExistApplicant(ticleId, userId);
 
@@ -98,7 +94,7 @@ export class TicleService {
     });
 
     if (existingApplication) {
-      throw new BadRequestException('already applied to this ticle');
+      throw new BadRequestException(ErrorMessage.TICLE_ALREADY_REQUESTED);
     }
     return;
   }
@@ -116,7 +112,7 @@ export class TicleService {
       },
     });
     if (!ticle) {
-      throw new NotFoundException(`cannot found ticle`);
+      throw new NotFoundException(ErrorMessage.TICLE_NOT_FOUND);
     }
     return ticle;
   }
@@ -127,29 +123,35 @@ export class TicleService {
     });
 
     if (!user) {
-      throw new NotFoundException(`cannot found user`);
+      throw new NotFoundException(ErrorMessage.USER_NOT_FOUND);
     }
     return user;
   }
 
-  async getTicleByTicleId(ticleId: number): Promise<TickleDetailResponseDto> {
+  async getTicleByTicleId(userId: number, ticleId: number): Promise<TickleDetailResponseDto> {
     const ticle = await this.ticleRepository
       .createQueryBuilder('ticle')
       .leftJoinAndSelect('ticle.tags', 'tags')
       .leftJoinAndSelect('ticle.speaker', 'speaker')
-      .select(['ticle', 'tags', 'speaker.id', 'speaker.profileImageUrl'])
+      .leftJoinAndSelect('ticle.applicants', 'applicants')
+      .select(['ticle', 'tags', 'speaker.id', 'speaker.profileImageUrl', 'applicants'])
       .where('ticle.id = :id', { id: ticleId })
       .getOne();
 
     if (!ticle) {
-      throw new NotFoundException('티클을 찾을 수 없습니다.');
+      throw new NotFoundException(ErrorMessage.TICLE_NOT_FOUND);
     }
     const { tags, speaker, ...ticleData } = ticle;
 
+    const alreadyApplied = ticle.applicants.some((applicnat) => applicnat.id === userId);
+
     return {
       ...ticleData,
+      speakerId: ticle.speaker.id,
       tags: tags.map((tag) => tag.name),
       speakerImgUrl: speaker.profileImageUrl,
+      isOwner: speaker.id === userId,
+      alreadyApplied: alreadyApplied,
     };
   }
 
@@ -165,48 +167,60 @@ export class TicleService {
         'ticle.endTime',
         'ticle.speakerName',
         'ticle.createdAt',
+        'ticle.profileImageUrl',
       ])
+      .addSelect('GROUP_CONCAT(DISTINCT tags.name)', 'tagNames')
+      .addSelect('COUNT(DISTINCT applicant.id)', 'applicantCount')
+      .addSelect('speaker.profile_image_url')
+      .leftJoin('ticle.tags', 'tags')
+      .leftJoin('ticle.applicants', 'applicant')
+      .leftJoin('ticle.speaker', 'speaker')
       .where('ticle.ticleStatus = :status', {
         status: isOpen ? TicleStatus.OPEN : TicleStatus.CLOSED,
       })
-      .leftJoin('ticle.tags', 'tags')
-      .addSelect('tags.name')
-      .loadRelationCountAndMap('ticle.applicantsCount', 'ticle.applicants')
-      .skip(skip)
-      .take(pageSize);
+      .groupBy('ticle.id');
 
     switch (sort) {
       case SortType.OLDEST:
         queryBuilder.orderBy('ticle.createdAt', 'ASC');
         break;
       case SortType.TRENDING:
-        queryBuilder.orderBy('ticle.applicantsCount', 'DESC');
+        queryBuilder.orderBy('applicantCount', 'DESC').addOrderBy('ticle.createdAt', 'DESC');
         break;
       case SortType.NEWEST:
       default:
         queryBuilder.orderBy('ticle.createdAt', 'DESC');
     }
-    const [ticles, totalItems] = await queryBuilder.getManyAndCount();
+
+    const ticles = await queryBuilder.offset(skip).limit(pageSize).getRawMany();
+    const countQuery = this.ticleRepository
+      .createQueryBuilder('ticle')
+      .select('COUNT(*) as count')
+      .where('ticle.ticleStatus = :status', {
+        status: isOpen ? TicleStatus.OPEN : TicleStatus.CLOSED,
+      });
+    const totalTicleCount = await countQuery.getRawOne();
 
     const formattedTicles = ticles.map((ticle) => ({
-      id: ticle.id,
-      title: ticle.title,
-      tags: ticle.tags.map((tag) => tag.name),
-      startTime: ticle.startTime,
-      endTime: ticle.endTime,
-      speakerName: ticle.speakerName,
-      applicantsCount: (ticle as any).applicantsCount || 0,
-      createdAt: ticle.createdAt,
+      id: ticle.ticle_id,
+      title: ticle.ticle_title,
+      tags: ticle.tagNames ? ticle.tagNames.split(',') : [],
+      startTime: ticle.ticle_start_time,
+      endTime: ticle.ticle_end_time,
+      speakerName: ticle.ticle_speaker_name,
+      applicantsCount: ticle.applicantCount,
+      createdAt: ticle.ticle_created_at,
+      speakerProfileImageUrl: ticle.profile_image_url,
     }));
 
-    const totalPages = Math.ceil(totalItems / pageSize);
+    const totalPages = Math.ceil(totalTicleCount.count / pageSize);
 
     return {
       ticles: formattedTicles,
       meta: {
         page,
         take: pageSize,
-        totalItems,
+        totalItems: totalTicleCount.count,
         totalPages,
         hasNextPage: page < totalPages,
       },

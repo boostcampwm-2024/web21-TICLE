@@ -1,9 +1,11 @@
 import { Body, Controller, Get, Post, Res, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ThrottlerGuard } from '@nestjs/throttler';
 import { Response } from 'express';
 
 import { GetUserId } from '@/common/decorator/get-userId.decorator';
+import { CookieConfig } from '@/config/cookie.config';
 
 import { AuthService } from './auth.service';
 import { LocalLoginRequestDto } from './dto/localLoginRequest.dto';
@@ -16,13 +18,18 @@ import { LocalAuthGuard } from './local/local-auth.guard';
 @Controller('auth')
 @ApiTags('Auth')
 export class AuthController {
+  private readonly redirectUrl: string;
+
   constructor(
-    private authService: AuthService,
-    private configService: ConfigService
-  ) {}
+    private readonly authService: AuthService,
+    private readonly configService: ConfigService,
+    private readonly cookieConfig: CookieConfig
+  ) {
+    this.redirectUrl = this.configService.get<string>('LOGIN_REDIRECT_URL');
+  }
 
   @Post('signup')
-  @ApiOperation({ summary: '회원가입' })
+  @ApiOperation({ summary: '로컬 회원가입' })
   @ApiResponse({ status: 201, type: SignupResponseDto })
   @ApiResponse({ status: 409 })
   async signup(@Body() createUserDto: LocalSignupRequestDto): Promise<SignupResponseDto> {
@@ -37,7 +44,16 @@ export class AuthController {
   @ApiResponse({ status: 401 })
   @UseGuards(LocalAuthGuard)
   localLogin(@GetUserId() userId: number, @Res() response: Response) {
-    this.cookieInsertJWT(response, userId);
+    this.loginProcess(response, userId);
+  }
+
+  @Get('guest/login')
+  @ApiOperation({ summary: '게스트 로그인' })
+  @ApiResponse({ status: 302, description: '홈으로 리다이렉션' })
+  @UseGuards(ThrottlerGuard)
+  async guestLogin(@Res() response: Response) {
+    const guestUser = await this.authService.createGuestUser();
+    this.loginProcess(response, guestUser.id);
   }
 
   @Get('google/login')
@@ -50,7 +66,7 @@ export class AuthController {
   @Get('google/callback')
   @UseGuards(GoogleAuthGuard)
   googleAuthCallback(@GetUserId() userId: number, @Res() response: Response) {
-    this.cookieInsertJWT(response, userId);
+    this.loginProcess(response, userId);
   }
 
   @Get('github/login')
@@ -63,25 +79,24 @@ export class AuthController {
   @Get('github/callback')
   @UseGuards(GitHubAuthGuard)
   githubAuthCallback(@GetUserId() userId: number, @Res() response: Response) {
-    this.cookieInsertJWT(response, userId);
+    this.loginProcess(response, userId);
   }
 
-  private setAuthCookie(response: Response, accessToken: string) {
-    response.cookie('accessToken', accessToken, {
-      httpOnly: true,
-      secure: this.configService.get<string>('NODE_ENV') === 'production',
-      sameSite: 'lax',
-      path: '/',
-    });
+  @Get('logout')
+  @ApiOperation({ summary: '로그아웃' })
+  @ApiResponse({ status: 302, description: '홈으로 리다이렉션' })
+  logout(@Res() response: Response) {
+    response.clearCookie('accessToken', this.cookieConfig.getAuthCookieOptions());
+    this.redirectToHome(response);
   }
 
-  private async cookieInsertJWT(
-    response: Response,
-    userId: number,
-    redirectUrl: string = this.configService.get<string>('LOGIN_REDIRECT_URL')
-  ) {
-    const { accessToken } = await this.authService.createJWT(userId);
-    this.setAuthCookie(response, accessToken);
-    response.redirect(redirectUrl);
+  private loginProcess(response: Response, userId: number) {
+    const { accessToken } = this.authService.createJWT(userId);
+    response.cookie('accessToken', accessToken, this.cookieConfig.getAuthCookieOptions());
+    this.redirectToHome(response);
+  }
+
+  private redirectToHome(response: Response) {
+    response.redirect(this.redirectUrl);
   }
 }

@@ -136,6 +136,32 @@ const tailwindConfig: Config = {
         up: '0px 2px 8px 0px var(--grey-500)',
         floating: '0px 16px 28px 0px var(--grey-500), 0px 0px 4px 0px var(--grey-500)',
       },
+
+      // animation
+      animation: {
+        flashWhite: 'flashWhite 1s ease-out infinite alternate',
+        flashPrimary: 'flashPurple 1s ease-out infinite alternate',
+      },
+
+      // keyframes
+      keyframes: {
+        flashWhite: {
+          '0%, 100%': {
+            backgroundColor: 'var(--grey-700)',
+          },
+          '50%': {
+            backgroundColor: 'var(--white)',
+          },
+        },
+        flashPrimary: {
+          '0%, 100%': {
+            backgroundColor: 'var(--purple-200)',
+          },
+          '50%': {
+            backgroundColor: 'var(--purple-500)',
+          },
+        },
+      },
     },
   },
 };

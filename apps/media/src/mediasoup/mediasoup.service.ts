@@ -6,6 +6,7 @@ import * as mediasoup from 'mediasoup';
 import { types } from 'mediasoup';
 import { Worker } from 'mediasoup/node/lib/types';
 import { MediaTypes, server, STREAM_STATUS } from '@repo/mediasoup';
+import { ErrorMessage } from '@repo/types';
 
 import { RoomService } from '@/room/room.service';
 
@@ -60,12 +61,12 @@ export class MediasoupService implements OnModuleInit {
     return this.roomService.createRoom(roomId, router);
   }
 
-  joinRoom(roomId: string, socketId: string) {
+  joinRoom(roomId: string, socketId: string, nickname: string) {
     const room = this.roomService.getRoom(roomId);
     if (room.hasPeer(socketId)) {
-      throw new WsException(`Peer ${socketId} already exists`);
+      throw new WsException(ErrorMessage.PEER_ALREADY_EXISTS_IN_ROOM);
     }
-    room.addPeer(socketId);
+    room.addPeer(socketId, nickname);
 
     return room.getRouter().rtpCapabilities;
   }
@@ -108,10 +109,16 @@ export class MediasoupService implements OnModuleInit {
     const peer = room.getPeer(socketId);
     const transport = peer.getTransport(transportId);
 
-    const producer = await transport.produce({ kind, rtpParameters, appData });
+    const producer = await transport.produce({
+      kind,
+      rtpParameters,
+      appData,
+      paused: appData.mediaTypes !== 'screen',
+    });
 
     peer.addProducer(producer);
-    return producer;
+
+    return { nickname: peer.nickname, producerId: producer.id, paused: producer.paused };
   }
 
   async consume(
@@ -125,10 +132,15 @@ export class MediasoupService implements OnModuleInit {
     const peer = room.getPeer(socketId);
     const transport = peer.getTransport(transportId);
 
+    const isExistConsumer = peer.checkConsumerByProducerId(producerId);
+
+    if (!isExistConsumer) {
+      return;
+    }
+
     const consumer = await transport.consume({
       producerId,
       rtpCapabilities,
-      paused: false,
     });
 
     consumer.on('producerclose', () => {
@@ -146,7 +158,7 @@ export class MediasoupService implements OnModuleInit {
     };
   }
 
-  async getProducers(roomId: string, socketId: string) {
+  getProducers(roomId: string, socketId: string) {
     const room = this.roomService.getRoom(roomId);
 
     const peers = [...room.peers.values()];
@@ -157,10 +169,11 @@ export class MediasoupService implements OnModuleInit {
       [...peer.producers.values()].map(({ id, kind, appData, paused }) => {
         return {
           producerId: id,
-          kind,
-          paused,
           peerId: peer.socketId,
+          nickname: peer.nickname,
+          kind,
           appData: appData,
+          paused,
         };
       })
     );

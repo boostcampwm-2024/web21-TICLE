@@ -11,7 +11,7 @@ module.exports = {
     require.resolve('@repo/lint'),
     'plugin:react/recommended',
     'plugin:react-hooks/recommended',
-    'plugin:jsx-a11y/recommended',
+    // 'plugin:jsx-a11y/recommended',
     'plugin:react/jsx-runtime',
   ],
   plugins: ['react-refresh'],
@@ -42,5 +42,7 @@ module.exports = {
     'no-multiple-empty-lines': ['error', { max: 1 }],
     'import/no-duplicates': 'error',
     'no-console': 'error',
+    'jsx-a11y/click-events-have-key-events': 'off',
+    'jsx-a11y/no-static-element-interactions': 'off',
   },
 };

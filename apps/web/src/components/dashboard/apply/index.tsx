@@ -1,60 +1,83 @@
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 
-import Select from '@/components/common/Select';
+import Empty from '@/components/common/Empty';
+import Loading from '@/components/common/Loading';
+import Select, { Option } from '@/components/common/Select';
+import { useDashboardTicleList } from '@/hooks/api/dashboard';
+import useIntersectionObserver from '@/hooks/useIntersectionObserver';
 
 import TicleInfoCard from './TicleInfoCard';
 
-const FILTER_OPTIONS = ['전체', '진행 예정', '종료']; // TODO: label과 value분리
-
-interface TicleInfo {
-  id: number;
-  ticleOwner: string;
-  title: string;
-  startTime: string;
-  endTime: string;
-  status: 'pending' | 'completed';
-}
-
-const TICLE_INFO: TicleInfo[] = [
+const FILTER_OPTIONS: Option[] = [
   {
-    id: 1,
-    ticleOwner: '김티클',
-    title: '야, 너도 부캠할 수 있어',
-    startTime: '2024-11-05T10:00:00Z',
-    endTime: '2024-11-05T13:00:00Z',
-    status: 'pending',
+    label: '전체',
+    value: '',
   },
   {
-    id: 2,
-    ticleOwner: '김티클',
-    title: '야, 너도 부캠할 수 있어',
-    startTime: '2024-11-05T10:00:00Z',
-    endTime: '2024-11-05T13:00:00Z',
-    status: 'pending',
+    label: '진행 중',
+    value: 'open',
+  },
+  {
+    label: '종료',
+    value: 'closed',
   },
 ];
 
 function Apply() {
-  const [selectedOption, setSelectedOption] = useState<string | undefined>(FILTER_OPTIONS[0]);
-  const onOptionChange = (option: string) => {
+  const [selectedOption, setSelectedOption] = useState<Option>(FILTER_OPTIONS[0] as Option);
+  const onOptionChange = (option: Option) => {
     setSelectedOption(option);
   };
+
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useDashboardTicleList(
+    {
+      isSpeaker: false,
+      page: 1,
+      pageSize: 10,
+      ...(selectedOption.value && { status: selectedOption.value as 'open' | 'closed' }),
+    }
+  );
+
+  const { ref: intersectionRef } = useIntersectionObserver({
+    hasNextPage,
+    fetchNextPage,
+  });
 
   return (
     <main className="mt-14 flex w-full flex-col gap-12">
       <Select options={FILTER_OPTIONS} selectedOption={selectedOption} onChange={onOptionChange} />
       <div className="flex flex-col gap-6">
-        {TICLE_INFO.map((ticle) => (
-          <TicleInfoCard
-            key={ticle.id}
-            ticleId={ticle.id}
-            ticleTitle={ticle.title}
-            ticleOwner={ticle.ticleOwner}
-            startTime={ticle.startTime}
-            endTime={ticle.endTime}
-            status={ticle.status}
-          />
-        ))}
+        {isLoading || !data ? (
+          <div className="flex h-80 w-full items-center justify-center">
+            <Loading color="primary" />
+          </div>
+        ) : !data.pages[0]?.ticles?.length ? (
+          <Empty />
+        ) : (
+          <div className="flex flex-col gap-6">
+            {data?.pages.map((page) => (
+              <Fragment key={page.meta.page}>
+                {page.ticles.map((ticle) => (
+                  <TicleInfoCard
+                    key={ticle.id}
+                    ticleId={ticle.id}
+                    ticleTitle={ticle.title}
+                    speakerName={ticle.speakerName as string}
+                    startTime={ticle.startTime}
+                    endTime={ticle.endTime}
+                    status={ticle.ticleStatus}
+                  />
+                ))}
+              </Fragment>
+            ))}
+            <div ref={intersectionRef} className="h-10 w-full" aria-hidden />
+            {isFetchingNextPage && (
+              <div className="flex w-full justify-center">
+                <Loading color="primary" />
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </main>
   );

@@ -7,6 +7,8 @@ import Tab from '@/components/common/Tab';
 import type { TabData } from '@/components/common/Tab';
 import type { Meta, StoryObj } from '@storybook/react';
 
+type TabValues = '전체' | '진행중' | '종료';
+
 const meta: Meta<typeof Tab> = {
   title: 'common/Tab',
   component: Tab,
@@ -15,11 +17,11 @@ const meta: Meta<typeof Tab> = {
     tabItems: {
       description: '탭 아이템들의 배열입니다.',
       table: {
-        type: { summary: 'TabData[]' },
+        type: { summary: 'TabData<T>[]' },
       },
     },
     selectedTab: {
-      description: '현재 선택된 탭의 이름입니다.',
+      description: '현재 선택된 탭의 value입니다.',
       control: 'text',
     },
   },
@@ -33,15 +35,17 @@ const meta: Meta<typeof Tab> = {
 import Tab from '@/components/common/Tab';
 
 // Basic usage
-const [selectedTab, setSelectedTab] = useState('Tab 1');
+const [selectedTab, setSelectedTab] = useState<'tab1' | 'tab2'>('tab1');
 const tabItems = [
   {
-    name: 'Tab 1',
-    onClick: () => setSelectedTab('Tab 1'),
+    value: 'tab1',
+    label: 'Tab 1',
+    onClick: () => setSelectedTab('tab1'),
   },
   {
-    name: 'Tab 2',
-    onClick: () => setSelectedTab('Tab 2'),
+    value: 'tab2',
+    label: 'Tab 2',
+    onClick: () => setSelectedTab('tab2'),
   },
 ];
 
@@ -60,21 +64,24 @@ export default meta;
 type Story = StoryObj<typeof Tab>;
 
 interface TabWithHooksProps {
-  initialSelectedTab?: string;
-  items?: TabData[];
+  initialSelectedTab?: TabValues;
+  items?: TabData<TabValues>[];
 }
 
-const defaultTabItems: TabData[] = [
+const defaultTabItems: TabData<TabValues>[] = [
   {
-    name: '전체',
+    value: '전체',
+    label: '전체',
     onClick: () => action('onClick')('전체'),
   },
   {
-    name: '진행중',
+    value: '진행중',
+    label: '진행중',
     onClick: () => action('onClick')('진행중'),
   },
   {
-    name: '종료',
+    value: '종료',
+    label: '종료',
     onClick: () => action('onClick')('종료'),
   },
 ];
@@ -83,13 +90,13 @@ const TabWithHooks = ({
   initialSelectedTab = '전체',
   items = defaultTabItems,
 }: TabWithHooksProps) => {
-  const [selectedTab, setSelectedTab] = useState(initialSelectedTab);
+  const [selectedTab, setSelectedTab] = useState<TabValues>(initialSelectedTab);
 
   const tabItems = items.map((item) => ({
     ...item,
     onClick: () => {
-      setSelectedTab(item.name);
-      action('onClick')(item.name);
+      setSelectedTab(item.value);
+      action('onClick')(item.value);
     },
   }));
 

@@ -1,3 +1,5 @@
+import { SOCKET_EVENTS } from '@repo/mediasoup';
+
 import CameraOffIc from '@/assets/icons/camera-off.svg?react';
 import CameraOnIc from '@/assets/icons/camera-on.svg?react';
 import ExitIc from '@/assets/icons/exit.svg?react';
@@ -7,30 +9,65 @@ import ScreenOffIc from '@/assets/icons/screen-off.svg?react';
 import ScreenOnIc from '@/assets/icons/screen-on.svg?react';
 import ToggleButton from '@/components/live/ControlBar/ToggleButton';
 import ExitDialog from '@/components/live/ExitDialog';
+import { useLocalStreamAction, useLocalStreamState } from '@/contexts/localStream/context';
+import { useMediasoupAction, useMediasoupState } from '@/contexts/mediasoup/context';
 import useModal from '@/hooks/useModal';
 
-interface ControlBarProps {
-  isVideoPaused: boolean;
-  isAudioMuted: boolean;
-  isScreenSharing: boolean;
-  toggleVideo: () => void;
-  toggleAudio: () => void;
-  toggleScreenShare: () => void;
-  handleExit: (isOwner: boolean) => void;
-}
-
-const ControlBar = (props: ControlBarProps) => {
-  const {
-    isVideoPaused,
-    isAudioMuted,
-    isScreenSharing,
-    toggleVideo,
-    toggleAudio,
-    toggleScreenShare,
-    handleExit,
-  } = props;
-
+const ControlBar = () => {
   const { isOpen, onClose, onOpen } = useModal();
+
+  const { socketRef } = useMediasoupState();
+  const { video, screen, audio } = useLocalStreamState();
+
+  const { disconnect } = useMediasoupAction();
+  const { closeStream, pauseStream, resumeStream, startScreenStream, closeScreenStream } =
+    useLocalStreamAction();
+
+  const toggleScreenShare = async () => {
+    const { paused, stream } = screen;
+
+    try {
+      if (stream && !paused) {
+        closeScreenStream();
+      } else {
+        startScreenStream();
+      }
+    } catch (_) {
+      closeStream('screen');
+    }
+  };
+
+  const toggleVideo = () => {
+    const { paused, stream } = video;
+
+    if (!stream) return;
+
+    if (paused) {
+      resumeStream('video');
+    } else {
+      pauseStream('video');
+    }
+  };
+
+  const toggleAudio = () => {
+    const { paused, stream } = audio;
+
+    if (!stream) return;
+
+    if (paused) {
+      resumeStream('audio');
+    } else {
+      pauseStream('audio');
+    }
+  };
+
+  const handleExit = (isOwner: boolean) => {
+    if (isOwner) {
+      socketRef.current?.emit(SOCKET_EVENTS.closeRoom);
+    }
+
+    disconnect();
+  };
 
   return (
     <>
@@ -39,19 +76,19 @@ const ControlBar = (props: ControlBarProps) => {
           ActiveIcon={MicOnIc}
           InactiveIcon={MicOffIc}
           onToggle={toggleAudio}
-          isActivated={!isAudioMuted}
+          isActivated={!audio.paused}
         />
         <ToggleButton
           ActiveIcon={CameraOnIc}
           InactiveIcon={CameraOffIc}
           onToggle={toggleVideo}
-          isActivated={!isVideoPaused}
+          isActivated={!video.paused}
         />
         <ToggleButton
           ActiveIcon={ScreenOnIc}
           InactiveIcon={ScreenOffIc}
           onToggle={toggleScreenShare}
-          isActivated={!isScreenSharing}
+          isActivated={screen.paused}
         />
         <ToggleButton type="exit" ActiveIcon={ExitIc} InactiveIcon={ExitIc} onToggle={onOpen} />
       </div>
