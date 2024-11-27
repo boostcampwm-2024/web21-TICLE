@@ -14,7 +14,7 @@ interface PinnedListProps {
   getAudioMutedState: (stream: StreamData) => boolean;
 }
 
-function PinnedList({
+function PinnedGrid({
   pinnedVideoStreamData,
   removePinnedVideo,
   addPinnedVideo,
@@ -52,4 +52,4 @@ function PinnedList({
   );
 }
 
-export default PinnedList;
+export default PinnedGrid;

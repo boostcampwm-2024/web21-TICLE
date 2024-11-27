@@ -10,7 +10,7 @@ interface UnPinnedListProps {
   getAudioMutedState: (stream: StreamData) => boolean;
 }
 
-function UnPinnedList({ addPinnedVideo, getAudioMutedState }: UnPinnedListProps) {
+function UnPinnedGrid({ addPinnedVideo, getAudioMutedState }: UnPinnedListProps) {
   const { paginatedItems: paginatedStreams, ...paginationControlsProps } = usePagination({
     itemsPerPage: ITEMS_PER_GRID,
   });
@@ -26,4 +26,4 @@ function UnPinnedList({ addPinnedVideo, getAudioMutedState }: UnPinnedListProps)
   );
 }
 
-export default UnPinnedList;
+export default UnPinnedGrid;
