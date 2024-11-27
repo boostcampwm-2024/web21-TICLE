@@ -32,13 +32,16 @@ export class AuthService {
 
   async createGuestUser() {
     const randomNum = Math.floor(Math.random() * 10000);
+    const response = await fetch('https://api.thecatapi.com/v1/images/search');
+    const catImageUrl = (await response.json())[0].url;
+
     const guestUser = {
       username: `guest_${randomNum}`,
       password: `guest_password_${randomNum}`,
       email: `guet_email@guest.com`,
       nickname: `guest_${randomNum}`,
       introduce: `게스트 사용자입니다. `,
-      profileImageUrl: `https://cataas.com/cat?${Date.now()}`,
+      profileImageUrl: catImageUrl,
     };
     const user = await this.userService.findUserByUsername(guestUser.username);
     if (!user) {

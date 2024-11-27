@@ -1,4 +1,5 @@
 import axiosInstance from '@/api/axios';
+import { ENV } from '@/constants/env';
 
 type SignUpDto = {
   username: string;
@@ -23,8 +24,12 @@ const signOut = async () => {
   await axiosInstance.post('/auth/logout');
 };
 
-const oauthLogin = async (provider: 'google' | 'github') => {
-  await axiosInstance.get(`/auth/${provider}/login`);
+const guestLogin = () => {
+  window.location.href = `${ENV.API_URL}/auth/guest/login`;
 };
 
-export { logIn, signUp, oauthLogin, signOut };
+const oauthLogin = (provider: 'google' | 'github') => {
+  window.location.href = `${ENV.API_URL}/auth/${provider}/login`;
+};
+
+export { logIn, signUp, oauthLogin, guestLogin, signOut };

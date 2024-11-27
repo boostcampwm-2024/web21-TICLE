@@ -80,7 +80,7 @@ function TicleList() {
           <div className="flex h-80 w-full items-center justify-center">
             <Loading color="primary" />
           </div>
-        ) : data?.pages.length === 0 ? (
+        ) : data?.pages[0].ticles.length === 0 ? (
           <Empty />
         ) : (
           data?.pages.map((page) => (
