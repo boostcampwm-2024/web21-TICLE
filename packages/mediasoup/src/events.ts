@@ -9,26 +9,31 @@ export const SOCKET_EVENTS = {
   reconnectFailed: 'reconnect_failed',
 
   // MediaSoup 관련 이벤트
-  closeRoom: 'close-room',
-  roomClosed: 'room-closed',
-  newPeer: 'new-peer',
-  newProducer: 'new-producer',
-  peerLeft: 'peer-left',
-  consumerClosed: 'consumer-closed',
-  consumerPaused: 'consumer-paused',
-  closeProducer: 'close-producer',
-  producerStatusChange: 'producer-status-change',
-  consumerStatusChange: 'consumer-status-change',
-  producerPaused: 'producer-paused',
-  producerResumed: 'producer-resumed',
-  producerClosed: 'producer-closed',
-  createRoom: 'create-room',
   joinRoom: 'join-room',
+  closeRoom: 'close-room',
+  createRoom: 'create-room',
+  roomClosed: 'room-closed',
+
   createTransport: 'create-transport',
   connectTransport: 'connect-transport',
+
+  newPeer: 'new-peer',
+  peerLeft: 'peer-left',
+
   produce: 'produce',
-  getProducer: 'get-producer',
+  newProducer: 'new-producer',
+  getProducers: 'get-producers',
+  closeProducer: 'close-producer',
+  producerClosed: 'producer-closed',
+  producerPaused: 'producer-paused',
+  producerResumed: 'producer-resumed',
+  producerStatusChange: 'producer-status-change',
+
   consume: 'consume',
+  consumerClosed: 'consumer-closed',
+  consumerPaused: 'consumer-paused',
+  pauseConsumers: 'pause-consumers',
+  resumeConsumers: 'resume-consumers',
 } as const;
 
 export const TRANSPORT_EVENTS = {
