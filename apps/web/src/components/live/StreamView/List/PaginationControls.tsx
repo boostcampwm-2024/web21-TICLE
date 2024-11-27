@@ -26,7 +26,7 @@ function PaginationControls({
         style={{ visibility: isFirstPage ? 'hidden' : 'visible' }}
         className="m-4 flex items-center justify-center"
       >
-        <ChevronLeftIc />
+        <ChevronLeftIc className="fill-white" />
       </button>
       {children}
       <button
@@ -35,7 +35,7 @@ function PaginationControls({
         className="m-4 flex items-center justify-center"
         onClick={onNextPage}
       >
-        <ChevronRightIc />
+        <ChevronRightIc className="fill-white" />
       </button>
     </>
   );
