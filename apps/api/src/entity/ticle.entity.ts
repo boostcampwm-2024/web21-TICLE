@@ -74,4 +74,7 @@ export class Ticle {
     },
   })
   tags: Tag[];
+
+  @Column({ type: 'varchar', name: 'profile_image_url', nullable: true })
+  profileImageUrl: string;
 }

@@ -128,12 +128,13 @@ export class TicleService {
     return user;
   }
 
-  async getTicleByTicleId(ticleId: number): Promise<TickleDetailResponseDto> {
+  async getTicleByTicleId(userId: number, ticleId: number): Promise<TickleDetailResponseDto> {
     const ticle = await this.ticleRepository
       .createQueryBuilder('ticle')
       .leftJoinAndSelect('ticle.tags', 'tags')
       .leftJoinAndSelect('ticle.speaker', 'speaker')
-      .select(['ticle', 'tags', 'speaker.id', 'speaker.profileImageUrl'])
+      .leftJoinAndSelect('ticle.applicants', 'applicants')
+      .select(['ticle', 'tags', 'speaker.id', 'speaker.profileImageUrl', 'applicants'])
       .where('ticle.id = :id', { id: ticleId })
       .getOne();
 
@@ -142,10 +143,15 @@ export class TicleService {
     }
     const { tags, speaker, ...ticleData } = ticle;
 
+    const alreadyApplied = ticle.applicants.some((applicnat) => applicnat.id === userId);
+
     return {
       ...ticleData,
+      speakerId: ticle.speaker.id,
       tags: tags.map((tag) => tag.name),
       speakerImgUrl: speaker.profileImageUrl,
+      isOwner: speaker.id === userId,
+      alreadyApplied: alreadyApplied,
     };
   }
 
@@ -161,11 +167,14 @@ export class TicleService {
         'ticle.endTime',
         'ticle.speakerName',
         'ticle.createdAt',
+        'ticle.profileImageUrl',
       ])
       .addSelect('GROUP_CONCAT(DISTINCT tags.name)', 'tagNames')
       .addSelect('COUNT(DISTINCT applicant.id)', 'applicantCount')
+      .addSelect('speaker.profile_image_url')
       .leftJoin('ticle.tags', 'tags')
       .leftJoin('ticle.applicants', 'applicant')
+      .leftJoin('ticle.speaker', 'speaker')
       .where('ticle.ticleStatus = :status', {
         status: isOpen ? TicleStatus.OPEN : TicleStatus.CLOSED,
       })
@@ -201,6 +210,7 @@ export class TicleService {
       speakerName: ticle.ticle_speaker_name,
       applicantsCount: ticle.applicantCount,
       createdAt: ticle.ticle_created_at,
+      speakerProfileImageUrl: ticle.profile_image_url,
     }));
 
     const totalPages = Math.ceil(totalTicleCount.count / pageSize);

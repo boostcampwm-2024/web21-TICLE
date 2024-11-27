@@ -7,6 +7,7 @@ export const TicleDetailResponseSchema = z.object({
   speakerName: z.string(),
   speakerEmail: z.string().email(),
   speakerIntroduce: z.string(),
+  speakerId: z.number(),
   title: z.string(),
   content: z.string(),
   startTime: z.string().datetime(),

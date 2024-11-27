@@ -3,6 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 
+import { CookieConfig } from '@/config/cookie.config';
 import { UserModule } from '@/user/user.module';
 
 import { AuthController } from './auth.controller';
@@ -27,6 +28,13 @@ import { LocalStrategy } from './local/local.strategy';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, LocalStrategy, JwtStrategy, GitHubStrategy, GoogleStrategy],
+  providers: [
+    AuthService,
+    LocalStrategy,
+    JwtStrategy,
+    GitHubStrategy,
+    GoogleStrategy,
+    CookieConfig,
+  ],
 })
 export class AuthModule {}
