@@ -63,9 +63,11 @@ export class MediasoupService implements OnModuleInit {
 
   joinRoom(roomId: string, socketId: string, nickname: string) {
     const room = this.roomService.getRoom(roomId);
+
     if (room.hasPeer(socketId)) {
       throw new WsException(ErrorMessage.PEER_ALREADY_EXISTS_IN_ROOM);
     }
+
     room.addPeer(socketId, nickname);
 
     return room.getRouter().rtpCapabilities;
@@ -75,6 +77,7 @@ export class MediasoupService implements OnModuleInit {
     const room = this.roomService.getRoom(roomId);
     const router = room.getRouter();
     const transport = await router.createWebRtcTransport(this.mediasoupConfig.webRtcTransport);
+
     room.getPeer(socketId).addTransport(transport);
 
     return {
@@ -121,41 +124,10 @@ export class MediasoupService implements OnModuleInit {
     return { nickname: peer.nickname, producerId: producer.id, paused: producer.paused };
   }
 
-  async consume(
-    socketId: string,
-    producerId: string,
-    roomId: string,
-    transportId: string,
-    rtpCapabilities: types.RtpCapabilities
-  ) {
-    const room = this.roomService.getRoom(roomId);
-    const peer = room.getPeer(socketId);
-    const transport = peer.getTransport(transportId);
+  disconnect(socketId: string) {
+    const roomIds = this.roomService.deletePeer(socketId);
 
-    const isExistConsumer = peer.checkConsumerByProducerId(producerId);
-
-    if (!isExistConsumer) {
-      return;
-    }
-
-    const consumer = await transport.consume({
-      producerId,
-      rtpCapabilities,
-    });
-
-    consumer.on('producerclose', () => {
-      peer.consumers.delete(consumer.id);
-      consumer.close();
-    });
-
-    peer.addConsumer(consumer);
-
-    return {
-      consumerId: consumer.id,
-      producerId: consumer.producerId,
-      kind: consumer.kind,
-      rtpParameters: consumer.rtpParameters,
-    };
+    return roomIds;
   }
 
   getProducers(roomId: string, socketId: string) {
@@ -181,53 +153,106 @@ export class MediasoupService implements OnModuleInit {
     return [...new Set(result)];
   }
 
-  disconnect(socketId: string) {
-    const roomIds = this.roomService.deletePeer(socketId);
-
-    return roomIds;
-  }
-
-  disconnectProducer(roomId: string, producerId: string, socketId: string) {
-    const room = this.roomService.getRoom(roomId);
-    const peer = room.peers.get(socketId);
-    const producer = peer.getProducer(producerId);
-    producer.close();
-    return producerId;
-  }
-
   changeProducerStatus(socketId: string, changeProducerState: server.ChangeProducerStateDto) {
     const { producerId, status, roomId } = changeProducerState;
     const room = this.roomService.getRoom(roomId);
     const peer = room.peers.get(socketId);
     const producer = peer.getProducer(producerId);
 
-    const updateStatus = () => {
-      if (status === STREAM_STATUS.pause) {
-        producer.pause();
-      } else {
-        producer.resume();
-      }
-    };
+    if (status === STREAM_STATUS.pause) {
+      producer.pause();
+    } else {
+      producer.resume();
+    }
 
-    updateStatus();
     return producerId;
   }
 
-  changeConsumerStatus(socketId: string, changeConsumerState: server.ChangeConsumerStateDto) {
-    const { consumerId, status, roomId } = changeConsumerState;
+  async consume(
+    socketId: string,
+    producerId: string,
+    roomId: string,
+    transportId: string,
+    rtpCapabilities: types.RtpCapabilities
+  ) {
+    const room = this.roomService.getRoom(roomId);
+    const peer = room.getPeer(socketId);
+    const transport = peer.getTransport(transportId);
+
+    const isExistConsumer = peer.checkConsumerByProducerId(producerId);
+
+    if (!isExistConsumer) {
+      return;
+    }
+
+    const consumer = await transport.consume({
+      producerId,
+      rtpCapabilities,
+      paused: true,
+    });
+
+    consumer.on('producerclose', () => {
+      peer.consumers.delete(consumer.id);
+      consumer.close();
+    });
+
+    peer.addConsumer(consumer);
+
+    return {
+      consumerId: consumer.id,
+      producerId: consumer.producerId,
+      kind: consumer.kind,
+      rtpParameters: consumer.rtpParameters,
+    };
+  }
+
+  async createConsumers(socketId: string, targets: server.CreateConsumerDto[]) {
+    return Promise.all(
+      targets.map(({ producerId, roomId, transportId, rtpCapabilities }) =>
+        this.consume(socketId, producerId, roomId, transportId, rtpCapabilities)
+      )
+    );
+  }
+
+  closeProducer(roomId: string, producerId: string, socketId: string) {
+    const room = this.roomService.getRoom(roomId);
+    const peer = room.peers.get(socketId);
+
+    peer.deleteProducer(producerId);
+    room.removeConsumersByProducerId(producerId);
+
+    return producerId;
+  }
+
+  pauseConsumer(socketId: string, consumerId: string, roomId: string) {
     const room = this.roomService.getRoom(roomId);
     const peer = room.peers.get(socketId);
     const consumer = peer.getConsumer(consumerId);
 
-    const updateStatus = () => {
-      if (status === STREAM_STATUS.pause) {
-        consumer.pause();
-      } else {
-        consumer.resume();
-      }
-    };
+    consumer.pause();
 
-    updateStatus();
     return consumerId;
+  }
+
+  resumeConsumer(socketId: string, consumerId: string, roomId: string) {
+    const room = this.roomService.getRoom(roomId);
+    const peer = room.peers.get(socketId);
+    const consumer = peer.getConsumer(consumerId);
+
+    consumer.resume();
+
+    return consumerId;
+  }
+
+  pauseConsumers(socketId: string, roomId: string, consumerIds: string[]) {
+    consumerIds.forEach((consumerId) => {
+      this.pauseConsumer(socketId, consumerId, roomId);
+    });
+  }
+
+  resumeConsumers(socketId: string, roomId: string, consumerIds: string[]) {
+    consumerIds.forEach((consumerId) => {
+      this.resumeConsumer(socketId, consumerId, roomId);
+    });
   }
 }
