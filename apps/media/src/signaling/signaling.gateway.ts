@@ -88,22 +88,6 @@ export class SignalingGateway implements OnGatewayDisconnect {
     return createProducerRes;
   }
 
-  @SubscribeMessage(SOCKET_EVENTS.consume)
-  async handleConsume(
-    @ConnectedSocket() client: Socket,
-    @MessageBody() createConsumerDto: server.CreateConsumerDto
-  ): Promise<client.CreateConsumerRes> {
-    const { transportId, producerId, roomId, rtpCapabilities } = createConsumerDto;
-
-    return this.mediasoupService.consume(
-      client.id,
-      producerId,
-      roomId,
-      transportId,
-      rtpCapabilities
-    );
-  }
-
   @SubscribeMessage(SOCKET_EVENTS.getProducers)
   getProducers(
     @ConnectedSocket() client: Socket,
@@ -146,6 +130,30 @@ export class SignalingGateway implements OnGatewayDisconnect {
     }
 
     return { producerId };
+  }
+
+  @SubscribeMessage(SOCKET_EVENTS.consume)
+  async handleConsume(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() createConsumerDto: server.CreateConsumerDto
+  ): Promise<client.CreateConsumerRes> {
+    const { transportId, producerId, roomId, rtpCapabilities } = createConsumerDto;
+
+    return this.mediasoupService.consume(
+      client.id,
+      producerId,
+      roomId,
+      transportId,
+      rtpCapabilities
+    );
+  }
+
+  @SubscribeMessage(SOCKET_EVENTS.createConsumers)
+  async createConsumers(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() createConsumersDto: server.CreateConsumerDto[]
+  ) {
+    await this.mediasoupService.createConsumers(client.id, createConsumersDto);
   }
 
   @SubscribeMessage(SOCKET_EVENTS.pauseConsumers)
