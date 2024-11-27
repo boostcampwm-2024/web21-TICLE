@@ -147,6 +147,7 @@ export class TicleService {
 
     return {
       ...ticleData,
+      speakerId: ticle.speaker.id,
       tags: tags.map((tag) => tag.name),
       speakerImgUrl: speaker.profileImageUrl,
       isOwner: speaker.id === userId,

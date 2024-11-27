@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
@@ -8,6 +8,8 @@ import { User } from '@/entity/user.entity';
 
 import { CreateLocalUserDto } from './dto/createLocalUser.dto';
 import { CreateSocialUserDto } from './dto/createSocialUser.dto';
+import { UserProfileDto } from './dto/userProfileDto';
+import { UserProfileOfMeDto } from './dto/userProfileOfMeDto';
 
 @Injectable()
 export class UserService {
@@ -63,5 +65,40 @@ export class UserService {
       return null;
     }
     return user;
+  }
+
+  async findUserProfileOfMeByUserId(userId: number): Promise<UserProfileOfMeDto> {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      select: ['id', 'nickname', 'profileImageUrl', 'provider'],
+    });
+
+    if (!user) {
+      throw new NotFoundException(ErrorMessage.USER_NOT_FOUND);
+    }
+
+    return user;
+  }
+
+  async findUserProfileByUserId(userId: number): Promise<UserProfileDto> {
+    const user = await this.userRepository
+      .createQueryBuilder('user')
+      .leftJoin('user.ticles', 'ticles')
+      .addSelect('ticles.title')
+      .where('user.id = :userId', { userId: userId })
+      .getOne();
+
+    if (!user) {
+      throw new NotFoundException(ErrorMessage.USER_NOT_FOUND);
+    }
+
+    const ticles = user.ticles || [];
+    return {
+      id: user.id,
+      nickname: user.nickname,
+      profileImageUrl: user.profileImageUrl,
+      provider: user.provider,
+      ticles: ticles.map((ticle) => ticle.title),
+    };
   }
 }
