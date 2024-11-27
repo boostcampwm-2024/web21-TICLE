@@ -30,6 +30,7 @@ export const SOCKET_EVENTS = {
   producerStatusChange: 'producer-status-change',
 
   consume: 'consume',
+  createConsumers: 'create-consumers',
   consumerClosed: 'consumer-closed',
   consumerPaused: 'consumer-paused',
   pauseConsumers: 'pause-consumers',
