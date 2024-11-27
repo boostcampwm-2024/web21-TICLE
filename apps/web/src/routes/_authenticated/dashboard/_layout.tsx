@@ -1,19 +1,19 @@
-import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
+import { createFileRoute, Outlet, redirect } from '@tanstack/react-router'
 
-import BasicLayout from '@/components/common/BasicLayout';
-import Header from '@/components/common/Header';
-import DashboardTab from '@/components/dashboard/DashboardTab';
+import BasicLayout from '@/components/common/BasicLayout'
+import Header from '@/components/common/Header'
+import DashboardTab from '@/components/dashboard/DashboardTab'
 
-export const Route = createFileRoute('/dashboard')({
+export const Route = createFileRoute('/_authenticated/dashboard')({
   component: RouteComponent,
   beforeLoad: () => {
     if (window.location.pathname === '/dashboard') {
       throw redirect({
         to: '/dashboard/apply',
-      });
+      })
     }
   },
-});
+})
 
 function RouteComponent() {
   return (
@@ -26,5 +26,5 @@ function RouteComponent() {
         <Outlet />
       </BasicLayout>
     </>
-  );
+  )
 }
