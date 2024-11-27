@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -55,18 +55,11 @@ export class StreamService {
         body: JSON.stringify(body),
       });
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Error response:', errorText);
-        throw new Error(`Failed to transcribe audio: ${response.status}`);
-      }
-
       const data = await response.json();
-
       return data.text;
     } catch (error) {
       console.error('Failed to transcribe audio:', error);
-      throw new Error('Failed to transcribe audio with Clova Speech Recognition');
+      throw new InternalServerErrorException(ErrorMessage.FAILED_TO_TRANSCRIBE_AUDIO);
     }
   }
 
@@ -104,7 +97,7 @@ export class StreamService {
       return data.result.text;
     } catch (error) {
       console.error('Failed to summarize audio:', error);
-      throw new Error('Failed to summarize audio with Clova Studio');
+      throw new InternalServerErrorException(ErrorMessage.FAILED_TO_SUMMARY_AUDIO);
     }
   }
 

@@ -14,6 +14,8 @@ export const ErrorMessage = {
   FAILED_TO_CREATE_TICLE: '티클 생성에 실패했습니다',
   CANNOT_REQUEST_OWN_TICLE: '자신이 발표자인 티클에는 신청할 수 없습니다',
   TICLE_ALREADY_REQUESTED: '이미 신청한 티클입니다',
+  FAILED_TO_TRANSCRIBE_AUDIO: 'CLOVA SPEECH로 텍스트 변환에 실패했습니다',
+  FAILED_TO_SUMMARY_AUDIO: 'CLOVA STRUDIO로 요약에 실패했습니다',
 
   // socket error
   PEER_NOT_FOUND_IN_ROOM: '방에 해당 peer가 존재하지 않습니다',
