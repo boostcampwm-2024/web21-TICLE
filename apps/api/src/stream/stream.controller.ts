@@ -6,7 +6,7 @@ import { StreamService } from './stream.service';
 @Controller('stream')
 export class StreamController {
   constructor(private readonly streamService: StreamService) {}
-  //업로드 완료된 오디오 파일의 s3주소를 미디어 서버에서 받아오기
+
   @Post('audio')
   async getAudioFileUrl(@Body() createSummaryDto: CreateSummaryDto) {
     const summary = await this.streamService.createSummary(createSummaryDto);
