@@ -7,6 +7,8 @@ import { ErrorMessage } from '@repo/types';
 import { Summary } from '@/entity/summary.entity';
 import { Ticle } from '@/entity/ticle.entity';
 
+import { CreateSummaryDto } from './dto/createSummaryDto';
+
 @Injectable()
 export class StreamService {
   constructor(
@@ -17,7 +19,8 @@ export class StreamService {
     private configService: ConfigService
   ) {}
 
-  async createSummary(ticleId: number, audioUrl: string, summaryText: string[]) {
+  async createSummary(createSummaryDto: CreateSummaryDto) {
+    const { ticleId, audioUrl } = createSummaryDto;
     const ticle = await this.ticleRepository.findOne({
       where: { id: ticleId },
     });
@@ -28,7 +31,6 @@ export class StreamService {
 
     const summary = this.summaryRepository.create({
       audioUrl: audioUrl,
-      summaryText: summaryText,
       ticle: ticle,
     });
     return await this.summaryRepository.save(summary);
@@ -106,5 +108,10 @@ export class StreamService {
       where: { ticle: { id: ticleId } },
     });
     return summary.summaryText;
+  }
+
+  async updateSummaryText(summary: Summary, summaryText: string[]) {
+    summary.summaryText = summaryText;
+    await this.summaryRepository.save(summary);
   }
 }
