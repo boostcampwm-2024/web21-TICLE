@@ -25,4 +25,5 @@ export class UserProfileOfMeDto {
     description: '유저 소셜 로그인 프로바이더',
   })
   provider: Provider;
+
 }

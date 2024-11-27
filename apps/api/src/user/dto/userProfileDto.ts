@@ -5,6 +5,7 @@ interface TicleInfo {
   title: string;
   ticleId: number;
 }
+
 export class UserProfileDto {
   @ApiProperty({
     example: '1',
@@ -40,4 +41,5 @@ export class UserProfileDto {
     description: '유저가 개설한 티클 목록',
   })
   ticleInfo: TicleInfo[];
+
 }
