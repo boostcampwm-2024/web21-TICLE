@@ -1,17 +1,11 @@
 import { types } from 'mediasoup-client';
-import { useEffect, useMemo, useState } from 'react';
 
-import AudioPlayer from '@/components/live/StreamView/AudioPlayer';
-import PaginationControls from '@/components/live/StreamView/PaginationControls';
-import SubVideoGrid from '@/components/live/StreamView/SubVideoGrid';
-import VideoGrid from '@/components/live/StreamView/VideoGrid';
-import VideoPlayer from '@/components/live/StreamView/VideoPlayer';
-import { useLocalStreamState } from '@/contexts/localStream/context';
-import { useRemoteStreamState } from '@/contexts/remoteStream/context';
-import usePagination from '@/hooks/usePagination';
+import AudioStreams from '@/components/live/StreamView/AudioStreams';
+import PinnedGrid from '@/components/live/StreamView/List/Pinned';
+import UnPinnedGrid from '@/components/live/StreamView/List/UnPinned';
+import useAudioState from '@/hooks/useAudioState';
+import usePinnedVideo from '@/hooks/usePinnedVideo';
 
-const ITEMS_PER_GRID = 9;
-const ITEMS_PER_SUB_GRID = 4;
 export interface StreamData {
   consumer?: types.Consumer;
   socketId: string;
@@ -21,130 +15,22 @@ export interface StreamData {
 }
 
 const StreamView = () => {
-  const { video, audio } = useLocalStreamState();
-
-  const { videoStreams, audioStreams } = useRemoteStreamState();
-  const [pinnedConsumerId, setPinnedConsumerId] = useState<string | null>(null);
-  const [pinnedVideoStreamData, setPinnedVideoStreamData] = useState<StreamData | null>(null);
-  const allAudioStreamData: StreamData[] = [
-    {
-      consumer: undefined,
-      socketId: 'local',
-      kind: 'audio',
-      stream: audio.stream,
-      paused: audio.paused,
-    },
-    ...audioStreams,
-  ];
-  const allVideoStreamData: StreamData[] = [
-    {
-      consumer: undefined,
-      socketId: 'local',
-      kind: 'video',
-      stream: video.stream,
-      paused: video.paused,
-    },
-    ...videoStreams,
-  ];
-  const { paginatedItems: paginatedStreams, ...paginationControlsProps } =
-    usePagination<StreamData>({
-      totalItems: allVideoStreamData,
-      itemsPerPage: ITEMS_PER_GRID,
-    });
-
-  const { paginatedItems: subPaginatedStreams, ...subPaginationControlsProps } =
-    usePagination<StreamData>({
-      totalItems: allVideoStreamData,
-      itemsPerPage: ITEMS_PER_SUB_GRID,
-    });
-
-  const addPinnedVideo = (consumerId?: string) => {
-    if (!consumerId) return;
-
-    setPinnedConsumerId(consumerId);
-
-    const streamData = allVideoStreamData.find((streamData) => {
-      return streamData.consumer?.id === consumerId;
-    });
-
-    if (!streamData) return;
-
-    setPinnedVideoStreamData(streamData);
-  };
-
-  const removePinnedVideo = () => {
-    setPinnedConsumerId(null);
-    setPinnedVideoStreamData(null);
-  };
-
-  const getAudioMutedState = (socketId?: string): boolean => {
-    const targetAudioStream = allAudioStreamData.find(
-      (streamData) => streamData.socketId === socketId
-    );
-    const isPaused = targetAudioStream?.paused;
-
-    if (isPaused === undefined) return false;
-    return !isPaused;
-  };
-
-  useEffect(() => {
-    const pinnedStream = videoStreams.find((stream) => stream.consumer.id === pinnedConsumerId);
-
-    if (pinnedStream) return;
-
-    setPinnedVideoStreamData(null);
-    setPinnedConsumerId(null);
-  }, [videoStreams, pinnedConsumerId]);
+  const { pinnedVideoStreamData, removePinnedVideo, selectPinnedVideo } = usePinnedVideo();
+  const { getAudioMutedState } = useAudioState();
 
   return (
-    <div className="relative flex h-full flex-1 items-center justify-center gap-5 px-12 pt-8">
-      {pinnedConsumerId && pinnedVideoStreamData ? (
-        <div className="relative flex h-full w-full flex-col gap-5">
-          <div className="flex h-[80%] w-full justify-center self-center">
-            <div className="w-full" onClick={removePinnedVideo}>
-              <VideoPlayer
-                stream={pinnedVideoStreamData.stream}
-                muted={pinnedVideoStreamData.paused}
-                isMicOn={getAudioMutedState(pinnedConsumerId)}
-              />
-            </div>
-          </div>
-          <div className="relative flex flex-1">
-            <PaginationControls
-              {...subPaginationControlsProps}
-              leftClassName="left-2"
-              rightClassName="right-2"
-            >
-              <SubVideoGrid
-                videoStreamData={subPaginatedStreams}
-                pinnedConsumerId={pinnedConsumerId}
-                onVideoClick={addPinnedVideo}
-                getAudioMutedState={getAudioMutedState}
-              />
-            </PaginationControls>
-          </div>
-        </div>
-      ) : (
-        <PaginationControls
-          {...paginationControlsProps}
-          leftClassName="left-2"
-          rightClassName="right-2"
-        >
-          <VideoGrid
-            videoStreamData={paginatedStreams}
-            onVideoClick={addPinnedVideo}
-            getAudioMutedState={getAudioMutedState}
-          />
-        </PaginationControls>
-      )}
-
-      {audioStreams.map((streamData) => (
-        <AudioPlayer
-          key={streamData.socketId}
-          stream={streamData.stream}
-          muted={streamData.paused}
+    <div className="relative flex h-full flex-1 items-center justify-center pt-8">
+      {pinnedVideoStreamData ? (
+        <PinnedGrid
+          pinnedVideoStreamData={pinnedVideoStreamData}
+          addPinnedVideo={selectPinnedVideo}
+          removePinnedVideo={removePinnedVideo}
+          getAudioMutedState={getAudioMutedState}
         />
-      ))}
+      ) : (
+        <UnPinnedGrid addPinnedVideo={selectPinnedVideo} getAudioMutedState={getAudioMutedState} />
+      )}
+      <AudioStreams />
     </div>
   );
 };

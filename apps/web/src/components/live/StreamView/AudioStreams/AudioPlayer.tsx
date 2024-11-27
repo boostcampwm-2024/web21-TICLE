@@ -1,8 +1,8 @@
 import { useEffect, useRef } from 'react';
 
-import { VideoPlayerProps } from './VideoPlayer';
+import { VideoPlayerProps } from '@/components/live/StreamView/List/VideoPlayer';
 
-function AudioPlayer({ stream, muted = false }: VideoPlayerProps) {
+function AudioPlayer({ stream, paused = false }: VideoPlayerProps) {
   const audioRef = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
@@ -11,7 +11,7 @@ function AudioPlayer({ stream, muted = false }: VideoPlayerProps) {
     }
   }, [stream]);
 
-  return <audio ref={audioRef} autoPlay muted={muted} />;
+  return <audio ref={audioRef} autoPlay muted={paused} />;
 }
 
 export default AudioPlayer;
