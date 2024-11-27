@@ -93,17 +93,6 @@ export class Peer {
     consumer.resume();
   }
 
-  removeConsumerByProducerId(producerId: string) {
-    const consumer = this.getConsumerByProducerId(producerId);
-
-    if (!consumer) {
-      return;
-    }
-
-    consumer.close();
-    this.consumers.delete(consumer.id);
-  }
-
   close() {
     this.consumers.forEach((consumer) => consumer.close());
     this.producers.forEach((producer) => producer.close());

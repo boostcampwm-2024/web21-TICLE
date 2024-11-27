@@ -51,10 +51,6 @@ export class Room {
     return false;
   }
 
-  removeConsumersByProducerId(producerId: string) {
-    this.peers.forEach((peer) => peer.removeConsumerByProducerId(producerId));
-  }
-
   close() {
     this.peers.forEach((peer) => peer.close());
     this.peers.clear();

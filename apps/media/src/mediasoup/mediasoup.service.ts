@@ -38,6 +38,7 @@ export class MediasoupService implements OnModuleInit {
     });
 
     this.workers.push(worker);
+
     return worker;
   }
 
@@ -192,8 +193,20 @@ export class MediasoupService implements OnModuleInit {
     });
 
     consumer.on('producerclose', () => {
-      peer.consumers.delete(consumer.id);
       consumer.close();
+      peer.consumers.delete(consumer.id);
+    });
+
+    consumer.on('producerpause', () => {
+      consumer.pause();
+    });
+
+    consumer.on('producerresume', () => {
+      if (consumer.kind !== 'audio') {
+        return;
+      }
+
+      consumer.resume();
     });
 
     peer.addConsumer(consumer);
@@ -214,12 +227,11 @@ export class MediasoupService implements OnModuleInit {
     );
   }
 
-  closeProducer(roomId: string, producerId: string, socketId: string) {
+  async closeProducer(roomId: string, producerId: string, socketId: string) {
     const room = this.roomService.getRoom(roomId);
     const peer = room.peers.get(socketId);
 
     peer.deleteProducer(producerId);
-    room.removeConsumersByProducerId(producerId);
 
     return producerId;
   }
