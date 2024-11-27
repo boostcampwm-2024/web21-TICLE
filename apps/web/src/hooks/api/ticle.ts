@@ -58,6 +58,7 @@ export const useApplyTicle = () => {
       navigate({ to: `/dashboard/apply` });
       queryClient.invalidateQueries({ queryKey: ['ticleList'] });
       queryClient.invalidateQueries({ queryKey: ['dashboardTicleList'] });
+      queryClient.invalidateQueries({ queryKey: ['ticle', ticleId] });
       queryClient.invalidateQueries({ queryKey: ['applicantsTicle', ticleId] });
     },
   });
