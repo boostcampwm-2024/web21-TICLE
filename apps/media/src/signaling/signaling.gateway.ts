@@ -104,7 +104,7 @@ export class SignalingGateway implements OnGatewayDisconnect {
     );
   }
 
-  @SubscribeMessage(SOCKET_EVENTS.getProducer)
+  @SubscribeMessage(SOCKET_EVENTS.getProducers)
   getProducers(
     @ConnectedSocket() client: Socket,
     @MessageBody() getProducerDto: server.GetProducersDto
@@ -125,7 +125,7 @@ export class SignalingGateway implements OnGatewayDisconnect {
     @MessageBody('roomId') roomId: string,
     @MessageBody('producerId') producerId: string
   ) {
-    this.mediasoupService.disconnectProducer(roomId, producerId, client.id);
+    this.mediasoupService.closeProducer(roomId, producerId, client.id);
 
     client.to(roomId).emit(SOCKET_EVENTS.producerClosed, { producerId });
   }
@@ -148,13 +148,21 @@ export class SignalingGateway implements OnGatewayDisconnect {
     return { producerId };
   }
 
-  @SubscribeMessage(SOCKET_EVENTS.consumerStatusChange)
-  pauseConsumer(
+  @SubscribeMessage(SOCKET_EVENTS.pauseConsumers)
+  pauseConsumers(
     @ConnectedSocket() client: Socket,
-    @MessageBody() changeConsumerState: server.ChangeConsumerStateDto
+    @MessageBody('roomId') roomId: string,
+    @MessageBody('consumerIds') consumerIds: string[]
   ) {
-    const { consumerId } = changeConsumerState;
-    this.mediasoupService.changeConsumerStatus(client.id, changeConsumerState);
-    return consumerId;
+    this.mediasoupService.pauseConsumers(client.id, roomId, consumerIds);
+  }
+
+  @SubscribeMessage(SOCKET_EVENTS.resumeConsumers)
+  resumeConsumers(
+    @ConnectedSocket() client: Socket,
+    @MessageBody('roomId') roomId: string,
+    @MessageBody('consumerIds') consumerIds: string[]
+  ) {
+    this.mediasoupService.resumeConsumers(client.id, roomId, consumerIds);
   }
 }
