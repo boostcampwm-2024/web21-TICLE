@@ -5,12 +5,12 @@ import usePagination from '@/hooks/usePagination';
 
 const ITEMS_PER_GRID = 9;
 
-interface UnPinedListProps {
+interface UnPinnedListProps {
   addPinnedVideo: (stream: StreamData) => void;
   getAudioMutedState: (stream: StreamData) => boolean;
 }
 
-function UnPinedList({ addPinnedVideo, getAudioMutedState }: UnPinedListProps) {
+function UnPinnedList({ addPinnedVideo, getAudioMutedState }: UnPinnedListProps) {
   const { paginatedItems: paginatedStreams, ...paginationControlsProps } = usePagination({
     itemsPerPage: ITEMS_PER_GRID,
   });
@@ -26,4 +26,4 @@ function UnPinedList({ addPinnedVideo, getAudioMutedState }: UnPinedListProps) {
   );
 }
 
-export default UnPinedList;
+export default UnPinnedList;

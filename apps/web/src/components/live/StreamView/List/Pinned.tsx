@@ -6,7 +6,7 @@ import usePagination from '@/hooks/usePagination';
 
 const ITEMS_PER_SUB_GRID = 4;
 
-interface PinedListProps {
+interface PinnedListProps {
   pinnedVideoStreamData: StreamData;
 
   addPinnedVideo: (stream: StreamData) => void;
@@ -14,12 +14,12 @@ interface PinedListProps {
   getAudioMutedState: (stream: StreamData) => boolean;
 }
 
-function PinedList({
+function PinnedList({
   pinnedVideoStreamData,
   removePinnedVideo,
   addPinnedVideo,
   getAudioMutedState,
-}: PinedListProps) {
+}: PinnedListProps) {
   const { paginatedItems: subPaginatedStreams, ...subPaginationControlsProps } = usePagination({
     itemsPerPage: ITEMS_PER_SUB_GRID,
   });
@@ -52,4 +52,4 @@ function PinedList({
   );
 }
 
-export default PinedList;
+export default PinnedList;

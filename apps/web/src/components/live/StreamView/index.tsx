@@ -1,8 +1,8 @@
 import { types } from 'mediasoup-client';
 
 import AudioStreams from '@/components/live/StreamView/AudioStreams';
-import PinedList from '@/components/live/StreamView/List/Pined';
-import UnPinedList from '@/components/live/StreamView/List/UnPined';
+import PinnedList from '@/components/live/StreamView/List/Pinned';
+import UnPinnedList from '@/components/live/StreamView/List/UnPinned';
 import useAudioState from '@/hooks/useAudioState';
 import usePinnedVideo from '@/hooks/usePinnedVideo';
 
@@ -21,14 +21,14 @@ const StreamView = () => {
   return (
     <div className="relative flex h-full flex-1 items-center justify-center pt-8">
       {pinnedVideoStreamData ? (
-        <PinedList
+        <PinnedList
           pinnedVideoStreamData={pinnedVideoStreamData}
           addPinnedVideo={selectPinnedVideo}
           removePinnedVideo={removePinnedVideo}
           getAudioMutedState={getAudioMutedState}
         />
       ) : (
-        <UnPinedList addPinnedVideo={selectPinnedVideo} getAudioMutedState={getAudioMutedState} />
+        <UnPinnedList addPinnedVideo={selectPinnedVideo} getAudioMutedState={getAudioMutedState} />
       )}
       <AudioStreams />
     </div>
