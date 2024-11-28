@@ -118,6 +118,7 @@ export class DashboardService {
   async startTicle(userId: number, ticleId: number) {
     const ticle = await this.ticleRepository.findOne({
       where: { id: ticleId },
+      relations: ['speaker'],
     });
 
     if (!ticle) {
@@ -138,16 +139,17 @@ export class DashboardService {
   async endTicle(userId: number, ticleId: number) {
     const ticle = await this.ticleRepository.findOne({
       where: { id: ticleId },
+      relations: ['speaker'],
     });
 
     if (!ticle) {
       throw new NotFoundException(ErrorMessage.TICLE_NOT_FOUND);
     }
     if (ticle.speaker.id !== userId) {
-      throw new BadRequestException(ErrorMessage.CANNOT_START_TICLE);
+      throw new BadRequestException(ErrorMessage.CANNOT_END_TICLE);
     }
-    if (ticle.ticleStatus !== TicleStatus.OPEN) {
-      throw new BadRequestException(ErrorMessage.CANNOT_START_TICLE);
+    if (ticle.ticleStatus !== TicleStatus.IN_PROGRESS) {
+      throw new BadRequestException(ErrorMessage.CANNOT_END_TICLE);
     }
 
     ticle.ticleStatus = TicleStatus.CLOSED;

@@ -31,14 +31,14 @@ export class DashboardController {
     return await this.dashboardService.getApplicants(ticleId);
   }
 
-  @Post('start')
+  @Post(':ticleId/start')
   @UseGuards(JwtAuthGuard)
   async startTicle(@GetUserId() userId: number, @Param('ticleId') ticleId: number) {
     await this.dashboardService.startTicle(userId, ticleId);
     return 'success ticle start';
   }
 
-  @Post('end')
+  @Post(':ticleId/end')
   @UseGuards(JwtAuthGuard)
   async endTicle(@GetUserId() userId: number, @Param('ticleId') ticleId: number) {
     await this.dashboardService.endTicle(userId, ticleId);
