@@ -11,15 +11,17 @@ const useMediasoup = () => {
   const { socketRef, isConnected, isError } = useMediasoupState();
 
   const { createRoom } = useRoom();
+  const { createRecvTransport, createSendTransport, createDevice, disconnect } =
+    useMediasoupAction();
   const {
-    createRecvTransport,
-    createSendTransport,
-    createDevice,
-    connectExistProducer,
-    disconnect,
-  } = useMediasoupAction();
+    consume,
+    createConsumers,
+    filterRemoteStream,
+    pauseRemoteStream,
+    resumeRemoteStream,
+    resumeAudioConsumers,
+  } = useRemoteStreamAction();
   const { startCameraStream, startMicStream } = useLocalStreamAction();
-  const { consume, filterRemoteStream, pauseRemoteStream } = useRemoteStreamAction();
 
   const initSocketEvent = () => {
     const socket = socketRef.current;
@@ -44,11 +46,14 @@ const useMediasoup = () => {
       pauseRemoteStream(producerId);
     });
 
-    socket.on(SOCKET_EVENTS.newProducer, ({ peerId, producerId, kind, paused }) => {
-      if (socket.id === peerId) return;
+    socket.on(SOCKET_EVENTS.producerResumed, ({ producerId }) => {
+      resumeRemoteStream(producerId);
+    });
 
-      // TODO: nickname 추가
-      consume({ producerId, kind, peerId, paused, nickname: '변경' });
+    socket.on(SOCKET_EVENTS.newProducer, (data) => {
+      if (socket.id === data.peerId) return;
+
+      consume({ ...data, nickname: '변경' });
     });
   };
 
@@ -65,25 +70,24 @@ const useMediasoup = () => {
   const setRemoteStream = async (device: client.Device) => {
     await createRecvTransport(device);
 
-    const remoteProducers = await connectExistProducer();
+    const consumers = await createConsumers();
 
-    if (!remoteProducers || remoteProducers.length === 0) return;
-
-    remoteProducers.forEach(consume);
+    resumeAudioConsumers(consumers);
   };
 
   const initMediasoup = async () => {
     const socket = socketRef.current;
 
     if (!socket) return;
+
     const rtpCapabilities = await createRoom();
 
     if (!rtpCapabilities) return;
 
     const device = await createDevice(rtpCapabilities);
 
-    await setLocalStream(device);
-    await setRemoteStream(device);
+    setLocalStream(device);
+    setRemoteStream(device);
   };
 
   useEffect(() => {
