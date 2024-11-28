@@ -22,6 +22,7 @@ function PinnedGrid({
 }: PinnedListProps) {
   const { paginatedItems: subPaginatedStreams, ...subPaginationControlsProps } = usePagination({
     itemsPerPage: ITEMS_PER_SUB_GRID,
+    pinnedStream: pinnedVideoStreamData,
   });
 
   return (
