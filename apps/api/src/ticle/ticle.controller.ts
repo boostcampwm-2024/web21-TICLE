@@ -54,6 +54,6 @@ export class TicleController {
   @Delete(':ticleId')
   @UseGuards(JwtAuthGuard)
   deleteTicle(@GetUserId() userId: number, @Param('ticleId') ticleId: number) {
-    return this.ticleService.deleteTicle(ticleId, userId);
+    return this.ticleService.deleteTicle(userId, ticleId);
   }
 }
