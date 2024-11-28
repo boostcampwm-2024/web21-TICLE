@@ -1,6 +1,6 @@
 import { WsException } from '@nestjs/websockets';
-import { ErrorMessage } from '@repo/types';
 import { types } from 'mediasoup';
+import { ErrorMessage } from '@repo/types';
 
 export class Peer {
   socketId: string;
@@ -34,7 +34,7 @@ export class Peer {
       (consumer) => consumer.producerId === producerId
     );
 
-    return !Boolean(consumer);
+    return !consumer;
   }
 
   addProducer(producer: types.Producer) {

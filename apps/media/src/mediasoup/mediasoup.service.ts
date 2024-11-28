@@ -145,7 +145,7 @@ export class MediasoupService implements OnModuleInit {
           peerId: peer.socketId,
           nickname: peer.nickname,
           kind,
-          appData: appData,
+          appData: appData as server.GetProducersRes['appData'],
           paused,
         };
       })
@@ -171,10 +171,15 @@ export class MediasoupService implements OnModuleInit {
 
   async consume(
     socketId: string,
-    producerId: string,
-    roomId: string,
-    transportId: string,
-    rtpCapabilities: types.RtpCapabilities
+    {
+      peerId,
+      producerId,
+      rtpCapabilities,
+      roomId,
+      transportId,
+      nickname,
+      appData,
+    }: server.CreateConsumerDto
   ) {
     const room = this.roomService.getRoom(roomId);
     const peer = room.getPeer(socketId);
@@ -190,6 +195,7 @@ export class MediasoupService implements OnModuleInit {
       producerId,
       rtpCapabilities,
       paused: true,
+      appData,
     });
 
     consumer.on('producerclose', () => {
@@ -212,6 +218,10 @@ export class MediasoupService implements OnModuleInit {
     peer.addConsumer(consumer);
 
     return {
+      peerId,
+      appData,
+      nickname,
+      paused: consumer.paused,
       consumerId: consumer.id,
       producerId: consumer.producerId,
       kind: consumer.kind,
@@ -219,10 +229,26 @@ export class MediasoupService implements OnModuleInit {
     };
   }
 
-  async createConsumers(socketId: string, targets: server.CreateConsumerDto[]) {
+  async createConsumers(data: server.CreateConsumersDto) {
+    const { socketId, roomId, rtpCapabilities, transportId, producers } = data;
+
+    const targets = producers.filter((producer) => producer.peerId !== socketId);
+
+    if (targets.length === 0) {
+      return [];
+    }
+
     return Promise.all(
-      targets.map(({ producerId, roomId, transportId, rtpCapabilities }) =>
-        this.consume(socketId, producerId, roomId, transportId, rtpCapabilities)
+      producers.map((producer) =>
+        this.consume(socketId, {
+          peerId: producer.peerId,
+          appData: producer.appData,
+          producerId: producer.producerId,
+          nickname: producer.nickname,
+          rtpCapabilities,
+          roomId,
+          transportId,
+        })
       )
     );
   }
@@ -243,7 +269,7 @@ export class MediasoupService implements OnModuleInit {
 
     consumer.pause();
 
-    return consumerId;
+    return { paused: true, consumerId, producerId: consumer.producerId };
   }
 
   resumeConsumer(socketId: string, consumerId: string, roomId: string) {
@@ -251,20 +277,20 @@ export class MediasoupService implements OnModuleInit {
     const peer = room.peers.get(socketId);
     const consumer = peer.getConsumer(consumerId);
 
+    if (consumer.producerPaused) {
+      return { paused: true, consumerId, producerId: consumer.producerId };
+    }
+
     consumer.resume();
 
-    return consumerId;
+    return { paused: false, consumerId, producerId: consumer.producerId };
   }
 
   pauseConsumers(socketId: string, roomId: string, consumerIds: string[]) {
-    consumerIds.forEach((consumerId) => {
-      this.pauseConsumer(socketId, consumerId, roomId);
-    });
+    return consumerIds.map((consumerId) => this.pauseConsumer(socketId, consumerId, roomId));
   }
 
   resumeConsumers(socketId: string, roomId: string, consumerIds: string[]) {
-    consumerIds.forEach((consumerId) => {
-      this.resumeConsumer(socketId, consumerId, roomId);
-    });
+    return consumerIds.map((consumerId) => this.resumeConsumer(socketId, consumerId, roomId));
   }
 }

@@ -1,4 +1,5 @@
 import { types } from 'mediasoup-client';
+import { MediaTypes } from '@repo/mediasoup';
 
 import AudioStreams from '@/components/live/StreamView/AudioStreams';
 import PinnedGrid from '@/components/live/StreamView/List/Pinned';
@@ -7,7 +8,7 @@ import useAudioState from '@/hooks/useAudioState';
 import usePinnedVideo from '@/hooks/usePinnedVideo';
 
 export interface StreamData {
-  consumer?: types.Consumer;
+  consumer?: types.Consumer<{ mediaTypes: MediaTypes; nickname: string }>;
   socketId: string;
   kind: types.MediaKind;
   stream: MediaStream | null;

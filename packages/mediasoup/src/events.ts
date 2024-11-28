@@ -34,6 +34,8 @@ export const SOCKET_EVENTS = {
   consumerClosed: 'consumer-closed',
   consumerPaused: 'consumer-paused',
   pauseConsumers: 'pause-consumers',
+  resumeAudioConsumers: 'resume-audio-consumers',
+  resumeVideoConsumers: 'resume-video-consumers',
   resumeConsumers: 'resume-consumers',
 } as const;
 

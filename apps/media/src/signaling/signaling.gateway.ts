@@ -1,17 +1,17 @@
+import { UseFilters } from '@nestjs/common';
 import {
   ConnectedSocket,
   MessageBody,
   OnGatewayDisconnect,
   SubscribeMessage,
   WebSocketGateway,
-  WsException,
 } from '@nestjs/websockets';
+import { types } from 'mediasoup';
 import { Socket } from 'socket.io';
 import { SOCKET_EVENTS, STREAM_STATUS } from '@repo/mediasoup';
 import type { client, server } from '@repo/mediasoup';
 
 import { MediasoupService } from '@/mediasoup/mediasoup.service';
-import { UseFilters } from '@nestjs/common';
 import { WSExceptionFilter } from '@/wsException.filter';
 
 @WebSocketGateway()
@@ -63,8 +63,9 @@ export class SignalingGateway implements OnGatewayDisconnect {
   async handleProduce(
     @ConnectedSocket() client: Socket,
     @MessageBody() createProducerDto: server.CreateProducerDto
-  ): Promise<client.CreateProducerRes> {
+  ) {
     const { transportId, kind, rtpParameters, roomId, appData } = createProducerDto;
+
     const producerData = await this.mediasoupService.produce(
       client.id,
       kind,
@@ -137,23 +138,25 @@ export class SignalingGateway implements OnGatewayDisconnect {
     @ConnectedSocket() client: Socket,
     @MessageBody() createConsumerDto: server.CreateConsumerDto
   ): Promise<client.CreateConsumerRes> {
-    const { transportId, producerId, roomId, rtpCapabilities } = createConsumerDto;
-
-    return this.mediasoupService.consume(
-      client.id,
-      producerId,
-      roomId,
-      transportId,
-      rtpCapabilities
-    );
+    return this.mediasoupService.consume(client.id, createConsumerDto);
   }
 
   @SubscribeMessage(SOCKET_EVENTS.createConsumers)
   async createConsumers(
     @ConnectedSocket() client: Socket,
-    @MessageBody() createConsumersDto: server.CreateConsumerDto[]
+    @MessageBody('roomId') roomId: string,
+    @MessageBody('transportId') transportId: string,
+    @MessageBody('rtpCapabilities') rtpCapabilities: types.RtpCapabilities
   ) {
-    await this.mediasoupService.createConsumers(client.id, createConsumersDto);
+    const producers = this.mediasoupService.getProducers(roomId, client.id);
+
+    return this.mediasoupService.createConsumers({
+      roomId,
+      socketId: client.id,
+      producers,
+      rtpCapabilities,
+      transportId,
+    });
   }
 
   @SubscribeMessage(SOCKET_EVENTS.pauseConsumers)
@@ -162,7 +165,7 @@ export class SignalingGateway implements OnGatewayDisconnect {
     @MessageBody('roomId') roomId: string,
     @MessageBody('consumerIds') consumerIds: string[]
   ) {
-    this.mediasoupService.pauseConsumers(client.id, roomId, consumerIds);
+    return this.mediasoupService.pauseConsumers(client.id, roomId, consumerIds);
   }
 
   @SubscribeMessage(SOCKET_EVENTS.resumeConsumers)
@@ -171,6 +174,6 @@ export class SignalingGateway implements OnGatewayDisconnect {
     @MessageBody('roomId') roomId: string,
     @MessageBody('consumerIds') consumerIds: string[]
   ) {
-    this.mediasoupService.resumeConsumers(client.id, roomId, consumerIds);
+    return this.mediasoupService.resumeConsumers(client.id, roomId, consumerIds);
   }
 }

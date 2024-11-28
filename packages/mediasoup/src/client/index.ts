@@ -16,7 +16,6 @@ export interface ConsumerTransports {
   consumerTransport: BaseTransport;
   consumerTransportId: BaseTransport;
 }
-
 export interface CreateProducerRes {
   kind: types.MediaKind;
   peerId: string;
@@ -34,16 +33,20 @@ export interface CreateTransportRes {
 }
 
 export interface CreateConsumerRes {
+  peerId: string;
   consumerId: string;
   producerId: string;
+  paused: boolean;
   kind: types.MediaKind;
+  nickname: string;
   rtpParameters: types.RtpParameters;
+  appData?: { mediaTypes: MediaTypes; nickname: string };
 }
 
 export interface RemoteStream {
   socketId: string;
   stream: MediaStream;
-  consumer: types.Consumer;
+  consumer: types.Consumer<{ mediaTypes: MediaTypes; nickname: string }>;
   kind: types.MediaKind;
   paused: boolean;
   nickname: string;
@@ -53,6 +56,12 @@ export interface GetProducersRes {
   producerId: string;
   kind: types.MediaKind;
   peerId: string;
+}
+
+export interface ResumeConsumersRes {
+  consumerId: string;
+  producerId: string;
+  paused: boolean;
 }
 
 export const PRODUCER_OPTIONS: ProducerOptions = {

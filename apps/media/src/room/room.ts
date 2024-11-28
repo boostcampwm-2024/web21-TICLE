@@ -1,8 +1,8 @@
 import { WsException } from '@nestjs/websockets';
 import { Router } from 'mediasoup/node/lib/RouterTypes';
+import { ErrorMessage } from '@repo/types';
 
 import { Peer } from './peer';
-import { ErrorMessage } from '@repo/types';
 
 export class Room {
   id: string;
