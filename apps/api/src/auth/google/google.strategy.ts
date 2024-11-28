@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
+import { Request } from 'express';
+import { StrategyOption } from 'passport-github2';
 import { Profile, Strategy } from 'passport-google-oauth20';
 import { Provider } from '@repo/types';
 
@@ -20,10 +22,9 @@ export class GoogleStrategy extends PassportStrategy(Strategy, Provider.google) 
     });
   }
 
-  authenticate(req: any, options: any) {
-    const returnUrl = req.query.redirect;
+  authenticate(req: Request, options: StrategyOption) {
+    const returnUrl = req.query.redirect as string;
     if (returnUrl) {
-      options = options || {};
       options.state = returnUrl;
     }
     return super.authenticate(req, options);

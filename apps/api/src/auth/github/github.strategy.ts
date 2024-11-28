@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
-import { Profile, Strategy } from 'passport-github2';
+import { Request } from 'express';
+import { Profile, Strategy, StrategyOption } from 'passport-github2';
 import { Provider } from '@repo/types';
 
 import { AuthService } from '../auth.service';
@@ -19,10 +20,9 @@ export class GitHubStrategy extends PassportStrategy(Strategy, Provider.github) 
       scope: ['user:email'],
     });
   }
-  authenticate(req: any, options: any) {
-    const returnUrl = req.query.redirect;
+  authenticate(req: Request, options: StrategyOption) {
+    const returnUrl = req.query.redirect as string;
     if (returnUrl) {
-      options = options || {};
       options.state = returnUrl;
     }
     return super.authenticate(req, options);
