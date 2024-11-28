@@ -135,7 +135,15 @@ export class TicleService {
       .leftJoinAndSelect('ticle.speaker', 'speaker')
       .leftJoinAndSelect('ticle.applicants', 'applicants')
       .leftJoinAndSelect('applicants.user', 'user')
-      .select(['ticle', 'tags', 'speaker.id', 'speaker.profileImageUrl', 'applicants', 'user.id'])
+      .select([
+        'ticle',
+        'tags',
+        'speaker.id',
+        'speaker.profileImageUrl',
+        'applicants',
+        'user.id',
+        'ticle.ticleStatus',
+      ])
       .where('ticle.id = :id', { id: ticleId })
       .getOne();
 
@@ -176,8 +184,8 @@ export class TicleService {
       .leftJoin('ticle.tags', 'tags')
       .leftJoin('ticle.applicants', 'applicant')
       .leftJoin('ticle.speaker', 'speaker')
-      .where('ticle.ticleStatus = :status', {
-        status: isOpen ? TicleStatus.OPEN : TicleStatus.CLOSED,
+      .where('ticle.ticleStatus IN (:...statuses)', {
+        statuses: isOpen ? [TicleStatus.OPEN, TicleStatus.IN_PROGRESS] : [TicleStatus.CLOSED],
       })
       .groupBy('ticle.id');
 
