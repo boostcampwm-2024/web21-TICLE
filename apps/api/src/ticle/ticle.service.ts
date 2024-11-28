@@ -134,7 +134,8 @@ export class TicleService {
       .leftJoinAndSelect('ticle.tags', 'tags')
       .leftJoinAndSelect('ticle.speaker', 'speaker')
       .leftJoinAndSelect('ticle.applicants', 'applicants')
-      .select(['ticle', 'tags', 'speaker.id', 'speaker.profileImageUrl', 'applicants'])
+      .leftJoinAndSelect('applicants.user', 'user')
+      .select(['ticle', 'tags', 'speaker.id', 'speaker.profileImageUrl', 'applicants', 'user.id'])
       .where('ticle.id = :id', { id: ticleId })
       .getOne();
 
@@ -143,7 +144,7 @@ export class TicleService {
     }
     const { tags, speaker, ...ticleData } = ticle;
 
-    const alreadyApplied = ticle.applicants.some((applicnat) => applicnat.id === userId);
+    const alreadyApplied = ticle.applicants.some((applicant) => applicant.user.id === userId);
 
     return {
       ...ticleData,

@@ -78,7 +78,11 @@ function Detail() {
           </div>
         </div>
       </div>
-      <Button onClick={handleApplyButtonClick}>티클 신청하기</Button>
+      {!data.isOwner && (
+        <Button onClick={handleApplyButtonClick} disabled={data.alreadyApplied}>
+          {data.alreadyApplied ? '신청 완료' : '티클 신청하기'}
+        </Button>
+      )}
     </div>
   );
 }
