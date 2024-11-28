@@ -1,10 +1,16 @@
 import { useEffect } from 'react';
 
-import useAuthStore from '@/stores/useAuthStore';
+import useAuthStore, { AuthInfo } from '@/stores/useAuthStore';
 
 import { useUserProfileOfMe } from './api/user';
 
-const useAuthInfo = () => {
+interface AuthInfoReturn {
+  isLoading: boolean;
+  isAuthenticated: boolean;
+  authInfo: AuthInfo | null;
+}
+
+const useAuthInfo = (): AuthInfoReturn => {
   const { data: user, isError } = useUserProfileOfMe();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const authInfo = useAuthStore((state) => state.authInfo);

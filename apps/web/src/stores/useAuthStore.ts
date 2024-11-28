@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { Provider } from '@repo/types';
 
-interface AuthInfo {
+export interface AuthInfo {
   nickname: string;
   profileImageUrl: string;
   provider: Provider;
