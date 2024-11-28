@@ -47,4 +47,10 @@ const applyTicle = async (ticleId: string) => {
   return data;
 };
 
-export { getTitleList, getTicle, createTicle, applyTicle };
+const deleteTicle = async (ticleId: string) => {
+  const { data } = await axiosInstance.delete(`/ticle/${ticleId}`);
+
+  return data;
+};
+
+export { getTitleList, getTicle, createTicle, applyTicle, deleteTicle };
