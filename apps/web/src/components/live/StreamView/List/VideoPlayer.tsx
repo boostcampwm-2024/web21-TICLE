@@ -25,6 +25,7 @@ export interface VideoPlayerProps {
   isMicOn?: boolean;
   avatarSize?: 'sm' | 'md' | 'lg';
   mediaType?: 'video' | 'screen';
+  nickname: string;
 }
 
 function VideoPlayer({
@@ -33,8 +34,8 @@ function VideoPlayer({
   mediaType = 'video',
   isMicOn = false,
   avatarSize = 'md',
+  nickname,
 }: VideoPlayerProps) {
-  const NAME = '김티클'; // TODO: 이름 받아오기
   const [isLoading, setIsLoading] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -65,7 +66,7 @@ function VideoPlayer({
             </div>
           )}
           <div className="absolute bottom-3 left-3 z-10">
-            <Badge>{NAME}</Badge>
+            <Badge>{nickname}</Badge>
           </div>
         </>
       )}

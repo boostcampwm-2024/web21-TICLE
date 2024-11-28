@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { StreamData } from '@/components/live/StreamView';
 import { useLocalStreamState } from '@/contexts/localStream/context';
 import { useRemoteStreamState } from '@/contexts/remoteStream/context';
+import useAuthStore from '@/stores/useAuthStore';
 
 interface PaginationParams {
   itemsPerPage: number;
@@ -11,6 +12,7 @@ interface PaginationParams {
 const usePagination = ({ itemsPerPage }: PaginationParams) => {
   const { video, screen } = useLocalStreamState();
   const { videoStreams } = useRemoteStreamState();
+  const nickname = useAuthStore.getState().authInfo?.nickname;
 
   const [currentPage, setCurrentPage] = useState(0);
 
@@ -23,6 +25,7 @@ const usePagination = ({ itemsPerPage }: PaginationParams) => {
         kind: 'video',
         stream: screen.stream,
         paused: false,
+        nickname: nickname ?? '',
       });
     }
 
@@ -32,6 +35,7 @@ const usePagination = ({ itemsPerPage }: PaginationParams) => {
         kind: 'video',
         stream: video.stream,
         paused: video.paused,
+        nickname: nickname ?? '',
       });
     }
 
@@ -39,7 +43,7 @@ const usePagination = ({ itemsPerPage }: PaginationParams) => {
     const endIdx = startIdx + itemsPerPage;
 
     return totalItems.slice(startIdx, endIdx);
-  }, [videoStreams, currentPage, itemsPerPage, video, screen]);
+  }, [videoStreams, currentPage, itemsPerPage, video, screen, nickname]);
 
   const onNextPage = () => {
     setCurrentPage((prev) => Math.min(totalPages - 1, prev + 1));

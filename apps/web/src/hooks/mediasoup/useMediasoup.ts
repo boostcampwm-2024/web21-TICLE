@@ -49,11 +49,10 @@ const useMediasoup = () => {
       resumeRemoteStream(producerId);
     });
 
-    socket.on(SOCKET_EVENTS.newProducer, ({ peerId, producerId, kind, paused }) => {
+    socket.on(SOCKET_EVENTS.newProducer, ({ peerId, producerId, kind, paused, nickname }) => {
       if (socket.id === peerId) return;
 
-      // TODO: nickname 추가
-      consume({ producerId, kind, peerId, paused, nickname: '변경' });
+      consume({ producerId, kind, peerId, paused, nickname });
     });
   };
 
