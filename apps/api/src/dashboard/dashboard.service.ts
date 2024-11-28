@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { TicleStatus } from '@repo/types';
+import { ErrorMessage, TicleStatus } from '@repo/types';
 
 import { Applicant } from '@/entity/applicant.entity';
 import { Ticle } from '@/entity/ticle.entity';
@@ -113,5 +113,25 @@ export class DashboardService {
         },
       },
     });
+  }
+
+  async startTicle(userId: number, ticleId: number) {
+    const ticle = await this.ticleRepository.findOne({
+      where: { id: ticleId },
+    });
+
+    if (!ticle) {
+      throw new NotFoundException(ErrorMessage.TICLE_NOT_FOUND);
+    }
+    if (ticle.speaker.id !== userId) {
+      throw new BadRequestException(ErrorMessage.CANNOT_START_TICLE);
+    }
+    if (ticle.ticleStatus !== TicleStatus.OPEN) {
+      throw new BadRequestException(ErrorMessage.CANNOT_START_TICLE);
+    }
+
+    ticle.ticleStatus = TicleStatus.IN_PROGRESS;
+    await this.ticleRepository.save(ticle);
+    return;
   }
 }

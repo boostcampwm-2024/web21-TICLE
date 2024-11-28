@@ -32,7 +32,11 @@ export class DashboardController {
   }
 
   @Post('start')
-  startTicle(@Param('ticleId') ticleId: number) {}
+  @UseGuards(JwtAuthGuard)
+  async startTicle(@GetUserId() userId: number, @Param('ticleId') ticleId: number) {
+    await this.dashboardService.startTicle(userId, ticleId);
+    return 'success ticle start';
+  }
 
   @Post('join')
   joinTicle(@Param('ticleId') ticleId: number) {}
