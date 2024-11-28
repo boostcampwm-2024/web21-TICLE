@@ -66,7 +66,7 @@ const usePinnedVideo = () => {
       paused: pinnedStream.paused,
       nickname: pinnedVideoStreamData.nickname,
     });
-  }, [video, screen, audio, pinnedVideoStreamData]);
+  }, [video, screen, audio]);
 
   return { pinnedVideoStreamData, selectPinnedVideo, removePinnedVideo };
 };
