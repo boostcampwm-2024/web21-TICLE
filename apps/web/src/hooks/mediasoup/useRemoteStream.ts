@@ -11,7 +11,13 @@ const useRemoteStream = () => {
   const [videoStreams, setVideoStreams] = useState<client.RemoteStream[]>([]);
   const [audioStreams, setAudioStreams] = useState<client.RemoteStream[]>([]);
 
-  const consume = async ({ producerId, peerId, kind, paused }: client.CreateProducerRes) => {
+  const consume = async ({
+    producerId,
+    peerId,
+    kind,
+    paused,
+    nickname,
+  }: client.CreateProducerRes) => {
     const socket = socketRef.current;
     const device = deviceRef.current;
     const { recvTransport } = transportsRef.current;
@@ -36,6 +42,7 @@ const useRemoteStream = () => {
         consumer,
         socketId: peerId,
         kind,
+        nickname,
         stream,
         paused,
       };
