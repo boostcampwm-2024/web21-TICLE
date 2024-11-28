@@ -1,9 +1,12 @@
-import { guestLogin } from '@/api/auth';
 import ChevronRight from '@/assets/icons/chevron-right.svg?react';
+import { ENV } from '@/constants/env';
+import { Route } from '@/routes/auth/oauth';
 
 function GuestLogin() {
+  const { redirect } = Route.useSearch();
+  const redirectUrl = `${ENV.API_URL}/auth/guest/login?redirect=${redirect}`;
   const handleGuestLogin = () => {
-    guestLogin();
+    window.location.href = redirectUrl;
   };
 
   return (
