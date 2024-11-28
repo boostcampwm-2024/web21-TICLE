@@ -4,7 +4,7 @@ import BasicLayout from '@/components/common/BasicLayout';
 import Header from '@/components/common/Header';
 import DashboardTab from '@/components/dashboard/DashboardTab';
 
-export const Route = createFileRoute('/dashboard')({
+export const Route = createFileRoute('/_authenticated/dashboard')({
   component: RouteComponent,
   beforeLoad: () => {
     if (window.location.pathname === '/dashboard') {

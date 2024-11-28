@@ -14,7 +14,7 @@ const DASHBOARD_ROUTES = {
 
 function DashboardTab() {
   const navigate = useNavigate();
-  const isOpenedMatch = useMatch({ from: '/dashboard/open', shouldThrow: false });
+  const isOpenedMatch = useMatch({ from: '/_authenticated/dashboard/open', shouldThrow: false });
   const selectedTab = isOpenedMatch ? 'OPENED' : 'APPLIED';
 
   const DASHBOARD_TAB_DATA: TabData<keyof typeof DASHBOARD_TAB>[] = [

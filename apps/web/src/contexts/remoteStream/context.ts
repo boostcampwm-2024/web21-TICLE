@@ -7,7 +7,14 @@ interface RemoteStreamState {
 }
 
 interface MediasoupActionContextProps {
-  consume: (data: client.CreateProducerRes) => void;
+  consume: (data: client.CreateProducerRes) => Promise<void>;
+  createConsumers: () => Promise<client.RemoteStream[]>;
+
+  resumeAudioConsumers: (consumers: client.RemoteStream[]) => void;
+  resumeVideoConsumers: (consumers: client.RemoteStream[]) => void;
+
+  pauseVideoConsumers: (consumers: client.RemoteStream[]) => void;
+
   filterRemoteStream: (cb: (remoteStream: client.RemoteStream) => boolean) => void;
   pauseRemoteStream: (producerId: string) => void;
   resumeRemoteStream: (producerId: string) => void;

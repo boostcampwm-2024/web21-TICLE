@@ -1,10 +1,9 @@
 /* eslint-disable react-refresh/only-export-components */
 import { Link } from '@tanstack/react-router';
-import axios from 'axios';
 import { Provider } from '@repo/types';
 
 import UserProfileOfMeDialog from '@/components/user/UserProfileOfMeDialog';
-import { useUserProfileOfMe } from '@/hooks/api/user';
+import useAuthInfo from '@/hooks/useAuthInfo';
 import useModal from '@/hooks/useModal';
 
 import Avatar from '../Avatar';
@@ -18,33 +17,30 @@ export const LOGIN_TYPE: Record<Provider, string> = {
 };
 
 function User() {
-  const { data, error } = useUserProfileOfMe();
+  const { isLoading, isAuthenticated, authInfo } = useAuthInfo();
+
   const { isOpen, onOpen, onClose } = useModal();
-
-  const isUnauthorized = axios.isAxiosError(error) && error.response?.status === 401;
-
-  const loginType = data?.provider && LOGIN_TYPE[data.provider];
 
   const AuthorizedContent = () => (
     <>
       <section className="flex cursor-pointer items-center gap-2" onClick={onOpen}>
-        <Avatar size="xs" src={data?.profileImageUrl} />
-        <span className="text-body1 text-alt">{data?.nickname}</span>
+        <Avatar size="xs" src={authInfo?.profileImageUrl} />
+        <span className="text-body1 text-alt">{authInfo?.nickname}</span>
       </section>
-      {isOpen && data && loginType && (
+      {isOpen && authInfo && (
         <UserProfileOfMeDialog
           onClose={onClose}
           isOpen={isOpen}
-          profileImageUrl={data.profileImageUrl}
-          nickname={data.nickname}
-          loginType={loginType}
+          profileImageUrl={authInfo.profileImageUrl}
+          nickname={authInfo.nickname}
+          loginType={LOGIN_TYPE[authInfo.provider]}
         />
       )}
     </>
   );
 
   const UnauthorizedContent = () => (
-    <Link to="/auth/oauth">
+    <Link to="/auth/oauth" search={{ redirect: location.pathname }}>
       <section className="flex items-center justify-center">
         <Button size="sm">로그인</Button>
       </section>
@@ -53,7 +49,7 @@ function User() {
 
   return (
     <aside className="flex gap-3">
-      {isUnauthorized ? <UnauthorizedContent /> : <AuthorizedContent />}
+      {isAuthenticated && !isLoading ? <AuthorizedContent /> : <UnauthorizedContent />}
     </aside>
   );
 }

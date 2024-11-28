@@ -1,4 +1,5 @@
 import { z } from 'zod';
+
 import { Provider } from './provider';
 
 export const UserProfileSchema = z.object({

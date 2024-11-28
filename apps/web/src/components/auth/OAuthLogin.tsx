@@ -1,9 +1,10 @@
 import { cva } from 'class-variance-authority';
 import { useState } from 'react';
 
-import { oauthLogin } from '@/api/auth';
 import GithubIc from '@/assets/icons/github.svg?react';
 import GoogleIc from '@/assets/icons/google.svg?react';
+import { ENV } from '@/constants/env';
+import { Route } from '@/routes/auth/oauth';
 
 import Loading from '../common/Loading';
 
@@ -32,10 +33,13 @@ interface OAuthLoginProps {
 
 function OAuthLogin({ type }: OAuthLoginProps) {
   const [loadingOAuthType, setLoadingOAuthType] = useState<OAuthType | null>(null);
+  const { redirect } = Route.useSearch();
+
+  const loginUrl = `${ENV.API_URL}/auth/${type}/login?redirect=${redirect || ''}`;
 
   const onLoginBtnClick = (type: OAuthType) => {
     setLoadingOAuthType(type);
-    oauthLogin(type);
+    window.location.href = loginUrl;
   };
 
   const isCurrentLoading = loadingOAuthType === type;

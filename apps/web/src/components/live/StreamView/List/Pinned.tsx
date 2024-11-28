@@ -22,6 +22,7 @@ function PinnedGrid({
 }: PinnedListProps) {
   const { paginatedItems: subPaginatedStreams, ...subPaginationControlsProps } = usePagination({
     itemsPerPage: ITEMS_PER_SUB_GRID,
+    pinnedStream: pinnedVideoStreamData,
   });
 
   return (
@@ -34,7 +35,9 @@ function PinnedGrid({
           <VideoPlayer
             stream={pinnedVideoStreamData.stream}
             paused={pinnedVideoStreamData.paused}
+            mediaType={pinnedVideoStreamData.consumer?.appData?.mediaTypes}
             isMicOn={getAudioMutedState(pinnedVideoStreamData)}
+            nickname={pinnedVideoStreamData.nickname}
           />
         </div>
       </div>

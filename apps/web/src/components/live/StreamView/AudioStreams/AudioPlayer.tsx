@@ -2,7 +2,9 @@ import { useEffect, useRef } from 'react';
 
 import { VideoPlayerProps } from '@/components/live/StreamView/List/VideoPlayer';
 
-function AudioPlayer({ stream, paused = false }: VideoPlayerProps) {
+type AudioPlayerProps = Omit<VideoPlayerProps, 'nickname'>;
+
+function AudioPlayer({ stream, paused = false }: AudioPlayerProps) {
   const audioRef = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
