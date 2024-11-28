@@ -45,19 +45,19 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   localLogin(
     @GetUserId() userId: number,
-    @Query('state') state: string,
+    @Query('redirect') redirect: string,
     @Res() response: Response
   ) {
-    this.loginProcess(response, userId, state);
+    this.loginProcess(response, userId, redirect);
   }
 
   @Get('guest/login')
   @ApiOperation({ summary: '게스트 로그인' })
   @ApiResponse({ status: 302, description: '홈으로 리다이렉션' })
   @UseGuards(ThrottlerGuard)
-  async guestLogin(@Query('state') state: string, @Res() response: Response) {
+  async guestLogin(@Query('redirect') redirect: string, @Res() response: Response) {
     const guestUser = await this.authService.createGuestUser();
-    this.loginProcess(response, guestUser.id, state);
+    this.loginProcess(response, guestUser.id, redirect);
   }
 
   @Get('google/login')
