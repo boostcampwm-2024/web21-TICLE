@@ -64,6 +64,7 @@ function SubVideoGrid({
             avatarSize="sm"
             paused={streamData.paused}
             isMicOn={getAudioMutedState(streamData)}
+            nickname={streamData.nickname}
           />
         </div>
       ))}
