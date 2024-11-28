@@ -40,7 +40,7 @@ function User() {
   );
 
   const UnauthorizedContent = () => (
-    <Link to="/auth/oauth">
+    <Link to="/auth/oauth" search={{ redirect: location.pathname }}>
       <section className="flex items-center justify-center">
         <Button size="sm">로그인</Button>
       </section>
