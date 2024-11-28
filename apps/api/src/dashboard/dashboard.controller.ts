@@ -38,6 +38,13 @@ export class DashboardController {
     return 'success ticle start';
   }
 
+  @Post('end')
+  @UseGuards(JwtAuthGuard)
+  async endTicle(@GetUserId() userId: number, @Param('ticleId') ticleId: number) {
+    await this.dashboardService.endTicle(userId, ticleId);
+    return 'success ticle end';
+  }
+
   @Post('join')
   joinTicle(@Param('ticleId') ticleId: number) {}
 }

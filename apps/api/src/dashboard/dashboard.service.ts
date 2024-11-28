@@ -134,4 +134,24 @@ export class DashboardService {
     await this.ticleRepository.save(ticle);
     return;
   }
+
+  async endTicle(userId: number, ticleId: number) {
+    const ticle = await this.ticleRepository.findOne({
+      where: { id: ticleId },
+    });
+
+    if (!ticle) {
+      throw new NotFoundException(ErrorMessage.TICLE_NOT_FOUND);
+    }
+    if (ticle.speaker.id !== userId) {
+      throw new BadRequestException(ErrorMessage.CANNOT_START_TICLE);
+    }
+    if (ticle.ticleStatus !== TicleStatus.OPEN) {
+      throw new BadRequestException(ErrorMessage.CANNOT_START_TICLE);
+    }
+
+    ticle.ticleStatus = TicleStatus.CLOSED;
+    await this.ticleRepository.save(ticle);
+    return;
+  }
 }
