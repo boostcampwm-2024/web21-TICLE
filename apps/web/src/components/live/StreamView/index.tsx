@@ -12,6 +12,7 @@ export interface StreamData {
   kind: types.MediaKind;
   stream: MediaStream | null;
   paused: boolean;
+  nickname: string;
 }
 
 const StreamView = () => {

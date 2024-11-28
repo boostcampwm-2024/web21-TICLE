@@ -22,7 +22,7 @@ export interface CreateProducerDto {
   kind: types.MediaKind;
   rtpParameters: types.RtpParameters;
   roomId: string;
-  appData: { mediaTypes: MediaTypes };
+  appData: { mediaTypes: MediaTypes; nickname: string };
 }
 
 export interface CreateConsumerDto {

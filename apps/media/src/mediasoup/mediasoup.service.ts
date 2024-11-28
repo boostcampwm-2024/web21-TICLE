@@ -66,6 +66,7 @@ export class MediasoupService implements OnModuleInit {
     if (room.hasPeer(socketId)) {
       throw new WsException(ErrorMessage.PEER_ALREADY_EXISTS_IN_ROOM);
     }
+
     room.addPeer(socketId, nickname);
 
     return room.getRouter().rtpCapabilities;
