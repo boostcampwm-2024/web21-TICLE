@@ -1,24 +1,39 @@
 import { useEffect, useMemo, useState } from 'react';
+import { client } from '@repo/mediasoup';
 
 import { StreamData } from '@/components/live/StreamView';
 import { useLocalStreamState } from '@/contexts/localStream/context';
-import { useRemoteStreamState } from '@/contexts/remoteStream/context';
+import { useMediasoupState } from '@/contexts/mediasoup/context';
+import { useRemoteStreamAction, useRemoteStreamState } from '@/contexts/remoteStream/context';
+import useDebouncedCallback from '@/hooks/useDebounce';
 
 interface PaginationParams {
   itemsPerPage: number;
+  pinnedStream?: StreamData;
 }
 
-const usePagination = ({ itemsPerPage }: PaginationParams) => {
+const usePagination = ({ itemsPerPage, pinnedStream }: PaginationParams) => {
+  const { socketRef } = useMediasoupState();
   const { video, screen } = useLocalStreamState();
   const { videoStreams } = useRemoteStreamState();
 
-  const [currentPage, setCurrentPage] = useState(0);
+  const { resumeVideoConsumers, pauseVideoConsumers } = useRemoteStreamAction();
 
+  const [currentPage, setCurrentPage] = useState(0);
   const paginatedItems = useMemo(() => {
-    const totalItems: StreamData[] = [...videoStreams];
+    const totalItems: StreamData[] = [];
+
+    if (video.stream) {
+      totalItems.push({
+        socketId: 'local',
+        kind: 'video',
+        stream: video.stream,
+        paused: video.paused,
+      });
+    }
 
     if (screen.stream) {
-      totalItems.unshift({
+      totalItems.push({
         socketId: 'local',
         kind: 'video',
         stream: screen.stream,
@@ -26,14 +41,7 @@ const usePagination = ({ itemsPerPage }: PaginationParams) => {
       });
     }
 
-    if (video.stream) {
-      totalItems.unshift({
-        socketId: 'local',
-        kind: 'video',
-        stream: video.stream,
-        paused: video.paused,
-      });
-    }
+    totalItems.push(...videoStreams);
 
     const startIdx = currentPage * itemsPerPage;
     const endIdx = startIdx + itemsPerPage;
@@ -52,11 +60,45 @@ const usePagination = ({ itemsPerPage }: PaginationParams) => {
   const streamLength = videoStreams.length + (video.stream ? 1 : 0) + (screen.stream ? 1 : 0);
   const totalPages = Math.ceil(streamLength / itemsPerPage);
 
-  useEffect(() => {
-    if (paginatedItems.length !== 0 || currentPage <= 0) return;
+  const resumeGridStreams = useDebouncedCallback(() => {
+    const gridItems = paginatedItems.filter(
+      (item) => item.socketId !== 'local' && item.consumer
+    ) as client.RemoteStream[];
 
-    setCurrentPage(currentPage - 1);
+    const isExistPinned = gridItems.some((item) => item.socketId === pinnedStream?.socketId);
+
+    if (pinnedStream && !isExistPinned) {
+      gridItems.push(pinnedStream as client.RemoteStream);
+    }
+
+    resumeVideoConsumers(gridItems);
+  }, 300);
+
+  const pauseGridStreams = () => {
+    const socket = socketRef.current;
+
+    if (!socket) return;
+
+    const gridItems = paginatedItems.filter(
+      (item) =>
+        item.socketId !== 'local' && item.consumer && pinnedStream?.socketId !== item.socketId
+    ) as client.RemoteStream[];
+
+    pauseVideoConsumers(gridItems);
+  };
+
+  useEffect(() => {
+    if (paginatedItems.length !== 0) return;
+
+    setCurrentPage((prev) => Math.max(0, prev - 1));
   }, [paginatedItems]);
+
+  useEffect(() => {
+    if (paginatedItems.length === 0) return;
+
+    pauseGridStreams();
+    resumeGridStreams();
+  }, [paginatedItems.length, currentPage]);
 
   return {
     currentPage,
