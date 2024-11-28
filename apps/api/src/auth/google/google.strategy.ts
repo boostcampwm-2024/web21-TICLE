@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
+import { Request } from 'express';
+import { StrategyOption } from 'passport-github2';
 import { Profile, Strategy } from 'passport-google-oauth20';
 import { Provider } from '@repo/types';
 
@@ -18,6 +20,14 @@ export class GoogleStrategy extends PassportStrategy(Strategy, Provider.google) 
       callbackURL: configService.get<string>('GOOGLE_CALLBACK_URL'),
       scope: ['email', 'profile'],
     });
+  }
+
+  authenticate(req: Request, options: StrategyOption) {
+    const returnUrl = req.query.redirect as string;
+    if (returnUrl) {
+      options.state = returnUrl;
+    }
+    return super.authenticate(req, options);
   }
 
   async validate(accessToken: string, refreshToken: string, profile: Profile): Promise<any> {
