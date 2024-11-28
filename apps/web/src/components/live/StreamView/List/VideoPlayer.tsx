@@ -86,8 +86,11 @@ function VideoPlayer({
             Your browser does not support the video.
           </video>
         ) : (
-          <div className="flex h-full w-full items-center justify-center rounded-lg bg-altWeak transition-opacity duration-300">
-            <Avatar size={avatarSize} />
+          <div className={videoVariants({ loading: false })}>
+            <Avatar
+              size={avatarSize}
+              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform"
+            />
           </div>
         ))}
     </div>
