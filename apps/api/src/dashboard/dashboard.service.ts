@@ -31,7 +31,13 @@ export class DashboardService {
       .take(pageSize);
 
     if (status) {
-      queryBuilder.andWhere('ticle.ticleStatus = :status', { status });
+      if (status === TicleStatus.OPEN) {
+        queryBuilder.andWhere('ticle.ticleStatus IN (:...statuses)', {
+          statuses: [TicleStatus.OPEN, TicleStatus.IN_PROGRESS],
+        });
+      } else {
+        queryBuilder.andWhere('ticle.ticleStatus = :status', { status });
+      }
     }
 
     const [ticles, totalItems] = await queryBuilder.getManyAndCount();
@@ -70,7 +76,13 @@ export class DashboardService {
       .take(pageSize);
 
     if (status) {
-      queryBuilder.andWhere('ticle.ticleStatus = :status', { status });
+      if (status === TicleStatus.OPEN) {
+        queryBuilder.andWhere('ticle.ticleStatus IN (:...statuses)', {
+          statuses: [TicleStatus.OPEN, TicleStatus.IN_PROGRESS],
+        });
+      } else {
+        queryBuilder.andWhere('ticle.ticleStatus = :status', { status });
+      }
     }
 
     const [applicants, totalItems] = await queryBuilder.getManyAndCount();
