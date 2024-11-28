@@ -4,9 +4,9 @@ import { Route } from '@/routes/auth/oauth';
 
 function GuestLogin() {
   const { redirect } = Route.useSearch();
-  const redirectUrl = `${ENV.API_URL}/auth/guest/login?redirect=${redirect}`;
+  const loginUrl = `${ENV.API_URL}/auth/guest/login?redirect=${redirect || ''}`;
   const handleGuestLogin = () => {
-    window.location.href = redirectUrl;
+    window.location.href = loginUrl;
   };
 
   return (

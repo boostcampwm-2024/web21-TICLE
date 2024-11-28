@@ -35,11 +35,11 @@ function OAuthLogin({ type }: OAuthLoginProps) {
   const [loadingOAuthType, setLoadingOAuthType] = useState<OAuthType | null>(null);
   const { redirect } = Route.useSearch();
 
-  const redirectUrl = `${ENV.API_URL}/auth/${type}/login?redirect=${redirect}`;
+  const loginUrl = `${ENV.API_URL}/auth/${type}/login?redirect=${redirect || ''}`;
 
   const onLoginBtnClick = (type: OAuthType) => {
     setLoadingOAuthType(type);
-    window.location.href = redirectUrl;
+    window.location.href = loginUrl;
   };
 
   const isCurrentLoading = loadingOAuthType === type;
