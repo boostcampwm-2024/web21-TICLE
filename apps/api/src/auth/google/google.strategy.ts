@@ -20,6 +20,15 @@ export class GoogleStrategy extends PassportStrategy(Strategy, Provider.google) 
     });
   }
 
+  authenticate(req: any, options: any) {
+    const returnUrl = req.query.redirect;
+    if (returnUrl) {
+      options = options || {};
+      options.state = returnUrl;
+    }
+    return super.authenticate(req, options);
+  }
+
   async validate(accessToken: string, refreshToken: string, profile: Profile): Promise<any> {
     const { id, displayName, emails, photos } = profile;
 

@@ -19,6 +19,14 @@ export class GitHubStrategy extends PassportStrategy(Strategy, Provider.github) 
       scope: ['user:email'],
     });
   }
+  authenticate(req: any, options: any) {
+    const returnUrl = req.query.redirect;
+    if (returnUrl) {
+      options = options || {};
+      options.state = returnUrl;
+    }
+    return super.authenticate(req, options);
+  }
 
   async validate(accessToken: string, refreshToken: string, profile: Profile) {
     const { id, username, emails, photos } = profile;
