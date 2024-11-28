@@ -1,22 +1,28 @@
-import { useNavigate, useParams } from '@tanstack/react-router';
+import { useParams } from '@tanstack/react-router';
 
 import CalendarIc from '@/assets/icons/calendar.svg?react';
 import ClockIc from '@/assets/icons/clock.svg?react';
+import TrashIc from '@/assets/icons/trash.svg?react';
 import Avatar from '@/components/common/Avatar';
 import Badge from '@/components/common/Badge';
 import Button from '@/components/common/Button';
 import UserProfileDialog from '@/components/user/UserProfileDialog';
-import { useApplyTicle, useTicle } from '@/hooks/api/ticle';
+import { useApplyTicle, useDeleteTicle, useTicle } from '@/hooks/api/ticle';
 import useModal from '@/hooks/useModal';
 import { formatDateTimeRange } from '@/utils/date';
 
 function Detail() {
-  const { ticleId } = useParams({ from: '/ticle/$ticleId' });
+  const { ticleId } = useParams({ from: '/_authenticated/ticle/$ticleId' });
   const { data } = useTicle(ticleId);
-  const { mutate } = useApplyTicle();
+  const { mutate: applyMutate } = useApplyTicle();
+  const { mutate: deleteMutate } = useDeleteTicle();
 
   const handleApplyButtonClick = () => {
-    mutate(ticleId);
+    applyMutate(ticleId);
+  };
+
+  const handleDeleteButtonClick = () => {
+    deleteMutate(ticleId);
   };
 
   const { isOpen, onOpen, onClose } = useModal();
@@ -78,7 +84,18 @@ function Detail() {
           </div>
         </div>
       </div>
-      <Button onClick={handleApplyButtonClick}>티클 신청하기</Button>
+      {data.isOwner ? (
+        <Button onClick={handleDeleteButtonClick}>
+          <span className="flex items-center gap-1">
+            티클 삭제하기
+            <TrashIc className="fill-white" />
+          </span>
+        </Button>
+      ) : (
+        <Button onClick={handleApplyButtonClick} disabled={data.alreadyApplied}>
+          {data.alreadyApplied ? '신청 완료' : '티클 신청하기'}
+        </Button>
+      )}
     </div>
   );
 }

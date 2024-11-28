@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { client } from '@repo/mediasoup';
 
 import { StreamData } from '@/components/live/StreamView';
@@ -6,6 +6,7 @@ import { useLocalStreamState } from '@/contexts/localStream/context';
 import { useMediasoupState } from '@/contexts/mediasoup/context';
 import { useRemoteStreamAction, useRemoteStreamState } from '@/contexts/remoteStream/context';
 import useDebouncedCallback from '@/hooks/useDebounce';
+import useAuthStore from '@/stores/useAuthStore';
 
 interface PaginationParams {
   itemsPerPage: number;
@@ -16,10 +17,14 @@ const usePagination = ({ itemsPerPage, pinnedStream }: PaginationParams) => {
   const { socketRef } = useMediasoupState();
   const { video, screen } = useLocalStreamState();
   const { videoStreams } = useRemoteStreamState();
+  const nickname = useAuthStore.getState().authInfo?.nickname;
 
   const { resumeVideoConsumers, pauseVideoConsumers } = useRemoteStreamAction();
 
   const [currentPage, setCurrentPage] = useState(0);
+
+  const prevGridItemsRef = useRef<StreamData[]>([]);
+
   const paginatedItems = useMemo(() => {
     const totalItems: StreamData[] = [];
 
@@ -29,6 +34,7 @@ const usePagination = ({ itemsPerPage, pinnedStream }: PaginationParams) => {
         kind: 'video',
         stream: video.stream,
         paused: video.paused,
+        nickname: nickname ?? '',
       });
     }
 
@@ -38,6 +44,7 @@ const usePagination = ({ itemsPerPage, pinnedStream }: PaginationParams) => {
         kind: 'video',
         stream: screen.stream,
         paused: false,
+        nickname: nickname ?? '',
       });
     }
 
@@ -47,7 +54,7 @@ const usePagination = ({ itemsPerPage, pinnedStream }: PaginationParams) => {
     const endIdx = startIdx + itemsPerPage;
 
     return totalItems.slice(startIdx, endIdx);
-  }, [videoStreams, currentPage, itemsPerPage, video, screen]);
+  }, [videoStreams, currentPage, itemsPerPage, video, screen, nickname]);
 
   const onNextPage = () => {
     setCurrentPage((prev) => Math.min(totalPages - 1, prev + 1));
@@ -64,10 +71,9 @@ const usePagination = ({ itemsPerPage, pinnedStream }: PaginationParams) => {
     const gridItems = paginatedItems.filter(
       (item) => item.socketId !== 'local' && item.consumer
     ) as client.RemoteStream[];
-
     const isExistPinned = gridItems.some((item) => item.socketId === pinnedStream?.socketId);
 
-    if (pinnedStream && !isExistPinned) {
+    if (pinnedStream?.consumer && !isExistPinned) {
       gridItems.push(pinnedStream as client.RemoteStream);
     }
 
@@ -76,15 +82,17 @@ const usePagination = ({ itemsPerPage, pinnedStream }: PaginationParams) => {
 
   const pauseGridStreams = () => {
     const socket = socketRef.current;
+    const prevGridItems = prevGridItemsRef.current;
 
-    if (!socket) return;
+    if (!socket || prevGridItems.length === 0) return;
 
-    const gridItems = paginatedItems.filter(
-      (item) =>
-        item.socketId !== 'local' && item.consumer && pinnedStream?.socketId !== item.socketId
-    ) as client.RemoteStream[];
+    const target = prevGridItems
+      .filter((item) => item.consumer && pinnedStream?.socketId !== item.socketId)
+      .filter(
+        (item) => !paginatedItems.some((paginatedItem) => paginatedItem.socketId === item.socketId)
+      ) as client.RemoteStream[];
 
-    pauseVideoConsumers(gridItems);
+    pauseVideoConsumers(target);
   };
 
   useEffect(() => {
@@ -96,8 +104,10 @@ const usePagination = ({ itemsPerPage, pinnedStream }: PaginationParams) => {
   useEffect(() => {
     if (paginatedItems.length === 0) return;
 
-    pauseGridStreams();
     resumeGridStreams();
+    pauseGridStreams();
+
+    prevGridItemsRef.current = paginatedItems;
   }, [paginatedItems.length, currentPage]);
 
   return {

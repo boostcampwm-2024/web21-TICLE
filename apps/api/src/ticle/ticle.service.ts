@@ -134,7 +134,8 @@ export class TicleService {
       .leftJoinAndSelect('ticle.tags', 'tags')
       .leftJoinAndSelect('ticle.speaker', 'speaker')
       .leftJoinAndSelect('ticle.applicants', 'applicants')
-      .select(['ticle', 'tags', 'speaker.id', 'speaker.profileImageUrl', 'applicants'])
+      .leftJoinAndSelect('applicants.user', 'user')
+      .select(['ticle', 'tags', 'speaker.id', 'speaker.profileImageUrl', 'applicants', 'user.id'])
       .where('ticle.id = :id', { id: ticleId })
       .getOne();
 
@@ -143,7 +144,7 @@ export class TicleService {
     }
     const { tags, speaker, ...ticleData } = ticle;
 
-    const alreadyApplied = ticle.applicants.some((applicnat) => applicnat.id === userId);
+    const alreadyApplied = ticle.applicants.some((applicant) => applicant.user.id === userId);
 
     return {
       ...ticleData,
@@ -225,5 +226,23 @@ export class TicleService {
         hasNextPage: page < totalPages,
       },
     };
+  }
+
+  async deleteTicle(userId: number, ticleId: number) {
+    const ticle = await this.ticleRepository.findOne({
+      where: { id: ticleId },
+      relations: ['speaker'],
+    });
+
+    if (!ticle) {
+      throw new NotFoundException(ErrorMessage.TICLE_NOT_FOUND);
+    }
+
+    if (ticle.speaker.id !== userId) {
+      throw new BadRequestException(ErrorMessage.CANNOT_DELETE_OTHERS_TICLE);
+    }
+
+    await this.ticleRepository.remove(ticle);
+    return;
   }
 }

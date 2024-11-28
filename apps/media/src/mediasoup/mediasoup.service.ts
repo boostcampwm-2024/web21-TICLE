@@ -145,7 +145,7 @@ export class MediasoupService implements OnModuleInit {
           peerId: peer.socketId,
           nickname: peer.nickname,
           kind,
-          appData: { mediaTypes: appData.mediaTypes as MediaTypes },
+          appData: appData as server.GetProducersRes['appData'],
           paused,
         };
       })
@@ -171,7 +171,15 @@ export class MediasoupService implements OnModuleInit {
 
   async consume(
     socketId: string,
-    { peerId, producerId, rtpCapabilities, roomId, transportId, appData }: server.CreateConsumerDto
+    {
+      peerId,
+      producerId,
+      rtpCapabilities,
+      roomId,
+      transportId,
+      nickname,
+      appData,
+    }: server.CreateConsumerDto
   ) {
     const room = this.roomService.getRoom(roomId);
     const peer = room.getPeer(socketId);
@@ -211,11 +219,12 @@ export class MediasoupService implements OnModuleInit {
 
     return {
       peerId,
+      appData,
+      nickname,
       paused: consumer.paused,
       consumerId: consumer.id,
       producerId: consumer.producerId,
       kind: consumer.kind,
-      appData: consumer.appData,
       rtpParameters: consumer.rtpParameters,
     };
   }
@@ -235,6 +244,7 @@ export class MediasoupService implements OnModuleInit {
           peerId: producer.peerId,
           appData: producer.appData,
           producerId: producer.producerId,
+          nickname: producer.nickname,
           rtpCapabilities,
           roomId,
           transportId,

@@ -22,7 +22,7 @@ export interface CreateProducerRes {
   nickname: string;
   producerId: string;
   paused: boolean;
-  appData?: { mediaTypes: MediaTypes };
+  appData?: { mediaTypes: MediaTypes; nickname: string };
 }
 
 export interface CreateTransportRes {
@@ -38,15 +38,18 @@ export interface CreateConsumerRes {
   producerId: string;
   paused: boolean;
   kind: types.MediaKind;
+  nickname: string;
   rtpParameters: types.RtpParameters;
+  appData?: { mediaTypes: MediaTypes; nickname: string };
 }
 
 export interface RemoteStream {
   socketId: string;
   stream: MediaStream;
-  consumer: types.Consumer;
+  consumer: types.Consumer<{ mediaTypes: MediaTypes; nickname: string }>;
   kind: types.MediaKind;
   paused: boolean;
+  nickname: string;
 }
 
 export interface GetProducersRes {

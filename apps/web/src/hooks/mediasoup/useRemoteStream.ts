@@ -5,7 +5,7 @@ import { client, SOCKET_EVENTS } from '@repo/mediasoup';
 import { useMediasoupState } from '@/contexts/mediasoup/context';
 
 const useRemoteStream = () => {
-  const { ticleId } = useParams({ from: '/live/$ticleId' });
+  const { ticleId } = useParams({ from: '/_authenticated/live/$ticleId' });
   const { socketRef, transportsRef, deviceRef } = useMediasoupState();
 
   const [videoStreams, setVideoStreams] = useState<client.RemoteStream[]>([]);
@@ -50,6 +50,7 @@ const useRemoteStream = () => {
           socketId: peerId,
           kind: consumer.kind,
           paused: consumer.paused,
+          nickname,
         });
 
         resolve();
@@ -188,7 +189,7 @@ const useRemoteStream = () => {
       throw new Error('recvTransport is not initialized');
     }
 
-    const { consumerId, ...rest } = data;
+    const { consumerId, peerId, nickname, ...rest } = data;
 
     const consumer = await recvTransport.consume({ id: consumerId, ...rest });
 
@@ -201,9 +202,10 @@ const useRemoteStream = () => {
     const newStream = {
       stream,
       consumer,
-      socketId: data.peerId,
       kind: consumer.kind,
       paused: consumer.paused,
+      socketId: peerId,
+      nickname,
     };
 
     setRemoteStream(newStream);

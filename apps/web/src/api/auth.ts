@@ -1,3 +1,5 @@
+import { useParams, useSearch } from '@tanstack/react-router';
+
 import axiosInstance from '@/api/axios';
 import { ENV } from '@/constants/env';
 
@@ -24,12 +26,4 @@ const logOut = () => {
   window.location.href = `${ENV.API_URL}/auth/logout`;
 };
 
-const guestLogin = () => {
-  window.location.href = `${ENV.API_URL}/auth/guest/login`;
-};
-
-const oauthLogin = (provider: 'google' | 'github') => {
-  window.location.href = `${ENV.API_URL}/auth/${provider}/login`;
-};
-
-export { logIn, signUp, oauthLogin, guestLogin, logOut };
+export { logIn, signUp, logOut };

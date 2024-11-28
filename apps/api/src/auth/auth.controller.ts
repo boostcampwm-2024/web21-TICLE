@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, Res, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ThrottlerGuard } from '@nestjs/throttler';
@@ -43,17 +43,21 @@ export class AuthController {
   @ApiResponse({ status: 302, description: '홈으로 리다이렉션' })
   @ApiResponse({ status: 401 })
   @UseGuards(LocalAuthGuard)
-  localLogin(@GetUserId() userId: number, @Res() response: Response) {
-    this.loginProcess(response, userId);
+  localLogin(
+    @GetUserId() userId: number,
+    @Query('redirect') redirect: string,
+    @Res() response: Response
+  ) {
+    this.loginProcess(response, userId, redirect);
   }
 
   @Get('guest/login')
   @ApiOperation({ summary: '게스트 로그인' })
   @ApiResponse({ status: 302, description: '홈으로 리다이렉션' })
   @UseGuards(ThrottlerGuard)
-  async guestLogin(@Res() response: Response) {
+  async guestLogin(@Query('redirect') redirect: string, @Res() response: Response) {
     const guestUser = await this.authService.createGuestUser();
-    this.loginProcess(response, guestUser.id);
+    this.loginProcess(response, guestUser.id, redirect);
   }
 
   @Get('google/login')
@@ -65,8 +69,12 @@ export class AuthController {
 
   @Get('google/callback')
   @UseGuards(GoogleAuthGuard)
-  googleAuthCallback(@GetUserId() userId: number, @Res() response: Response) {
-    this.loginProcess(response, userId);
+  googleAuthCallback(
+    @GetUserId() userId: number,
+    @Query('state') state: string,
+    @Res() response: Response
+  ) {
+    this.loginProcess(response, userId, state);
   }
 
   @Get('github/login')
@@ -78,8 +86,12 @@ export class AuthController {
 
   @Get('github/callback')
   @UseGuards(GitHubAuthGuard)
-  githubAuthCallback(@GetUserId() userId: number, @Res() response: Response) {
-    this.loginProcess(response, userId);
+  githubAuthCallback(
+    @GetUserId() userId: number,
+    @Query('state') state: string,
+    @Res() response: Response
+  ) {
+    this.loginProcess(response, userId, state);
   }
 
   @Get('logout')
@@ -90,13 +102,14 @@ export class AuthController {
     this.redirectToHome(response);
   }
 
-  private loginProcess(response: Response, userId: number) {
+  private loginProcess(response: Response, userId: number, path?: string) {
     const { accessToken } = this.authService.createJWT(userId);
     response.cookie('accessToken', accessToken, this.cookieConfig.getAuthCookieOptions());
-    this.redirectToHome(response);
+    this.redirectToHome(response, path);
   }
 
-  private redirectToHome(response: Response) {
-    response.redirect(this.redirectUrl);
+  private redirectToHome(response: Response, path?: string) {
+    const redirectUrl = `${this.redirectUrl}${path || ''}`;
+    response.redirect(redirectUrl);
   }
 }

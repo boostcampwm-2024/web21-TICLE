@@ -18,7 +18,7 @@ interface UseProducerProps {
 }
 
 const useProducer = ({ socketRef, transportsRef }: UseProducerProps) => {
-  const { ticleId: roomId } = useParams({ from: '/live/$ticleId' });
+  const { ticleId: roomId } = useParams({ from: '/_authenticated/live/$ticleId' });
 
   const producersRef = useRef<{ [key in MediaTypes]: types.Producer | null }>({
     video: null,

@@ -35,7 +35,9 @@ function PinnedGrid({
           <VideoPlayer
             stream={pinnedVideoStreamData.stream}
             paused={pinnedVideoStreamData.paused}
+            mediaType={pinnedVideoStreamData.consumer?.appData?.mediaTypes}
             isMicOn={getAudioMutedState(pinnedVideoStreamData)}
+            nickname={pinnedVideoStreamData.nickname}
           />
         </div>
       </div>

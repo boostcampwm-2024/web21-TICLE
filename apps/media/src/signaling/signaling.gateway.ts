@@ -1,3 +1,4 @@
+import { UseFilters } from '@nestjs/common';
 import {
   ConnectedSocket,
   MessageBody,
@@ -5,14 +6,13 @@ import {
   SubscribeMessage,
   WebSocketGateway,
 } from '@nestjs/websockets';
+import { types } from 'mediasoup';
 import { Socket } from 'socket.io';
 import { SOCKET_EVENTS, STREAM_STATUS } from '@repo/mediasoup';
 import type { client, server } from '@repo/mediasoup';
 
 import { MediasoupService } from '@/mediasoup/mediasoup.service';
-import { UseFilters } from '@nestjs/common';
 import { WSExceptionFilter } from '@/wsException.filter';
-import { types } from 'mediasoup';
 
 @WebSocketGateway()
 @UseFilters(WSExceptionFilter)

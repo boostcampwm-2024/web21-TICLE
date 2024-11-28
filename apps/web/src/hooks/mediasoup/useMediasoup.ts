@@ -53,7 +53,7 @@ const useMediasoup = () => {
     socket.on(SOCKET_EVENTS.newProducer, (data) => {
       if (socket.id === data.peerId) return;
 
-      consume({ ...data, nickname: '변경' });
+      consume(data);
     });
   };
 

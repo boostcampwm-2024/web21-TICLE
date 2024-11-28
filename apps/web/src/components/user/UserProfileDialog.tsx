@@ -34,7 +34,7 @@ function UserProfileDialog({ isOpen, onClose, speakerId, nickname }: UserProfile
           <UserInfo {...data} loginType={loginType} />
           <div className="flex flex-col gap-2.5">
             <h3 className="text-title2 text-main">개설한 티클 목록</h3>
-            <div className="flex h-28 flex-col gap-2 overflow-y-scroll">
+            <div className="custom-scrollbar flex h-28 flex-col gap-2 overflow-y-scroll">
               {data.ticleInfo.map((info) => (
                 <button
                   type="button"
