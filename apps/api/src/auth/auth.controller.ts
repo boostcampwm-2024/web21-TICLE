@@ -109,7 +109,7 @@ export class AuthController {
   }
 
   private redirectToHome(response: Response, path?: string) {
-    const redirectUrl = `${this.redirectUrl}${path}`;
+    const redirectUrl = `${this.redirectUrl}${path || ''}`;
     response.redirect(redirectUrl);
   }
 }
