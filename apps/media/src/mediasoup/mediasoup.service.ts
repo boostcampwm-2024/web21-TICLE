@@ -171,7 +171,7 @@ export class MediasoupService implements OnModuleInit {
 
   async consume(
     socketId: string,
-    { producerId, rtpCapabilities, roomId, transportId, appData, ...rest }: server.CreateConsumerDto
+    { peerId, producerId, rtpCapabilities, roomId, transportId, appData }: server.CreateConsumerDto
   ) {
     const room = this.roomService.getRoom(roomId);
     const peer = room.getPeer(socketId);
@@ -210,7 +210,7 @@ export class MediasoupService implements OnModuleInit {
     peer.addConsumer(consumer);
 
     return {
-      peerId: peer.socketId,
+      peerId,
       paused: consumer.paused,
       consumerId: consumer.id,
       producerId: consumer.producerId,
@@ -232,6 +232,7 @@ export class MediasoupService implements OnModuleInit {
     return Promise.all(
       producers.map((producer) =>
         this.consume(socketId, {
+          peerId: producer.peerId,
           appData: producer.appData,
           producerId: producer.producerId,
           rtpCapabilities,
@@ -258,7 +259,7 @@ export class MediasoupService implements OnModuleInit {
 
     consumer.pause();
 
-    return consumerId;
+    return { paused: true, consumerId, producerId: consumer.producerId };
   }
 
   resumeConsumer(socketId: string, consumerId: string, roomId: string) {
@@ -267,7 +268,7 @@ export class MediasoupService implements OnModuleInit {
     const consumer = peer.getConsumer(consumerId);
 
     if (consumer.producerPaused) {
-      return { paused: true };
+      return { paused: true, consumerId, producerId: consumer.producerId };
     }
 
     consumer.resume();
