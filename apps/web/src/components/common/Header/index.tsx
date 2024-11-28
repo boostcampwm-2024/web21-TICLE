@@ -20,7 +20,6 @@ function Header() {
           대시보드
         </Link>
       </nav>
-      {/* TODO: User 로그인시 핸들링 */}
       <User />
     </header>
   );
