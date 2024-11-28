@@ -103,18 +103,16 @@
   border: 3px dashed var(--grey-300);
 }
 
-@layer utilities {
-  *::-webkit-scrollbar {
-    @apply w-2;
-  }
+.custom-scrollbar::-webkit-scrollbar {
+  @apply w-2;
+}
 
-  *::-webkit-scrollbar-track {
-    background: var(--grey-200);
-  }
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: var(--grey-200);
+}
 
-  *::-webkit-scrollbar-thumb {
-    @apply rounded-full;
-    background: var(--purple-200);
-    cursor: pointer;
-  }
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  @apply rounded-full;
+  background: var(--purple-200);
+  cursor: pointer;
 }
