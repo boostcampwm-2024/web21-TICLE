@@ -53,6 +53,46 @@ export class Peer {
     return this.consumers.get(consumerId);
   }
 
+  deleteProducer(producerId: string) {
+    const producer = this.producers.get(producerId);
+
+    if (!producer) {
+      return;
+    }
+
+    producer.close();
+
+    this.producers.delete(producerId);
+  }
+
+  getConsumerByProducerId(producerId: string) {
+    const consumer = Array.from(this.consumers.values()).find(
+      (consumer) => consumer.producerId === producerId
+    );
+
+    return consumer;
+  }
+
+  pauseConsumerByProducerId(producerId: string) {
+    const consumer = this.getConsumerByProducerId(producerId);
+
+    if (!consumer) {
+      return;
+    }
+
+    consumer.pause();
+  }
+
+  resumeConsumerByProducerId(producerId: string) {
+    const consumer = this.getConsumerByProducerId(producerId);
+
+    if (!consumer) {
+      return;
+    }
+
+    consumer.resume();
+  }
+
   close() {
     this.consumers.forEach((consumer) => consumer.close());
     this.producers.forEach((producer) => producer.close());
