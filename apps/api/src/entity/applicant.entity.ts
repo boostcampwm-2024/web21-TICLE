@@ -16,7 +16,7 @@ export class Applicant {
   @PrimaryGeneratedColumn({ type: 'bigint' })
   id: number;
 
-  @ManyToOne(() => Ticle, (ticle) => ticle.applicants)
+  @ManyToOne(() => Ticle, (ticle) => ticle.applicants, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'ticle_id' })
   ticle: Ticle;
 

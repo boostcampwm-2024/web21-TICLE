@@ -26,7 +26,7 @@ export class Summary {
   @CreateDateColumn({ type: 'timestamp', name: 'created_at' })
   createdAt: Date;
 
-  @OneToOne(() => Ticle, (ticle) => ticle.summary)
+  @OneToOne(() => Ticle, (ticle) => ticle.summary, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'ticle_id' })
   ticle: Ticle;
 }

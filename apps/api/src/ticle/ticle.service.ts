@@ -226,4 +226,22 @@ export class TicleService {
       },
     };
   }
+
+  async deleteTicle(userId: number, ticleId: number) {
+    const ticle = await this.ticleRepository.findOne({
+      where: { id: ticleId },
+      relations: ['speaker'],
+    });
+
+    if (!ticle) {
+      throw new NotFoundException(ErrorMessage.TICLE_NOT_FOUND);
+    }
+
+    if (ticle.speaker.id !== userId) {
+      throw new BadRequestException(ErrorMessage.CANNOT_DELETE_OTHERS_TICLE);
+    }
+
+    await this.ticleRepository.remove(ticle);
+    return;
+  }
 }
