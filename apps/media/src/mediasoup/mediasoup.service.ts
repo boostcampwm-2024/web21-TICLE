@@ -145,7 +145,7 @@ export class MediasoupService implements OnModuleInit {
           peerId: peer.socketId,
           nickname: peer.nickname,
           kind,
-          appData: appData,
+          appData: { mediaTypes: appData.mediaTypes as MediaTypes },
           paused,
         };
       })
@@ -171,10 +171,7 @@ export class MediasoupService implements OnModuleInit {
 
   async consume(
     socketId: string,
-    producerId: string,
-    roomId: string,
-    transportId: string,
-    rtpCapabilities: types.RtpCapabilities
+    { producerId, rtpCapabilities, roomId, transportId, appData, ...rest }: server.CreateConsumerDto
   ) {
     const room = this.roomService.getRoom(roomId);
     const peer = room.getPeer(socketId);
@@ -190,6 +187,7 @@ export class MediasoupService implements OnModuleInit {
       producerId,
       rtpCapabilities,
       paused: true,
+      appData,
     });
 
     consumer.on('producerclose', () => {
@@ -212,17 +210,34 @@ export class MediasoupService implements OnModuleInit {
     peer.addConsumer(consumer);
 
     return {
+      peerId: peer.socketId,
+      paused: consumer.paused,
       consumerId: consumer.id,
       producerId: consumer.producerId,
       kind: consumer.kind,
+      appData: consumer.appData,
       rtpParameters: consumer.rtpParameters,
     };
   }
 
-  async createConsumers(socketId: string, targets: server.CreateConsumerDto[]) {
+  async createConsumers(data: server.CreateConsumersDto) {
+    const { socketId, roomId, rtpCapabilities, transportId, producers } = data;
+
+    const targets = producers.filter((producer) => producer.peerId !== socketId);
+
+    if (targets.length === 0) {
+      return [];
+    }
+
     return Promise.all(
-      targets.map(({ producerId, roomId, transportId, rtpCapabilities }) =>
-        this.consume(socketId, producerId, roomId, transportId, rtpCapabilities)
+      producers.map((producer) =>
+        this.consume(socketId, {
+          appData: producer.appData,
+          producerId: producer.producerId,
+          rtpCapabilities,
+          roomId,
+          transportId,
+        })
       )
     );
   }
@@ -251,20 +266,20 @@ export class MediasoupService implements OnModuleInit {
     const peer = room.peers.get(socketId);
     const consumer = peer.getConsumer(consumerId);
 
+    if (consumer.producerPaused) {
+      return { paused: true };
+    }
+
     consumer.resume();
 
-    return consumerId;
+    return { paused: false, consumerId, producerId: consumer.producerId };
   }
 
   pauseConsumers(socketId: string, roomId: string, consumerIds: string[]) {
-    consumerIds.forEach((consumerId) => {
-      this.pauseConsumer(socketId, consumerId, roomId);
-    });
+    return consumerIds.map((consumerId) => this.pauseConsumer(socketId, consumerId, roomId));
   }
 
   resumeConsumers(socketId: string, roomId: string, consumerIds: string[]) {
-    consumerIds.forEach((consumerId) => {
-      this.resumeConsumer(socketId, consumerId, roomId);
-    });
+    return consumerIds.map((consumerId) => this.resumeConsumer(socketId, consumerId, roomId));
   }
 }
