@@ -102,13 +102,14 @@ export class AuthController {
     this.redirectToHome(response);
   }
 
-  private loginProcess(response: Response, userId: number, redirectUrl: string) {
+  private loginProcess(response: Response, userId: number, path?: string) {
     const { accessToken } = this.authService.createJWT(userId);
     response.cookie('accessToken', accessToken, this.cookieConfig.getAuthCookieOptions());
-    this.redirectToHome(response, redirectUrl);
+    this.redirectToHome(response, path);
   }
 
-  private redirectToHome(response: Response, redirectUrl = this.redirectUrl) {
+  private redirectToHome(response: Response, path?: string) {
+    const redirectUrl = `${this.redirectUrl}${path}`;
     response.redirect(redirectUrl);
   }
 }
