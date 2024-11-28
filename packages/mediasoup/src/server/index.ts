@@ -26,14 +26,33 @@ export interface CreateProducerDto {
 }
 
 export interface CreateConsumerDto {
+  peerId: string;
   transportId: string;
   producerId: string;
   roomId: string;
   rtpCapabilities: types.RtpCapabilities;
+  appData?: { mediaTypes: MediaTypes };
+}
+
+export interface CreateConsumersDto {
+  socketId: string;
+  roomId: string;
+  transportId: string;
+  rtpCapabilities: types.RtpCapabilities;
+  producers: GetProducersRes[];
 }
 
 export interface GetProducersDto {
   roomId: string;
+}
+
+export interface GetProducersRes {
+  kind: types.MediaKind;
+  peerId: string;
+  nickname: string;
+  producerId: string;
+  paused: boolean;
+  appData?: { mediaTypes: MediaTypes };
 }
 
 export interface ChangeProducerStateDto {
