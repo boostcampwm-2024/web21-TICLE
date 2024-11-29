@@ -6,17 +6,18 @@
 <img width="600" alt="메인 배너" src="https://github.com/user-attachments/assets/eb4c89c8-6870-4114-bddc-796b51bd7163">
 <br/>
 
-### [:ledger: 팀 노션](https://www.notion.so/simeunseo/9-Ticle-12e599a6f0d2804682ccd2251248a435?pvs=4) | [:mag: 위키](https://github.com/boostcampwm-2024/web21-boostproject/wiki) | [🎨 피그마](https://www.figma.com/design/nw74detTvjXGrDP2cfdmwp/TICLE-%EB%94%94%EC%9E%90%EC%9D%B8?node-id=32-4477&t=3FCCnBpgQXMZs63X-1) | [🗓️ 스프린트 백로그](https://github.com/orgs/boostcampwm-2024/projects/82/views/7) | [🧪 스토리북](https://673a0cccd15a760db778c591-kxdpixadfg.chromatic.com/?path=/docs/common-dialog--docs)
+### [:ledger: 팀 노션](https://www.notion.so/simeunseo/9-Ticle-12e599a6f0d2804682ccd2251248a435?pvs=4) | [:mag: 위키](https://github.com/boostcampwm-2024/web21-boostproject/wiki) | [🎨 피그마](https://www.figma.com/design/nw74detTvjXGrDP2cfdmwp/TICLE-%EB%94%94%EC%9E%90%EC%9D%B8?node-id=32-4477&t=3FCCnBpgQXMZs63X-1) | [🗓️ 스프린트 백로그](https://github.com/orgs/boostcampwm-2024/projects/82/views/7) | [🧪 스토리북](https://673a0cccd15a760db778c591-ttyfhdnavn.chromatic.com/)
 
 </div>
 
 # 🖧 시스템 아키텍처
 
-<img width="6176" alt="아키텍처" src="https://github.com/user-attachments/assets/dc0a4690-e906-4068-b391-f15f6fcdc9a6">
+![Cloudcraft Image (4)](https://github.com/user-attachments/assets/1e5874ee-2485-4e89-90a0-cebb47621c77)
 
 # 🏃 작업 진행 상황
 
-- [🆕 4주차 발표자료](https://simeunseo.notion.site/4-1ccf63bab4b14fd8b249f5d7c7cd7e53?pvs=4)
+- [🆕 5주차 발표자료](https://www.figma.com/slides/kNBDNutRalcIkuGWo3LHd9/5%EC%A3%BC%EC%B0%A8-%EB%8D%B0%EB%AA%A8-%EB%B0%9C%ED%91%9C%EC%9E%90%EB%A3%8C?node-id=1-23&t=LH1JpAKm2xhJUq9q-1)
+- [4주차 발표자료](https://simeunseo.notion.site/4-1ccf63bab4b14fd8b249f5d7c7cd7e53?pvs=4)
 - [3주차 발표자료](https://simeunseo.notion.site/3-0df689ca7cd3407b89a93284854a54b8?pvs=4)
 - [2주차 발표자료](https://simeunseo.notion.site/2-137599a6f0d2809fa498fa1cc31d97f9?pvs=4)
 - [1주차 발표자료](https://simeunseo.notion.site/1-130599a6f0d2804597e0c55e8ee33920?pvs=4)
@@ -28,28 +29,32 @@
     카메라와 음성을 통해 발표자와 참여자가 실시간으로 지식을 공유할 수 있습니다.
     화면 공유 기능으로 더욱 효과적인 지식 전달이 가능합니다.
 
-<img width="600" alt="화면공유" src="https://github.com/user-attachments/assets/1e82dd2b-e019-44d8-a85d-12a961de38fc">
+![티클 시작](https://github.com/user-attachments/assets/f0c3f9b3-cbda-49b2-a6a3-4c77fd569129)
 
-### **✔️ 티클 신청 시스템**
+### **티클 목록**
 
-    참여자는 티클 리스트에서 원하는 티클을 선택하고 신청할 수 있습니다.
-    발표자는 자신의 티클 관리 페이지에서 신청자를 확인하고 발표를 시작할 수 있습니다.
+    티클 목록을 확인하고 정렬, 필터링할 수 있습니다.
 
-<img width="600" alt="티클 리스트(메인)" src="https://github.com/user-attachments/assets/08449986-eda7-408a-845a-cd21da718837">
-<div>
-<img width="600" alt="개설한 티클 관리" src="https://github.com/user-attachments/assets/9dc9627e-c806-4560-82d0-a949b1dca153">
-<img width="600" alt="신청한 티클 관리" src="https://github.com/user-attachments/assets/81cf68b1-4006-4c05-9984-29d450106b2c">
-</div>
+![티클목록4](https://github.com/user-attachments/assets/ac4cbba2-5552-43d3-8361-4159f9c3a48b)
 
-### **✔️ 티클 소개 페이지**
+### **✔️ 티클 개설**
 
-    티클 내용과 발표자 정보를 제공합니다.
+    발표자는 원하는 티클을 개설할 수 있습니다.
 
-<img width="600" alt="티클 개설하기" src="https://github.com/user-attachments/assets/566412dc-2045-4260-bfac-309350ac040e">
+![티클개설4](https://github.com/user-attachments/assets/56b33a06-a85d-49a2-b830-c46d44879ce2)
+
+### **✔️ 티클 관리 대시보드**
+
+    참여자는 신청한 티클을 대시보드에서 확인하고 참가할 수 있습니다.
+    발표자는 대시보드에서 신청자를 확인하고 발표를 시작할 수 있습니다.
+
+![대시보드4](https://github.com/user-attachments/assets/d6f57d72-135e-4e36-bba9-784a1fd368a2)
 
 ### **✔️ AI 요약 기능**
 
     CLOVA API를 이용해 티클 내용을 요약하여 제공합니다.
+
+![image](https://github.com/user-attachments/assets/825a5ea0-e873-40e1-a866-5706bde4bf5a)
 
 # ✍️ 학습 정리
 
@@ -99,7 +104,7 @@
 </tr>
 <tr>
     <td align="center">Web FE·BE</td>
-    <td align="center">Web FE·BE</td>
+    <td align="center">Web FE</td>
     <td align="center">Web FE</td>
     <td align="center">Web BE</td>
     <td align="center">Web BE</td>
