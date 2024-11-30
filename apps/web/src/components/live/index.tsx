@@ -31,7 +31,8 @@ function MediaContainer() {
   return (
     <div className="flex h-dvh flex-col justify-between gap-y-4 bg-black">
       <StreamView />
-      <footer className="flex w-full justify-end gap-4 px-8 pb-4 text-white">
+      <footer className="flex w-full items-center justify-between gap-4 px-8 pb-4 text-white">
+        <span className="text-body1 text-white">{ticleData?.title}</span>
         <ControlBar isOwner={isOwner} onTicleEnd={hanleTicleEnd} />
       </footer>
     </div>
