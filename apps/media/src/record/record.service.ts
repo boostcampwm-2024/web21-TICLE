@@ -1,3 +1,5 @@
+import fs from 'fs';
+
 import { Injectable } from '@nestjs/common';
 import { types } from 'mediasoup';
 
@@ -9,10 +11,15 @@ import { RecordInfo } from './recordInfo';
 @Injectable()
 export class RecordService {
   private recordInfos: Map<string, RecordInfo> = new Map();
+  private recordPath = './record';
   constructor(
     private mediasoupService: MediasoupService,
     private roomService: RoomService
-  ) {}
+  ) {
+    if (!fs.existsSync(this.recordPath)) {
+      fs.mkdirSync(this.recordPath);
+    }
+  }
 
   async recordStart(roomId: string, socketId: string) {
     const room = this.roomService.getRoom(roomId);
@@ -32,7 +39,7 @@ export class RecordService {
       ip: '127.0.0.1',
       port,
     });
-    const consumer = await this.addConsumer(
+    await this.addConsumer(
       recordInfo,
       router.rtpCapabilities,
       audioProducer.id,
