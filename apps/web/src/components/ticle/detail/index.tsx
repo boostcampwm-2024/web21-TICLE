@@ -34,7 +34,7 @@ function Detail() {
   const { dateStr, timeRangeStr } = formatDateTimeRange(data.startTime, data.endTime);
   return (
     <div className="flex flex-col items-end gap-9">
-      <div className="surface-white flex w-[49.5rem] flex-col gap-9 rounded-lg border border-main p-10 shadow-normal">
+      <div className="flex w-[49.5rem] flex-col gap-9 rounded-lg border border-main bg-white p-10 shadow-normal">
         <div className="flex flex-col gap-2">
           <h1 className="w-full text-head1 text-main">{data.title}</h1>
           <div className="flex gap-2.5">
