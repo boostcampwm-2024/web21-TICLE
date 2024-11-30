@@ -309,18 +309,18 @@ export class MediasoupService implements OnModuleInit {
       rtpCapabilities,
       paused: producerPaused,
     });
-
-    consumer.on('producerclose', () => {
-      consumer.close();
-    });
-
     consumer.on('producerpause', () => {
       consumer.pause();
     });
 
     consumer.on('producerresume', () => {
+      if (consumer.kind !== 'audio') {
+        return;
+      }
+
       consumer.resume();
     });
+
     return consumer;
   }
 }
