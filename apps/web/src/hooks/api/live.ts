@@ -7,8 +7,10 @@ export const useEndTicle = () => {
 
   return useMutation({
     mutationFn: endTicle,
-    onSuccess: () => {
+    onSuccess: (_, ticleId) => {
       queryClient.invalidateQueries({ queryKey: ['appliedTicleList'] });
+      queryClient.invalidateQueries({ queryKey: ['ticleList'] });
+      queryClient.invalidateQueries({ queryKey: ['ticle', ticleId] });
     },
   });
 };

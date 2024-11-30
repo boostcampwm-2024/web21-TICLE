@@ -1,4 +1,3 @@
-import { useParams } from '@tanstack/react-router';
 import { SOCKET_EVENTS } from '@repo/mediasoup';
 
 import CameraOffIc from '@/assets/icons/camera-off.svg?react';
@@ -12,11 +11,14 @@ import ToggleButton from '@/components/live/ControlBar/ToggleButton';
 import ExitDialog from '@/components/live/ExitDialog';
 import { useLocalStreamAction, useLocalStreamState } from '@/contexts/localStream/context';
 import { useMediasoupAction, useMediasoupState } from '@/contexts/mediasoup/context';
-import { useEndTicle } from '@/hooks/api/live';
-import { useTicle } from '@/hooks/api/ticle';
 import useModal from '@/hooks/useModal';
 
-const ControlBar = () => {
+interface ControlBarProps {
+  isOwner: boolean;
+  onTicleEnd: () => void;
+}
+
+const ControlBar = ({ isOwner, onTicleEnd }: ControlBarProps) => {
   const { isOpen, onClose, onOpen } = useModal();
 
   const { socketRef } = useMediasoupState();
@@ -25,12 +27,6 @@ const ControlBar = () => {
   const { disconnect } = useMediasoupAction();
   const { closeStream, pauseStream, resumeStream, startScreenStream, closeScreenStream } =
     useLocalStreamAction();
-
-  const { ticleId } = useParams({ from: '/_authenticated/live/$ticleId' });
-
-  const { data: ticleData } = useTicle(ticleId);
-  const { mutate: endTicleMutate } = useEndTicle();
-  const isOwner = ticleData?.isOwner || false;
 
   const toggleScreenShare = async () => {
     const { paused, stream } = screen;
@@ -73,7 +69,7 @@ const ControlBar = () => {
   const handleExit = () => {
     if (isOwner) {
       socketRef.current?.emit(SOCKET_EVENTS.closeRoom);
-      endTicleMutate(ticleId);
+      onTicleEnd();
     }
 
     disconnect();
