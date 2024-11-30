@@ -27,7 +27,7 @@ export class TicleService {
   ) {}
 
   async createTicle(createTicleDto: CreateTicleDto, userId: number): Promise<Ticle> {
-    const user = await this.userRepository.findOne({ where: { id: userId } });
+    const user = await this.getUserById(userId);
 
     const { existingTags, tagsToCreate } = await this.findExistingTags(createTicleDto.tags);
     const newTags = await this.createNewTags(tagsToCreate);
