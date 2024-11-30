@@ -2,14 +2,14 @@ import { useParams } from '@tanstack/react-router';
 
 import CalendarIc from '@/assets/icons/calendar.svg?react';
 import ClockIc from '@/assets/icons/clock.svg?react';
-import TrashIc from '@/assets/icons/trash.svg?react';
 import Avatar from '@/components/common/Avatar';
 import Badge from '@/components/common/Badge';
-import Button from '@/components/common/Button';
 import UserProfileDialog from '@/components/user/UserProfileDialog';
 import { useApplyTicle, useDeleteTicle, useTicle } from '@/hooks/api/ticle';
 import useModal from '@/hooks/useModal';
 import { formatDateTimeRange } from '@/utils/date';
+
+import CtaButton from './CtaButton';
 
 function Detail() {
   const { ticleId } = useParams({ from: '/_authenticated/ticle/$ticleId' });
@@ -84,18 +84,13 @@ function Detail() {
           </div>
         </div>
       </div>
-      {data.isOwner ? (
-        <Button onClick={handleDeleteButtonClick}>
-          <span className="flex items-center gap-1">
-            티클 삭제하기
-            <TrashIc className="fill-white" />
-          </span>
-        </Button>
-      ) : (
-        <Button onClick={handleApplyButtonClick} disabled={data.alreadyApplied}>
-          {data.alreadyApplied ? '신청 완료' : '티클 신청하기'}
-        </Button>
-      )}
+      <CtaButton
+        isOwner={data.isOwner}
+        alreadyApplied={data.alreadyApplied}
+        ticleStatus={data.ticleStatus}
+        onApply={handleApplyButtonClick}
+        onDelete={handleDeleteButtonClick}
+      />
     </div>
   );
 }
