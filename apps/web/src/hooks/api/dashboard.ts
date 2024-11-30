@@ -33,9 +33,8 @@ export const useStartTicle = () => {
 
   return useMutation({
     mutationFn: startTicle,
-    onSuccess: (_, ticleId) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['appliedTicleList'] });
-      queryClient.invalidateQueries({ queryKey: ['applicantsTicle', ticleId] });
     },
   });
 };
