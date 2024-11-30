@@ -293,4 +293,8 @@ export class MediasoupService implements OnModuleInit {
   resumeConsumers(socketId: string, roomId: string, consumerIds: string[]) {
     return consumerIds.map((consumerId) => this.resumeConsumer(socketId, consumerId, roomId));
   }
+
+  async createPlainTransport(router: types.Router) {
+    return router.createPlainTransport(this.mediasoupConfig.plainTransport);
+  }
 }
