@@ -1,3 +1,4 @@
+import { useParams } from '@tanstack/react-router';
 import { SOCKET_EVENTS } from '@repo/mediasoup';
 
 import CameraOffIc from '@/assets/icons/camera-off.svg?react';
@@ -11,6 +12,7 @@ import ToggleButton from '@/components/live/ControlBar/ToggleButton';
 import ExitDialog from '@/components/live/ExitDialog';
 import { useLocalStreamAction, useLocalStreamState } from '@/contexts/localStream/context';
 import { useMediasoupAction, useMediasoupState } from '@/contexts/mediasoup/context';
+import { useTicle } from '@/hooks/api/ticle';
 import useModal from '@/hooks/useModal';
 
 const ControlBar = () => {
@@ -22,6 +24,10 @@ const ControlBar = () => {
   const { disconnect } = useMediasoupAction();
   const { closeStream, pauseStream, resumeStream, startScreenStream, closeScreenStream } =
     useLocalStreamAction();
+
+  const { ticleId } = useParams({ from: '/_authenticated/live/$ticleId' });
+  const { data: ticleData } = useTicle(ticleId);
+  const isOwner = ticleData?.isOwner || false;
 
   const toggleScreenShare = async () => {
     const { paused, stream } = screen;
@@ -61,7 +67,7 @@ const ControlBar = () => {
     }
   };
 
-  const handleExit = (isOwner: boolean) => {
+  const handleExit = () => {
     if (isOwner) {
       socketRef.current?.emit(SOCKET_EVENTS.closeRoom);
     }
@@ -93,7 +99,7 @@ const ControlBar = () => {
         <ToggleButton type="exit" ActiveIcon={ExitIc} InactiveIcon={ExitIc} onToggle={onOpen} />
       </div>
       {isOpen && (
-        <ExitDialog isOpen={isOpen} isOwner={false} handleExit={handleExit} onClose={onClose} />
+        <ExitDialog isOpen={isOpen} isOwner={isOwner} handleExit={handleExit} onClose={onClose} />
       )}
     </>
   );
