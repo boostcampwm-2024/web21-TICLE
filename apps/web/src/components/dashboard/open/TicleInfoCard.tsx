@@ -68,6 +68,7 @@ function TicleInfoCard({ ticleId, ticleTitle, startTime, endTime, status }: Ticl
           <Button
             disabled={status === 'closed' || status === 'inProgress'}
             onClick={handleTicleStart}
+            className="w-36"
           >
             {status === 'closed'
               ? '종료된 티클'

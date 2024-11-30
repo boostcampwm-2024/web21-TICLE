@@ -48,7 +48,7 @@ function TicleInfoCard({
             <span className="text-body1 text-main">{`${dateStr} ${timeRangeStr}`}</span>
           </div>
         </div>
-        <Button disabled={status === 'closed'} onClick={handleTicleParticipate}>
+        <Button disabled={status === 'closed'} onClick={handleTicleParticipate} className="w-36">
           {status === 'closed' ? '종료된 티클' : '티클 참여하기'}
         </Button>
       </div>
