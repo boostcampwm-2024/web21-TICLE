@@ -1,6 +1,6 @@
 export const TicleStatus = {
   OPEN: 'open',
-  IN_PROGRESS: 'in_progress',
+  IN_PROGRESS: 'inProgress',
   CLOSED: 'closed',
 } as const;
 
