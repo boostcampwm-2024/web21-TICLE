@@ -3,7 +3,7 @@ import { GetDashboardListQuerySchema } from '@repo/types';
 
 import { JwtAuthGuard } from '@/auth/jwt/jwt-auth.guard';
 import { GetUserId } from '@/common/decorator/get-userId.decorator';
-import { ZodValidationPipe } from '@/zodValidationPipe';
+import { ZodValidationPipe } from '@/common/pipe/zodValidationPipe';
 
 import { DashboardService } from './dashboard.service';
 import { GetDashboardListQueryDto } from './dto/getDashboardListQueryDto';

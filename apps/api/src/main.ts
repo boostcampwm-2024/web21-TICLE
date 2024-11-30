@@ -8,7 +8,7 @@ import { AppModule } from '@/app.module';
 
 import { DBExceptionFilter } from './common/filter/db-exception.filter';
 import { HttpExceptionFilter } from './common/filter/http-exception.filter';
-import { ResponseInterceptor } from './response.interceptor';
+import { ResponseInterceptor } from './common/Interceptor/response.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
