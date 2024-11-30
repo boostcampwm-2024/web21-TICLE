@@ -12,12 +12,16 @@ import { SOCKET_EVENTS, STREAM_STATUS } from '@repo/mediasoup';
 import type { client, server } from '@repo/mediasoup';
 
 import { MediasoupService } from '@/mediasoup/mediasoup.service';
+import { RecordService } from '@/record/record.service';
 import { WSExceptionFilter } from '@/wsException.filter';
 
 @WebSocketGateway()
 @UseFilters(WSExceptionFilter)
 export class SignalingGateway implements OnGatewayDisconnect {
-  constructor(private mediasoupService: MediasoupService) {}
+  constructor(
+    private mediasoupService: MediasoupService,
+    private recordService: RecordService
+  ) {}
 
   @SubscribeMessage(SOCKET_EVENTS.createRoom)
   async handleCreateRoom(@ConnectedSocket() client: Socket, @MessageBody('roomId') roomId: string) {
@@ -175,5 +179,10 @@ export class SignalingGateway implements OnGatewayDisconnect {
     @MessageBody('consumerIds') consumerIds: string[]
   ) {
     return this.mediasoupService.resumeConsumers(client.id, roomId, consumerIds);
+  }
+
+  @SubscribeMessage('recordStart')
+  async recordStart(@ConnectedSocket() client: Socket, @MessageBody('roomId') roomId: string) {
+    await this.recordService.recordStart(roomId, client.id);
   }
 }

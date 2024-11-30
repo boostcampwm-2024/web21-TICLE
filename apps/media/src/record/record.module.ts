@@ -8,6 +8,6 @@ import { RecordService } from './record.service';
 @Module({
   imports: [RoomModule, MediasoupModule],
   providers: [RecordService],
-  exports: [],
+  exports: [RecordService],
 })
 export class RecordModule {}
