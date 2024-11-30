@@ -14,7 +14,7 @@ interface TicleInfoCardProps {
   ticleTitle: string;
   startTime: string;
   endTime: string;
-  status: 'closed' | 'open';
+  status: 'closed' | 'open' | 'inProgress';
 }
 
 function TicleInfoCard({ ticleId, ticleTitle, startTime, endTime, status }: TicleInfoCardProps) {
@@ -64,7 +64,7 @@ function TicleInfoCard({ ticleId, ticleTitle, startTime, endTime, status }: Ticl
             </div>
           </button>
           <Button disabled={status === 'closed'} onClick={handleTicleParticipate}>
-            티클 시작하기
+            {status === 'closed' ? '종료된 티클' : '티클 시작하기'}
           </Button>
         </div>
         {isOpen && (
