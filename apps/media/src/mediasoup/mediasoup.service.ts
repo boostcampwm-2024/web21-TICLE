@@ -297,4 +297,25 @@ export class MediasoupService implements OnModuleInit {
   async createPlainTransport(router: types.Router) {
     return router.createPlainTransport(this.mediasoupConfig.plainTransport);
   }
+
+  async createRecordConsumer(
+    transport: types.Transport,
+    producerId: string,
+    rtpCapabilities: types.RtpCapabilities
+  ) {
+    //todo : producer의 pause 상태를 확인하여 pause 상태일 경우 consumer도 pause 상태로 생성
+    const consumer = await transport.consume({ producerId, rtpCapabilities });
+    consumer.on('producerclose', () => {
+      consumer.close();
+    });
+
+    consumer.on('producerpause', () => {
+      consumer.pause();
+    });
+
+    consumer.on('producerresume', () => {
+      consumer.resume();
+    });
+    return consumer;
+  }
 }

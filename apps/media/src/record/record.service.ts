@@ -37,4 +37,26 @@ export class RecordService {
     const plainTransport = await this.mediasoupService.createPlainTransport(router);
     recordInfo.setPlainTransport(plainTransport);
   }
+
+  async addConsumer(roomId: string, producerId: string) {
+    const room = this.roomService.getRoom(roomId);
+    if (!room) {
+      return;
+    }
+    const recordInfo = this.recordInfos.get(roomId);
+    if (!recordInfo) {
+      return;
+    }
+    const plainTransport = recordInfo.getPlainTransport();
+    if (!plainTransport) {
+      return;
+    }
+    const consumer = await this.mediasoupService.createRecordConsumer(
+      plainTransport,
+      producerId,
+      room.router.rtpCapabilities
+    );
+
+    recordInfo.setRecordConsumer(consumer);
+  }
 }
