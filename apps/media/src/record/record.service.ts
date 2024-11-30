@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { types } from 'mediasoup';
 
 import { MediasoupService } from '@/mediasoup/mediasoup.service';
 import { RoomService } from '@/room/room.service';
@@ -13,48 +14,47 @@ export class RecordService {
     private roomService: RoomService
   ) {}
 
-  addRecordInfo(roomId: string) {
+  async recordStart(roomId: string, socketId: string) {
     const room = this.roomService.getRoom(roomId);
     if (!room) {
-      return;
-    }
-    if (this.recordInfos.has(roomId)) {
-      return;
-    }
-    this.recordInfos.set(roomId, new RecordInfo());
-  }
-
-  async addPlainTransport(roomId: string) {
-    const room = this.roomService.getRoom(roomId);
-    if (!room) {
-      return;
-    }
-    const recordInfo = this.recordInfos.get(roomId);
-    if (!recordInfo) {
       return;
     }
     const router = room.router;
+    const recordInfo = this.addRecordInfo(roomId);
+    const audioProducer = room.getPeer(socketId).getAudioProducer();
+
+    await this.addPlainTransport(recordInfo, router);
+    await this.addConsumer(
+      recordInfo,
+      router.rtpCapabilities,
+      audioProducer.id,
+      audioProducer.paused
+    );
+  }
+
+  addRecordInfo(roomId: string) {
+    const recordInfo = new RecordInfo();
+    this.recordInfos.set(roomId, recordInfo);
+    return recordInfo;
+  }
+
+  async addPlainTransport(recordInfo: RecordInfo, router: types.Router) {
     const plainTransport = await this.mediasoupService.createPlainTransport(router);
     recordInfo.setPlainTransport(plainTransport);
   }
 
-  async addConsumer(roomId: string, producerId: string) {
-    const room = this.roomService.getRoom(roomId);
-    if (!room) {
-      return;
-    }
-    const recordInfo = this.recordInfos.get(roomId);
-    if (!recordInfo) {
-      return;
-    }
+  async addConsumer(
+    recordInfo: RecordInfo,
+    rtpCapabilities: types.RtpCapabilities,
+    producerId: string,
+    producerPaused: boolean
+  ) {
     const plainTransport = recordInfo.getPlainTransport();
-    if (!plainTransport) {
-      return;
-    }
     const consumer = await this.mediasoupService.createRecordConsumer(
       plainTransport,
       producerId,
-      room.router.rtpCapabilities
+      rtpCapabilities,
+      producerPaused
     );
 
     recordInfo.setRecordConsumer(consumer);

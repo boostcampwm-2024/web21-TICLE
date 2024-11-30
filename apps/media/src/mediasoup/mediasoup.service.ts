@@ -303,10 +303,15 @@ export class MediasoupService implements OnModuleInit {
   async createRecordConsumer(
     transport: types.Transport,
     producerId: string,
-    rtpCapabilities: types.RtpCapabilities
+    rtpCapabilities: types.RtpCapabilities,
+    producerPaused: boolean
   ) {
-    //todo : producer의 pause 상태를 확인하여 pause 상태일 경우 consumer도 pause 상태로 생성
-    const consumer = await transport.consume({ producerId, rtpCapabilities });
+    const consumer = await transport.consume({
+      producerId,
+      rtpCapabilities,
+      paused: producerPaused,
+    });
+
     consumer.on('producerclose', () => {
       consumer.close();
     });
