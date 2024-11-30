@@ -12,6 +12,7 @@ import ToggleButton from '@/components/live/ControlBar/ToggleButton';
 import ExitDialog from '@/components/live/ExitDialog';
 import { useLocalStreamAction, useLocalStreamState } from '@/contexts/localStream/context';
 import { useMediasoupAction, useMediasoupState } from '@/contexts/mediasoup/context';
+import { useEndTicle } from '@/hooks/api/live';
 import { useTicle } from '@/hooks/api/ticle';
 import useModal from '@/hooks/useModal';
 
@@ -26,7 +27,9 @@ const ControlBar = () => {
     useLocalStreamAction();
 
   const { ticleId } = useParams({ from: '/_authenticated/live/$ticleId' });
+
   const { data: ticleData } = useTicle(ticleId);
+  const { mutate: endTicleMutate } = useEndTicle();
   const isOwner = ticleData?.isOwner || false;
 
   const toggleScreenShare = async () => {
@@ -70,6 +73,7 @@ const ControlBar = () => {
   const handleExit = () => {
     if (isOwner) {
       socketRef.current?.emit(SOCKET_EVENTS.closeRoom);
+      endTicleMutate(ticleId);
     }
 
     disconnect();
