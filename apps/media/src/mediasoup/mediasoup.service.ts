@@ -317,7 +317,6 @@ export class MediasoupService implements OnModuleInit {
       if (consumer.kind !== 'audio') {
         return;
       }
-
       consumer.resume();
     });
 
