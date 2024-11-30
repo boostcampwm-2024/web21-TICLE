@@ -65,8 +65,15 @@ function TicleInfoCard({ ticleId, ticleTitle, startTime, endTime, status }: Ticl
               <PersonFilledIc className="fill-primary" />
             </div>
           </button>
-          <Button disabled={status === 'closed'} onClick={handleTicleStart}>
-            {status === 'closed' ? '종료된 티클' : '티클 시작하기'}
+          <Button
+            disabled={status === 'closed' || status === 'inProgress'}
+            onClick={handleTicleStart}
+          >
+            {status === 'closed'
+              ? '종료된 티클'
+              : status === 'inProgress'
+                ? '시작된 티클'
+                : '티클 시작하기'}
           </Button>
         </div>
         {isOpen && (
