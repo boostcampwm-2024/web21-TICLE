@@ -295,4 +295,8 @@ export class MediasoupService implements OnModuleInit {
   closeRoom(roomId: string) {
     this.roomService.closeRoom(roomId);
   }
+
+  async createPlainTransport(router: types.Router) {
+    return router.createPlainTransport(this.mediasoupConfig.plainTransport);
+  }
 }

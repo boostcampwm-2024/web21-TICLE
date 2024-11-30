@@ -1,11 +1,12 @@
 import { Module } from '@nestjs/common';
 
-import { RoomService } from '@/room/room.service';
+import { MediasoupModule } from '@/mediasoup/mediasoup.module';
+import { RoomModule } from '@/room/room.module';
 
 import { RecordService } from './record.service';
 
 @Module({
-  imports: [RoomService],
+  imports: [RoomModule, MediasoupModule],
   providers: [RecordService],
   exports: [],
 })
