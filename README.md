@@ -9,7 +9,7 @@
 <div style='display:flex; flex-direction:column; width:100%; padding-top:30px;'>
 <a href='https://ticle.live/'>
 <img src='https://github.com/user-attachments/assets/a3c42d03-5fc7-4ca3-b91f-38f577a9f28a' height='60' alt='TICLE 바로가기'/>
-</a>
+</a>    
 <div style='display:flex; width:100%; justify-content:center;'>
 <a href='https://www.notion.so/simeunseo/9-Ticle-12e599a6f0d2804682ccd2251248a435?pvs=4'>
 <img src='https://github.com/user-attachments/assets/ea949b3f-dedd-4440-8c8a-3e41cac51926' height='50' alt='팀 노션'/>
@@ -34,7 +34,7 @@
 
 </div>
 
-<h1 style='background-color:#EEEBFF;'>목차</h1>
+<h1>📋 목차</h1>
 
 #### [1. 기획 의도](#기획_의도)
 
@@ -43,12 +43,6 @@
 #### [3. 시스템 아키텍처](#시스템_아키텍처)
 
 #### [4. 핵심 기능](#시스템_아키텍처)
-
-- [누구나, 언제든, 자유롭게 실시간 지식 공유가 가능해요](#️-누구나-언제든-자유롭게-실시간-지식-공유가-가능해요)
-- [개설된 티클을 확인하고 신청할 수 있어요](#️-개설된-티클을-확인하고-신청할-수-있어요)
-- [나만의 티클을 개설할 수 있어요](#️-나만의-티클을-개설할-수-있어요)
-- [신청한 티클과 개설한 티클을 확인하고 관리할 수 있어요](#️-신청한-티클과-개설한-티클을-확인하고-관리할-수-있어요)
-- [AI 요약 기능으로 종료된 티클 내용을 요약해서 보관해요](#️-ai-요약-기능으로-종료된-티클-내용을-요약해서-보관해요)
 
 #### [5. 우리만의 기술적 경험](#우리만의_기술적_경험)
 
@@ -60,17 +54,17 @@
 
 #### [7. 팀원 소개](#팀원_소개)
 
-<h1 id='기획_의도' style='background-color:#EEEBFF;'>기획 의도</h1>
+<h1 id='기획_의도'>💭 기획 의도</h1>
 
-"부스트캠프의 **기술 공유** 시간이 참 좋은데, 시간이 한정적이다..."
+> "부스트캠프의 **기술 공유** 시간이 참 좋은데, 시간이 한정적이다..."
 
-"**시간에 구애받지 않고 누구나** 지식을 나눌 수 있는 플랫폼이 있다면 어떨까?"
+> "**시간에 구애받지 않고 누구나** 지식을 나눌 수 있는 플랫폼이 있다면 어떨까?"
 
-"준일님의 글쓰기 클래스처럼, 캠퍼들도 **각자의 전문성과 경험을 더욱 자유롭게 공유**할 수 있다면 좋지 않을까?"
+> "준일님의 글쓰기 클래스처럼, 캠퍼들도 **각자의 전문성과 경험을 더욱 자유롭게 공유**할 수 있다면 좋지 않을까?"
 
-➡️ 누구나, 언제든, 자유롭게 개설하고 참여하는 실시간 지식공유 플랫폼 **TICLE**❗️
+#### ➡️ 누구나, 언제든, 자유롭게 개설하고 참여하는 실시간 지식공유 플랫폼 **TICLE**❗️
 
-<h1 id='핵심_목표' style='background-color:#EEEBFF;'>핵심 목표</h1>
+<h1 id='핵심_목표'>🎯 핵심 목표</h1>
 
 1️⃣ 실시간으로 발표자와 참여자가 즉각적인 피드백과 질문이 가능한 **양방향 소통 환경**
 
@@ -78,13 +72,13 @@
 
 3️⃣ **다수의 참여자가 동시에 접속**하여 최대한 많은 사람에게 지식 공유를 할 수 있는 안정적인 환경
 
-<h1 id='시스템_아키텍처' style='background-color:#EEEBFF;'>시스템 아키텍처</h1>
+<h1 id='시스템_아키텍처'>🖧 시스템 아키텍처</h1>
 
 ![Cloudcraft Image (4)](https://github.com/user-attachments/assets/1e5874ee-2485-4e89-90a0-cebb47621c77)
 
-<h1 id='핵심_기능' style='background-color:#EEEBFF;'>핵심 기능</h1>
+<h1 id='핵심_기능'>✴️ 핵심 기능</h1>
 
-### **✔️ 누구나, 언제든, 자유롭게 실시간 지식 공유가 가능해요**
+## **✔️ 누구나, 언제든, 자유롭게 실시간 지식 공유가 가능해요**
 
 <img src='https://github.com/user-attachments/assets/883670ed-60dd-412b-89eb-969b0e72bd8e' width=600 alt='티클 시작1'/>
 
@@ -95,10 +89,9 @@
 
 - 참가자가 많아지면 **페이지네이션**이 가능해요.
 - 크게 보고 싶은 **화면을 클릭해서 고정**할 수 있어요.
-
 - 발표자는 원할 때 **티클을 종료**할 수 있어요.
 
-### **✔️ 개설된 티클을 확인하고 신청할 수 있어요**
+## **✔️ 개설된 티클을 확인하고 신청할 수 있어요**
 
 <img src='https://github.com/user-attachments/assets/4bff5732-7686-4e35-b171-49c65caa6aeb' width=600 alt='티클 목록'/>
 
@@ -107,14 +100,14 @@
 - 진행 예정인 티클과 종료된 **티클을 필터링**하여 볼 수 있어요.
 - 무한 스크롤로 티클 목록을 빠르게 로딩해요.
 
-### **✔️ 나만의 티클을 개설할 수 있어요**
+## **✔️ 나만의 티클을 개설할 수 있어요**
 
 <img src='https://github.com/user-attachments/assets/6aa3f861-b769-4f14-b698-d20d78ae3de5' width=600 alt='티클 개설'/>
 
 - 티클을 소개하기 위한 필수적인 **정보를 입력하여 게시**할 수 있어요.
 - 각 입력에 대해 **정확한 유효성 검증**이 적용돼요.
 
-### **✔️ 신청한 티클과 개설한 티클을 확인하고 관리할 수 있어요**
+## **✔️ 신청한 티클과 개설한 티클을 확인하고 관리할 수 있어요**
 
 <img src='https://github.com/user-attachments/assets/723d1063-83bb-4be7-a786-32295765e328' width=600 alt='티클 대시보드'/>
 
@@ -122,11 +115,11 @@
 - 개설한 티클에 대해 **신청자 목록을 확인**할 수 있어요.
 - **티클 시작하기** 또는 **티클 참여하기**를 통해 실시간 지식 공유에 접속할 수 있어요.
 
-### **✔️ AI 요약 기능으로 종료된 티클 내용을 요약해서 보관해요**
+## **✔️ AI 요약 기능으로 종료된 티클 내용을 요약해서 보관해요**
 
 <img src='https://github.com/user-attachments/assets/825a5ea0-e873-40e1-a866-5706bde4bf5a' width=600 alt='AI 요약'/>
 
-<h1 id='우리만의_기술적_경험' style='background-color:#EEEBFF;'>우리만의 기술적 경험</h1>
+<h1 id='우리만의_기술적_경험'>🏃 우리만의 기술적 경험</h1>
 
 ## 공통
 
@@ -185,7 +178,7 @@
 [💭 학습 기록장↗️](https://simeunseo.notion.site/12e599a6f0d2807489d3fc76cbdcaa98?v=12e599a6f0d28130bc68000c718aa85b&pvs=4)
 [👾 개발 기록장↗️](https://simeunseo.notion.site/12e599a6f0d280c0a7d9c948983ff80a?v=12e599a6f0d281afa7a4000c474633fc&pvs=4)
 
-<h1 id='기술_스택' style='background-color:#EEEBFF;'>기술 스택</h1>
+<h1 id='기술_스택'>🧑‍💻 기술 스택</h1>
 
 | 분야       | 기술                                                                                                                                                                                                                                                                                                                                                                 |
 | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -194,7 +187,7 @@
 | 백엔드     | ![NestJS](https://img.shields.io/badge/nestjs-E0234E?style=for-the-badge&logo=nestjs&logoColor=white) ![MySQL](https://img.shields.io/badge/mysql-4479A1?style=for-the-badge&logo=mysql&logoColor=white) ![Redis](https://img.shields.io/badge/redis-FF4438?style=for-the-badge&logo=redis&logoColor=white)                                                          |
 | 데브옵스   | ![GitHub Actions](https://img.shields.io/badge/githubactions-FF4438?style=for-the-badge&logo=githubactions&logoColor=white) ![Turborepo](https://img.shields.io/badge/turborepo-EF4444?style=for-the-badge&logo=turborepo&logoColor=white) ![Docker](https://img.shields.io/badge/docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)                     |
 
-<h1 id='팀원_소개' style='background-color:#EEEBFF;'>팀원 소개</h1>
+<h1 id='팀원_소개'>🏠 팀원 소개</h1>
 
 <table width="100%">
 <tr>
