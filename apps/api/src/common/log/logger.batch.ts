@@ -29,9 +29,9 @@ export class LogBatchService {
     try {
       const remoteFileName = `logs/${logFileName}`;
       const result = await this.ncpService.uploadFile(localFilePath, remoteFileName);
-      this.loggerService.log(`Log file uploaded successfully:`, 'logBatchService');
+      this.loggerService.log(`Log file uploaded successfully: ${result}`, 'logBatchService');
     } catch (error) {
-      this.loggerService.log(`Failed to upload log file: `, 'logBatchService');
+      this.loggerService.log(`Failed to upload log file: ${error}`, 'logBatchService');
     }
   }
 }
