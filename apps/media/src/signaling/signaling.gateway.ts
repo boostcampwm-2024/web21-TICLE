@@ -104,6 +104,10 @@ export class SignalingGateway implements OnGatewayDisconnect {
 
   handleDisconnect(@ConnectedSocket() client: Socket) {
     const roomId = this.mediasoupService.disconnect(client.id);
+    const recordInfo = this.recordService.getRecordInfo(roomId);
+    if (recordInfo && recordInfo.socketId === client.id) {
+      this.recordService.stopRecord(roomId);
+    }
 
     client.to(roomId).emit(SOCKET_EVENTS.peerLeft, { peerId: client.id });
   }
@@ -183,20 +187,21 @@ export class SignalingGateway implements OnGatewayDisconnect {
 
   @SubscribeMessage('recordStart')
   async recordStart(@ConnectedSocket() client: Socket, @MessageBody('roomId') roomId: string) {
-    await this.recordService.recordStart(roomId, client.id);
+    await this.recordService.startRecord(roomId, client.id);
   }
+
   @SubscribeMessage('recordStop')
   recordStop(@MessageBody('roomId') roomId: string) {
-    this.recordService.recordStop(roomId);
+    this.recordService.stopRecord(roomId);
   }
 
   @SubscribeMessage('recordPause')
   recordPause(@MessageBody('roomId') roomId: string) {
-    this.recordService.recordPause(roomId);
+    this.recordService.pauseRecord(roomId);
   }
 
   @SubscribeMessage('recordResume')
   recordResume(@MessageBody('roomId') roomId: string) {
-    this.recordService.recordResume(roomId);
+    this.recordService.resumeRecord(roomId);
   }
 }

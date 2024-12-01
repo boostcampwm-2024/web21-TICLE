@@ -1,6 +1,8 @@
 import fs from 'fs';
 
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { WsException } from '@nestjs/websockets';
 import { types } from 'mediasoup';
 
 import { MediasoupService } from '@/mediasoup/mediasoup.service';
@@ -12,16 +14,19 @@ import { RecordInfo } from './recordInfo';
 export class RecordService {
   private recordInfos: Map<string, RecordInfo> = new Map();
   private recordPath = './record';
+  private usedPorts: Set<number> = new Set();
+
   constructor(
     private mediasoupService: MediasoupService,
-    private roomService: RoomService
+    private roomService: RoomService,
+    private configService: ConfigService
   ) {
     if (!fs.existsSync(this.recordPath)) {
       fs.mkdirSync(this.recordPath);
     }
   }
 
-  async recordStart(roomId: string, socketId: string) {
+  async startRecord(roomId: string, socketId: string) {
     const room = this.roomService.getRoom(roomId);
     if (!room) {
       return;
@@ -33,7 +38,7 @@ export class RecordService {
     }
 
     const port = this.getPort();
-    const recordInfo = this.addRecordInfo(roomId, port);
+    const recordInfo = this.setRecordInfo(roomId, port, socketId);
     const plainTransport = await this.addPlainTransport(recordInfo, router);
     plainTransport.connect({
       ip: '127.0.0.1',
@@ -48,25 +53,29 @@ export class RecordService {
     recordInfo.createFfmpegProcess(roomId);
   }
 
-  addRecordInfo(roomId: string, port: number) {
-    const recordInfo = new RecordInfo(port);
+  private setRecordInfo(roomId: string, port: number, socketId: string) {
+    const recordInfo = new RecordInfo(port, socketId);
     this.recordInfos.set(roomId, recordInfo);
     return recordInfo;
   }
 
-  async addPlainTransport(recordInfo: RecordInfo, router: types.Router) {
+  getRecordInfo(roomId: string) {
+    return this.recordInfos.get(roomId);
+  }
+
+  private async addPlainTransport(recordInfo: RecordInfo, router: types.Router) {
     const plainTransport = await this.mediasoupService.createPlainTransport(router);
     recordInfo.setPlainTransport(plainTransport);
     return plainTransport;
   }
 
-  async addConsumer(
+  private async addConsumer(
     recordInfo: RecordInfo,
     rtpCapabilities: types.RtpCapabilities,
     producerId: string,
     producerPaused: boolean
   ) {
-    const plainTransport = recordInfo.getPlainTransport();
+    const plainTransport = recordInfo.plainTransport;
     const consumer = await this.mediasoupService.createRecordConsumer(
       plainTransport,
       producerId,
@@ -78,7 +87,7 @@ export class RecordService {
     return consumer;
   }
 
-  recordPause(roomId: string) {
+  pauseRecord(roomId: string) {
     const recordInfo = this.recordInfos.get(roomId);
     if (!recordInfo) {
       return;
@@ -86,7 +95,7 @@ export class RecordService {
     recordInfo.pauseRecord();
   }
 
-  recordResume(roomId: string) {
+  resumeRecord(roomId: string) {
     const recordInfo = this.recordInfos.get(roomId);
     if (!recordInfo) {
       return;
@@ -94,20 +103,35 @@ export class RecordService {
     recordInfo.resumeRecord();
   }
 
-  recordStop(roomId: string) {
+  stopRecord(roomId: string) {
     const recordInfo = this.recordInfos.get(roomId);
     if (!recordInfo) {
       return;
     }
+    this.releasePort(recordInfo.port);
     recordInfo.stopRecord();
     this.recordInfos.delete(roomId);
   }
 
-  getPort() {
-    // todo : port 안겹치게 설정
-    const maxPort = 29999;
-    const minPort = 20000;
-    const port = Math.floor(Math.random() * (maxPort - minPort + 1)) + minPort;
+  private getPort() {
+    const minPort = Number(this.configService.get('RECORD_MIN_PORT'));
+    const maxPort = Number(this.configService.get('RECORD_MAX_PORT'));
+    const totalPorts = maxPort - minPort + 1;
+
+    if (this.usedPorts.size >= totalPorts) {
+      throw new WsException('No available port');
+    }
+
+    let port: number;
+    do {
+      port = Math.floor(Math.random() * totalPorts) + minPort;
+    } while (this.usedPorts.has(port));
+
+    this.usedPorts.add(port);
     return port;
+  }
+
+  private releasePort(port: number): void {
+    this.usedPorts.delete(port);
   }
 }
