@@ -1,4 +1,4 @@
-import { spawn } from 'child_process';
+import { ChildProcess, spawn } from 'child_process';
 import { Readable } from 'stream';
 
 import { types } from 'mediasoup';
@@ -8,7 +8,8 @@ export class RecordInfo {
   private recordConsumer: types.Consumer;
 
   private port: number;
-  private ffmpegProcess: any;
+
+  private ffmpegProcess: ChildProcess;
 
   constructor(port: number) {
     this.port = port;
@@ -36,10 +37,13 @@ export class RecordInfo {
     return this.port;
   }
 
-  private cleanUp() {
+  cleanUp() {
+    if (this.ffmpegProcess) {
+      this.ffmpegProcess.kill('SIGINT');
+    }
+
     this.recordConsumer.close();
     this.plainTransport.close();
-    this.ffmpegProcess.kill('SIGINT');
   }
 
   createFfmpegProcess(roomId: string) {
@@ -50,8 +54,8 @@ export class RecordInfo {
     const filePath = `./record/${roomId}_${Date.now()}.mp3`;
     const ffmpegOption = this.createFfmpegOption(filePath);
     const ffmpegProcess = spawn('ffmpeg', ffmpegOption);
-    ffmpegProcess.stderr.setEncoding('utf-8');
 
+    ffmpegProcess.stderr.setEncoding('utf-8');
     ffmpegProcess.stdout.setEncoding('utf-8');
 
     //todo : 녹음 에러관련 로그, 예외처리
@@ -59,12 +63,14 @@ export class RecordInfo {
       this.cleanUp();
     });
 
+    //todo: 녹음 종료 시 s3에 업로드
     ffmpegProcess.on('close', () => {
-      //todo : 종료되면 s3에 업로드
       console.log('ffmpeg process close');
     });
 
     sdpStream.pipe(ffmpegProcess.stdin);
+
+    this.ffmpegProcess = ffmpegProcess;
   }
 
   createSdpText = (port: number, rtpParameters: types.RtpParameters) => {
@@ -82,18 +88,23 @@ a=receiveonly
 `;
   };
 
+  //todo : producer, consumer가 pause, resume에 따라 스트림 pause, resume
   convertStringToStream = (stringToConvert: string) => {
-    const stream = new Readable();
-    stream._read = () => {};
-    stream.push(stringToConvert);
-    stream.push(null);
+    const stream = new Readable({
+      read() {
+        this.push(stringToConvert);
+        this.push(null);
+      },
+    });
+
     return stream;
   };
 
   createFfmpegOption(filePath: string) {
+    //todo : loglevel 수정
     return [
       '-loglevel',
-      'debug',
+      'info',
       '-protocol_whitelist',
       'pipe,udp,rtp,file',
       '-f',
