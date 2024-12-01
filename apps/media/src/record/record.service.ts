@@ -78,6 +78,15 @@ export class RecordService {
     return consumer;
   }
 
+  recordStop(roomId: string) {
+    const recordInfo = this.recordInfos.get(roomId);
+    if (!recordInfo) {
+      return;
+    }
+    recordInfo.cleanUp();
+    this.recordInfos.delete(roomId);
+  }
+
   getPort() {
     // todo : port 안겹치게 설정
     const maxPort = 29999;
