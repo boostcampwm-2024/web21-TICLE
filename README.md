@@ -157,12 +157,12 @@
 > nestjs에서 response 형식을 어떻게 통일할 수 있을까? 인증은 어떤곳에서 처리해야 할까?
 > Middleware vs Guard vs Interceptor vs Pipe를 비교해 보았습니다.
 
-<h4><a href='https://www.notion.so/REDIRECT-21892728dd4945e6861cd5dd72f0e148?pvs=4'>🔗 쿠키와 로그아웃</a></h4>
+<h4><a href='https://simeunseo.notion.site/9f85adcce9b24ee18420c06d90fd14ee?pvs=4'>🔗 쿠키와 로그아웃</a></h4>
 
-> 로그인 성공 후 jwt를 쿠키에 넣어 redirection을 하여 클라이언트에서 쿠키를 조작할 수 없었습니다.
+> 로그인 성공 후 JWT를 쿠키에 넣은 뒤 redirection을 하여 클라이언트에서 쿠키를 조작할 수 없었습니다.
 > 클라이언트 단일로 로그아웃이 불가능하여 쿠키 옵션에 대해 공부하며 로그아웃 기능을 구현했습니다.
 
-<h4><a href='https://www.notion.so/nest-Throttler-143c27a1f6bf4feb9b0983e770c82b95?pvs=4'>🔗 게스트 로그인 구현과 @nest/Throttler</a></h4>
+<h4><a href='https://simeunseo.notion.site/nest-Throttler-143c27a1f6bf4feb9b0983e770c82b95?pvs=4'>🔗 게스트 로그인 구현과 @nest/Throttler</a></h4>
 
 > 캠퍼들이 저희의 서비스를 편하게 테스트할 수 있도록 게스트 로그인 기능을 구현하였습니다.
 > 게스트 로그인을 구현하며 고민이였던 과도한 게스트 로그인 요청을 nest의 Throttler를 활용하여 해결하였습니다.
