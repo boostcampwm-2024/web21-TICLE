@@ -2,7 +2,7 @@
 import { ReactNode } from '@tanstack/react-router';
 import { cva } from 'class-variance-authority';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useRef } from 'react';
+import { MouseEvent, useRef } from 'react';
 
 import CloseIc from '@/assets/icons/close.svg?react';
 import useOutsideClick from '@/hooks/useOutsideClick';
@@ -25,6 +25,10 @@ function DialogRoot({ isOpen, onClose, children, className }: DialogRootProps) {
 
   if (!isOpen) return null;
 
+  const handleInnerClick = (e: MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+  };
+
   return (
     <Portal portalId="dialog">
       <AnimatePresence>
@@ -41,6 +45,7 @@ function DialogRoot({ isOpen, onClose, children, className }: DialogRootProps) {
               className={cn('relative w-80 rounded-lg bg-white px-6 py-7 shadow-normal', className)}
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
+              onClick={handleInnerClick}
             >
               {children}
             </motion.div>

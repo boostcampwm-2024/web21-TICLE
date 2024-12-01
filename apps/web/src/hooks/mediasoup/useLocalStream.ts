@@ -7,7 +7,7 @@ import { getCameraStream, getMicStream, getScreenStream } from '@/utils/stream';
 
 const DEFAULT_LOCAL_STREAM = {
   stream: null,
-  paused: false,
+  paused: true,
 } as const;
 
 const useLocalStream = () => {
@@ -34,37 +34,47 @@ const useLocalStream = () => {
   const { createProducer, closeProducer, resumeProducer, pauseProducer } = useMediasoupAction();
 
   const startCameraStream = async () => {
-    if (video.stream) {
-      return;
+    try {
+      if (video.stream) {
+        return;
+      }
+
+      const stream = await getCameraStream();
+
+      const track = stream.getVideoTracks()[0];
+
+      if (!track) {
+        return;
+      }
+
+      setVideo({ stream, paused: true });
+
+      return createProducer('video', track);
+    } catch (_) {
+      // TODO: Error
+      closeStream('video');
     }
-
-    const stream = await getCameraStream();
-
-    const track = stream.getVideoTracks()[0];
-
-    if (!track) {
-      return;
-    }
-
-    setVideo({ stream, paused: true });
-
-    return createProducer('video', track);
   };
 
   const startMicStream = async () => {
-    if (audio.stream) {
-      return;
+    try {
+      if (audio.stream) {
+        return;
+      }
+
+      const stream = await getMicStream();
+      const track = stream.getAudioTracks()[0];
+
+      if (!track) {
+        return;
+      }
+
+      setAudio({ stream, paused: true });
+      return createProducer('audio', track);
+    } catch (_) {
+      // TODO: Error
+      closeStream('audio');
     }
-
-    const stream = await getMicStream();
-    const track = stream.getAudioTracks()[0];
-
-    if (!track) {
-      return;
-    }
-
-    setAudio({ stream, paused: true });
-    return createProducer('audio', track);
   };
 
   const startScreenStream = async () => {
@@ -86,17 +96,14 @@ const useLocalStream = () => {
       closeProducer('screen');
     };
 
-    setScreen({ stream, paused: true });
+    setScreen({ stream, paused: false });
 
     return createProducer('screen', track);
   };
 
-  const closeStream = (type: MediaTypes) => {
-    const [localStream, setLocalStream] = getState(type);
-
+  const closeScreenStream = () => {
+    const [localStream, setLocalStream] = getState('screen');
     const { stream } = localStream;
-
-    setLocalStream({ stream: null, paused: false });
 
     if (!stream) {
       return;
@@ -106,7 +113,25 @@ const useLocalStream = () => {
       track.stop();
     });
 
-    setLocalStream({ stream: null, paused: false });
+    setLocalStream({ ...DEFAULT_LOCAL_STREAM });
+    closeProducer('screen');
+  };
+
+  const closeStream = (type: MediaTypes) => {
+    const [localStream, setLocalStream] = getState(type);
+
+    const { stream } = localStream;
+
+    setLocalStream({ ...DEFAULT_LOCAL_STREAM });
+
+    if (!stream) {
+      return;
+    }
+
+    stream.getTracks().forEach((track) => {
+      track.stop();
+    });
+
     closeProducer(type);
   };
 
@@ -156,6 +181,7 @@ const useLocalStream = () => {
     closeStream,
     pauseStream,
     resumeStream,
+    closeScreenStream,
   } as const;
 };
 

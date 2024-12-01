@@ -20,14 +20,15 @@ const ControlBar = () => {
   const { video, screen, audio } = useLocalStreamState();
 
   const { disconnect } = useMediasoupAction();
-  const { closeStream, pauseStream, resumeStream, startScreenStream } = useLocalStreamAction();
+  const { closeStream, pauseStream, resumeStream, startScreenStream, closeScreenStream } =
+    useLocalStreamAction();
 
   const toggleScreenShare = async () => {
     const { paused, stream } = screen;
 
     try {
-      if (stream && paused) {
-        closeStream('screen');
+      if (stream && !paused) {
+        closeScreenStream();
       } else {
         startScreenStream();
       }
@@ -87,7 +88,7 @@ const ControlBar = () => {
           ActiveIcon={ScreenOnIc}
           InactiveIcon={ScreenOffIc}
           onToggle={toggleScreenShare}
-          isActivated={!screen.paused}
+          isActivated={screen.paused}
         />
         <ToggleButton type="exit" ActiveIcon={ExitIc} InactiveIcon={ExitIc} onToggle={onOpen} />
       </div>

@@ -8,6 +8,12 @@ export class TickleDetailResponseDto {
   speakerName: string;
 
   @ApiProperty({
+    example: 1,
+    description: '발표자 유저 아이디',
+  })
+  speakerId: number;
+
+  @ApiProperty({
     example: 'kim@example.com',
     description: '발표자 이메일',
   })

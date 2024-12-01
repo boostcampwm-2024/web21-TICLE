@@ -27,7 +27,7 @@ export class TicleService {
   ) {}
 
   async createTicle(createTicleDto: CreateTicleDto, userId: number): Promise<Ticle> {
-    const user = await this.userRepository.findOne({ where: { id: userId } });
+    const user = await this.getUserById(userId);
 
     const { existingTags, tagsToCreate } = await this.findExistingTags(createTicleDto.tags);
     const newTags = await this.createNewTags(tagsToCreate);
@@ -134,7 +134,16 @@ export class TicleService {
       .leftJoinAndSelect('ticle.tags', 'tags')
       .leftJoinAndSelect('ticle.speaker', 'speaker')
       .leftJoinAndSelect('ticle.applicants', 'applicants')
-      .select(['ticle', 'tags', 'speaker.id', 'speaker.profileImageUrl', 'applicants'])
+      .leftJoinAndSelect('applicants.user', 'user')
+      .select([
+        'ticle',
+        'tags',
+        'speaker.id',
+        'speaker.profileImageUrl',
+        'applicants',
+        'user.id',
+        'ticle.ticleStatus',
+      ])
       .where('ticle.id = :id', { id: ticleId })
       .getOne();
 
@@ -143,10 +152,11 @@ export class TicleService {
     }
     const { tags, speaker, ...ticleData } = ticle;
 
-    const alreadyApplied = ticle.applicants.some((applicnat) => applicnat.id === userId);
+    const alreadyApplied = ticle.applicants.some((applicant) => applicant.user.id === userId);
 
     return {
       ...ticleData,
+      speakerId: ticle.speaker.id,
       tags: tags.map((tag) => tag.name),
       speakerImgUrl: speaker.profileImageUrl,
       isOwner: speaker.id === userId,
@@ -166,6 +176,7 @@ export class TicleService {
         'ticle.endTime',
         'ticle.speakerName',
         'ticle.createdAt',
+        'ticle.profileImageUrl',
       ])
       .addSelect('GROUP_CONCAT(DISTINCT tags.name)', 'tagNames')
       .addSelect('COUNT(DISTINCT applicant.id)', 'applicantCount')
@@ -173,8 +184,8 @@ export class TicleService {
       .leftJoin('ticle.tags', 'tags')
       .leftJoin('ticle.applicants', 'applicant')
       .leftJoin('ticle.speaker', 'speaker')
-      .where('ticle.ticleStatus = :status', {
-        status: isOpen ? TicleStatus.OPEN : TicleStatus.CLOSED,
+      .where('ticle.ticleStatus IN (:...statuses)', {
+        statuses: isOpen ? [TicleStatus.OPEN, TicleStatus.IN_PROGRESS] : [TicleStatus.CLOSED],
       })
       .groupBy('ticle.id');
 
@@ -223,5 +234,23 @@ export class TicleService {
         hasNextPage: page < totalPages,
       },
     };
+  }
+
+  async deleteTicle(userId: number, ticleId: number) {
+    const ticle = await this.ticleRepository.findOne({
+      where: { id: ticleId },
+      relations: ['speaker'],
+    });
+
+    if (!ticle) {
+      throw new NotFoundException(ErrorMessage.TICLE_NOT_FOUND);
+    }
+
+    if (ticle.speaker.id !== userId) {
+      throw new BadRequestException(ErrorMessage.CANNOT_DELETE_OTHERS_TICLE);
+    }
+
+    await this.ticleRepository.remove(ticle);
+    return;
   }
 }
