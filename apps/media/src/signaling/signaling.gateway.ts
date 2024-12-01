@@ -185,4 +185,8 @@ export class SignalingGateway implements OnGatewayDisconnect {
   async recordStart(@ConnectedSocket() client: Socket, @MessageBody('roomId') roomId: string) {
     await this.recordService.recordStart(roomId, client.id);
   }
+  @SubscribeMessage('recordStop')
+  recordStop(@MessageBody('roomId') roomId: string) {
+    this.recordService.recordStop(roomId);
+  }
 }
