@@ -61,10 +61,6 @@ const useSocket = (): UseSocketReturn => {
     const socket = initSocket();
 
     initSocketEvents(socket);
-
-    return () => {
-      socket.disconnect();
-    };
   }, [initSocket, initSocketEvents]);
 
   return { socketRef, isConnected, isError };
