@@ -4,6 +4,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { WsException } from '@nestjs/websockets';
 import { types } from 'mediasoup';
+import { ErrorMessage } from '@repo/types';
 
 import { MediasoupService } from '@/mediasoup/mediasoup.service';
 import { RoomService } from '@/room/room.service';
@@ -119,7 +120,7 @@ export class RecordService {
     const totalPorts = maxPort - minPort + 1;
 
     if (this.usedPorts.size >= totalPorts) {
-      throw new WsException('No available port');
+      throw new WsException(ErrorMessage.NO_AVAILABLE_PORT);
     }
 
     let port: number;
