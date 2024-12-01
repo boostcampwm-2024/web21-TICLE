@@ -170,7 +170,7 @@ const useLocalStream = () => {
 
     closeStream('video');
     startCameraStream();
-  }, [selectedVideoDeviceId, video.stream]);
+  }, [selectedVideoDeviceId]);
 
   useEffect(() => {
     if (!selectedAudioDeviceId) return;
@@ -185,7 +185,7 @@ const useLocalStream = () => {
 
     closeStream('audio');
     startMicStream();
-  }, [selectedAudioDeviceId, audio.stream]);
+  }, [selectedAudioDeviceId]);
 
   return {
     video,
