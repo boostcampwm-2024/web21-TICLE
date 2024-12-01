@@ -37,6 +37,11 @@ export const SOCKET_EVENTS = {
   resumeAudioConsumers: 'resume-audio-consumers',
   resumeVideoConsumers: 'resume-video-consumers',
   resumeConsumers: 'resume-consumers',
+  // 녹음관련 이벤트
+  startRecord: 'start-record',
+  stopRecord: 'stop-record',
+  pauseRecord: 'pause-record',
+  resumeRecord: 'resume-record',
 } as const;
 
 export const TRANSPORT_EVENTS = {
