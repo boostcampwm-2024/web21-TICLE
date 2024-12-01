@@ -25,21 +25,27 @@ export class RecordInfo {
     this.recordConsumer = recordConsumer;
   }
 
-  pauseRecord() {
+  pauseRecordProcess() {
     this.recordConsumer.pause();
   }
 
-  resumeRecord() {
+  resumeRecordProcess() {
     this.recordConsumer.resume();
   }
 
-  stopRecord() {
+  stopRecordProcess() {
+    if (this.recordConsumer) {
+      this.recordConsumer.close();
+      this.recordConsumer = null;
+    }
+    if (this.plainTransport) {
+      this.plainTransport.close();
+      this.plainTransport = null;
+    }
     if (this.ffmpegProcess) {
       this.ffmpegProcess.kill('SIGINT');
+      this.ffmpegProcess = null;
     }
-
-    this.recordConsumer.close();
-    this.plainTransport.close();
   }
 
   createFfmpegProcess(roomId: string) {
@@ -56,11 +62,15 @@ export class RecordInfo {
 
     //todo : 녹음 에러관련 로그, 예외처리
     ffmpegProcess.on('error', () => {
-      this.stopRecord();
+      sdpStream.destroy();
+      this.stopRecordProcess();
     });
 
     //todo: 녹음 종료 시 s3에 업로드
-    ffmpegProcess.on('close', () => {});
+    ffmpegProcess.on('close', () => {
+      sdpStream.destroy();
+      this.stopRecordProcess();
+    });
 
     sdpStream.pipe(ffmpegProcess.stdin);
 
