@@ -11,7 +11,7 @@ const DEFAULT_LOCAL_STREAM = {
 
 const getMediaDevices = (kind: MediaDeviceKind, devices: MediaDeviceInfo[]) => {
   return devices
-    .filter((device) => device.kind === kind)
+    .filter((device) => device.kind === kind && device.deviceId && device.deviceId !== 'default')
     .map((device) => ({ label: device.label, value: device.deviceId }));
 };
 
