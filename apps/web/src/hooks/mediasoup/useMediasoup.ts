@@ -20,8 +20,9 @@ const useMediasoup = () => {
     pauseRemoteStream,
     resumeRemoteStream,
     resumeAudioConsumers,
+    clearRemoteStream,
   } = useRemoteStreamAction();
-  const { startCameraStream, startMicStream } = useLocalStreamAction();
+  const { startCameraStream, startMicStream, closeLocalStream } = useLocalStreamAction();
 
   const initSocketEvent = () => {
     const socket = socketRef.current;
@@ -98,8 +99,17 @@ const useMediasoup = () => {
   }, [isConnected, isError]);
 
   useEffect(() => {
-    return () => {
+    const clearAll = () => {
       disconnect();
+      clearRemoteStream();
+      closeLocalStream();
+    };
+
+    window.addEventListener('beforeunload', clearAll);
+
+    return () => {
+      window.removeEventListener('beforeunload', clearAll);
+      clearAll();
     };
   }, []);
 };
