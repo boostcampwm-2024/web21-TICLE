@@ -14,6 +14,11 @@ export class RecordInfo {
   constructor(port: number) {
     this.port = port;
   }
+
+  getPort() {
+    return this.port;
+  }
+
   setPlainTransport(plainTransport: types.PlainTransport) {
     this.plainTransport = plainTransport;
   }
@@ -24,20 +29,24 @@ export class RecordInfo {
 
   setRecordConsumer(recordConsumer: types.Consumer) {
     recordConsumer.on('producerclose', () => {
-      this.cleanUp();
+      this.stopRecord();
     });
     recordConsumer.on('transportclose', () => {
-      this.cleanUp();
+      this.stopRecord();
     });
 
     this.recordConsumer = recordConsumer;
   }
 
-  getPort() {
-    return this.port;
+  pauseRecord() {
+    this.recordConsumer.pause();
   }
 
-  cleanUp() {
+  resumeRecord() {
+    this.recordConsumer.resume();
+  }
+
+  stopRecord() {
     if (this.ffmpegProcess) {
       this.ffmpegProcess.kill('SIGINT');
     }
@@ -60,7 +69,7 @@ export class RecordInfo {
 
     //todo : 녹음 에러관련 로그, 예외처리
     ffmpegProcess.on('error', () => {
-      this.cleanUp();
+      this.stopRecord();
     });
 
     //todo: 녹음 종료 시 s3에 업로드

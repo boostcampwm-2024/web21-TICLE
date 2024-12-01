@@ -78,12 +78,28 @@ export class RecordService {
     return consumer;
   }
 
+  recordPause(roomId: string) {
+    const recordInfo = this.recordInfos.get(roomId);
+    if (!recordInfo) {
+      return;
+    }
+    recordInfo.pauseRecord();
+  }
+
+  recordResume(roomId: string) {
+    const recordInfo = this.recordInfos.get(roomId);
+    if (!recordInfo) {
+      return;
+    }
+    recordInfo.resumeRecord();
+  }
+
   recordStop(roomId: string) {
     const recordInfo = this.recordInfos.get(roomId);
     if (!recordInfo) {
       return;
     }
-    recordInfo.cleanUp();
+    recordInfo.stopRecord();
     this.recordInfos.delete(roomId);
   }
 
