@@ -42,6 +42,6 @@ import { UserModule } from './user/user.module';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(LoggerMiddleware).forRoutes('*'); // 모든 라우트에 미들웨어 적용
+    consumer.apply(LoggerMiddleware).forRoutes('*');
   }
 }
