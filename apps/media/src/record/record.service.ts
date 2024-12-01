@@ -92,7 +92,7 @@ export class RecordService {
     if (!recordInfo) {
       return;
     }
-    recordInfo.pauseRecord();
+    recordInfo.pauseRecordProcess();
   }
 
   resumeRecord(roomId: string) {
@@ -100,7 +100,7 @@ export class RecordService {
     if (!recordInfo) {
       return;
     }
-    recordInfo.resumeRecord();
+    recordInfo.resumeRecordProcess();
   }
 
   stopRecord(roomId: string) {
@@ -109,7 +109,7 @@ export class RecordService {
       return;
     }
     this.releasePort(recordInfo.port);
-    recordInfo.stopRecord();
+    recordInfo.stopRecordProcess();
     this.recordInfos.delete(roomId);
   }
 
