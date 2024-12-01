@@ -13,8 +13,7 @@ export class LogBatchService {
     private readonly loggerService: LoggerService
   ) {}
 
-  // @Cron('5 * * * * *')
-  @Cron(CronExpression.EVERY_10_SECONDS)
+  @Cron(CronExpression.EVERY_DAY_AT_1AM)
   async uploadLogToObjectStorage() {
     const logsDir = path.join(__dirname, '../../../logs');
     console.log('logsDir : ', logsDir);
