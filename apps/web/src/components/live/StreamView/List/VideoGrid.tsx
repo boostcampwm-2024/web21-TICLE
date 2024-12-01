@@ -29,13 +29,13 @@ function VideoGrid({ videoStreamData, onVideoClick, getAudioMutedState }: VideoG
         <div
           key={`${streamData.consumer?.id}${idx}`}
           className="h-full w-full flex-1 overflow-hidden rounded-lg"
-          onClick={() => onVideoClick(streamData)}
+          onClick={() => streamData.stream && onVideoClick(streamData)}
         >
           <VideoPlayer
-            stream={streamData.stream}
             paused={streamData.paused}
-            isMicOn={getAudioMutedState(streamData)}
             nickname={streamData.nickname}
+            stream={streamData.stream ?? null}
+            isMicOn={streamData && getAudioMutedState(streamData)}
             mediaType={streamData.consumer?.appData?.mediaTypes}
           />
         </div>
