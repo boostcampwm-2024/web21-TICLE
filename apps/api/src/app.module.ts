@@ -1,13 +1,15 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { ScheduleModule } from '@nestjs/schedule';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { TypeOrmConfigService } from '@/config/typeorm.config';
 
 import { AuthModule } from './auth/auth.module';
-import { LoggerMiddleware } from './common/middleware/logger.middleware';
-import { LoggerModule } from './common/middleware/logger.module';
+import { LoggerMiddleware } from './common/log/logger.middleware';
+import { LoggerModule } from './common/log/logger.module';
+import { NcpModule } from './common/ncp/ncp.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { StreamModule } from './stream/stream.module';
 import { TicleModule } from './ticle/ticle.module';
@@ -35,6 +37,7 @@ import { UserModule } from './user/user.module';
     }),
     DashboardModule,
     LoggerModule,
+    NcpModule,
   ],
 })
 export class AppModule implements NestModule {
