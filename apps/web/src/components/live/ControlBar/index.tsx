@@ -20,8 +20,15 @@ const ControlBar = () => {
   const { video, screen, audio } = useLocalStreamState();
 
   const { disconnect } = useMediasoupAction();
-  const { closeStream, pauseStream, resumeStream, startScreenStream, closeScreenStream } =
-    useLocalStreamAction();
+  const {
+    closeStream,
+    pauseStream,
+    resumeStream,
+    startScreenStream,
+    startCameraStream,
+    startMicStream,
+    closeScreenStream,
+  } = useLocalStreamAction();
 
   const toggleScreenShare = async () => {
     const { paused, stream } = screen;
@@ -40,7 +47,10 @@ const ControlBar = () => {
   const toggleVideo = () => {
     const { paused, stream } = video;
 
-    if (!stream) return;
+    if (!stream) {
+      startCameraStream();
+      return;
+    }
 
     if (paused) {
       resumeStream('video');
@@ -52,7 +62,10 @@ const ControlBar = () => {
   const toggleAudio = () => {
     const { paused, stream } = audio;
 
-    if (!stream) return;
+    if (!stream) {
+      startMicStream();
+      return;
+    }
 
     if (paused) {
       resumeStream('audio');
