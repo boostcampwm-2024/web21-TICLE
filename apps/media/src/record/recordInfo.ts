@@ -82,7 +82,6 @@ a=receiveonly
 `;
   };
 
-  //todo : producer, consumer가 pause, resume에 따라 스트림 pause, resume
   private convertStringToStream = (stringToConvert: string) => {
     const stream = new Readable({
       read() {

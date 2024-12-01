@@ -190,22 +190,23 @@ export class SignalingGateway implements OnGatewayDisconnect {
     client.to(roomId).emit(SOCKET_EVENTS.roomClosed);
     this.mediasoupService.closeRoom(roomId);
   }
+
   @SubscribeMessage(SOCKET_EVENTS.startRecord)
   async recordStart(@ConnectedSocket() client: Socket, @MessageBody('roomId') roomId: string) {
     await this.recordService.startRecord(roomId, client.id);
   }
 
-  @SubscribeMessage('recordStop')
+  @SubscribeMessage(SOCKET_EVENTS.stopRecord)
   recordStop(@MessageBody('roomId') roomId: string) {
     this.recordService.stopRecord(roomId);
   }
 
-  @SubscribeMessage('recordPause')
+  @SubscribeMessage(SOCKET_EVENTS.pauseRecord)
   recordPause(@MessageBody('roomId') roomId: string) {
     this.recordService.pauseRecord(roomId);
   }
 
-  @SubscribeMessage('recordResume')
+  @SubscribeMessage(SOCKET_EVENTS.resumeRecord)
   recordResume(@MessageBody('roomId') roomId: string) {
     this.recordService.resumeRecord(roomId);
   }
