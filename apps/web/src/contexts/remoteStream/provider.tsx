@@ -15,18 +15,26 @@ export const RemoteStreamProvider = ({ children }: RemoteStreamProviderProps) =>
     audioStreams,
     videoStreams,
     consume,
+    createConsumers,
     filterRemoteStream,
     pauseRemoteStream,
     resumeRemoteStream,
+    resumeAudioConsumers,
+    resumeVideoConsumers,
+    pauseVideoConsumers,
   } = useRemoteStream();
 
   const state = { audioStreams, videoStreams };
 
   const actions = {
     consume,
+    createConsumers,
     filterRemoteStream,
     pauseRemoteStream,
     resumeRemoteStream,
+    resumeAudioConsumers,
+    resumeVideoConsumers,
+    pauseVideoConsumers,
   } as const;
 
   return (

@@ -6,6 +6,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Provider } from '@repo/types';
 
 import { Applicant } from './applicant.entity';
 import { Ticle } from './ticle.entity';
@@ -34,7 +35,7 @@ export class User {
   profileImageUrl: string;
 
   @Column({ type: 'varchar', default: 'local' })
-  provider: string;
+  provider: Provider;
 
   @Column({ type: 'varchar', name: 'social_id', nullable: true })
   socialId: string;

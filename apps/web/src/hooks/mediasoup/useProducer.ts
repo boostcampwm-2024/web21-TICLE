@@ -18,7 +18,7 @@ interface UseProducerProps {
 }
 
 const useProducer = ({ socketRef, transportsRef }: UseProducerProps) => {
-  const { ticleId: roomId } = useParams({ from: '/live/$ticleId' });
+  const { ticleId: roomId } = useParams({ from: '/_authenticated/live/$ticleId' });
 
   const producersRef = useRef<{ [key in MediaTypes]: types.Producer | null }>({
     video: null,
@@ -100,7 +100,7 @@ const useProducer = ({ socketRef, transportsRef }: UseProducerProps) => {
     const params = { roomId };
 
     return new Promise<client.CreateProducerRes[]>((resolve) => {
-      socket.emit(SOCKET_EVENTS.getProducer, params, (result: client.CreateProducerRes[]) => {
+      socket.emit(SOCKET_EVENTS.getProducers, params, (result: client.CreateProducerRes[]) => {
         const producers = producersRef.current;
 
         const producerIds = Object.values(producers)

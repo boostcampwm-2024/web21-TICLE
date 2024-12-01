@@ -1,21 +1,33 @@
-import { useNavigate, useParams } from '@tanstack/react-router';
+import { useParams } from '@tanstack/react-router';
 
 import CalendarIc from '@/assets/icons/calendar.svg?react';
 import ClockIc from '@/assets/icons/clock.svg?react';
+import TrashIc from '@/assets/icons/trash.svg?react';
 import Avatar from '@/components/common/Avatar';
 import Badge from '@/components/common/Badge';
 import Button from '@/components/common/Button';
-import { useApplyTicle, useTicle } from '@/hooks/api/ticle';
+import UserProfileDialog from '@/components/user/UserProfileDialog';
+import { useApplyTicle, useDeleteTicle, useTicle } from '@/hooks/api/ticle';
+import useModal from '@/hooks/useModal';
 import { formatDateTimeRange } from '@/utils/date';
 
 function Detail() {
-  const { ticleId } = useParams({ from: '/ticle/$ticleId' });
+  const { ticleId } = useParams({ from: '/_authenticated/ticle/$ticleId' });
   const { data } = useTicle(ticleId);
-
-  const { mutate } = useApplyTicle();
+  const { mutate: applyMutate } = useApplyTicle();
+  const { mutate: deleteMutate } = useDeleteTicle();
 
   const handleApplyButtonClick = () => {
-    mutate(ticleId);
+    applyMutate(ticleId);
+  };
+
+  const handleDeleteButtonClick = () => {
+    deleteMutate(ticleId);
+  };
+
+  const { isOpen, onOpen, onClose } = useModal();
+  const handleProfileClick = () => {
+    onOpen();
   };
 
   if (!data) return;
@@ -51,17 +63,39 @@ function Detail() {
         <div className="flex flex-col gap-4">
           <h3 className="text-head3 text-main">발표자 소개</h3>
           <div className="flex gap-8">
-            <div className="flex flex-col items-center gap-3">
-              <Avatar size="lg" />
+            <div
+              className="flex cursor-pointer flex-col items-center gap-3"
+              onClick={handleProfileClick}
+            >
+              <Avatar size="lg" src={data.speakerImgUrl} />
               <span className="text-title2 text-main">{data.speakerName}</span>
             </div>
+            {isOpen && (
+              <UserProfileDialog
+                isOpen={isOpen}
+                onClose={onClose}
+                speakerId={data.speakerId}
+                nickname={data.speakerName}
+              />
+            )}
             <div className="w-full rounded-lg bg-teritary p-4 text-body2 text-main">
               {data.speakerIntroduce}
             </div>
           </div>
         </div>
       </div>
-      <Button onClick={handleApplyButtonClick}>티클 신청하기</Button>
+      {data.isOwner ? (
+        <Button onClick={handleDeleteButtonClick}>
+          <span className="flex items-center gap-1">
+            티클 삭제하기
+            <TrashIc className="fill-white" />
+          </span>
+        </Button>
+      ) : (
+        <Button onClick={handleApplyButtonClick} disabled={data.alreadyApplied}>
+          {data.alreadyApplied ? '신청 완료' : '티클 신청하기'}
+        </Button>
+      )}
     </div>
   );
 }

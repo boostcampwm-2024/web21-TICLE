@@ -4,7 +4,7 @@ import BasicLayout from '@/components/common/BasicLayout';
 import Header from '@/components/common/Header';
 import Open from '@/components/ticle/open';
 
-export const Route = createFileRoute('/ticle/open')({
+export const Route = createFileRoute('/_authenticated/ticle/open')({
   component: RouteComponent,
 });
 

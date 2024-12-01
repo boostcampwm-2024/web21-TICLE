@@ -1,6 +1,8 @@
+import { Provider } from '@repo/types';
+
 export class CreateSocialUserDto {
   email: string;
-  provider: string;
+  provider: Provider;
   socialId: string;
   nickname?: string;
   introduce?: string;

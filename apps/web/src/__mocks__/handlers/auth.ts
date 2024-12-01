@@ -39,13 +39,3 @@ export const logIn: HttpResponseResolver<object, SignInData> = async ({ request 
     },
   });
 };
-
-export const signOut: HttpResponseResolver = async () => {
-  return HttpResponse.json(null, {
-    status: 302,
-    headers: {
-      Location: '/',
-      'Set-Cookie': `accessToken=; Path=/; HttpOnly, refreshToken=; Path=/; HttpOnly`,
-    },
-  });
-};

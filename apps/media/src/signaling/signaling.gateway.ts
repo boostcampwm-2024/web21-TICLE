@@ -1,17 +1,17 @@
+import { UseFilters } from '@nestjs/common';
 import {
   ConnectedSocket,
   MessageBody,
   OnGatewayDisconnect,
   SubscribeMessage,
   WebSocketGateway,
-  WsException,
 } from '@nestjs/websockets';
+import { types } from 'mediasoup';
 import { Socket } from 'socket.io';
 import { SOCKET_EVENTS, STREAM_STATUS } from '@repo/mediasoup';
 import type { client, server } from '@repo/mediasoup';
 
 import { MediasoupService } from '@/mediasoup/mediasoup.service';
-import { UseFilters } from '@nestjs/common';
 import { WSExceptionFilter } from '@/wsException.filter';
 
 @WebSocketGateway()
@@ -63,8 +63,9 @@ export class SignalingGateway implements OnGatewayDisconnect {
   async handleProduce(
     @ConnectedSocket() client: Socket,
     @MessageBody() createProducerDto: server.CreateProducerDto
-  ): Promise<client.CreateProducerRes> {
+  ) {
     const { transportId, kind, rtpParameters, roomId, appData } = createProducerDto;
+
     const producerData = await this.mediasoupService.produce(
       client.id,
       kind,
@@ -88,23 +89,7 @@ export class SignalingGateway implements OnGatewayDisconnect {
     return createProducerRes;
   }
 
-  @SubscribeMessage(SOCKET_EVENTS.consume)
-  async handleConsume(
-    @ConnectedSocket() client: Socket,
-    @MessageBody() createConsumerDto: server.CreateConsumerDto
-  ): Promise<client.CreateConsumerRes> {
-    const { transportId, producerId, roomId, rtpCapabilities } = createConsumerDto;
-
-    return this.mediasoupService.consume(
-      client.id,
-      producerId,
-      roomId,
-      transportId,
-      rtpCapabilities
-    );
-  }
-
-  @SubscribeMessage(SOCKET_EVENTS.getProducer)
+  @SubscribeMessage(SOCKET_EVENTS.getProducers)
   getProducers(
     @ConnectedSocket() client: Socket,
     @MessageBody() getProducerDto: server.GetProducersDto
@@ -125,7 +110,7 @@ export class SignalingGateway implements OnGatewayDisconnect {
     @MessageBody('roomId') roomId: string,
     @MessageBody('producerId') producerId: string
   ) {
-    this.mediasoupService.disconnectProducer(roomId, producerId, client.id);
+    this.mediasoupService.closeProducer(roomId, producerId, client.id);
 
     client.to(roomId).emit(SOCKET_EVENTS.producerClosed, { producerId });
   }
@@ -148,13 +133,47 @@ export class SignalingGateway implements OnGatewayDisconnect {
     return { producerId };
   }
 
-  @SubscribeMessage(SOCKET_EVENTS.consumerStatusChange)
-  pauseConsumer(
+  @SubscribeMessage(SOCKET_EVENTS.consume)
+  async handleConsume(
     @ConnectedSocket() client: Socket,
-    @MessageBody() changeConsumerState: server.ChangeConsumerStateDto
+    @MessageBody() createConsumerDto: server.CreateConsumerDto
+  ): Promise<client.CreateConsumerRes> {
+    return this.mediasoupService.consume(client.id, createConsumerDto);
+  }
+
+  @SubscribeMessage(SOCKET_EVENTS.createConsumers)
+  async createConsumers(
+    @ConnectedSocket() client: Socket,
+    @MessageBody('roomId') roomId: string,
+    @MessageBody('transportId') transportId: string,
+    @MessageBody('rtpCapabilities') rtpCapabilities: types.RtpCapabilities
   ) {
-    const { consumerId } = changeConsumerState;
-    this.mediasoupService.changeConsumerStatus(client.id, changeConsumerState);
-    return consumerId;
+    const producers = this.mediasoupService.getProducers(roomId, client.id);
+
+    return this.mediasoupService.createConsumers({
+      roomId,
+      socketId: client.id,
+      producers,
+      rtpCapabilities,
+      transportId,
+    });
+  }
+
+  @SubscribeMessage(SOCKET_EVENTS.pauseConsumers)
+  pauseConsumers(
+    @ConnectedSocket() client: Socket,
+    @MessageBody('roomId') roomId: string,
+    @MessageBody('consumerIds') consumerIds: string[]
+  ) {
+    return this.mediasoupService.pauseConsumers(client.id, roomId, consumerIds);
+  }
+
+  @SubscribeMessage(SOCKET_EVENTS.resumeConsumers)
+  resumeConsumers(
+    @ConnectedSocket() client: Socket,
+    @MessageBody('roomId') roomId: string,
+    @MessageBody('consumerIds') consumerIds: string[]
+  ) {
+    return this.mediasoupService.resumeConsumers(client.id, roomId, consumerIds);
   }
 }

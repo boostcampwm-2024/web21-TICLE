@@ -1,6 +1,6 @@
 import { action } from '@storybook/addon-actions';
 
-import Select from '@/components/common/Select';
+import Select, { Option } from '@/components/common/Select';
 
 import type { Meta, StoryObj } from '@storybook/react';
 
@@ -53,7 +53,20 @@ const options = ['Option 1', 'Option 2', 'Option 3'];
 export default meta;
 type Story = StoryObj<typeof Select>;
 
-const SAMPLE_OPTIONS = ['React', 'Vue', 'Angular', 'Svelte'];
+const SAMPLE_OPTIONS: Option[] = [
+  {
+    label: 'React',
+    value: '0',
+  },
+  {
+    label: 'Svlete',
+    value: '1',
+  },
+  {
+    label: 'Vue',
+    value: '2',
+  },
+];
 
 export const Default: Story = {
   args: {
@@ -67,7 +80,7 @@ export const WithSelectedOption: Story = {
   args: {
     options: SAMPLE_OPTIONS,
     placeholder: '기술 스택',
-    selectedOption: 'React',
+    selectedOption: SAMPLE_OPTIONS[0],
     onChange: action('onChange'),
   },
 };

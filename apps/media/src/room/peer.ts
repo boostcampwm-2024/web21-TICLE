@@ -1,6 +1,6 @@
 import { WsException } from '@nestjs/websockets';
-import { ErrorMessage } from '@repo/types';
 import { types } from 'mediasoup';
+import { ErrorMessage } from '@repo/types';
 
 export class Peer {
   socketId: string;
@@ -34,7 +34,7 @@ export class Peer {
       (consumer) => consumer.producerId === producerId
     );
 
-    return !Boolean(consumer);
+    return !consumer;
   }
 
   addProducer(producer: types.Producer) {
@@ -51,6 +51,46 @@ export class Peer {
 
   getConsumer(consumerId: string) {
     return this.consumers.get(consumerId);
+  }
+
+  deleteProducer(producerId: string) {
+    const producer = this.producers.get(producerId);
+
+    if (!producer) {
+      return;
+    }
+
+    producer.close();
+
+    this.producers.delete(producerId);
+  }
+
+  getConsumerByProducerId(producerId: string) {
+    const consumer = Array.from(this.consumers.values()).find(
+      (consumer) => consumer.producerId === producerId
+    );
+
+    return consumer;
+  }
+
+  pauseConsumerByProducerId(producerId: string) {
+    const consumer = this.getConsumerByProducerId(producerId);
+
+    if (!consumer) {
+      return;
+    }
+
+    consumer.pause();
+  }
+
+  resumeConsumerByProducerId(producerId: string) {
+    const consumer = this.getConsumerByProducerId(producerId);
+
+    if (!consumer) {
+      return;
+    }
+
+    consumer.resume();
   }
 
   close() {

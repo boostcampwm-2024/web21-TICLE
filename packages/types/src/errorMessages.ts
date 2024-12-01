@@ -16,6 +16,9 @@ export const ErrorMessage = {
   TICLE_ALREADY_REQUESTED: '이미 신청한 티클입니다',
   FAILED_TO_TRANSCRIBE_AUDIO: 'CLOVA SPEECH로 텍스트 변환에 실패했습니다',
   FAILED_TO_SUMMARY_AUDIO: 'CLOVA STRUDIO로 요약에 실패했습니다',
+  CANNOT_DELETE_OTHERS_TICLE: '다른 사람의 티클은 삭제할 수 없습니다',
+  CANNOT_START_TICLE: '티클을 시작할 수 없습니다',
+  CANNOT_END_TICLE: '티클을 종료할 수 없습니다',
 
   // socket error
   PEER_NOT_FOUND_IN_ROOM: '방에 해당 peer가 존재하지 않습니다',

@@ -4,7 +4,7 @@ import { StreamData } from '@/components/live/StreamView';
 
 import VideoPlayer from './VideoPlayer';
 
-const containerVariants = cva('h-full flex-1 justify-center gap-5 overflow-hidden', {
+const containerVariants = cva('h-full flex-1 justify-center gap-5', {
   variants: {
     layout: {
       grid: `grid grid-cols-3 items-center justify-center gap-5`,
@@ -18,8 +18,8 @@ const containerVariants = cva('h-full flex-1 justify-center gap-5 overflow-hidde
 
 interface VideoGridProps {
   videoStreamData: StreamData[];
-  onVideoClick: (consumerId?: string) => void;
-  getAudioMutedState: (socketId?: string) => boolean;
+  onVideoClick: (stream: StreamData) => void;
+  getAudioMutedState: (stream: StreamData) => boolean;
 }
 
 function VideoGrid({ videoStreamData, onVideoClick, getAudioMutedState }: VideoGridProps) {
@@ -28,13 +28,15 @@ function VideoGrid({ videoStreamData, onVideoClick, getAudioMutedState }: VideoG
       {videoStreamData.map((streamData, idx) => (
         <div
           key={`${streamData.consumer?.id}${idx}`}
-          className="h-full w-full flex-1 overflow-hidden"
-          onClick={() => onVideoClick(streamData.consumer?.id)}
+          className="h-full w-full flex-1 overflow-hidden rounded-lg"
+          onClick={() => onVideoClick(streamData)}
         >
           <VideoPlayer
             stream={streamData.stream}
-            muted={streamData.paused}
-            isMicOn={getAudioMutedState(streamData.socketId)}
+            paused={streamData.paused}
+            isMicOn={getAudioMutedState(streamData)}
+            nickname={streamData.nickname}
+            mediaType={streamData.consumer?.appData?.mediaTypes}
           />
         </div>
       ))}

@@ -5,7 +5,7 @@ import { LocalStreamProvider } from '@/contexts/localStream/provider';
 import { MediasoupProvider } from '@/contexts/mediasoup/provider';
 import { RemoteStreamProvider } from '@/contexts/remoteStream/provider';
 
-export const Route = createFileRoute('/live/$ticleId')({
+export const Route = createFileRoute('/_authenticated/live/$ticleId')({
   component: RouteComponent,
 });
 
