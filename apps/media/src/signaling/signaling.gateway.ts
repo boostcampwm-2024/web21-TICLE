@@ -30,7 +30,7 @@ export class SignalingGateway implements OnGatewayDisconnect {
     const { roomId, nickname } = joinRoomDto;
     client.join(roomId);
     const rtpCapabilities = this.mediasoupService.joinRoom(roomId, client.id, nickname);
-    client.to(roomId).emit(SOCKET_EVENTS.newPeer, { peerId: client.id });
+    client.to(roomId).emit(SOCKET_EVENTS.newPeer, { peerId: client.id, nickname });
     return { rtpCapabilities };
   }
 
