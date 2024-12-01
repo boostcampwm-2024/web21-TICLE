@@ -4,37 +4,24 @@ import { Readable } from 'stream';
 import { types } from 'mediasoup';
 
 export class RecordInfo {
-  private plainTransport: types.PlainTransport;
-  private recordConsumer: types.Consumer;
+  socketId: string;
+  plainTransport: types.PlainTransport;
+  recordConsumer: types.Consumer;
 
-  private port: number;
+  port: number;
 
-  private ffmpegProcess: ChildProcess;
+  ffmpegProcess: ChildProcess;
 
-  constructor(port: number) {
+  constructor(port: number, socketId: string) {
     this.port = port;
-  }
-
-  getPort() {
-    return this.port;
+    this.socketId = socketId;
   }
 
   setPlainTransport(plainTransport: types.PlainTransport) {
     this.plainTransport = plainTransport;
   }
 
-  getPlainTransport() {
-    return this.plainTransport;
-  }
-
   setRecordConsumer(recordConsumer: types.Consumer) {
-    recordConsumer.on('producerclose', () => {
-      this.stopRecord();
-    });
-    recordConsumer.on('transportclose', () => {
-      this.stopRecord();
-    });
-
     this.recordConsumer = recordConsumer;
   }
 
@@ -73,16 +60,14 @@ export class RecordInfo {
     });
 
     //todo: 녹음 종료 시 s3에 업로드
-    ffmpegProcess.on('close', () => {
-      console.log('ffmpeg process close');
-    });
+    ffmpegProcess.on('close', () => {});
 
     sdpStream.pipe(ffmpegProcess.stdin);
 
     this.ffmpegProcess = ffmpegProcess;
   }
 
-  createSdpText = (port: number, rtpParameters: types.RtpParameters) => {
+  private createSdpText = (port: number, rtpParameters: types.RtpParameters) => {
     const { codecs } = rtpParameters;
     const payloadType = codecs[0].payloadType;
     return `v=0
@@ -98,7 +83,7 @@ a=receiveonly
   };
 
   //todo : producer, consumer가 pause, resume에 따라 스트림 pause, resume
-  convertStringToStream = (stringToConvert: string) => {
+  private convertStringToStream = (stringToConvert: string) => {
     const stream = new Readable({
       read() {
         this.push(stringToConvert);
@@ -109,7 +94,7 @@ a=receiveonly
     return stream;
   };
 
-  createFfmpegOption(filePath: string) {
+  private createFfmpegOption(filePath: string) {
     //todo : loglevel 수정
     return [
       '-loglevel',
