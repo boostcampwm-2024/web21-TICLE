@@ -12,7 +12,7 @@ const DEFAULT_LOCAL_STREAM = {
 const getMediaDevices = (kind: MediaDeviceKind, devices: MediaDeviceInfo[]) => {
   return devices
     .filter((device) => device.kind === kind)
-    .map((device) => ({ label: device.label, deviceId: device.deviceId }));
+    .map((device) => ({ label: device.label, value: device.deviceId }));
 };
 
 const useMediaTracks = () => {
@@ -30,7 +30,7 @@ const useMediaTracks = () => {
   );
 
   const getCameraTrack = async () => {
-    if (video.stream || !selectedVideoDeviceId) {
+    if (!selectedVideoDeviceId) {
       return;
     }
 
@@ -50,13 +50,19 @@ const useMediaTracks = () => {
   };
 
   const getAudioTrack = async () => {
-    if (audio.stream || !selectedAudioDeviceId) {
+    if (!selectedAudioDeviceId) {
       return;
     }
 
     const stream = await getMicStream({
-      audio: { deviceId: selectedAudioDeviceId },
+      audio: {
+        deviceId: {
+          exact: selectedAudioDeviceId,
+          ideal: selectedAudioDeviceId,
+        },
+      },
     });
+
     const track = stream.getAudioTracks()[0];
 
     if (!track) {
@@ -115,11 +121,11 @@ const useMediaTracks = () => {
         setAudioDevices(audioInputs);
         setAudioOutputDevices(audioOutputs);
 
-        if (videoInputs[0]) setSelectedVideoDeviceId(videoInputs[0].deviceId);
-        if (audioInputs[0]) setSelectedAudioDeviceId(audioInputs[0].deviceId);
-        if (audioOutputs[0]) setSelectedAudioOutputDeviceId(audioOutputs[0].deviceId);
+        if (videoInputs[0]) setSelectedVideoDeviceId(videoInputs[0].value);
+        if (audioInputs[0]) setSelectedAudioDeviceId(audioInputs[0].value);
+        if (audioOutputs[0]) setSelectedAudioOutputDeviceId(audioOutputs[0].value);
       } catch (error) {
-        console.error('Error fetching media devices:', error);
+        // console.error('Error fetching media devices:', error);
       }
     };
 

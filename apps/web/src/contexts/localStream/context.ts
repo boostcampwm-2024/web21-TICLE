@@ -8,7 +8,7 @@ export interface LocalStream {
 
 export interface MediaDevice {
   label: string;
-  deviceId: string;
+  value: string;
 }
 
 interface LocalStreamState {
