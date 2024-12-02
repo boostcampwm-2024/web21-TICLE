@@ -11,16 +11,21 @@ interface AudioLevelData {
 const useAudioLevelDetector = () => {
   const audioContextRef = useRef<AudioContext | null>(null);
   const audioLevelsRef = useRef<AudioLevelData[]>([]);
+
+  const lastActiveTimeRef = useRef<number>(0);
+  const currentSpeakerRef = useRef<string | null>(null);
+
   const [activeSocketId, setActiveSocketId] = useState<string | null>(null);
 
   const startAudioLevelDetection = () => {
     const AUDIO_THRESHOLD = 0.01;
+    const SPEECH_END_DELAY = 1000;
 
     const detectAudioLevels = () => {
       const audioLevels = audioLevelsRef.current;
 
       let maxLevel = 0;
-      let currentSpeakerSocketId = null;
+      let maxLevelSocketId = null;
 
       audioLevels.forEach((levelData) => {
         const { analyser, dataArray, socketId } = levelData;
@@ -34,13 +39,27 @@ const useAudioLevelDetector = () => {
 
         if (level > maxLevel) {
           maxLevel = level;
-          currentSpeakerSocketId = socketId;
+          maxLevelSocketId = socketId;
         }
       });
+
       if (maxLevel > AUDIO_THRESHOLD) {
-        setActiveSocketId(currentSpeakerSocketId);
+        lastActiveTimeRef.current = Date.now();
+
+        if (currentSpeakerRef.current === null) {
+          currentSpeakerRef.current = maxLevelSocketId;
+          setActiveSocketId(maxLevelSocketId);
+        } else if (maxLevelSocketId !== currentSpeakerRef.current) {
+          currentSpeakerRef.current = maxLevelSocketId;
+          setActiveSocketId(maxLevelSocketId);
+        }
       } else {
-        setActiveSocketId(null);
+        const activeTime = Date.now() - lastActiveTimeRef.current;
+
+        if (activeTime > SPEECH_END_DELAY && currentSpeakerRef.current !== null) {
+          currentSpeakerRef.current = null;
+          setActiveSocketId(null);
+        }
       }
     };
 
