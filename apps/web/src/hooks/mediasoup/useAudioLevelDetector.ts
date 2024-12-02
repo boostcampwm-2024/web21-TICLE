@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { client } from '@repo/mediasoup';
 
+import { useRemoteStreamState } from '@/contexts/remoteStream/context';
+
 interface AudioLevelData {
   socketId: string;
   audioLevel: number;
@@ -9,6 +11,8 @@ interface AudioLevelData {
 }
 
 const useAudioLevelDetector = () => {
+  const { audioStreams } = useRemoteStreamState();
+
   const audioContextRef = useRef<AudioContext | null>(null);
   const audioLevelsRef = useRef<AudioLevelData[]>([]);
 
@@ -22,12 +26,20 @@ const useAudioLevelDetector = () => {
     const SPEECH_END_DELAY = 1000;
 
     const detectAudioLevels = () => {
-      const audioLevels = audioLevelsRef.current;
+      const unmutedStreamIds = new Set(
+        audioStreams.filter((stream) => !stream.paused).map((stream) => stream.socketId)
+      );
+
+      const unmutedAudioLevels = audioLevelsRef.current.filter((data) =>
+        unmutedStreamIds.has(data.socketId)
+      );
+
+      if (!unmutedAudioLevels.length) return;
 
       let maxLevel = 0;
       let maxLevelSocketId = null;
 
-      audioLevels.forEach((levelData) => {
+      unmutedAudioLevels.forEach((levelData) => {
         const { analyser, dataArray, socketId } = levelData;
         analyser.getFloatTimeDomainData(dataArray);
 
