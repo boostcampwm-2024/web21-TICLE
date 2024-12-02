@@ -15,7 +15,12 @@ import { useLocalStreamAction, useLocalStreamState } from '@/contexts/localStrea
 import { useMediasoupAction, useMediasoupState } from '@/contexts/mediasoup/context';
 import useModal from '@/hooks/useModal';
 
-const ControlBar = () => {
+interface ControlBarProps {
+  isOwner: boolean;
+  onTicleEnd: () => void;
+}
+
+const ControlBar = ({ isOwner, onTicleEnd }: ControlBarProps) => {
   const {
     isOpen: isOpenExitModal,
     onClose: onCloseExitModal,
@@ -86,9 +91,10 @@ const ControlBar = () => {
     }
   };
 
-  const handleExit = (isOwner: boolean) => {
+  const handleExit = () => {
     if (isOwner) {
       socketRef.current?.emit(SOCKET_EVENTS.closeRoom);
+      onTicleEnd();
     }
 
     disconnect();

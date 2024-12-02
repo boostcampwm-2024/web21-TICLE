@@ -32,7 +32,6 @@ const useMediasoup = () => {
 
     if (!socket) return;
 
-    // TODO: new peer 이벤트시 목록에 추가하고 stream은 없다고 표시
     socket.on(SOCKET_EVENTS.newPeer, ({ peerId, nickname }) => {
       addDummyStream(peerId, nickname);
     });

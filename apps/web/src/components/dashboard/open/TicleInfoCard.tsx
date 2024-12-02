@@ -3,7 +3,7 @@ import { MouseEvent } from 'react';
 
 import PersonFilledIc from '@/assets/icons/person-filled.svg?react';
 import Button from '@/components/common/Button';
-import { useApplicantsTicle } from '@/hooks/api/dashboard';
+import { useApplicantsTicle, useStartTicle } from '@/hooks/api/dashboard';
 import useModal from '@/hooks/useModal';
 import { formatDateTimeRange } from '@/utils/date';
 
@@ -14,21 +14,23 @@ interface TicleInfoCardProps {
   ticleTitle: string;
   startTime: string;
   endTime: string;
-  status: 'closed' | 'open';
+  status: 'closed' | 'open' | 'inProgress';
 }
 
 function TicleInfoCard({ ticleId, ticleTitle, startTime, endTime, status }: TicleInfoCardProps) {
   const { isOpen, onOpen, onClose } = useModal();
 
   const { data: applicantsData } = useApplicantsTicle(ticleId.toString());
+  const { mutate: ticleStartMutate } = useStartTicle();
   const { dateStr, timeRangeStr } = formatDateTimeRange(startTime, endTime);
 
   const navigate = useNavigate();
 
   if (!applicantsData) return;
 
-  const handleTicleParticipate = (e: MouseEvent<HTMLButtonElement>) => {
+  const handleTicleStart = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    ticleStartMutate(ticleId.toString());
     navigate({ to: `/live/${ticleId}` });
   };
 
@@ -63,8 +65,16 @@ function TicleInfoCard({ ticleId, ticleTitle, startTime, endTime, status }: Ticl
               <PersonFilledIc className="fill-primary" />
             </div>
           </button>
-          <Button disabled={status === 'closed'} onClick={handleTicleParticipate}>
-            티클 시작하기
+          <Button
+            disabled={status === 'closed' || status === 'inProgress'}
+            onClick={handleTicleStart}
+            className="w-36"
+          >
+            {status === 'closed'
+              ? '종료된 티클'
+              : status === 'inProgress'
+                ? '시작된 티클'
+                : '티클 시작하기'}
           </Button>
         </div>
         {isOpen && (

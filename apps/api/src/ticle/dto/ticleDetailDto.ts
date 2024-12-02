@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { TicleStatus } from '@repo/types';
 
 export class TickleDetailResponseDto {
   @ApiProperty({
@@ -74,4 +75,10 @@ export class TickleDetailResponseDto {
     description: '이미 참가신청을 했는지 여부',
   })
   alreadyApplied: boolean;
+
+  @ApiProperty({
+    example: 'inProgress',
+    description: '티클의 상태',
+  })
+  ticleStatus: TicleStatus;
 }
