@@ -13,7 +13,12 @@ import { useLocalStreamAction, useLocalStreamState } from '@/contexts/localStrea
 import { useMediasoupAction, useMediasoupState } from '@/contexts/mediasoup/context';
 import useModal from '@/hooks/useModal';
 
-const ControlBar = () => {
+interface ControlBarProps {
+  isOwner: boolean;
+  onTicleEnd: () => void;
+}
+
+const ControlBar = ({ isOwner, onTicleEnd }: ControlBarProps) => {
   const { isOpen, onClose, onOpen } = useModal();
 
   const { socketRef } = useMediasoupState();
@@ -61,9 +66,10 @@ const ControlBar = () => {
     }
   };
 
-  const handleExit = (isOwner: boolean) => {
+  const handleExit = () => {
     if (isOwner) {
       socketRef.current?.emit(SOCKET_EVENTS.closeRoom);
+      onTicleEnd();
     }
 
     disconnect();
@@ -93,7 +99,7 @@ const ControlBar = () => {
         <ToggleButton type="exit" ActiveIcon={ExitIc} InactiveIcon={ExitIc} onToggle={onOpen} />
       </div>
       {isOpen && (
-        <ExitDialog isOpen={isOpen} isOwner={false} handleExit={handleExit} onClose={onClose} />
+        <ExitDialog isOpen={isOpen} isOwner={isOwner} handleExit={handleExit} onClose={onClose} />
       )}
     </>
   );
