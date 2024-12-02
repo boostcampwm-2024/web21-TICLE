@@ -74,7 +74,7 @@ export class RecordInfo {
     ffmpegProcess.on('close', () => {
       sdpStream.destroy();
       this.stopRecordProcess();
-      ncpService.uploadFile(filePath, remoteFileName);
+      ncpService.uploadFile(filePath, remoteFileName, roomId);
     });
 
     sdpStream.pipe(ffmpegProcess.stdin);
