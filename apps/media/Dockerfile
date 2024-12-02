@@ -28,6 +28,10 @@ COPY . .
 # Turbo Prune으로 최소화된 결과 생성
 RUN turbo prune @app/media --docker
 
+# C++ 컴파일을 캐시하기 위한 작업
+RUN --mount=type=cache,id=flatbuffers-cache,target=/root/.cache \
+    pnpm install --frozen-lockfile
+
 # 3. Runner 단계
 FROM base AS runner
 
