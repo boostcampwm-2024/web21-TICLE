@@ -2,7 +2,7 @@ name: 백엔드 @app/media CD
 
 on:
   push:
-    branches: [main, release]
+    branches: [main, release, fix/#347/media-build]
 
 jobs:
   ci:
