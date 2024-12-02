@@ -28,10 +28,6 @@ COPY . .
 # Turbo Prune으로 최소화된 결과 생성
 RUN turbo prune @app/media --docker
 
-# C++ 컴파일을 캐시하기 위한 작업
-RUN --mount=type=cache,id=flatbuffers-cache,target=/root/.cache \
-    pnpm install --frozen-lockfile
-
 # 3. Runner 단계
 FROM base AS runner
 
@@ -47,7 +43,10 @@ RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store pnpm install --frozen-lo
 
 # 전체 소스 복사 및 빌드
 COPY --from=builder /app/out/full/ .
-RUN pnpm build:media
+
+# 이곳에서 캐시를 활용하여 C++ 모듈의 컴파일 결과를 캐싱합니다.
+RUN --mount=type=cache,id=build-cache,target=/root/.cache \
+    pnpm build:media
 
 # 환경 파일 복사
 COPY --from=builder /app/apps/media/.env /app/apps/media/dist/.env
