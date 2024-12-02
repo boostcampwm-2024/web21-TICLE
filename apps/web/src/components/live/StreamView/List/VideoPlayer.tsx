@@ -22,7 +22,7 @@ const videoVariants = cva(
       },
       isSpeaking: {
         true: 'border-4 border-primary',
-        false: 'border-alt border-4',
+        false: 'border-4 border-alt',
       },
     },
     defaultVariants: {
