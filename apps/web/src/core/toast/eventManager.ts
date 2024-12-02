@@ -41,7 +41,7 @@ class EventManager {
 
   emit(event: 'show', content: ToastContent, options: NotValidatedToastProps): void;
   emit(event: 'willUnmount'): void;
-  emit(event: ToastEvent, ...args: any[]) {
+  emit(event: ToastEvent, ...args: never) {
     const callbacks = this.list.get(event);
 
     if (!this.list.has(event) || !callbacks) {
