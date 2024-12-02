@@ -62,13 +62,14 @@ jobs:
       - name: 🐳 Docker 빌드 및 푸시
         run: |
           echo "Starting Docker build..."
-          DOCKER_BUILDKIT=1 docker buildx build -f apps/media/Dockerfile . -t my-media-app
+          DOCKER_BUILDKIT=1 docker buildx build --progress=plain -f apps/media/Dockerfile . -t my-media-app
           echo "Docker build completed."
       - name: 🐳 Docker 실행
         run: |
           echo "Starting Docker container..."
           docker run -d -p 3002:3002 --name media-app my-media-app
           echo "Docker container started."
+
       - name: 🐳 Docker 상태 확인
         run: |
           sleep 10  # 컨테이너가 시작될 시간을 주기 위한 대기 시간
