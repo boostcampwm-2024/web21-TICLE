@@ -20,7 +20,6 @@ export class NcpService {
 
   async uploadFile(localFilePath: string, remoteFileName: string): Promise<string> {
     const bucketName = this.configService.get<string>('NCP_OBJECT_STORAGE_BUCKET');
-    const endpoint = this.configService.get<string>('NCP_OBJECT_STORAGE_ENDPOINT');
 
     const fileStream = fs.createReadStream(localFilePath);
     const params = {
@@ -30,12 +29,7 @@ export class NcpService {
     };
 
     try {
-      const uploadResponse = await this.s3.send(new PutObjectCommand(params));
-      // console.log('File uploaded:', uploadResponse);
-
-      const url = `${endpoint}/${bucketName}/${remoteFileName}`;
-      // console.log('Uploaded file URL:', url);
-
+      await this.s3.send(new PutObjectCommand(params));
       return remoteFileName;
     } catch (error) {
       throw new Error(ErrorMessage.FILE_UPLOAD_FAILED);

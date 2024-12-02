@@ -7,6 +7,7 @@ import { types } from 'mediasoup';
 import { ErrorMessage } from '@repo/types';
 
 import { MediasoupService } from '@/mediasoup/mediasoup.service';
+import { NcpService } from '@/ncp/ncp.service';
 import { RoomService } from '@/room/room.service';
 
 import { RecordInfo } from './recordInfo';
@@ -20,7 +21,8 @@ export class RecordService {
   constructor(
     private mediasoupService: MediasoupService,
     private roomService: RoomService,
-    private configService: ConfigService
+    private configService: ConfigService,
+    private ncpService: NcpService
   ) {
     if (!fs.existsSync(this.recordPath)) {
       fs.mkdirSync(this.recordPath);
@@ -51,7 +53,7 @@ export class RecordService {
       audioProducer.id,
       audioProducer.paused
     );
-    recordInfo.createFfmpegProcess(roomId);
+    recordInfo.createFfmpegProcess(roomId, this.ncpService);
   }
 
   private setRecordInfo(roomId: string, port: number, socketId: string) {

@@ -3,6 +3,8 @@ import { Readable } from 'stream';
 
 import { types } from 'mediasoup';
 
+import { NcpService } from '@/ncp/ncp.service';
+
 export class RecordInfo {
   socketId: string;
   plainTransport: types.PlainTransport;
@@ -48,7 +50,7 @@ export class RecordInfo {
     }
   }
 
-  createFfmpegProcess(roomId: string) {
+  createFfmpegProcess(roomId: string, ncpService: NcpService) {
     const rtpParameter = this.recordConsumer.rtpParameters;
     const sdpString = this.createSdpText(this.port, rtpParameter);
     const sdpStream = this.convertStringToStream(sdpString);
@@ -56,6 +58,8 @@ export class RecordInfo {
     const filePath = `./record/${roomId}_${Date.now()}.mp3`;
     const ffmpegOption = this.createFfmpegOption(filePath);
     const ffmpegProcess = spawn('ffmpeg', ffmpegOption);
+
+    const remoteFileName = `uploads/${roomId}_${Date.now()}.mp3`;
 
     ffmpegProcess.stderr.setEncoding('utf-8');
     ffmpegProcess.stdout.setEncoding('utf-8');
@@ -70,6 +74,7 @@ export class RecordInfo {
     ffmpegProcess.on('close', () => {
       sdpStream.destroy();
       this.stopRecordProcess();
+      ncpService.uploadFile(filePath, remoteFileName);
     });
 
     sdpStream.pipe(ffmpegProcess.stdin);
