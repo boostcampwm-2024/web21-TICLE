@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import {
   useEffect,
   useRef,
@@ -21,12 +22,10 @@ import {
 import { canBeRendered, isStr } from '@/utils/toast/typeGuard';
 
 export interface ContainerInstance {
-  toastKey: number;
-  displayedToast: number;
-  props: ToastContainerProps;
-  isToastActive: (toastId: ToastId) => boolean;
-  getToast: (id: ToastId) => Toast | null | undefined;
   count: number;
+  toastKey: number;
+  props: ToastContainerProps;
+  getToast: (id: ToastId) => Toast | null | undefined;
 }
 
 const useToastContainer = (props: ToastContainerProps) => {
@@ -35,11 +34,9 @@ const useToastContainer = (props: ToastContainerProps) => {
   const containerRef = useRef(null);
   const toastToRender = useRef(new Map<ToastId, Toast>()).current;
   const instance = useRef<ContainerInstance>({
-    toastKey: 1,
-    displayedToast: 0,
-    count: 0,
     props,
-    isToastActive,
+    count: 0,
+    toastKey: 1,
     getToast: (id) => toastToRender.get(id),
   }).current;
 
@@ -51,16 +48,9 @@ const useToastContainer = (props: ToastContainerProps) => {
       eventManager.emit('willUnmount');
     };
   }, []);
-
-  useEffect(() => {
-    instance.props = props;
-    instance.isToastActive = isToastActive;
-    instance.displayedToast = toastIds.length;
-  });
-
-  function isToastActive(id: ToastId) {
+  const isToastActive = (id: ToastId) => {
     return toastIds.indexOf(id) !== -1;
-  }
+  };
 
   const removeToast = (toastId?: ToastId) => {
     setToastIds((state) => (!toastId ? [] : state.filter((id) => id !== toastId)));
