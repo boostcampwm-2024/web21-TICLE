@@ -23,6 +23,7 @@ export const ErrorMessage = {
   ROOM_NOT_FOUND: '방이 존재하지 않습니다',
   TRANSPORT_NOT_FOUND: 'transport가 존재하지 않습니다',
   PEER_ALREADY_EXISTS_IN_ROOM: '이미 방에 존재하는 Peer입니다',
+  FILE_UPLOAD_FAILED: '파일 업로드에 실패했습니다',
 } as const;
 
 export type ErrorMessage = (typeof ErrorMessage)[keyof typeof ErrorMessage];
