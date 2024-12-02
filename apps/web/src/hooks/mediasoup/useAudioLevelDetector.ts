@@ -15,6 +15,7 @@ const useAudioLevelDetector = () => {
 
   const audioContextRef = useRef<AudioContext | null>(null);
   const audioLevelsRef = useRef<AudioLevelData[]>([]);
+  const intervalRef = useRef<number>();
 
   const lastActiveTimeRef = useRef<number>(0);
   const currentSpeakerRef = useRef<string | null>(null);
@@ -75,10 +76,50 @@ const useAudioLevelDetector = () => {
       }
     };
 
-    setInterval(detectAudioLevels, 300);
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
+
+    intervalRef.current = setInterval(detectAudioLevels, 300);
+  };
+
+  const resetAudioContext = () => {
+    if (audioContextRef.current?.state === 'closed') {
+      audioContextRef.current = new AudioContext();
+
+      const audioContext = audioContextRef.current;
+
+      audioStreams.forEach((stream) => {
+        if (stream.kind === 'audio') {
+          const source = audioContext.createMediaStreamSource(stream.stream);
+          const analyser = audioContext.createAnalyser();
+          analyser.fftSize = 256;
+          source.connect(analyser);
+
+          const dataArray = new Float32Array(analyser.frequencyBinCount);
+
+          const audioLevelData: AudioLevelData = {
+            socketId: stream.socketId,
+            audioLevel: 0,
+            analyser,
+            dataArray,
+          };
+
+          audioLevelsRef.current = [...audioLevelsRef.current, audioLevelData];
+        }
+      });
+
+      startAudioLevelDetection();
+    }
   };
 
   const createAudioLevel = (remoteStream: client.RemoteStream) => {
+    resetAudioContext();
+
+    if (audioContextRef.current?.state === 'closed') {
+      audioContextRef.current = null;
+    }
+
     if (!audioContextRef.current) {
       audioContextRef.current = new AudioContext();
     }
@@ -112,9 +153,16 @@ const useAudioLevelDetector = () => {
 
   useEffect(() => {
     return () => {
-      if (audioContextRef.current) {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+
+      if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
         audioContextRef.current.close();
       }
+
+      currentSpeakerRef.current = null;
+      setActiveSocketId(null);
     };
   }, []);
 
