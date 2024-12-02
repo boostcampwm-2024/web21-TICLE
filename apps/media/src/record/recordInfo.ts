@@ -1,6 +1,6 @@
-import { ChildProcess, spawn } from 'child_process';
 import { Readable } from 'stream';
 
+import ffmpeg, { FfmpegCommand } from 'fluent-ffmpeg';
 import { types } from 'mediasoup';
 
 import { NcpService } from '@/ncp/ncp.service';
@@ -12,7 +12,7 @@ export class RecordInfo {
 
   port: number;
 
-  ffmpegProcess: ChildProcess;
+  ffmpegProcess: FfmpegCommand;
 
   constructor(port: number, socketId: string) {
     this.port = port;
@@ -45,7 +45,9 @@ export class RecordInfo {
       this.plainTransport = null;
     }
     if (this.ffmpegProcess) {
-      this.ffmpegProcess.kill('SIGINT');
+      // this.ffmpegProcess.kill('SIGINT');
+      this.ffmpegProcess.kill('SIGTERM');
+      console.log('녹음 프로세스 종료');
       this.ffmpegProcess = null;
     }
   }
@@ -56,30 +58,32 @@ export class RecordInfo {
     const sdpStream = this.convertStringToStream(sdpString);
 
     const filePath = `./record/${roomId}_${Date.now()}.mp3`;
-    const ffmpegOption = this.createFfmpegOption(filePath);
-    const ffmpegProcess = spawn('ffmpeg', ffmpegOption);
 
     const remoteFileName = `uploads/${roomId}_${Date.now()}.mp3`;
-
-    ffmpegProcess.stderr.setEncoding('utf-8');
-    ffmpegProcess.stdout.setEncoding('utf-8');
-
-    //todo : 녹음 에러관련 로그, 예외처리
-    ffmpegProcess.on('error', () => {
-      sdpStream.destroy();
-      this.stopRecordProcess();
-    });
-
-    //todo: 녹음 종료 시 s3에 업로드
-    ffmpegProcess.on('close', () => {
-      sdpStream.destroy();
-      this.stopRecordProcess();
-      ncpService.uploadFile(filePath, remoteFileName, roomId);
-    });
-
-    sdpStream.pipe(ffmpegProcess.stdin);
-
-    this.ffmpegProcess = ffmpegProcess;
+    const ffmpegCommand = ffmpeg()
+      .input(sdpStream)
+      .inputFormat('sdp')
+      .inputOptions(['-protocol_whitelist', 'pipe,udp,rtp,file'])
+      .audioCodec('libmp3lame')
+      .audioBitrate('192k')
+      .audioFrequency(48000)
+      .audioChannels(2)
+      .on('stderr', (data) => {
+        console.log(data);
+      })
+      .on('error', (err) => {
+        console.log('FFmpeg error:1', err);
+        sdpStream.destroy();
+        this.stopRecordProcess();
+      })
+      .on('end', () => {
+        sdpStream.destroy();
+        this.stopRecordProcess();
+        // ncpService.uploadFile(filePath, remoteFileName, roomId);
+        console.log('녹음 종료');
+      })
+      .save(filePath);
+    this.ffmpegProcess = ffmpegCommand;
   }
 
   private createSdpText = (port: number, rtpParameters: types.RtpParameters) => {
@@ -107,27 +111,4 @@ a=receiveonly
 
     return stream;
   };
-
-  private createFfmpegOption(filePath: string) {
-    //todo : loglevel 수정
-    return [
-      '-loglevel',
-      'info',
-      '-protocol_whitelist',
-      'pipe,udp,rtp,file',
-      '-f',
-      'sdp',
-      '-i',
-      'pipe:0',
-      '-acodec',
-      'libmp3lame',
-      '-b:a',
-      '192k',
-      '-ar',
-      '48000',
-      '-ac',
-      '2',
-      filePath,
-    ];
-  }
 }
