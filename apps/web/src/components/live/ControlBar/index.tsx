@@ -7,8 +7,10 @@ import MicOffIc from '@/assets/icons/mic-off.svg?react';
 import MicOnIc from '@/assets/icons/mic-on.svg?react';
 import ScreenOffIc from '@/assets/icons/screen-off.svg?react';
 import ScreenOnIc from '@/assets/icons/screen-on.svg?react';
+import SettingIc from '@/assets/icons/setting.svg?react';
 import ToggleButton from '@/components/live/ControlBar/ToggleButton';
 import ExitDialog from '@/components/live/ExitDialog';
+import SettingDialog from '@/components/live/SettingDialog';
 import { useLocalStreamAction, useLocalStreamState } from '@/contexts/localStream/context';
 import { useMediasoupAction, useMediasoupState } from '@/contexts/mediasoup/context';
 import useModal from '@/hooks/useModal';
@@ -19,7 +21,17 @@ interface ControlBarProps {
 }
 
 const ControlBar = ({ isOwner, onTicleEnd }: ControlBarProps) => {
-  const { isOpen, onClose, onOpen } = useModal();
+  const {
+    isOpen: isOpenExitModal,
+    onClose: onCloseExitModal,
+    onOpen: onOpenExitModal,
+  } = useModal();
+
+  const {
+    isOpen: isOpenSettingModal,
+    onClose: onCloseSettingModal,
+    onOpen: onOpenSettingModal,
+  } = useModal();
 
   const { socketRef } = useMediasoupState();
   const { video, screen, audio } = useLocalStreamState();
@@ -92,6 +104,12 @@ const ControlBar = ({ isOwner, onTicleEnd }: ControlBarProps) => {
     <>
       <div className="flex items-center justify-start gap-x-[14px]">
         <ToggleButton
+          isActivated
+          ActiveIcon={SettingIc}
+          InactiveIcon={SettingIc}
+          onToggle={onOpenSettingModal}
+        />
+        <ToggleButton
           ActiveIcon={MicOnIc}
           InactiveIcon={MicOffIc}
           onToggle={toggleAudio}
@@ -109,10 +127,23 @@ const ControlBar = ({ isOwner, onTicleEnd }: ControlBarProps) => {
           onToggle={toggleScreenShare}
           isActivated={screen.paused}
         />
-        <ToggleButton type="exit" ActiveIcon={ExitIc} InactiveIcon={ExitIc} onToggle={onOpen} />
+        <ToggleButton
+          type="exit"
+          ActiveIcon={ExitIc}
+          InactiveIcon={ExitIc}
+          onToggle={onOpenExitModal}
+        />
       </div>
-      {isOpen && (
-        <ExitDialog isOpen={isOpen} isOwner={isOwner} handleExit={handleExit} onClose={onClose} />
+      {isOpenExitModal && (
+        <ExitDialog
+          isOpen={isOpenExitModal}
+          isOwner={false}
+          handleExit={handleExit}
+          onClose={onCloseExitModal}
+        />
+      )}
+      {isOpenSettingModal && (
+        <SettingDialog isOpen={isOpenSettingModal} onClose={onCloseSettingModal} />
       )}
     </>
   );
