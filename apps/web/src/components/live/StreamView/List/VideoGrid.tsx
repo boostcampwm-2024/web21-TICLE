@@ -37,6 +37,7 @@ function VideoGrid({ videoStreamData, onVideoClick, getAudioMutedState }: VideoG
             stream={streamData.stream ?? null}
             isMicOn={streamData && getAudioMutedState(streamData)}
             mediaType={streamData.consumer?.appData?.mediaTypes}
+            socketId={streamData.socketId}
           />
         </div>
       ))}

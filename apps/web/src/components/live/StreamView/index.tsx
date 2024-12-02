@@ -1,7 +1,6 @@
 import { types } from 'mediasoup-client';
 import { MediaTypes } from '@repo/mediasoup';
 
-import AudioStreams from '@/components/live/StreamView/AudioStreams';
 import PinnedGrid from '@/components/live/StreamView/List/Pinned';
 import UnPinnedGrid from '@/components/live/StreamView/List/UnPinned';
 import useAudioState from '@/hooks/useAudioState';
@@ -32,7 +31,6 @@ const StreamView = () => {
       ) : (
         <UnPinnedGrid addPinnedVideo={selectPinnedVideo} getAudioMutedState={getAudioMutedState} />
       )}
-      <AudioStreams />
     </div>
   );
 };

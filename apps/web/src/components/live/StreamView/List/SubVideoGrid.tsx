@@ -31,6 +31,7 @@ function SubVideoGrid({
 }: SubVideoGridProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [videoMaxWidth, setVideoMaxWidth] = useState(0);
+
   useEffect(() => {
     // TODO: throttle resize event
     const adjustSize = () => {
@@ -66,6 +67,7 @@ function SubVideoGrid({
             stream={streamData.stream ?? null}
             isMicOn={streamData && getAudioMutedState(streamData)}
             mediaType={streamData.consumer?.appData?.mediaTypes}
+            socketId={streamData.socketId}
           />
         </div>
       ))}

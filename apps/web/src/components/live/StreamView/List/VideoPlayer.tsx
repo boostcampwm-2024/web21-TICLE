@@ -6,19 +6,30 @@ import MicOnIc from '@/assets/icons/mic-on.svg?react';
 import Avatar from '@/components/common/Avatar';
 import Badge from '@/components/common/Badge';
 import Loading from '@/components/common/Loading';
+import useAudioLevelDetector from '@/hooks/mediasoup/useAudioLevelDetector';
 import cn from '@/utils/cn';
 
-const videoVariants = cva('absolute h-full w-full object-cover transition-opacity duration-300', {
-  variants: {
-    loading: {
-      true: 'opacity-0',
-      false: 'opacity-100',
+import AudioStreams from '../AudioStreams';
+
+const videoVariants = cva(
+  'absolute h-full w-full rounded-lg object-cover transition-opacity duration-300',
+  {
+    variants: {
+      loading: {
+        true: 'opacity-0',
+        false: 'opacity-100',
+      },
+      isSpeaking: {
+        true: 'border-active border-4',
+        false: 'border-alt border-4',
+      },
     },
-  },
-  defaultVariants: {
-    loading: true,
-  },
-});
+    defaultVariants: {
+      loading: true,
+      isSpeaking: false,
+    },
+  }
+);
 
 export interface VideoPlayerProps {
   stream: MediaStream | null;
@@ -27,6 +38,7 @@ export interface VideoPlayerProps {
   avatarSize?: 'sm' | 'md' | 'lg';
   mediaType?: string;
   nickname: string;
+  socketId?: string;
 }
 
 function VideoPlayer({
@@ -36,10 +48,14 @@ function VideoPlayer({
   isMicOn = false,
   avatarSize = 'md',
   nickname,
+  socketId,
 }: VideoPlayerProps) {
   const [isLoading, setIsLoading] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
 
+  const { activeSocketId, createAudioLevel } = useAudioLevelDetector();
+  const isSpeaking = activeSocketId === socketId;
+  console.log(activeSocketId);
   useEffect(() => {
     if (!videoRef.current) return;
 
@@ -60,7 +76,10 @@ function VideoPlayer({
             autoPlay
             playsInline
             preload="metadata"
-            className={videoVariants({ loading: isLoading })}
+            className={videoVariants({
+              loading: isLoading,
+              isSpeaking: isSpeaking,
+            })}
             onLoadedData={onLoadedData}
           >
             <track default kind="captions" srcLang="en" src="SUBTITLE_PATH" />
@@ -69,13 +88,14 @@ function VideoPlayer({
             Your browser does not support the video.
           </video>
         ) : (
-          <div className={videoVariants({ loading: false })}>
+          <div className={videoVariants({ loading: false, isSpeaking })}>
             <Avatar
               size={avatarSize}
               className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform"
             />
           </div>
         ))}
+      <AudioStreams createAudioLevel={createAudioLevel} />
       {!stream && (
         <div
           className={cn(
