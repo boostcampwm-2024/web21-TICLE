@@ -35,6 +35,9 @@ jobs:
       - name: 📦 프로젝트 빌드
         run: pnpm build:media
 
+      - name: 빌드 테스트
+        run: echo "test"
+
   build:
     runs-on: ubuntu-latest
     needs: ci
