@@ -6,6 +6,7 @@ import MicOnIc from '@/assets/icons/mic-on.svg?react';
 import Avatar from '@/components/common/Avatar';
 import Badge from '@/components/common/Badge';
 import Loading from '@/components/common/Loading';
+import cn from '@/utils/cn';
 
 const videoVariants = cva('absolute h-full w-full object-cover transition-opacity duration-300', {
   variants: {
@@ -52,25 +53,6 @@ function VideoPlayer({
 
   return (
     <div className="relative flex h-full w-full cursor-pointer items-center justify-center overflow-hidden bg-darkAlt">
-      {!stream && (
-        <div className="flex h-full items-center justify-center">
-          <Loading />
-        </div>
-      )}
-
-      {stream && (
-        <>
-          {mediaType === 'video' && (
-            <div className="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-altWeak p-1">
-              {isMicOn ? <MicOnIc className="text-white" /> : <MicOffIc className="fill-white" />}
-            </div>
-          )}
-          <div className="absolute bottom-3 left-3 z-10">
-            <Badge>{nickname}</Badge>
-          </div>
-        </>
-      )}
-
       {stream &&
         (!paused ? (
           <video
@@ -94,6 +76,28 @@ function VideoPlayer({
             />
           </div>
         ))}
+      {!stream && (
+        <div
+          className={cn(
+            'flex h-full items-center justify-center',
+            videoVariants({ loading: false })
+          )}
+        >
+          <Loading />
+        </div>
+      )}
+      <div className="absolute bottom-3 left-3">
+        <Badge>{nickname}</Badge>
+      </div>
+      {stream && (
+        <>
+          {mediaType === 'video' && (
+            <div className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-altWeak p-1">
+              {isMicOn ? <MicOnIc className="text-white" /> : <MicOffIc className="fill-white" />}
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 }

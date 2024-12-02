@@ -126,9 +126,7 @@ export class MediasoupService implements OnModuleInit {
   }
 
   disconnect(socketId: string) {
-    const roomIds = this.roomService.deletePeer(socketId);
-
-    return roomIds;
+    return this.roomService.deletePeer(socketId);
   }
 
   getProducers(roomId: string, socketId: string) {
@@ -267,7 +265,7 @@ export class MediasoupService implements OnModuleInit {
     const peer = room.peers.get(socketId);
     const consumer = peer.getConsumer(consumerId);
 
-    consumer.pause();
+    consumer?.pause();
 
     return { paused: true, consumerId, producerId: consumer.producerId };
   }
@@ -281,7 +279,7 @@ export class MediasoupService implements OnModuleInit {
       return { paused: true, consumerId, producerId: consumer.producerId };
     }
 
-    consumer.resume();
+    consumer?.resume();
 
     return { paused: false, consumerId, producerId: consumer.producerId };
   }

@@ -27,7 +27,7 @@ const getApplicantsTicle = async (ticleId: string) => {
 };
 
 const startTicle = async (ticleId: string) => {
-  const { data } = await axiosInstance.post('/dashboard/start', { ticleId });
+  const { data } = await axiosInstance.post(`/dashboard/${ticleId}/start`);
 
   return data;
 };

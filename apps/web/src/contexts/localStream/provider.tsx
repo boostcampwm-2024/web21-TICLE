@@ -15,22 +15,47 @@ export const LocalStreamProvider = ({ children }: StreamProviderProps) => {
     startCameraStream,
     startMicStream,
     startScreenStream,
+    closeScreenStream,
     pauseStream,
     resumeStream,
     closeStream,
-    closeScreenStream,
+    closeLocalStream,
+
+    videoDevices,
+    audioDevices,
+    audioOutputDevices,
+    selectedVideoDeviceId,
+    selectedAudioDeviceId,
+    selectedAudioOutputDeviceId,
+    setSelectedVideoDeviceId,
+    setSelectedAudioDeviceId,
+    setSelectedAudioOutputDeviceId,
   } = useLocalStream();
 
-  const state = { video, audio, screen };
+  const state = {
+    video,
+    audio,
+    screen,
+    videoDevices,
+    audioDevices,
+    audioOutputDevices,
+    selectedVideoDeviceId,
+    selectedAudioDeviceId,
+    selectedAudioOutputDeviceId,
+  };
 
   const actions = {
-    startCameraStream,
-    startMicStream,
-    startScreenStream,
+    closeStream,
     pauseStream,
     resumeStream,
-    closeStream,
+    startMicStream,
+    startCameraStream,
+    startScreenStream,
     closeScreenStream,
+    closeLocalStream,
+    setSelectedVideoDeviceId,
+    setSelectedAudioDeviceId,
+    setSelectedAudioOutputDeviceId,
   } as const;
 
   return (

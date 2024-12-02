@@ -38,6 +38,11 @@ export const MediasoupProvider = ({ children }: MediasoupProviderProps) => {
     audio?.close();
     video?.close();
     screen?.close();
+
+    socketRef.current = null;
+    deviceRef.current = null;
+    transportsRef.current = { sendTransport: null, recvTransport: null };
+    producersRef.current = { audio: null, video: null, screen: null };
   };
 
   const state = {

@@ -1,9 +1,8 @@
-import { useState } from 'react';
+import { useEffect } from 'react';
 import { MediaTypes } from '@repo/mediasoup';
 
-import { LocalStream } from '@/contexts/localStream/context';
 import { useMediasoupAction } from '@/contexts/mediasoup/context';
-import { getCameraStream, getMicStream, getScreenStream } from '@/utils/stream';
+import useMediaTracks from '@/hooks/useMediaTracks';
 
 const DEFAULT_LOCAL_STREAM = {
   stream: null,
@@ -11,80 +10,62 @@ const DEFAULT_LOCAL_STREAM = {
 } as const;
 
 const useLocalStream = () => {
-  const [video, setVideo] = useState<LocalStream>({ ...DEFAULT_LOCAL_STREAM });
-  const [audio, setAudio] = useState<LocalStream>({ ...DEFAULT_LOCAL_STREAM });
-  const [screen, setScreen] = useState<LocalStream>({ ...DEFAULT_LOCAL_STREAM });
+  const {
+    video,
+    audio,
+    screen,
 
-  const getState = (type: MediaTypes) => {
-    if (type === 'video') {
-      return [video, setVideo] as const;
-    }
+    getAudioTrack,
+    getCameraTrack,
+    getScreenTrack,
 
-    if (type === 'audio') {
-      return [audio, setAudio] as const;
-    }
+    videoDevices,
+    audioDevices,
+    audioOutputDevices,
 
-    if (type === 'screen') {
-      return [screen, setScreen] as const;
-    }
+    selectedVideoDeviceId,
+    selectedAudioDeviceId,
+    selectedAudioOutputDeviceId,
 
-    throw new Error('Invalid stream type');
-  };
+    setSelectedVideoDeviceId,
+    setSelectedAudioDeviceId,
+    setSelectedAudioOutputDeviceId,
+
+    getMediaState,
+  } = useMediaTracks();
 
   const { createProducer, closeProducer, resumeProducer, pauseProducer } = useMediasoupAction();
 
   const startCameraStream = async () => {
     try {
-      if (video.stream) {
-        return;
-      }
-
-      const stream = await getCameraStream();
-
-      const track = stream.getVideoTracks()[0];
+      const track = await getCameraTrack();
 
       if (!track) {
         return;
       }
 
-      setVideo({ stream, paused: true });
-
       return createProducer('video', track);
     } catch (_) {
-      // TODO: Error
       closeStream('video');
     }
   };
 
   const startMicStream = async () => {
     try {
-      if (audio.stream) {
-        return;
-      }
-
-      const stream = await getMicStream();
-      const track = stream.getAudioTracks()[0];
+      const track = await getAudioTrack();
 
       if (!track) {
         return;
       }
 
-      setAudio({ stream, paused: true });
       return createProducer('audio', track);
     } catch (_) {
-      // TODO: Error
       closeStream('audio');
     }
   };
 
   const startScreenStream = async () => {
-    if (screen.stream) {
-      return;
-    }
-
-    const stream = await getScreenStream();
-
-    const track = stream.getVideoTracks()[0];
+    const track = await getScreenTrack();
 
     if (!track) {
       return;
@@ -96,29 +77,28 @@ const useLocalStream = () => {
       closeProducer('screen');
     };
 
-    setScreen({ stream, paused: false });
-
     return createProducer('screen', track);
   };
 
   const closeScreenStream = () => {
-    const [localStream, setLocalStream] = getState('screen');
+    const [localStream, setLocalStream] = getMediaState('screen');
     const { stream } = localStream;
+
+    setLocalStream({ ...DEFAULT_LOCAL_STREAM });
 
     if (!stream) {
       return;
     }
 
+    closeProducer('screen');
+
     stream.getTracks().forEach((track) => {
       track.stop();
     });
-
-    setLocalStream({ ...DEFAULT_LOCAL_STREAM });
-    closeProducer('screen');
   };
 
   const closeStream = (type: MediaTypes) => {
-    const [localStream, setLocalStream] = getState(type);
+    const [localStream, setLocalStream] = getMediaState(type);
 
     const { stream } = localStream;
 
@@ -128,15 +108,15 @@ const useLocalStream = () => {
       return;
     }
 
+    closeProducer(type);
+
     stream.getTracks().forEach((track) => {
       track.stop();
     });
-
-    closeProducer(type);
   };
 
   const pauseStream = (type: MediaTypes) => {
-    const [localStream, setLocalStream] = getState(type);
+    const [localStream, setLocalStream] = getMediaState(type);
 
     const { stream } = localStream;
 
@@ -146,15 +126,15 @@ const useLocalStream = () => {
       return;
     }
 
+    pauseProducer(type);
+
     stream.getTracks().forEach((track) => {
       track.enabled = false;
     });
-
-    pauseProducer(type);
   };
 
   const resumeStream = (type: MediaTypes) => {
-    const [localStream, setLocalStream] = getState(type);
+    const [localStream, setLocalStream] = getMediaState(type);
 
     const { stream } = localStream;
 
@@ -164,12 +144,48 @@ const useLocalStream = () => {
       return;
     }
 
+    resumeProducer(type);
+
     stream.getTracks().forEach((track) => {
       track.enabled = true;
     });
-
-    resumeProducer(type);
   };
+
+  const closeLocalStream = () => {
+    closeStream('video');
+    closeStream('audio');
+    closeStream('screen');
+  };
+
+  useEffect(() => {
+    if (!selectedVideoDeviceId) return;
+
+    const videoTrack = video.stream?.getVideoTracks()[0];
+
+    if (!videoTrack) return;
+
+    const isSameDevice = videoTrack.getSettings().deviceId === selectedVideoDeviceId;
+
+    if (isSameDevice) return;
+
+    closeStream('video');
+    startCameraStream();
+  }, [selectedVideoDeviceId]);
+
+  useEffect(() => {
+    if (!selectedAudioDeviceId) return;
+
+    const audioTrack = audio.stream?.getAudioTracks()[0];
+
+    if (!audioTrack) return;
+
+    const isSameDevice = audioTrack.getSettings().deviceId === selectedAudioDeviceId;
+
+    if (isSameDevice) return;
+
+    closeStream('audio');
+    startMicStream();
+  }, [selectedAudioDeviceId]);
 
   return {
     video,
@@ -182,6 +198,19 @@ const useLocalStream = () => {
     pauseStream,
     resumeStream,
     closeScreenStream,
+    closeLocalStream,
+
+    videoDevices,
+    audioDevices,
+    audioOutputDevices,
+
+    selectedVideoDeviceId,
+    selectedAudioDeviceId,
+    selectedAudioOutputDeviceId,
+
+    setSelectedVideoDeviceId,
+    setSelectedAudioDeviceId,
+    setSelectedAudioOutputDeviceId,
   } as const;
 };
 

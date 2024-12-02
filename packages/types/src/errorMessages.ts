@@ -14,7 +14,11 @@ export const ErrorMessage = {
   FAILED_TO_CREATE_TICLE: '티클 생성에 실패했습니다',
   CANNOT_REQUEST_OWN_TICLE: '자신이 발표자인 티클에는 신청할 수 없습니다',
   TICLE_ALREADY_REQUESTED: '이미 신청한 티클입니다',
+  FAILED_TO_TRANSCRIBE_AUDIO: 'CLOVA SPEECH로 텍스트 변환에 실패했습니다',
+  FAILED_TO_SUMMARY_AUDIO: 'CLOVA STRUDIO로 요약에 실패했습니다',
   CANNOT_DELETE_OTHERS_TICLE: '다른 사람의 티클은 삭제할 수 없습니다',
+  CANNOT_START_TICLE: '티클을 시작할 수 없습니다',
+  CANNOT_END_TICLE: '티클을 종료할 수 없습니다',
 
   // socket error
   PEER_NOT_FOUND_IN_ROOM: '방에 해당 peer가 존재하지 않습니다',
@@ -22,6 +26,8 @@ export const ErrorMessage = {
   TRANSPORT_NOT_FOUND: 'transport가 존재하지 않습니다',
   PEER_ALREADY_EXISTS_IN_ROOM: '이미 방에 존재하는 Peer입니다',
   NO_AVAILABLE_PORT: '사용 가능한 포트가 없습니다',
+  FILE_UPLOAD_FAILED: '파일 업로드에 실패했습니다',
+
 } as const;
 
 export type ErrorMessage = (typeof ErrorMessage)[keyof typeof ErrorMessage];

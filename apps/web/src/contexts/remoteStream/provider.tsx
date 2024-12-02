@@ -19,6 +19,7 @@ export const RemoteStreamProvider = ({ children }: RemoteStreamProviderProps) =>
     filterRemoteStream,
     pauseRemoteStream,
     resumeRemoteStream,
+    clearRemoteStream,
     resumeAudioConsumers,
     resumeVideoConsumers,
     pauseVideoConsumers,
@@ -28,10 +29,11 @@ export const RemoteStreamProvider = ({ children }: RemoteStreamProviderProps) =>
 
   const actions = {
     consume,
-    createConsumers,
     filterRemoteStream,
     pauseRemoteStream,
     resumeRemoteStream,
+    clearRemoteStream,
+    createConsumers,
     resumeAudioConsumers,
     resumeVideoConsumers,
     pauseVideoConsumers,

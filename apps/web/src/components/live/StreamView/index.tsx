@@ -8,12 +8,12 @@ import useAudioState from '@/hooks/useAudioState';
 import usePinnedVideo from '@/hooks/usePinnedVideo';
 
 export interface StreamData {
-  consumer?: types.Consumer<{ mediaTypes: MediaTypes; nickname: string }>;
   socketId: string;
-  kind: types.MediaKind;
-  stream: MediaStream | null;
-  paused: boolean;
   nickname: string;
+  consumer?: types.Consumer<{ mediaTypes: MediaTypes; nickname: string }>;
+  kind?: types.MediaKind;
+  stream?: MediaStream | null;
+  paused?: boolean;
 }
 
 const StreamView = () => {

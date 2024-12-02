@@ -12,7 +12,7 @@ const useRemoteStream = () => {
   const [audioStreams, setAudioStreams] = useState<client.RemoteStream[]>([]);
 
   const consume = async (data: client.CreateProducerRes) => {
-    const { peerId, producerId, kind, paused, appData, nickname } = data;
+    const { peerId, producerId, kind, paused, nickname, appData } = data;
 
     const socket = socketRef.current;
     const device = deviceRef.current;
@@ -21,38 +21,19 @@ const useRemoteStream = () => {
     if (!device || !recvTransport || !socket) return;
 
     const params = {
-      roomId: ticleId,
-      paused,
       kind,
+      paused,
+      appData,
+      nickname,
       producerId,
+      roomId: ticleId,
       transportId: recvTransport.id,
       rtpCapabilities: device.rtpCapabilities,
     };
 
     return new Promise<void>((resolve) => {
       socket.emit(SOCKET_EVENTS.consume, params, async (params: client.CreateConsumerRes) => {
-        const { consumerId, paused, ...rest } = params;
-
-        const consumer = await recvTransport.consume({
-          id: consumerId,
-          appData,
-          ...rest,
-        });
-        const stream = new MediaStream([consumer.track]);
-
-        if (paused) {
-          consumer.pause();
-        }
-
-        setRemoteStream({
-          stream,
-          consumer,
-          socketId: peerId,
-          kind: consumer.kind,
-          paused: consumer.paused,
-          nickname,
-        });
-
+        await createRemoteStream({ ...params, peerId });
         resolve();
       });
     });
@@ -117,6 +98,7 @@ const useRemoteStream = () => {
     if (!socket) {
       throw new Error('socket is not initialized');
     }
+
     if (!consumers.length) return;
 
     const consumerIds = consumers
@@ -136,9 +118,11 @@ const useRemoteStream = () => {
 
   const pauseVideoConsumers = (consumers: client.RemoteStream[]) => {
     const socket = socketRef.current;
+
     if (!socket) {
       throw new Error('socket is not initialized');
     }
+
     if (!consumers.length) return;
 
     const consumerIds = consumers
@@ -163,7 +147,11 @@ const useRemoteStream = () => {
         return stream;
       });
 
-      return newStreams;
+      return newStreams.sort((a, b) => {
+        if (a.paused === b.paused) return 0;
+
+        return a.paused ? 1 : -1;
+      });
     };
   };
 
@@ -178,7 +166,11 @@ const useRemoteStream = () => {
         return stream;
       });
 
-      return newStreams;
+      return newStreams.sort((a, b) => {
+        if (a.paused === b.paused) return 0;
+
+        return a.paused ? 1 : -1;
+      });
     };
   };
 
@@ -202,10 +194,10 @@ const useRemoteStream = () => {
     const newStream = {
       stream,
       consumer,
+      nickname,
+      socketId: peerId,
       kind: consumer.kind,
       paused: consumer.paused,
-      socketId: peerId,
-      nickname,
     };
 
     setRemoteStream(newStream);
@@ -273,7 +265,11 @@ const useRemoteStream = () => {
       stream.consumer.pause();
       stream.paused = true;
 
-      return newStreams;
+      return newStreams.sort((a, b) => {
+        if (a.paused === b.paused) return 0;
+
+        return a.paused ? 1 : -1;
+      });
     };
 
     setVideoStreams(getNewStreams);
@@ -303,12 +299,27 @@ const useRemoteStream = () => {
       stream.consumer.resume();
       stream.paused = false;
 
-      return newStreams;
+      return newStreams.sort((a, b) => {
+        if (a.paused === b.paused) return 0;
+
+        return a.paused ? 1 : -1;
+      });
     };
 
     setVideoStreams(getNewStreams);
     setAudioStreams(getNewStreams);
   }, []);
+
+  const clearRemoteStream = () => {
+    setVideoStreams((prevStreams) => {
+      prevStreams.forEach((stream) => stream.consumer?.close());
+      return [];
+    });
+    setAudioStreams((prevStreams) => {
+      prevStreams.forEach((stream) => stream.consumer?.close());
+      return [];
+    });
+  };
 
   return {
     videoStreams,
@@ -321,6 +332,7 @@ const useRemoteStream = () => {
     resumeAudioConsumers,
     resumeVideoConsumers,
     pauseVideoConsumers,
+    clearRemoteStream,
   };
 };
 

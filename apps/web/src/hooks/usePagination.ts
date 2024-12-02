@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { client } from '@repo/mediasoup';
 
 import { StreamData } from '@/components/live/StreamView';
+import { useDummyStreamState } from '@/contexts/dummyStream/context';
 import { useLocalStreamState } from '@/contexts/localStream/context';
 import { useMediasoupState } from '@/contexts/mediasoup/context';
 import { useRemoteStreamAction, useRemoteStreamState } from '@/contexts/remoteStream/context';
@@ -16,27 +17,29 @@ interface PaginationParams {
 const usePagination = ({ itemsPerPage, pinnedStream }: PaginationParams) => {
   const { socketRef } = useMediasoupState();
   const { video, screen } = useLocalStreamState();
+
+  const { dummyStreams } = useDummyStreamState();
   const { videoStreams } = useRemoteStreamState();
+
   const nickname = useAuthStore.getState().authInfo?.nickname;
 
   const { resumeVideoConsumers, pauseVideoConsumers } = useRemoteStreamAction();
 
   const [currentPage, setCurrentPage] = useState(0);
 
+  const prevPinStreamRef = useRef<StreamData>();
   const prevGridItemsRef = useRef<StreamData[]>([]);
 
   const paginatedItems = useMemo(() => {
     const totalItems: StreamData[] = [];
 
-    if (video.stream) {
-      totalItems.push({
-        socketId: 'local',
-        kind: 'video',
-        stream: video.stream,
-        paused: video.paused,
-        nickname: nickname ?? '',
-      });
-    }
+    totalItems.push({
+      socketId: 'local',
+      kind: 'video',
+      stream: video.stream,
+      paused: video.paused,
+      nickname: nickname ?? '',
+    });
 
     if (screen.stream) {
       totalItems.push({
@@ -48,13 +51,13 @@ const usePagination = ({ itemsPerPage, pinnedStream }: PaginationParams) => {
       });
     }
 
-    totalItems.push(...videoStreams);
+    totalItems.push(...videoStreams, ...dummyStreams);
 
     const startIdx = currentPage * itemsPerPage;
     const endIdx = startIdx + itemsPerPage;
 
     return totalItems.slice(startIdx, endIdx);
-  }, [videoStreams, currentPage, itemsPerPage, video, screen, nickname]);
+  }, [videoStreams, currentPage, itemsPerPage, video, screen, nickname, dummyStreams]);
 
   const onNextPage = () => {
     setCurrentPage((prev) => Math.min(totalPages - 1, prev + 1));
@@ -64,12 +67,12 @@ const usePagination = ({ itemsPerPage, pinnedStream }: PaginationParams) => {
     setCurrentPage((prev) => Math.max(0, prev - 1));
   };
 
-  const streamLength = videoStreams.length + (video.stream ? 1 : 0) + (screen.stream ? 1 : 0);
+  const streamLength = dummyStreams.length + videoStreams.length + 1 + (screen.stream ? 1 : 0);
   const totalPages = Math.ceil(streamLength / itemsPerPage);
 
   const resumeGridStreams = useDebouncedCallback(() => {
     const gridItems = paginatedItems.filter(
-      (item) => item.socketId !== 'local' && item.consumer
+      (item) => item.socketId !== 'local' && item.consumer?.closed === false
     ) as client.RemoteStream[];
     const isExistPinned = gridItems.some((item) => item.socketId === pinnedStream?.socketId);
 
@@ -87,7 +90,7 @@ const usePagination = ({ itemsPerPage, pinnedStream }: PaginationParams) => {
     if (!socket || prevGridItems.length === 0) return;
 
     const target = prevGridItems
-      .filter((item) => item.consumer && pinnedStream?.socketId !== item.socketId)
+      .filter((item) => item.consumer?.closed === false && pinnedStream?.socketId !== item.socketId)
       .filter(
         (item) => !paginatedItems.some((paginatedItem) => paginatedItem.socketId === item.socketId)
       ) as client.RemoteStream[];
@@ -109,6 +112,22 @@ const usePagination = ({ itemsPerPage, pinnedStream }: PaginationParams) => {
 
     prevGridItemsRef.current = paginatedItems;
   }, [paginatedItems.length, currentPage]);
+
+  useEffect(() => {
+    const prevPinnedStream = prevPinStreamRef.current;
+
+    prevPinStreamRef.current = pinnedStream;
+
+    if (!prevPinnedStream?.consumer) return;
+
+    const isExistPinned = paginatedItems.some(
+      (item) => item.socketId === prevPinnedStream.socketId
+    );
+
+    if (isExistPinned) return;
+
+    pauseVideoConsumers([prevPinnedStream as client.RemoteStream]);
+  }, [pinnedStream?.consumer?.id]);
 
   return {
     currentPage,
