@@ -291,4 +291,8 @@ export class MediasoupService implements OnModuleInit {
   resumeConsumers(socketId: string, roomId: string, consumerIds: string[]) {
     return consumerIds.map((consumerId) => this.resumeConsumer(socketId, consumerId, roomId));
   }
+
+  closeRoom(roomId: string) {
+    this.roomService.closeRoom(roomId);
+  }
 }
