@@ -31,8 +31,6 @@ export class NcpService {
 
     try {
       const uploadResponse = await this.s3.send(new PutObjectCommand(params));
-      // console.log('File uploaded:', uploadResponse);
-
       const url = `${endpoint}/${bucketName}/${remoteFileName}`;
       return remoteFileName;
     } catch (error) {
