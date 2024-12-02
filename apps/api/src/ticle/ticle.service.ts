@@ -205,8 +205,8 @@ export class TicleService {
     const countQuery = this.ticleRepository
       .createQueryBuilder('ticle')
       .select('COUNT(*) as count')
-      .where('ticle.ticleStatus = :status', {
-        status: isOpen ? TicleStatus.OPEN : TicleStatus.CLOSED,
+      .where('ticle.ticleStatus IN (:...statuses)', {
+        status: isOpen ? [TicleStatus.OPEN, TicleStatus.IN_PROGRESS] : [TicleStatus.CLOSED],
       });
     const totalTicleCount = await countQuery.getRawOne();
 

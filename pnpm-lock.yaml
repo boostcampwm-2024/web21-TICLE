@@ -6869,7 +6869,7 @@ snapshots:
       tslib: 2.8.0
     transitivePeerDependencies:
       - aws-crt
-
+      
   '@aws-sdk/client-sso-oidc@3.699.0(@aws-sdk/client-sts@3.699.0)':
     dependencies:
       '@aws-crypto/sha256-browser': 5.2.0
