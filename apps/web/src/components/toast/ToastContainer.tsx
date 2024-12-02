@@ -16,23 +16,19 @@ const ToastContainer = ({ autoClose = 2000, closeOnClick = true }: ToastContaine
 
   return (
     <div ref={containerRef} className={CONTAINER_CLASS}>
-      {getToastToRender((toastList) => {
-        return (
-          <div className={cn(CONTAINER_CLASS, 'bottom-0 transition-all delay-300')}>
-            {toastList.map(({ content, props: toastProps }) => {
-              return (
-                <Toast
-                  {...toastProps}
-                  key={`toast-${toastProps.key}`}
-                  isIn={isToastActive(toastProps.toastId)}
-                >
-                  {content}
-                </Toast>
-              );
-            })}
-          </div>
-        );
-      })}
+      {getToastToRender((toastList) => (
+        <div className={cn(CONTAINER_CLASS, 'bottom-0 transition-all delay-300')}>
+          {toastList.map(({ content, props: toastProps }) => (
+            <Toast
+              {...toastProps}
+              key={`toast-${toastProps.key}`}
+              isIn={isToastActive(toastProps.toastId)}
+            >
+              {content}
+            </Toast>
+          ))}
+        </div>
+      ))}
     </div>
   );
 };
