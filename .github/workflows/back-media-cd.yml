@@ -2,7 +2,7 @@ name: 백엔드 @app/media CD
 
 on:
   push:
-    branches: [main, release, fix/#347/media-build]
+    branches: [main, release]
 
 jobs:
   ci:
@@ -29,13 +29,6 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'pnpm'
 
-      - name: .env 파일 생성
-        run: |
-          jq -r 'to_entries|map("\(.key)=\(.value|tostring)")|.[]' <<< "$SECRETS_CONTEXT" > .env
-          mv .env apps/media/.env
-        env:
-          SECRETS_CONTEXT: ${{ toJson(secrets) }}
-
       - name: ⬇️ 의존성 설치
         run: pnpm install --frozen-lockfile
 
@@ -52,6 +45,13 @@ jobs:
         with:
           fetch-depth: 2
 
+      - name: .env 파일 생성
+        run: |
+          jq -r 'to_entries|map("\(.key)=\(.value|tostring)")|.[]' <<< "$SECRETS_CONTEXT" > .env
+          mv .env apps/media/.env
+        env:
+          SECRETS_CONTEXT: ${{ toJson(secrets) }}
+
       # - name: 🐳 Docker 로그인
       #   uses: docker/login-action@v3
       #   with:
@@ -62,5 +62,15 @@ jobs:
       - name: 🐳 Docker 빌드 및 푸시
         run: |
           echo "Starting Docker build..."
-          docker buildx build -f apps/media/Dockerfile . 
+          DOCKER_BUILDKIT=1 docker buildx build -f apps/media/Dockerfile . -t my-media-app
           echo "Docker build completed."
+      - name: 🐳 Docker 실행
+        run: |
+          echo "Starting Docker container..."
+          docker run -d -p 3002:3002 --name media-app my-media-app
+          echo "Docker container started."
+      - name: 🐳 Docker 상태 확인
+        run: |
+          sleep 10  # 컨테이너가 시작될 시간을 주기 위한 대기 시간
+          docker ps -a
+          docker logs media-app  # 로그 확인
