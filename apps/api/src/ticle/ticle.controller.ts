@@ -37,10 +37,9 @@ export class TicleController {
   }
 
   @Get(':ticleId')
-  @UseGuards(JwtAuthGuard)
   getTicle(
-    @GetUserId() userId: number,
-    @Param('ticleId') ticleId: number
+    @Param('ticleId') ticleId: number,
+    @Query('userId') userId: number
   ): Promise<TickleDetailResponseDto> {
     return this.ticleService.getTicleByTicleId(userId, ticleId);
   }
