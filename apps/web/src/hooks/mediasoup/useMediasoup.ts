@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { client, SOCKET_EVENTS } from '@repo/mediasoup';
 
+import { useDummyStreamAction } from '@/contexts/dummyStream/context';
 import { useLocalStreamAction } from '@/contexts/localStream/context';
 import { useMediasoupAction, useMediasoupState } from '@/contexts/mediasoup/context';
 import { useRemoteStreamAction } from '@/contexts/remoteStream/context';
@@ -20,17 +21,23 @@ const useMediasoup = () => {
     pauseRemoteStream,
     resumeRemoteStream,
     resumeAudioConsumers,
+    clearRemoteStream,
   } = useRemoteStreamAction();
-  const { startCameraStream, startMicStream } = useLocalStreamAction();
+  const { startCameraStream, startMicStream, closeLocalStream } = useLocalStreamAction();
+
+  const { addDummyStream, removeDummyStream } = useDummyStreamAction();
 
   const initSocketEvent = () => {
     const socket = socketRef.current;
 
     if (!socket) return;
 
-    // TODO: new peer 이벤트시 목록에 추가하고 stream은 없다고 표시
+    socket.on(SOCKET_EVENTS.newPeer, ({ peerId, nickname }) => {
+      addDummyStream(peerId, nickname);
+    });
 
     socket.on(SOCKET_EVENTS.peerLeft, ({ peerId }) => {
+      removeDummyStream(peerId);
       filterRemoteStream((rs) => rs.socketId !== peerId);
     });
 
@@ -53,6 +60,7 @@ const useMediasoup = () => {
     socket.on(SOCKET_EVENTS.newProducer, (data) => {
       if (socket.id === data.peerId) return;
 
+      removeDummyStream(data.peerId);
       consume(data);
     });
   };
@@ -98,8 +106,17 @@ const useMediasoup = () => {
   }, [isConnected, isError]);
 
   useEffect(() => {
-    return () => {
+    const clearAll = () => {
       disconnect();
+      clearRemoteStream();
+      closeLocalStream();
+    };
+
+    window.addEventListener('beforeunload', clearAll);
+
+    return () => {
+      window.removeEventListener('beforeunload', clearAll);
+      clearAll();
     };
   }, []);
 };

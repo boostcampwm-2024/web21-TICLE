@@ -20,6 +20,7 @@ interface StreamActionContextProps {
   pauseStream: (type: MediaTypes) => void;
   resumeStream: (type: MediaTypes) => void;
   closeStream: (type: MediaTypes) => void;
+  closeLocalStream: () => void;
 }
 
 export const LocalStreamStateContext = createContext<LocalStreamState | undefined>(undefined);

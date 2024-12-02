@@ -51,7 +51,6 @@ const useLocalStream = () => {
 
       return createProducer('video', track);
     } catch (_) {
-      // TODO: Error
       closeStream('video');
     }
   };
@@ -72,7 +71,6 @@ const useLocalStream = () => {
       setAudio({ stream, paused: true });
       return createProducer('audio', track);
     } catch (_) {
-      // TODO: Error
       closeStream('audio');
     }
   };
@@ -171,6 +169,12 @@ const useLocalStream = () => {
     resumeProducer(type);
   };
 
+  const closeLocalStream = () => {
+    closeStream('video');
+    closeStream('audio');
+    closeStream('screen');
+  };
+
   return {
     video,
     audio,
@@ -182,6 +186,7 @@ const useLocalStream = () => {
     pauseStream,
     resumeStream,
     closeScreenStream,
+    closeLocalStream,
   } as const;
 };
 

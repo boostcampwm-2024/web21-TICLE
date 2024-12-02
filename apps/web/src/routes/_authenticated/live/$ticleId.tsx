@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 
 import MediaContainer from '@/components/live';
+import { DummyStreamProvider } from '@/contexts/dummyStream/provider';
 import { LocalStreamProvider } from '@/contexts/localStream/provider';
 import { MediasoupProvider } from '@/contexts/mediasoup/provider';
 import { RemoteStreamProvider } from '@/contexts/remoteStream/provider';
@@ -14,7 +15,9 @@ function RouteComponent() {
     <MediasoupProvider>
       <LocalStreamProvider>
         <RemoteStreamProvider>
-          <MediaContainer />
+          <DummyStreamProvider>
+            <MediaContainer />
+          </DummyStreamProvider>
         </RemoteStreamProvider>
       </LocalStreamProvider>
     </MediasoupProvider>
