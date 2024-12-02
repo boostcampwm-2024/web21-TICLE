@@ -8,7 +8,8 @@ import { AppModule } from '@/app.module';
 
 import { DBExceptionFilter } from './common/filter/db-exception.filter';
 import { HttpExceptionFilter } from './common/filter/http-exception.filter';
-import { ResponseInterceptor } from './response.interceptor';
+import { ResponseInterceptor } from './common/Interceptor/response.interceptor';
+import { LoggerService } from './common/log/logger.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -30,6 +31,7 @@ async function bootstrap() {
     })
   );
 
+  app.useLogger(app.get(LoggerService));
   app.useGlobalInterceptors(new ResponseInterceptor());
   app.useGlobalFilters(new HttpExceptionFilter(), new DBExceptionFilter());
   app.setGlobalPrefix('api');
