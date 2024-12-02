@@ -36,7 +36,7 @@ jobs:
         run: pnpm build:media
 
       - name: 빌드 테스트
-        run: echo "test"
+        run: echo "test11"
 
   build:
     runs-on: ubuntu-latest
