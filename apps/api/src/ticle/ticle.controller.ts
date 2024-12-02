@@ -3,7 +3,7 @@ import { CreateTicleSchema } from '@repo/types';
 
 import { JwtAuthGuard } from '@/auth/jwt/jwt-auth.guard';
 import { GetUserId } from '@/common/decorator/get-userId.decorator';
-import { ZodValidationPipe } from '@/zodValidationPipe';
+import { ZodValidationPipe } from '@/common/pipe/zodValidationPipe';
 
 import { CreateTicleDto } from './dto/createTicleDto';
 import { GetTicleListQueryDto } from './dto/getTicleListQueryDto';
