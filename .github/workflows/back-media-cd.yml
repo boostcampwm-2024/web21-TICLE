@@ -65,7 +65,7 @@ jobs:
       - name: 🐳 Docker 빌드 및 푸시
         run: |
           echo "Starting Docker build..."
-          DOCKER_BUILDKIT=1 docker buildx build --progress=plain -f apps/media/Dockerfile . -t my-media-app
+          DOCKER_BUILDKIT=1 docker buildx build --progress=plain --no-cache -f apps/media/Dockerfile . -t my-media-app
           echo "Docker build completed."
       - name: 🐳 Docker 실행
         run: |
