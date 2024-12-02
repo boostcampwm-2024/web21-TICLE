@@ -3,6 +3,7 @@ import { memo, useEffect, useRef, useState } from 'react';
 
 import MicOffIc from '@/assets/icons/mic-off.svg?react';
 import MicOnIc from '@/assets/icons/mic-on.svg?react';
+import PinIc from '@/assets/icons/pin.svg?react';
 import Avatar from '@/components/common/Avatar';
 import Badge from '@/components/common/Badge';
 import Loading from '@/components/common/Loading';
@@ -20,7 +21,7 @@ const videoVariants = cva(
         false: 'opacity-100',
       },
       isSpeaking: {
-        true: 'border-active border-4',
+        true: 'border-4 border-primary',
         false: 'border-alt border-4',
       },
     },
@@ -39,6 +40,7 @@ export interface VideoPlayerProps {
   mediaType?: string;
   nickname: string;
   socketId?: string;
+  isPinned?: boolean;
 }
 
 function VideoPlayer({
@@ -49,13 +51,14 @@ function VideoPlayer({
   avatarSize = 'md',
   nickname,
   socketId,
+  isPinned = false,
 }: VideoPlayerProps) {
   const [isLoading, setIsLoading] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const { activeSocketId, createAudioLevel } = useAudioLevelDetector();
   const isSpeaking = activeSocketId === socketId;
-  console.log(activeSocketId);
+
   useEffect(() => {
     if (!videoRef.current) return;
 
@@ -78,7 +81,7 @@ function VideoPlayer({
             preload="metadata"
             className={videoVariants({
               loading: isLoading,
-              isSpeaking: isSpeaking,
+              isSpeaking,
             })}
             onLoadedData={onLoadedData}
           >
@@ -112,9 +115,17 @@ function VideoPlayer({
       {stream && (
         <>
           {mediaType === 'video' && (
-            <div className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-altWeak p-1">
-              {isMicOn ? <MicOnIc className="text-white" /> : <MicOffIc className="fill-white" />}
-            </div>
+            <>
+              <div className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-altWeak p-1">
+                {isMicOn ? <MicOnIc className="text-white" /> : <MicOffIc className="fill-white" />}
+              </div>
+
+              {isPinned && (
+                <div className="absolute left-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-primary p-1">
+                  <PinIc className="fill-white" />
+                </div>
+              )}
+            </>
           )}
         </>
       )}

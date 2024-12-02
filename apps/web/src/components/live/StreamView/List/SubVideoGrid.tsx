@@ -4,18 +4,6 @@ import { useEffect, useRef, useState } from 'react';
 import { StreamData } from '@/components/live/StreamView';
 import VideoPlayer from '@/components/live/StreamView/List/VideoPlayer';
 
-const highlightVariants = cva(`h-full w-full overflow-hidden rounded-lg border-2`, {
-  variants: {
-    pinned: {
-      true: 'border-primary',
-      false: 'border-transparent',
-    },
-  },
-  defaultVariants: {
-    pinned: false,
-  },
-});
-
 interface SubVideoGridProps {
   videoStreamData: StreamData[];
   pinnedVideoStreamData: StreamData | null;
@@ -55,9 +43,7 @@ function SubVideoGrid({
         <div
           key={`${streamData.socketId}${idx}`}
           style={{ maxWidth: videoMaxWidth }}
-          className={highlightVariants({
-            pinned: pinnedVideoStreamData?.stream?.id === streamData.stream?.id,
-          })}
+          className="h-full w-full overflow-hidden rounded-lg"
           onClick={() => streamData.stream && onVideoClick(streamData)}
         >
           <VideoPlayer
@@ -68,6 +54,7 @@ function SubVideoGrid({
             isMicOn={streamData && getAudioMutedState(streamData)}
             mediaType={streamData.consumer?.appData?.mediaTypes}
             socketId={streamData.socketId}
+            isPinned={pinnedVideoStreamData?.stream?.id === streamData.stream?.id}
           />
         </div>
       ))}

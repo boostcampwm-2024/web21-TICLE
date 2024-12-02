@@ -41,7 +41,6 @@ const tailwindConfig: Config = {
         black: 'var(--black)',
         alt: 'var(--grey-700)',
         error: 'var(--red)',
-        active: 'var(--green)',
       },
       fill: {
         primary: 'var(--purple-500)',
