@@ -56,6 +56,8 @@ const useAudioLevelDetector = () => {
         }
       });
 
+      console.log(unmutedAudioLevels);
+
       if (maxLevel > AUDIO_THRESHOLD) {
         lastActiveTimeRef.current = Date.now();
 
@@ -152,7 +154,11 @@ const useAudioLevelDetector = () => {
   };
 
   useEffect(() => {
-    audioStreams.forEach((stream) => {
+    const streams = audioStreams.filter(
+      (stream) => !audioLevelsRef.current.some((level) => level.socketId === stream.socketId)
+    );
+
+    streams.forEach((stream) => {
       if (stream.paused) return;
       createAudioLevel(stream);
     });
