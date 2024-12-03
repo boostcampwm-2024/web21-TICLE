@@ -10,7 +10,7 @@ import Loading from '@/components/common/Loading';
 import cn from '@/utils/cn';
 
 const videoVariants = cva(
-  'absolute h-full w-full rounded-lg object-cover transition-opacity duration-300 [transform:rotateY(180deg)]',
+  'absolute h-full w-full rounded-lg object-cover transition-opacity duration-300',
   {
     variants: {
       loading: {
