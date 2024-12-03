@@ -21,6 +21,7 @@ export const Route = createFileRoute('/_authenticated')({
           nickname: userData.nickname,
           profileImageUrl: userData.profileImageUrl,
           provider: userData.provider,
+          userId: userData.id.toString(),
         },
         isAuthenticated: true,
       });

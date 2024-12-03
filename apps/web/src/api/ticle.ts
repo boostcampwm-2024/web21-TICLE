@@ -27,10 +27,10 @@ const getTitleList = async (params: GetTicleListParams = {}) => {
   });
 };
 
-const getTicle = async (ticleId: string) => {
+const getTicle = async (ticleId: string, userId: string) => {
   return request<TicleDetailResponse>({
     method: 'GET',
-    url: `/ticle/${ticleId}`,
+    url: `/ticle/${ticleId}?userId=${userId}`,
     schema: TicleDetailResponseSchema,
   });
 };

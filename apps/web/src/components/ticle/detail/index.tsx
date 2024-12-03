@@ -7,13 +7,15 @@ import Badge from '@/components/common/Badge';
 import UserProfileDialog from '@/components/user/UserProfileDialog';
 import { useApplyTicle, useDeleteTicle, useTicle } from '@/hooks/api/ticle';
 import useModal from '@/hooks/useModal';
+import useAuthStore from '@/stores/useAuthStore';
 import { formatDateTimeRange } from '@/utils/date';
 
 import CtaButton from './CtaButton';
 
 function Detail() {
   const { ticleId } = useParams({ from: '/_authenticated/ticle/$ticleId' });
-  const { data } = useTicle(ticleId);
+  const userId = useAuthStore.getState().authInfo?.userId;
+  const { data } = useTicle(ticleId, userId || '');
   const { mutate: applyMutate } = useApplyTicle();
   const { mutate: deleteMutate } = useDeleteTicle();
 
