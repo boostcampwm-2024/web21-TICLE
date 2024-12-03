@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import {
   useEffect,
   useRef,
@@ -99,11 +98,15 @@ const useToastContainer = (props: ToastContainerProps) => {
   };
 
   const appendToast = (content: ToastContent, props: ToastProps) => {
-    const { toastId } = props;
+    const { toastId, limit } = props;
 
     toastToRender.set(toastId, { content, props });
 
-    setToastIds((state) => [toastId, ...state]);
+    setToastIds((state) => {
+      const newToastIds = [toastId, ...state].slice(0, limit);
+
+      return newToastIds;
+    });
   };
 
   const getToastToRender = (cb: (toastList: Toast[]) => ReactNode) => {

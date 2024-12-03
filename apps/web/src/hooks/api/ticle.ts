@@ -2,6 +2,8 @@ import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from '@tansta
 import { useNavigate } from '@tanstack/react-router';
 
 import { getTitleList, getTicle, createTicle, applyTicle, deleteTicle } from '@/api/ticle';
+import { toast } from '@/core/toast';
+import { renderSuccess } from '@/utils/toast/renderMessage';
 
 interface GetTicleListParams {
   page?: number;
@@ -41,6 +43,7 @@ export const useCreateTicle = () => {
   return useMutation({
     mutationFn: createTicle,
     onSuccess: () => {
+      toast(renderSuccess('티클이 생성되었습니다.'));
       queryClient.invalidateQueries({ queryKey: ['ticleList'] });
       queryClient.invalidateQueries({ queryKey: ['dashboardTicleList'] });
     },
@@ -54,7 +57,7 @@ export const useApplyTicle = () => {
   return useMutation({
     mutationFn: applyTicle,
     onSuccess: (_, ticleId) => {
-      alert('티클 신청이 완료되었습니다.'); // TODO: toast로 교체
+      toast(renderSuccess('티클 신청이 완료되었습니다.'));
       navigate({ to: `/dashboard/apply` });
       queryClient.invalidateQueries({ queryKey: ['ticleList'] });
       queryClient.invalidateQueries({ queryKey: ['dashboardTicleList'] });
@@ -71,7 +74,7 @@ export const useDeleteTicle = () => {
   return useMutation({
     mutationFn: deleteTicle,
     onSuccess: () => {
-      alert('티클이 삭제되었습니다.'); // TODO: toast로 교체
+      toast(renderSuccess('티클이 삭제되었습니다.'));
       navigate({ to: `/` });
       queryClient.invalidateQueries({ queryKey: ['ticleList'] });
       queryClient.invalidateQueries({ queryKey: ['dashboardTicleList'] });

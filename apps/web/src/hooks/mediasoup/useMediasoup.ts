@@ -66,13 +66,9 @@ const useMediasoup = () => {
   };
 
   const setLocalStream = async (device: client.Device) => {
-    try {
-      await createSendTransport(device);
+    await createSendTransport(device);
 
-      await Promise.all([startCameraStream(), startMicStream()]);
-    } catch (_) {
-      // TODO: Error
-    }
+    Promise.all([startCameraStream(), startMicStream()]);
   };
 
   const setRemoteStream = async (device: client.Device) => {

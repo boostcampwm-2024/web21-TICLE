@@ -5,6 +5,7 @@ export type ToastContent = ReactNode;
 export type ToastId = number | string;
 
 export interface ToastCommonOptions {
+  limit?: number;
   autoClose?: number;
   closeOnClick?: boolean;
 }

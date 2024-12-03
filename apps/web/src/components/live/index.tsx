@@ -3,9 +3,11 @@ import { useEffect } from 'react';
 
 import ControlBar from '@/components/live/ControlBar';
 import StreamView from '@/components/live/StreamView';
+import { toast } from '@/core/toast';
 import { useEndTicle } from '@/hooks/api/live';
 import { useTicle } from '@/hooks/api/ticle';
 import useMediasoup from '@/hooks/mediasoup/useMediasoup';
+import { renderError } from '@/utils/toast/renderMessage';
 
 function MediaContainer() {
   useMediasoup();
@@ -23,7 +25,7 @@ function MediaContainer() {
 
   useEffect(() => {
     if (ticleData?.ticleStatus === 'closed') {
-      alert('종료된 티클입니다.'); // TODO: toast로 교체
+      toast(renderError('종료된 티클입니다.'));
       navigate({ to: '/' });
     }
   }, [ticleData?.ticleStatus, navigate]);
