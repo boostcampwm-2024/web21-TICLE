@@ -11,7 +11,7 @@ const useMediasoup = () => {
   const { socketRef, isConnected, isError } = useMediasoupState();
 
   const { createRoom } = useRoom();
-  const { createRecvTransport, createSendTransport, createDevice, disconnect } =
+  const { createRecvTransport, createSendTransport, createDevice, clearMediasoup } =
     useMediasoupAction();
   const {
     consume,
@@ -99,7 +99,7 @@ const useMediasoup = () => {
     const clearAll = () => {
       clearRemoteStream();
       clearLocalStream();
-      disconnect();
+      clearMediasoup();
     };
 
     window.addEventListener('beforeunload', clearAll);
