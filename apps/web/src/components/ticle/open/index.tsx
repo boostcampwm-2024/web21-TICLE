@@ -6,7 +6,9 @@ import { CreateTicleFormSchema, CreateTicleFormType } from '@repo/types';
 import Button from '@/components/common/Button';
 import TextArea from '@/components/common/TextArea';
 import TextInput from '@/components/common/TextInput';
+import { toast } from '@/core/toast';
 import { useCreateTicle } from '@/hooks/api/ticle';
+import { renderError } from '@/utils/toast/renderMessage';
 
 import DateTimePicker from './DateTimePicker';
 import FormBox from './FormBox';
@@ -36,7 +38,7 @@ function Open() {
       const { data } = await mutateAsync(submitData);
       navigate({ to: `/ticle/${data.ticleId}` });
     } catch (_) {
-      // TODO: 에러 토스트
+      toast(renderError('티클 개설에 실패했습니다.'));
     }
   };
 

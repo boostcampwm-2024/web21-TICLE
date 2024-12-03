@@ -21,7 +21,7 @@ const videoVariants = cva('absolute h-full w-full object-cover transition-opacit
 });
 
 export interface VideoPlayerProps {
-  stream: MediaStream | null;
+  stream?: MediaStream | null;
   paused?: boolean;
   isMicOn?: boolean;
   avatarSize?: 'sm' | 'md' | 'lg';
@@ -43,7 +43,7 @@ function VideoPlayer({
   useEffect(() => {
     if (!videoRef.current) return;
 
-    videoRef.current.srcObject = stream;
+    videoRef.current.srcObject = stream ?? null;
     setIsLoading(false);
   }, [stream, paused]);
 
