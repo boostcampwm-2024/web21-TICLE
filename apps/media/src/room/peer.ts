@@ -45,6 +45,10 @@ export class Peer {
     return this.producers.get(producerId);
   }
 
+  getAudioProducer() {
+    return Array.from(this.producers.values()).find((producer) => producer.kind === 'audio');
+  }
+
   addConsumer(consumer: types.Consumer) {
     this.consumers.set(consumer.id, consumer);
   }
