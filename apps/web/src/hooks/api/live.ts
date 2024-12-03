@@ -11,6 +11,7 @@ export const useEndTicle = () => {
       queryClient.invalidateQueries({ queryKey: ['appliedTicleList'] });
       queryClient.invalidateQueries({ queryKey: ['ticleList'] });
       queryClient.invalidateQueries({ queryKey: ['ticle', ticleId] });
+      queryClient.invalidateQueries({ queryKey: ['dashboardTicleList'] });
     },
   });
 };

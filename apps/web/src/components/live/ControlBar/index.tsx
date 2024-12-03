@@ -1,3 +1,4 @@
+import { useParams } from '@tanstack/react-router';
 import { SOCKET_EVENTS } from '@repo/mediasoup';
 
 import CameraOffIc from '@/assets/icons/camera-off.svg?react';
@@ -47,6 +48,8 @@ const ControlBar = ({ isOwner, onTicleEnd }: ControlBarProps) => {
     closeScreenStream,
   } = useLocalStreamAction();
 
+  const { ticleId } = useParams({ from: '/_authenticated/live/$ticleId' });
+
   const toggleScreenShare = async () => {
     const { paused, stream } = screen;
 
@@ -93,7 +96,7 @@ const ControlBar = ({ isOwner, onTicleEnd }: ControlBarProps) => {
 
   const handleExit = () => {
     if (isOwner) {
-      socketRef.current?.emit(SOCKET_EVENTS.closeRoom);
+      socketRef.current?.emit(SOCKET_EVENTS.closeRoom, { roomId: ticleId });
       onTicleEnd();
     }
 
@@ -137,7 +140,7 @@ const ControlBar = ({ isOwner, onTicleEnd }: ControlBarProps) => {
       {isOpenExitModal && (
         <ExitDialog
           isOpen={isOpenExitModal}
-          isOwner={false}
+          isOwner={isOwner}
           handleExit={handleExit}
           onClose={onCloseExitModal}
         />
