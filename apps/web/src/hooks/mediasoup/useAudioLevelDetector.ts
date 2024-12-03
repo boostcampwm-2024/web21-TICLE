@@ -56,8 +56,6 @@ const useAudioLevelDetector = () => {
         }
       });
 
-      console.log(unmutedAudioLevels);
-
       if (maxLevel > AUDIO_THRESHOLD) {
         lastActiveTimeRef.current = Date.now();
 
