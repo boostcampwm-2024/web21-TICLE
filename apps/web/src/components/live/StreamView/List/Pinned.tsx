@@ -12,6 +12,8 @@ interface PinnedListProps {
   addPinnedVideo: (stream: StreamData) => void;
   removePinnedVideo: () => void;
   getAudioMutedState: (stream: StreamData) => boolean;
+
+  activeSocketId: string | null;
 }
 
 function PinnedGrid({
@@ -19,6 +21,7 @@ function PinnedGrid({
   removePinnedVideo,
   addPinnedVideo,
   getAudioMutedState,
+  activeSocketId,
 }: PinnedListProps) {
   const { paginatedItems: subPaginatedStreams, ...subPaginationControlsProps } = usePagination({
     itemsPerPage: ITEMS_PER_SUB_GRID,
@@ -38,6 +41,7 @@ function PinnedGrid({
             mediaType={pinnedVideoStreamData.consumer?.appData?.mediaTypes}
             isMicOn={getAudioMutedState(pinnedVideoStreamData)}
             nickname={pinnedVideoStreamData.nickname}
+            activeSocketId={activeSocketId}
           />
         </div>
       </div>
@@ -48,6 +52,7 @@ function PinnedGrid({
             videoStreamData={subPaginatedStreams}
             onVideoClick={addPinnedVideo}
             getAudioMutedState={getAudioMutedState}
+            activeSocketId={activeSocketId}
           />
         </PaginationControls>
       </div>

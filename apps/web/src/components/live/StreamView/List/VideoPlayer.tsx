@@ -7,7 +7,6 @@ import PinIc from '@/assets/icons/pin.svg?react';
 import Avatar from '@/components/common/Avatar';
 import Badge from '@/components/common/Badge';
 import Loading from '@/components/common/Loading';
-import useAudioLevelDetector from '@/hooks/mediasoup/useAudioLevelDetector';
 import cn from '@/utils/cn';
 
 const videoVariants = cva(
@@ -39,6 +38,7 @@ export interface VideoPlayerProps {
   nickname: string;
   socketId?: string;
   isPinned?: boolean;
+  activeSocketId: string | null;
 }
 
 function VideoPlayer({
@@ -50,11 +50,11 @@ function VideoPlayer({
   nickname,
   socketId,
   isPinned = false,
+  activeSocketId,
 }: VideoPlayerProps) {
   const [isLoading, setIsLoading] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  const { activeSocketId } = useAudioLevelDetector();
   const isSpeaking = activeSocketId === socketId;
 
   useEffect(() => {

@@ -1,4 +1,3 @@
-import { cva } from 'class-variance-authority';
 import { useEffect, useRef, useState } from 'react';
 
 import { StreamData } from '@/components/live/StreamView';
@@ -9,6 +8,7 @@ interface SubVideoGridProps {
   pinnedVideoStreamData: StreamData | null;
   onVideoClick: (stream: StreamData) => void;
   getAudioMutedState: (stream: StreamData) => boolean;
+  activeSocketId: string | null;
 }
 
 function SubVideoGrid({
@@ -16,6 +16,7 @@ function SubVideoGrid({
   pinnedVideoStreamData,
   onVideoClick,
   getAudioMutedState,
+  activeSocketId,
 }: SubVideoGridProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [videoMaxWidth, setVideoMaxWidth] = useState(0);
@@ -55,6 +56,7 @@ function SubVideoGrid({
             mediaType={streamData.consumer?.appData?.mediaTypes}
             socketId={streamData.socketId}
             isPinned={pinnedVideoStreamData?.stream?.id === streamData.stream?.id}
+            activeSocketId={activeSocketId}
           />
         </div>
       ))}
