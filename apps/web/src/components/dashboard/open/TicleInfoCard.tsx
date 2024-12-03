@@ -1,6 +1,7 @@
 import { Link, useNavigate } from '@tanstack/react-router';
 import { MouseEvent } from 'react';
 
+import AiSummaryIc from '@/assets/icons/ai-summary.svg?react';
 import PersonFilledIc from '@/assets/icons/person-filled.svg?react';
 import Button from '@/components/common/Button';
 import { useApplicantsTicle, useStartTicle } from '@/hooks/api/dashboard';
@@ -8,6 +9,7 @@ import useModal from '@/hooks/useModal';
 import { formatDateTimeRange } from '@/utils/date';
 
 import ApplicantsDialog from './ApplicantsDialog';
+import AiSummaryDialog from '../AiSummaryDialog';
 
 interface TicleInfoCardProps {
   ticleId: number;
@@ -18,7 +20,17 @@ interface TicleInfoCardProps {
 }
 
 function TicleInfoCard({ ticleId, ticleTitle, startTime, endTime, status }: TicleInfoCardProps) {
-  const { isOpen, onOpen, onClose } = useModal();
+  const {
+    isOpen: isApplicantsDialogOpen,
+    onOpen: onApplicantsDialogOpen,
+    onClose: onApplicantsDialogClose,
+  } = useModal();
+
+  const {
+    isOpen: isAiSummaryDialogOpen,
+    onOpen: onAiSummaryDialogOpen,
+    onClose: onAiSummaryDialogClose,
+  } = useModal();
 
   const { data: applicantsData } = useApplicantsTicle(ticleId.toString());
   const { mutate: ticleStartMutate } = useStartTicle();
@@ -36,7 +48,12 @@ function TicleInfoCard({ ticleId, ticleTitle, startTime, endTime, status }: Ticl
 
   const handleApplicantsDialogOpen = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    onOpen();
+    onApplicantsDialogOpen();
+  };
+
+  const handleAiSummaryDialogOpen = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    onAiSummaryDialogOpen();
   };
 
   return (
@@ -55,6 +72,17 @@ function TicleInfoCard({ ticleId, ticleTitle, startTime, endTime, status }: Ticl
           </div>
         </div>
         <div className="flex gap-9">
+          {status === 'closed' && (
+            <button
+              className="flex items-center gap-2 rounded-md p-2.5 hover:bg-teritary"
+              onClick={handleAiSummaryDialogOpen}
+            >
+              <span className="text-title2 text-primary">AI 음성 요약</span>
+              <div>
+                <AiSummaryIc className="fill-primary" />
+              </div>
+            </button>
+          )}
           <button
             className="flex items-center gap-2 rounded-md p-2.5 hover:bg-teritary"
             onClick={handleApplicantsDialogOpen}
@@ -77,8 +105,19 @@ function TicleInfoCard({ ticleId, ticleTitle, startTime, endTime, status }: Ticl
                 : '티클 시작하기'}
           </Button>
         </div>
-        {isOpen && (
-          <ApplicantsDialog onClose={onClose} isOpen={isOpen} applicants={applicantsData} />
+        {isApplicantsDialogOpen && (
+          <ApplicantsDialog
+            onClose={onApplicantsDialogClose}
+            isOpen={isApplicantsDialogOpen}
+            applicants={applicantsData}
+          />
+        )}
+        {isAiSummaryDialogOpen && (
+          <AiSummaryDialog
+            onClose={onAiSummaryDialogClose}
+            isOpen={isAiSummaryDialogOpen}
+            ticleId={ticleId.toString()}
+          />
         )}
       </div>
     </Link>

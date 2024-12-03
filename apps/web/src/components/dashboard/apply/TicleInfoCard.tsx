@@ -6,7 +6,7 @@ import Button from '@/components/common/Button';
 import useModal from '@/hooks/useModal';
 import { formatDateTimeRange } from '@/utils/date';
 
-import AiSummaryDialog from './AiSummaryDialog';
+import AiSummaryDialog from '../AiSummaryDialog';
 
 interface TicleInfoCardProps {
   ticleId: number;
