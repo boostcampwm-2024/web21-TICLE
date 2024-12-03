@@ -14,8 +14,7 @@ export class LogBatchService {
     private readonly loggerService: LoggerService
   ) {}
 
-  // @Cron(CronExpression.EVERY_DAY_AT_1AM)
-  @Cron('10 * * * * *')
+  @Cron(CronExpression.EVERY_DAY_AT_1AM)
   async uploadLogToObjectStorage() {
     const logsDir = path.join(__dirname, '../../../logs');
     const today = new Date();
