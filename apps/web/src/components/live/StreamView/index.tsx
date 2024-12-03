@@ -6,6 +6,8 @@ import UnPinnedGrid from '@/components/live/StreamView/List/UnPinned';
 import useAudioState from '@/hooks/useAudioState';
 import usePinnedVideo from '@/hooks/usePinnedVideo';
 
+import AudioStreams from './AudioStreams';
+
 export interface StreamData {
   socketId: string;
   nickname: string;
@@ -31,6 +33,7 @@ const StreamView = () => {
       ) : (
         <UnPinnedGrid addPinnedVideo={selectPinnedVideo} getAudioMutedState={getAudioMutedState} />
       )}
+      <AudioStreams />
     </div>
   );
 };

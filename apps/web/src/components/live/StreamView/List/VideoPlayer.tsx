@@ -10,8 +10,6 @@ import Loading from '@/components/common/Loading';
 import useAudioLevelDetector from '@/hooks/mediasoup/useAudioLevelDetector';
 import cn from '@/utils/cn';
 
-import AudioStreams from '../AudioStreams';
-
 const videoVariants = cva(
   'absolute h-full w-full rounded-lg object-cover transition-opacity duration-300',
   {
@@ -56,7 +54,7 @@ function VideoPlayer({
   const [isLoading, setIsLoading] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  const { activeSocketId, createAudioLevel } = useAudioLevelDetector();
+  const { activeSocketId } = useAudioLevelDetector();
   const isSpeaking = activeSocketId === socketId;
 
   useEffect(() => {
@@ -98,7 +96,6 @@ function VideoPlayer({
             />
           </div>
         ))}
-      <AudioStreams createAudioLevel={createAudioLevel} />
       {!stream && (
         <div
           className={cn(

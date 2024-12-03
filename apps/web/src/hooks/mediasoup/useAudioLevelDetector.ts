@@ -152,6 +152,13 @@ const useAudioLevelDetector = () => {
   };
 
   useEffect(() => {
+    audioStreams.forEach((stream) => {
+      if (stream.paused) return;
+      createAudioLevel(stream);
+    });
+  }, [audioStreams]);
+
+  useEffect(() => {
     return () => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
