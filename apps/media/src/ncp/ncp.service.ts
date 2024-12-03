@@ -35,9 +35,10 @@ export class NcpService {
 
     try {
       await this.s3.send(new PutObjectCommand(params));
+      fs.unlink(localFilePath, () => {});
       const serverURL = this.configService.get<string>('VITE_API_URL');
       //todo 예외처리
-      await fetch(`${serverURL}/stream/audio`, {
+      fetch(`${serverURL}/stream/audio`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

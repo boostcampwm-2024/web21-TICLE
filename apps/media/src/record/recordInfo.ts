@@ -10,21 +10,29 @@ export class RecordInfo {
   plainTransport: types.PlainTransport;
   recordConsumer: types.Consumer;
 
+  ncpService: NcpService;
+
   port: number;
 
   ffmpegProcess: FfmpegCommand;
 
-  constructor(port: number, socketId: string) {
+  constructor(port: number, socketId: string, ncpService: NcpService) {
     this.port = port;
     this.socketId = socketId;
+    this.ncpService = ncpService;
   }
 
   setPlainTransport(plainTransport: types.PlainTransport) {
     this.plainTransport = plainTransport;
   }
 
-  setRecordConsumer(recordConsumer: types.Consumer) {
+  setRecordConsumer(recordConsumer: types.Consumer, roomId: string) {
     this.recordConsumer = recordConsumer;
+    this.recordConsumer.on('producerresume', () => {
+      if (!this.ffmpegProcess) {
+        this.createFfmpegProcess(roomId);
+      }
+    });
   }
 
   pauseRecordProcess() {
@@ -46,10 +54,13 @@ export class RecordInfo {
     }
   }
 
-  createFfmpegProcess(roomId: string, ncpService: NcpService) {
+  createFfmpegProcess(roomId: string) {
+    if (this.ffmpegProcess) {
+      return;
+    }
+
     const rtpParameter = this.recordConsumer.rtpParameters;
     const sdpString = this.createSdpText(this.port, rtpParameter);
-    const sdpStream = this.convertStringToStream(sdpString);
     const sdpFilePath = `./record/${roomId}_${Date.now()}.sdp`;
     writeFileSync(sdpFilePath, sdpString);
 
@@ -65,19 +76,18 @@ export class RecordInfo {
       .audioBitrate('192k')
       .audioFrequency(48000)
       .audioChannels(2)
-      .on('stderr', (data) => {
-        console.log(data);
-      })
+
       .on('error', (err) => {
+        // todo 예외처리
         console.log('FFmpeg error:1', err);
-        sdpStream.destroy();
-        this.stopRecordProcess();
       })
       .on('end', () => {
-        // ncpService.uploadFile(filePath, remoteFileName, roomId);
-        console.log('녹음 종료');
+        this.ncpService.uploadFile(filePath, remoteFileName, roomId);
+        unlinkSync(sdpFilePath);
+        this.ffmpegProcess = null;
       })
       .save(filePath);
+
     this.ffmpegProcess = ffmpegCommand;
   }
 

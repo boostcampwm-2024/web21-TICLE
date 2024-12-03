@@ -51,13 +51,16 @@ export class RecordService {
       recordInfo,
       router.rtpCapabilities,
       audioProducer.id,
-      audioProducer.paused
+      audioProducer.paused,
+      roomId
     );
-    recordInfo.createFfmpegProcess(roomId, this.ncpService);
+    if (!audioProducer.paused) {
+      recordInfo.createFfmpegProcess(roomId);
+    }
   }
 
   private setRecordInfo(roomId: string, port: number, socketId: string) {
-    const recordInfo = new RecordInfo(port, socketId);
+    const recordInfo = new RecordInfo(port, socketId, this.ncpService);
     this.recordInfos.set(roomId, recordInfo);
     return recordInfo;
   }
@@ -76,7 +79,8 @@ export class RecordService {
     recordInfo: RecordInfo,
     rtpCapabilities: types.RtpCapabilities,
     producerId: string,
-    producerPaused: boolean
+    producerPaused: boolean,
+    roomId: string
   ) {
     const plainTransport = recordInfo.plainTransport;
     const consumer = await this.mediasoupService.createRecordConsumer(
@@ -86,7 +90,7 @@ export class RecordService {
       producerPaused
     );
 
-    recordInfo.setRecordConsumer(consumer);
+    recordInfo.setRecordConsumer(consumer, roomId);
     return consumer;
   }
 
