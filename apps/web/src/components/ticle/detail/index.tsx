@@ -13,7 +13,7 @@ import { formatDateTimeRange } from '@/utils/date';
 import CtaButton from './CtaButton';
 
 function Detail() {
-  const { ticleId } = useParams({ from: '/_authenticated/ticle/$ticleId' });
+  const { ticleId } = useParams({ from: '/ticle/$ticleId' });
   const userId = useAuthStore.getState().authInfo?.userId;
   const { data } = useTicle(ticleId, userId || '');
   const { mutate: applyMutate } = useApplyTicle();
