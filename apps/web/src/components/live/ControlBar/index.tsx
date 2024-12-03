@@ -143,7 +143,11 @@ const ControlBar = ({ isOwner, onTicleEnd }: ControlBarProps) => {
         />
       )}
       {isOpenSettingModal && (
-        <SettingDialog isOpen={isOpenSettingModal} onClose={onCloseSettingModal} />
+        <SettingDialog
+          isOpen={isOpenSettingModal}
+          onClose={onCloseSettingModal}
+          isOwner={isOwner}
+        />
       )}
     </>
   );

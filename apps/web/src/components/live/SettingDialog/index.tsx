@@ -1,4 +1,5 @@
 import { cva } from 'class-variance-authority';
+import { i } from 'node_modules/@repo/mediasoup/dist/index-uthNRcro';
 import { useState } from 'react';
 
 import { Dialog } from '@/components/common/Dialog';
@@ -23,10 +24,12 @@ const listVariants = cva(
 
 const SIDEBAR_ITEMS = [
   {
+    onlyForOwner: false,
     title: '오디오 및 비디오',
     Component: SelectMedia,
   },
   {
+    onlyForOwner: true,
     title: 'AI 음성 요약',
     Component: AiSummary,
   },
@@ -35,9 +38,10 @@ const SIDEBAR_ITEMS = [
 interface SettingDialogProps {
   isOpen: boolean;
   onClose: () => void;
+  isOwner: boolean;
 }
 
-function SettingDialog({ isOpen, onClose }: SettingDialogProps) {
+function SettingDialog({ isOpen, onClose, isOwner }: SettingDialogProps) {
   const [activeIndex, setActiveIndex] = useState(0);
 
   const Component = SIDEBAR_ITEMS[activeIndex]?.Component;
@@ -48,15 +52,18 @@ function SettingDialog({ isOpen, onClose }: SettingDialogProps) {
       <Dialog.Close onClose={onClose} />
       <Dialog.Content className="flex h-full flex-1 items-center justify-center gap-x-4">
         <ul className="flex h-full basis-32 flex-col items-start justify-start gap-y-2">
-          {SIDEBAR_ITEMS.map((item, index) => (
-            <li
-              key={index}
-              className={listVariants({ active: activeIndex === index })}
-              onClick={() => setActiveIndex(index)}
-            >
-              {item.title}
-            </li>
-          ))}
+          {SIDEBAR_ITEMS.map(
+            (item, index) =>
+              (item.onlyForOwner ? isOwner : true) && (
+                <li
+                  key={index}
+                  className={listVariants({ active: activeIndex === index })}
+                  onClick={() => setActiveIndex(index)}
+                >
+                  {item.title}
+                </li>
+              )
+          )}
         </ul>
         <div className="h-full flex-1">{Component && <Component />}</div>
       </Dialog.Content>
