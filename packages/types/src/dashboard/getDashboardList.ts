@@ -61,3 +61,9 @@ export const DashboardApplicantsResponseSchema = z.array(
 );
 
 export type DashboardApplicantsResponse = z.infer<typeof DashboardApplicantsResponseSchema>;
+
+export const DashboardAiSummaryResponseSchema = z.object({
+  summary: z.array(z.string()),
+});
+
+export type DashboardAiSummaryResponse = z.infer<typeof DashboardAiSummaryResponseSchema>;

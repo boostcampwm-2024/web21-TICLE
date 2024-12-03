@@ -59,20 +59,24 @@ function TicleInfoCard({
           </div>
         </div>
         <div className="flex gap-9">
-          <button
-            className="flex items-center gap-2 rounded-md p-2.5 hover:bg-teritary"
-            onClick={handleAiSummaryDialogOpen}
-          >
-            <span className="text-title2 text-primary">AI 음성 요약</span>
-            <div>
-              <AiSummaryIc className="fill-primary" />
-            </div>
-          </button>
+          {status === 'closed' && (
+            <button
+              className="flex items-center gap-2 rounded-md p-2.5 hover:bg-teritary"
+              onClick={handleAiSummaryDialogOpen}
+            >
+              <span className="text-title2 text-primary">AI 음성 요약</span>
+              <div>
+                <AiSummaryIc className="fill-primary" />
+              </div>
+            </button>
+          )}
           <Button disabled={status === 'closed'} onClick={handleTicleParticipate} className="w-36">
             {status === 'closed' ? '종료된 티클' : '티클 참여하기'}
           </Button>
         </div>
-        {isOpen && <AiSummaryDialog onClose={onClose} isOpen={isOpen} />}
+        {isOpen && (
+          <AiSummaryDialog onClose={onClose} isOpen={isOpen} ticleId={ticleId.toString()} />
+        )}
       </div>
     </Link>
   );

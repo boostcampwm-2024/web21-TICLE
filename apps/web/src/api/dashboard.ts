@@ -1,4 +1,6 @@
 import {
+  DashboardAiSummaryResponse,
+  DashboardAiSummaryResponseSchema,
   DashboardApplicantsResponse,
   DashboardApplicantsResponseSchema,
   DashboardListResponse,
@@ -26,6 +28,14 @@ const getApplicantsTicle = async (ticleId: string) => {
   });
 };
 
+const getAiSummary = async (ticleId: string) => {
+  return request<DashboardAiSummaryResponse>({
+    method: 'GET',
+    url: `/stream/summary/${ticleId}`,
+    schema: DashboardAiSummaryResponseSchema,
+  });
+};
+
 const startTicle = async (ticleId: string) => {
   const { data } = await axiosInstance.post(`/dashboard/${ticleId}/start`);
 
@@ -38,4 +48,4 @@ const joinTicle = async (ticleId: string) => {
   return data;
 };
 
-export { getDashboardTicleList, startTicle, joinTicle, getApplicantsTicle };
+export { getDashboardTicleList, startTicle, joinTicle, getApplicantsTicle, getAiSummary };
