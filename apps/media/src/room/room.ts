@@ -6,12 +6,14 @@ import { Peer } from './peer';
 
 export class Room {
   id: string;
+  masterSocketId: string;
   router: Router;
   peers: Map<string, Peer>;
 
-  constructor(roomId: string, router: Router) {
+  constructor(roomId: string, router: Router, masterSocketId: string) {
     this.id = roomId;
     this.router = router;
+    this.masterSocketId = masterSocketId;
     this.peers = new Map();
   }
 

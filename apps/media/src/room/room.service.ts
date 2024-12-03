@@ -11,8 +11,8 @@ export class RoomService {
 
   constructor() {}
 
-  createRoom(roomId: string, router: Router) {
-    const room = new Room(roomId, router);
+  createRoom(roomId: string, router: Router, masterSocketId: string) {
+    const room = new Room(roomId, router, masterSocketId);
     this.rooms.set(roomId, room);
     return roomId;
   }

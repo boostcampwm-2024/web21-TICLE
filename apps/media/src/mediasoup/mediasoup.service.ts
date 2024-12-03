@@ -48,7 +48,7 @@ export class MediasoupService implements OnModuleInit {
     return worker;
   }
 
-  async createRoom(roomId: string) {
+  async createRoom(roomId: string, masterSocketId: string) {
     const isExistRoom = this.roomService.existRoom(roomId);
     if (isExistRoom) {
       return roomId;
@@ -59,7 +59,7 @@ export class MediasoupService implements OnModuleInit {
       mediaCodecs: this.mediasoupConfig.router.mediaCodecs,
     });
 
-    return this.roomService.createRoom(roomId, router);
+    return this.roomService.createRoom(roomId, router, masterSocketId);
   }
 
   joinRoom(roomId: string, socketId: string, nickname: string) {

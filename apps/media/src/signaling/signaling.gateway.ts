@@ -24,8 +24,8 @@ export class SignalingGateway implements OnGatewayDisconnect {
   ) {}
 
   @SubscribeMessage(SOCKET_EVENTS.createRoom)
-  async handleCreateRoom(@MessageBody('roomId') roomId: string) {
-    await this.mediasoupService.createRoom(roomId);
+  async handleCreateRoom(@ConnectedSocket() client: Socket, @MessageBody('roomId') roomId: string) {
+    await this.mediasoupService.createRoom(roomId, client.id);
     return { roomId };
   }
 
