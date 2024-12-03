@@ -1,8 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { client } from '@repo/mediasoup';
 
-import { StreamData } from '@/components/live/StreamView';
-import { useDummyStreamState } from '@/contexts/dummyStream/context';
 import { useLocalStreamState } from '@/contexts/localStream/context';
 import { useMediasoupState } from '@/contexts/mediasoup/context';
 import { useRemoteStreamAction, useRemoteStreamState } from '@/contexts/remoteStream/context';
@@ -11,14 +9,13 @@ import useAuthStore from '@/stores/useAuthStore';
 
 interface PaginationParams {
   itemsPerPage: number;
-  pinnedStream?: StreamData;
+  pinnedStream?: client.RemoteStream;
 }
 
 const usePagination = ({ itemsPerPage, pinnedStream }: PaginationParams) => {
   const { socketRef } = useMediasoupState();
   const { video, screen } = useLocalStreamState();
 
-  const { dummyStreams } = useDummyStreamState();
   const { videoStreams } = useRemoteStreamState();
 
   const nickname = useAuthStore.getState().authInfo?.nickname;
@@ -27,11 +24,11 @@ const usePagination = ({ itemsPerPage, pinnedStream }: PaginationParams) => {
 
   const [currentPage, setCurrentPage] = useState(0);
 
-  const prevPinStreamRef = useRef<StreamData>();
-  const prevGridItemsRef = useRef<StreamData[]>([]);
+  const prevPinStreamRef = useRef<client.RemoteStream>();
+  const prevGridItemsRef = useRef<client.RemoteStream[]>([]);
 
   const paginatedItems = useMemo(() => {
-    const totalItems: StreamData[] = [];
+    const totalItems: client.RemoteStream[] = [];
 
     totalItems.push({
       socketId: 'local',
@@ -39,6 +36,7 @@ const usePagination = ({ itemsPerPage, pinnedStream }: PaginationParams) => {
       stream: video.stream,
       paused: video.paused,
       nickname: nickname ?? '',
+      mediaType: 'video',
     });
 
     if (screen.stream) {
@@ -48,16 +46,17 @@ const usePagination = ({ itemsPerPage, pinnedStream }: PaginationParams) => {
         stream: screen.stream,
         paused: false,
         nickname: nickname ?? '',
+        mediaType: 'screen',
       });
     }
 
-    totalItems.push(...videoStreams, ...dummyStreams);
+    totalItems.push(...videoStreams);
 
     const startIdx = currentPage * itemsPerPage;
     const endIdx = startIdx + itemsPerPage;
 
     return totalItems.slice(startIdx, endIdx);
-  }, [videoStreams, currentPage, itemsPerPage, video, screen, nickname, dummyStreams]);
+  }, [videoStreams, currentPage, itemsPerPage, video, screen, nickname]);
 
   const onNextPage = () => {
     setCurrentPage((prev) => Math.min(totalPages - 1, prev + 1));
@@ -67,7 +66,7 @@ const usePagination = ({ itemsPerPage, pinnedStream }: PaginationParams) => {
     setCurrentPage((prev) => Math.max(0, prev - 1));
   };
 
-  const streamLength = dummyStreams.length + videoStreams.length + 1 + (screen.stream ? 1 : 0);
+  const streamLength = videoStreams.length + 1 + (screen.stream ? 1 : 0);
   const totalPages = Math.ceil(streamLength / itemsPerPage);
 
   const resumeGridStreams = useDebouncedCallback(() => {
