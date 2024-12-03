@@ -76,7 +76,6 @@ export class RecordInfo {
       .audioBitrate('192k')
       .audioFrequency(48000)
       .audioChannels(2)
-
       .on('error', (err) => {
         // todo 예외처리
         console.log('FFmpeg error:1', err);

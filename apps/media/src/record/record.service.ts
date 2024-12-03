@@ -35,7 +35,8 @@ export class RecordService {
       return;
     }
     const router = room.router;
-    const audioProducer = room.getPeer(socketId).getAudioProducer();
+    const peer = room.getPeer(socketId);
+    const audioProducer = peer.getAudioProducer();
     if (!audioProducer) {
       return;
     }
