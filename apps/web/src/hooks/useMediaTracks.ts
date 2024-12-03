@@ -37,7 +37,6 @@ const useMediaTracks = () => {
     const stream = await getCameraStream({
       video: { deviceId: selectedVideoDeviceId },
     });
-
     const track = stream.getVideoTracks()[0];
 
     if (!track) {

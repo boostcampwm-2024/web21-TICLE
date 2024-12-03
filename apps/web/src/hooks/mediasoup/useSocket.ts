@@ -4,6 +4,8 @@ import { io, Socket } from 'socket.io-client';
 import { SOCKET_EVENTS } from '@repo/mediasoup';
 
 import { ENV } from '@/constants/env';
+import { toast } from '@/core/toast';
+import { renderError } from '@/utils/toast/renderMessage';
 
 const SOCKET_OPTIONS = {
   transports: ['websocket', 'polling'],
@@ -38,6 +40,10 @@ const useSocket = (): UseSocketReturn => {
 
   const initSocketEvents = useCallback(
     (socket: Socket) => {
+      socket.on(SOCKET_EVENTS.error, (result) => {
+        toast(renderError(result.error.message));
+      });
+
       socket.on(SOCKET_EVENTS.connect, () => {
         setIsConnected(true);
         setIsError(null);

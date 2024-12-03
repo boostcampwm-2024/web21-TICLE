@@ -2,7 +2,9 @@ import { useEffect } from 'react';
 import { MediaTypes } from '@repo/mediasoup';
 
 import { useMediasoupAction } from '@/contexts/mediasoup/context';
+import { toast } from '@/core/toast';
 import useMediaTracks from '@/hooks/useMediaTracks';
+import { renderError } from '@/utils/toast/renderMessage';
 
 const DEFAULT_LOCAL_STREAM = {
   stream: null,
@@ -41,12 +43,14 @@ const useLocalStream = () => {
       const track = await getCameraTrack();
 
       if (!track) {
-        return;
+        throw new Error();
       }
 
       return createProducer('video', track);
-    } catch (_) {
+    } catch (e) {
+      toast(renderError('카메라를 찾을 수 없습니다.'));
       closeStream('video');
+      throw e;
     }
   };
 
@@ -55,29 +59,36 @@ const useLocalStream = () => {
       const track = await getAudioTrack();
 
       if (!track) {
-        return;
+        throw new Error();
       }
-
       return createProducer('audio', track);
-    } catch (_) {
+    } catch (e) {
+      toast(renderError('마이크를 찾을 수 없습니다.'));
       closeStream('audio');
+      throw e;
     }
   };
 
   const startScreenStream = async () => {
-    const track = await getScreenTrack();
+    try {
+      const track = await getScreenTrack();
 
-    if (!track) {
-      return;
-    }
+      if (!track) {
+        throw new Error();
+      }
 
-    track.onended = () => {
-      track.stop();
+      track.onended = () => {
+        track.stop();
+        closeStream('screen');
+        closeProducer('screen');
+      };
+
+      return createProducer('screen', track);
+    } catch (e) {
+      toast(renderError('화면 공유를 시작할 수 없습니다.'));
       closeStream('screen');
-      closeProducer('screen');
-    };
-
-    return createProducer('screen', track);
+      throw e;
+    }
   };
 
   const closeScreenStream = () => {
