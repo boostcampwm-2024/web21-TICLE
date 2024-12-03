@@ -1,8 +1,12 @@
 import { Link, useNavigate } from '@tanstack/react-router';
 import { MouseEvent } from 'react';
 
+import AiSummaryIc from '@/assets/icons/ai-summary.svg?react';
 import Button from '@/components/common/Button';
+import useModal from '@/hooks/useModal';
 import { formatDateTimeRange } from '@/utils/date';
+
+import AiSummaryDialog from './AiSummaryDialog';
 
 interface TicleInfoCardProps {
   ticleId: number;
@@ -21,12 +25,18 @@ function TicleInfoCard({
   endTime,
   status,
 }: TicleInfoCardProps) {
+  const { isOpen, onOpen, onClose } = useModal();
   const { dateStr, timeRangeStr } = formatDateTimeRange(startTime, endTime);
   const navigate = useNavigate();
 
   const handleTicleParticipate = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     navigate({ to: `/live/${ticleId}` });
+  };
+
+  const handleAiSummaryDialogOpen = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    onOpen();
   };
 
   return (
@@ -48,9 +58,21 @@ function TicleInfoCard({
             <span className="text-body1 text-main">{`${dateStr} ${timeRangeStr}`}</span>
           </div>
         </div>
-        <Button disabled={status === 'closed'} onClick={handleTicleParticipate} className="w-36">
-          {status === 'closed' ? '종료된 티클' : '티클 참여하기'}
-        </Button>
+        <div className="flex gap-9">
+          <button
+            className="flex items-center gap-2 rounded-md p-2.5 hover:bg-teritary"
+            onClick={handleAiSummaryDialogOpen}
+          >
+            <span className="text-title2 text-primary">AI 음성 요약</span>
+            <div>
+              <AiSummaryIc className="fill-primary" />
+            </div>
+          </button>
+          <Button disabled={status === 'closed'} onClick={handleTicleParticipate} className="w-36">
+            {status === 'closed' ? '종료된 티클' : '티클 참여하기'}
+          </Button>
+        </div>
+        {isOpen && <AiSummaryDialog onClose={onClose} isOpen={isOpen} />}
       </div>
     </Link>
   );
