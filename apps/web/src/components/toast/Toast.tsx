@@ -6,7 +6,7 @@ import { ToastProps } from '@/core/toast/type';
 import useToast from '@/hooks/toast/useToast';
 
 const containerVariants = cva(
-  'z-0 mb-4 flex min-h-16 cursor-pointer justify-between overflow-hidden rounded-md bg-[#ffffffb3] text-white shadow-md [&.bounce-enter]:animate-bounce-in-bottom [&.bounce-exit]:animate-bounce-out-bottom',
+  '[&.bounce-enter]:animate-bounce-in-bottom [&.bounce-exit]:animate-bounce-out-bottom z-0 mb-4 flex min-h-16 cursor-pointer justify-between overflow-hidden rounded-md border border-main bg-[#ffffffb3] text-white shadow-md',
   {
     variants: {
       closeOnClick: {
