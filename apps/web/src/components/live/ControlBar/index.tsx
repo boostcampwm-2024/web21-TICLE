@@ -137,7 +137,7 @@ const ControlBar = ({ isOwner, onTicleEnd }: ControlBarProps) => {
       {isOpenExitModal && (
         <ExitDialog
           isOpen={isOpenExitModal}
-          isOwner={false}
+          isOwner={isOwner}
           handleExit={handleExit}
           onClose={onCloseExitModal}
         />
