@@ -1,5 +1,5 @@
 import { useParams } from '@tanstack/react-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { SOCKET_EVENTS } from '@repo/mediasoup';
 
 import Button from '@/components/common/Button';
@@ -8,14 +8,22 @@ import { useMediasoupState } from '@/contexts/mediasoup/context';
 function AiSummary() {
   const [isRecording, setIsRecording] = useState<boolean>(false);
   const { socketRef } = useMediasoupState();
+  const socket = socketRef.current;
   const { ticleId: roomId } = useParams({ from: '/_authenticated/live/$ticleId' });
 
   const handleRecordStart = () => {
-    const socket = socketRef.current;
     if (!socket) return;
     socket.emit(SOCKET_EVENTS.startRecord, { roomId });
     setIsRecording(true);
   };
+
+  useEffect(() => {
+    if (!socket) return;
+    socket.emit(SOCKET_EVENTS.getIsRecording, { roomId }, (res) => {
+      const { isRecording } = res;
+      setIsRecording(isRecording);
+    });
+  }, []);
 
   return (
     <div className="flex flex-col gap-4">
