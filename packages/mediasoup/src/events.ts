@@ -42,6 +42,7 @@ export const SOCKET_EVENTS = {
   stopRecord: 'stop-record',
   pauseRecord: 'pause-record',
   resumeRecord: 'resume-record',
+  getIsRecording: 'get-is-recording',
 } as const;
 
 export const TRANSPORT_EVENTS = {

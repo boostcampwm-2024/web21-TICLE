@@ -142,4 +142,8 @@ export class RecordService {
   private releasePort(port: number): void {
     this.usedPorts.delete(port);
   }
+
+  getIsRecording(roomId: string) {
+    return this.recordInfos.has(roomId);
+  }
 }
