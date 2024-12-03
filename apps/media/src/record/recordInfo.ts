@@ -1,4 +1,4 @@
-import { Readable } from 'stream';
+import { unlinkSync, writeFileSync } from 'fs';
 
 import ffmpeg, { FfmpegCommand } from 'fluent-ffmpeg';
 import { types } from 'mediasoup';
@@ -44,24 +44,21 @@ export class RecordInfo {
       this.plainTransport.close();
       this.plainTransport = null;
     }
-    if (this.ffmpegProcess) {
-      // this.ffmpegProcess.kill('SIGINT');
-      this.ffmpegProcess.kill('SIGTERM');
-      console.log('녹음 프로세스 종료');
-      this.ffmpegProcess = null;
-    }
   }
 
   createFfmpegProcess(roomId: string, ncpService: NcpService) {
     const rtpParameter = this.recordConsumer.rtpParameters;
     const sdpString = this.createSdpText(this.port, rtpParameter);
     const sdpStream = this.convertStringToStream(sdpString);
+    const sdpFilePath = `./record/${roomId}_${Date.now()}.sdp`;
+    writeFileSync(sdpFilePath, sdpString);
 
     const filePath = `./record/${roomId}_${Date.now()}.mp3`;
 
     const remoteFileName = `uploads/${roomId}_${Date.now()}.mp3`;
+
     const ffmpegCommand = ffmpeg()
-      .input(sdpStream)
+      .input(sdpFilePath)
       .inputFormat('sdp')
       .inputOptions(['-protocol_whitelist', 'pipe,udp,rtp,file'])
       .audioCodec('libmp3lame')
@@ -77,8 +74,6 @@ export class RecordInfo {
         this.stopRecordProcess();
       })
       .on('end', () => {
-        sdpStream.destroy();
-        this.stopRecordProcess();
         // ncpService.uploadFile(filePath, remoteFileName, roomId);
         console.log('녹음 종료');
       })
@@ -97,18 +92,7 @@ t=0 0
 m=audio ${port} RTP/AVP ${payloadType}
 a=rtpmap:${payloadType} opus/48000/2
 a=fmtp:${payloadType} minptime=10;useinbandfec=1
-a=receiveonly
+a=sendrecv
 `;
-  };
-
-  private convertStringToStream = (stringToConvert: string) => {
-    const stream = new Readable({
-      read() {
-        this.push(stringToConvert);
-        this.push(null);
-      },
-    });
-
-    return stream;
   };
 }

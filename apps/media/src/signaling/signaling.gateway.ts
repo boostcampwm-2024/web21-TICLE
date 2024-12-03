@@ -25,6 +25,7 @@ export class SignalingGateway implements OnGatewayDisconnect {
 
   @SubscribeMessage(SOCKET_EVENTS.createRoom)
   async handleCreateRoom(@ConnectedSocket() client: Socket, @MessageBody('roomId') roomId: string) {
+    console.log(client.id);
     await this.mediasoupService.createRoom(roomId);
     return { roomId };
   }
@@ -192,12 +193,18 @@ export class SignalingGateway implements OnGatewayDisconnect {
   }
 
   @SubscribeMessage(SOCKET_EVENTS.startRecord)
-  async recordStart(@ConnectedSocket() client: Socket, @MessageBody('roomId') roomId: string) {
-    await this.recordService.startRecord(roomId, client.id);
+  async recordStart(
+    @ConnectedSocket() client: Socket,
+    @MessageBody('roomId') roomId: string,
+    @MessageBody('socketId') socketId: string
+  ) {
+    // await this.recordService.startRecord(roomId, client.id);
+    await this.recordService.startRecord(roomId, socketId);
   }
 
   @SubscribeMessage(SOCKET_EVENTS.stopRecord)
   recordStop(@MessageBody('roomId') roomId: string) {
+    console.log('recordStop signal');
     this.recordService.stopRecord(roomId);
   }
 
