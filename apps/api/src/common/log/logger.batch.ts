@@ -1,3 +1,4 @@
+import fs from 'fs/promises';
 import path from 'path';
 
 import { Injectable } from '@nestjs/common';
@@ -23,11 +24,18 @@ export class LogBatchService {
     const logFileName = `application-${today.toISOString().split('T')[0]}.log`;
     const localFilePath = path.join(logsDir, logFileName);
     try {
+      await fs.access(localFilePath);
+
       const remoteFileName = `logs/${logFileName}`;
       const result = await this.ncpService.uploadFile(localFilePath, remoteFileName);
       this.loggerService.log(`Log file uploaded successfully: ${result}`, 'logBatchService');
     } catch (error) {
-      this.loggerService.log(`Failed to upload log file: ${error}`, 'logBatchService');
+      const err = error as Error;
+      this.loggerService.error(
+        `Log file not found: ${localFilePath}`,
+        err.stack,
+        'logBatchService'
+      );
     }
   }
 }

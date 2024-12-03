@@ -22,14 +22,13 @@ export class NcpService {
     const bucketName = this.configService.get<string>('NCP_OBJECT_STORAGE_BUCKET');
     const endpoint = this.configService.get<string>('NCP_OBJECT_STORAGE_ENDPOINT');
 
-    const fileStream = fs.createReadStream(localFilePath);
-    const params = {
-      Bucket: bucketName,
-      Key: remoteFileName,
-      Body: fileStream,
-    };
-
     try {
+      const fileStream = fs.createReadStream(localFilePath);
+      const params = {
+        Bucket: bucketName,
+        Key: remoteFileName,
+        Body: fileStream,
+      };
       const uploadResponse = await this.s3.send(new PutObjectCommand(params));
       const url = `${endpoint}/${bucketName}/${remoteFileName}`;
       return remoteFileName;

@@ -176,4 +176,10 @@ export class SignalingGateway implements OnGatewayDisconnect {
   ) {
     return this.mediasoupService.resumeConsumers(client.id, roomId, consumerIds);
   }
+
+  @SubscribeMessage(SOCKET_EVENTS.closeRoom)
+  closeMeetingRoom(@ConnectedSocket() client: Socket, @MessageBody('roomId') roomId: string) {
+    client.to(roomId).emit(SOCKET_EVENTS.roomClosed);
+    this.mediasoupService.closeRoom(roomId);
+  }
 }
