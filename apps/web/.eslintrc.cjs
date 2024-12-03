@@ -9,6 +9,7 @@ module.exports = {
   root: true,
   extends: [
     require.resolve('@repo/lint'),
+    'prettier/prettier',
     'plugin:react/recommended',
     'plugin:react-hooks/recommended',
     // 'plugin:jsx-a11y/recommended',
