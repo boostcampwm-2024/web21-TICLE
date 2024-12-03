@@ -20,9 +20,15 @@ interface VideoGridProps {
   videoStreamData: StreamData[];
   onVideoClick: (stream: StreamData) => void;
   getAudioMutedState: (stream: StreamData) => boolean;
+  activeSocketId: string | null;
 }
 
-function VideoGrid({ videoStreamData, onVideoClick, getAudioMutedState }: VideoGridProps) {
+function VideoGrid({
+  videoStreamData,
+  onVideoClick,
+  getAudioMutedState,
+  activeSocketId,
+}: VideoGridProps) {
   return (
     <div className={containerVariants({ layout: videoStreamData.length > 3 ? 'grid' : 'flex' })}>
       {videoStreamData.map((streamData, idx) => (
@@ -37,6 +43,8 @@ function VideoGrid({ videoStreamData, onVideoClick, getAudioMutedState }: VideoG
             stream={streamData.stream ?? null}
             isMicOn={streamData && getAudioMutedState(streamData)}
             mediaType={streamData.consumer?.appData?.mediaTypes}
+            socketId={streamData.socketId}
+            activeSocketId={activeSocketId}
           />
         </div>
       ))}

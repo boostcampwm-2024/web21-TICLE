@@ -38,6 +38,8 @@ const tailwindConfig: Config = {
       borderColor: {
         main: 'var(--grey-300)',
         primary: 'var(--purple-500)',
+        black: 'var(--black)',
+        alt: 'var(--grey-700)',
         error: 'var(--red)',
       },
       fill: {

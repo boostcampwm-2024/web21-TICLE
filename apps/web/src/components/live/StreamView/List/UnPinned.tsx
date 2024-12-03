@@ -8,9 +8,10 @@ const ITEMS_PER_GRID = 9;
 interface UnPinnedListProps {
   addPinnedVideo: (stream: StreamData) => void;
   getAudioMutedState: (stream: StreamData) => boolean;
+  activeSocketId: string | null;
 }
 
-function UnPinnedGrid({ addPinnedVideo, getAudioMutedState }: UnPinnedListProps) {
+function UnPinnedGrid({ addPinnedVideo, getAudioMutedState, activeSocketId }: UnPinnedListProps) {
   const { paginatedItems: paginatedStreams, ...paginationControlsProps } = usePagination({
     itemsPerPage: ITEMS_PER_GRID,
   });
@@ -21,6 +22,7 @@ function UnPinnedGrid({ addPinnedVideo, getAudioMutedState }: UnPinnedListProps)
         videoStreamData={paginatedStreams}
         onVideoClick={addPinnedVideo}
         getAudioMutedState={getAudioMutedState}
+        activeSocketId={activeSocketId}
       />
     </PaginationControls>
   );
