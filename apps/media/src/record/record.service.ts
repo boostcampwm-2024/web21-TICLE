@@ -117,7 +117,7 @@ export class RecordService {
       return;
     }
     this.releasePort(recordInfo.port);
-    recordInfo.stopRecordProcess();
+    recordInfo.clearStream();
     this.recordInfos.delete(roomId);
   }
 
