@@ -34,6 +34,7 @@ RUN apt-get update \
     python3 \
     python3-pip \
     build-essential \
+    ffmpeg \ 
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
