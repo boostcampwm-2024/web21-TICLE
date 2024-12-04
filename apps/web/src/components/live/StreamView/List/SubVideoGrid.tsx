@@ -1,7 +1,7 @@
 import { cva } from 'class-variance-authority';
 import { useEffect, useRef, useState } from 'react';
+import { client } from '@repo/mediasoup';
 
-import { StreamData } from '@/components/live/StreamView';
 import VideoPlayer from '@/components/live/StreamView/List/VideoPlayer';
 
 const highlightVariants = cva(`h-full w-full overflow-hidden rounded-lg border-2`, {
@@ -17,10 +17,10 @@ const highlightVariants = cva(`h-full w-full overflow-hidden rounded-lg border-2
 });
 
 interface SubVideoGridProps {
-  videoStreamData: StreamData[];
-  pinnedVideoStreamData: StreamData | null;
-  onVideoClick: (stream: StreamData) => void;
-  getAudioMutedState: (stream: StreamData) => boolean;
+  videoStreamData: client.RemoteStream[];
+  pinnedVideoStreamData: client.RemoteStream | null;
+  onVideoClick: (stream: client.RemoteStream) => void;
+  getAudioMutedState: (stream: client.RemoteStream) => boolean;
 }
 
 function SubVideoGrid({
