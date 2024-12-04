@@ -23,6 +23,7 @@ export const RemoteStreamProvider = ({ children }: RemoteStreamProviderProps) =>
     resumeAudioConsumers,
     resumeVideoConsumers,
     pauseVideoConsumers,
+    addInitialRemoteStream,
   } = useRemoteStream();
 
   const state = { audioStreams, videoStreams };
@@ -37,6 +38,7 @@ export const RemoteStreamProvider = ({ children }: RemoteStreamProviderProps) =>
     resumeAudioConsumers,
     resumeVideoConsumers,
     pauseVideoConsumers,
+    addInitialRemoteStream,
   } as const;
 
   return (

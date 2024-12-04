@@ -26,23 +26,17 @@ export const MediasoupProvider = ({ children }: MediasoupProviderProps) => {
     connectExistProducer,
   } = useProducer({ socketRef, transportsRef });
 
-  const disconnect = () => {
+  const clearMediasoup = () => {
     const { recvTransport, sendTransport } = transportsRef.current;
-    const { audio, video, screen } = producersRef.current;
-
-    socketRef.current?.disconnect();
 
     sendTransport?.close();
     recvTransport?.close();
 
-    audio?.close();
-    video?.close();
-    screen?.close();
+    socketRef.current?.disconnect();
 
     socketRef.current = null;
     deviceRef.current = null;
     transportsRef.current = { sendTransport: null, recvTransport: null };
-    producersRef.current = { audio: null, video: null, screen: null };
   };
 
   const state = {
@@ -55,7 +49,7 @@ export const MediasoupProvider = ({ children }: MediasoupProviderProps) => {
   };
 
   const actions = {
-    disconnect,
+    clearMediasoup,
     createDevice,
     createRecvTransport,
     createSendTransport,

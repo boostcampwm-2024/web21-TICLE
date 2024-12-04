@@ -20,7 +20,7 @@ export interface MediasoupState {
 }
 
 interface MediasoupActionContextProps {
-  disconnect: () => void;
+  clearMediasoup: () => void;
   createDevice: (rtpCapabilities: client.RtpCapabilities) => Promise<client.Device>;
   createSendTransport: (device: client.Device) => Promise<void>;
   createRecvTransport: (device: client.Device) => Promise<void>;

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { MediaTypes } from '@repo/mediasoup';
 
 import { LocalStream, MediaDevice } from '@/contexts/localStream/context';
+import { toast } from '@/core/toast';
 import { getCameraStream, getMicStream, getScreenStream } from '@/utils/stream';
 
 const DEFAULT_LOCAL_STREAM = {
@@ -91,6 +92,21 @@ const useMediaTracks = () => {
     return track;
   };
 
+  const clearStreams = () => {
+    setVideo((prev) => {
+      prev.stream?.getTracks().forEach((track) => track.stop());
+      return { ...DEFAULT_LOCAL_STREAM };
+    });
+    setAudio((prev) => {
+      prev.stream?.getTracks().forEach((track) => track.stop());
+      return { ...DEFAULT_LOCAL_STREAM };
+    });
+    setScreen((prev) => {
+      prev.stream?.getTracks().forEach((track) => track.stop());
+      return { ...DEFAULT_LOCAL_STREAM };
+    });
+  };
+
   const getMediaState = (type: MediaTypes) => {
     if (type === 'video') {
       return [video, setVideo] as const;
@@ -123,8 +139,8 @@ const useMediaTracks = () => {
         if (videoInputs[0]) setSelectedVideoDeviceId(videoInputs[0].value);
         if (audioInputs[0]) setSelectedAudioDeviceId(audioInputs[0].value);
         if (audioOutputs[0]) setSelectedAudioOutputDeviceId(audioOutputs[0].value);
-      } catch (error) {
-        // console.error('Error fetching media devices:', error);
+      } catch (_) {
+        toast('미디어 정보를 가져올 수 없습니다.');
       }
     };
 
@@ -150,6 +166,7 @@ const useMediaTracks = () => {
     setSelectedAudioOutputDeviceId,
 
     getMediaState,
+    clearStreams,
   };
 };
 

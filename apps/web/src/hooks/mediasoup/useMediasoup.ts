@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { client, SOCKET_EVENTS } from '@repo/mediasoup';
 
-import { useDummyStreamAction } from '@/contexts/dummyStream/context';
 import { useLocalStreamAction } from '@/contexts/localStream/context';
 import { useMediasoupAction, useMediasoupState } from '@/contexts/mediasoup/context';
 import { useRemoteStreamAction } from '@/contexts/remoteStream/context';
@@ -12,7 +11,7 @@ const useMediasoup = () => {
   const { socketRef, isConnected, isError } = useMediasoupState();
 
   const { createRoom } = useRoom();
-  const { createRecvTransport, createSendTransport, createDevice, disconnect } =
+  const { createRecvTransport, createSendTransport, createDevice, clearMediasoup } =
     useMediasoupAction();
   const {
     consume,
@@ -22,31 +21,28 @@ const useMediasoup = () => {
     resumeRemoteStream,
     resumeAudioConsumers,
     clearRemoteStream,
+    addInitialRemoteStream,
   } = useRemoteStreamAction();
-  const { startCameraStream, startMicStream, closeLocalStream } = useLocalStreamAction();
-
-  const { addDummyStream, removeDummyStream } = useDummyStreamAction();
-
+  const { startCameraStream, startMicStream, clearLocalStream } = useLocalStreamAction();
   const initSocketEvent = () => {
     const socket = socketRef.current;
 
     if (!socket) return;
 
     socket.on(SOCKET_EVENTS.newPeer, ({ peerId, nickname }) => {
-      addDummyStream(peerId, nickname);
+      addInitialRemoteStream({ socketId: peerId, nickname });
     });
 
     socket.on(SOCKET_EVENTS.peerLeft, ({ peerId }) => {
-      removeDummyStream(peerId);
       filterRemoteStream((rs) => rs.socketId !== peerId);
     });
 
     socket.on(SOCKET_EVENTS.consumerClosed, ({ consumerId }) => {
-      filterRemoteStream((rs) => rs.consumer.id !== consumerId);
+      filterRemoteStream((rs) => rs.consumer?.id !== consumerId);
     });
 
     socket.on(SOCKET_EVENTS.producerClosed, ({ producerId }) => {
-      filterRemoteStream((rs) => rs.consumer.producerId !== producerId);
+      filterRemoteStream((rs) => rs.consumer?.producerId !== producerId);
     });
 
     socket.on(SOCKET_EVENTS.producerPaused, ({ producerId }) => {
@@ -59,8 +55,6 @@ const useMediasoup = () => {
 
     socket.on(SOCKET_EVENTS.newProducer, (data) => {
       if (socket.id === data.peerId) return;
-
-      removeDummyStream(data.peerId);
       consume(data);
     });
   };
@@ -103,16 +97,16 @@ const useMediasoup = () => {
 
   useEffect(() => {
     const clearAll = () => {
-      disconnect();
       clearRemoteStream();
-      closeLocalStream();
+      clearLocalStream();
+      clearMediasoup();
     };
 
     window.addEventListener('beforeunload', clearAll);
 
     return () => {
-      window.removeEventListener('beforeunload', clearAll);
       clearAll();
+      window.removeEventListener('beforeunload', clearAll);
     };
   }, []);
 };
