@@ -19,7 +19,7 @@ const DEFAULT_SCREEN_CONSTRAINTS: MediaTrackConstraints = {
   frameRate: { max: 30, ideal: 15 },
 };
 
-const getCameraStream = async (options: MediaStreamConstraints = {}) => {
+const getCameraStream = async (options: MediaTrackConstraints = {}) => {
   return navigator.mediaDevices.getUserMedia({
     video: {
       ...DEFAULT_VIDEO_CONSTRAINTS,
@@ -28,7 +28,7 @@ const getCameraStream = async (options: MediaStreamConstraints = {}) => {
   });
 };
 
-const getMicStream = async (options: MediaStreamConstraints = {}) => {
+const getMicStream = async (options: MediaTrackConstraints = {}) => {
   return navigator.mediaDevices.getUserMedia({
     audio: {
       ...DEFAULT_AUDIO_CONSTRAINTS,
@@ -37,7 +37,7 @@ const getMicStream = async (options: MediaStreamConstraints = {}) => {
   });
 };
 
-const getScreenStream = async (options: MediaStreamConstraints = {}) => {
+const getScreenStream = async (options: MediaTrackConstraints = {}) => {
   return navigator.mediaDevices.getDisplayMedia({
     video: {
       ...DEFAULT_SCREEN_CONSTRAINTS,
