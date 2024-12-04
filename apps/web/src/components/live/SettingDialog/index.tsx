@@ -1,5 +1,4 @@
 import { cva } from 'class-variance-authority';
-import { i } from 'node_modules/@repo/mediasoup/dist/index-uthNRcro';
 import { useState } from 'react';
 
 import { Dialog } from '@/components/common/Dialog';
