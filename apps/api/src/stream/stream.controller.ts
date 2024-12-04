@@ -19,7 +19,7 @@ export class StreamController {
 
   @Get('summary/:ticleId')
   async getSummaryByTicleId(@Param('ticleId') ticleId: number) {
-    const text = await this.streamService.getSummaryText(ticleId);
-    return { summary: text };
+    const summary = await this.streamService.getSummary(ticleId);
+    return summary;
   }
 }

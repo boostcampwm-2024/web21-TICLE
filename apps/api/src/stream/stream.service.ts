@@ -103,7 +103,7 @@ export class StreamService {
     }
   }
 
-  async getSummaryText(ticleId: number) {
+  async getSummary(ticleId: number) {
     const summary = await this.summaryRepository.findOne({
       where: { ticle: { id: ticleId } },
     });
