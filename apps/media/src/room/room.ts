@@ -9,12 +9,14 @@ export class Room {
   masterSocketId: string;
   router: Router;
   peers: Map<string, Peer>;
+  isOpen: boolean;
 
   constructor(roomId: string, router: Router, masterSocketId: string) {
     this.id = roomId;
     this.router = router;
     this.masterSocketId = masterSocketId;
     this.peers = new Map();
+    this.isOpen = true;
   }
 
   getRouter() {

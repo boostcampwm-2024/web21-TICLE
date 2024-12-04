@@ -34,8 +34,8 @@ export class SignalingGateway implements OnGatewayDisconnect {
   @SubscribeMessage(SOCKET_EVENTS.joinRoom)
   joinRoom(@ConnectedSocket() client: Socket, @MessageBody() joinRoomDto: server.JoinRoomDto) {
     const { roomId, nickname } = joinRoomDto;
-    client.join(roomId);
     const rtpCapabilities = this.mediasoupService.joinRoom(roomId, client.id, nickname);
+    client.join(roomId);
     client.to(roomId).emit(SOCKET_EVENTS.newPeer, { peerId: client.id, nickname });
     return { rtpCapabilities };
   }
@@ -114,8 +114,8 @@ export class SignalingGateway implements OnGatewayDisconnect {
       return;
     }
 
-    const isExistRoom = this.roomService.existRoom(roomId);
-    if (isExistRoom) {
+    const isOpen = this.roomService.checkRoomIsOpen(roomId);
+    if (isOpen) {
       client.to(roomId).emit(SOCKET_EVENTS.peerLeft, { peerId: client.id });
     }
   }
@@ -196,6 +196,7 @@ export class SignalingGateway implements OnGatewayDisconnect {
   @SubscribeMessage(SOCKET_EVENTS.closeRoom)
   closeMeetingRoom(@ConnectedSocket() client: Socket, @MessageBody('roomId') roomId: string) {
     client.to(roomId).emit(SOCKET_EVENTS.roomClosed);
+    this.roomService.setRoomIsOpen(roomId, false);
   }
 
   @SubscribeMessage(SOCKET_EVENTS.startRecord)

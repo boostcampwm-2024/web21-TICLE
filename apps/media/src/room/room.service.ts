@@ -49,4 +49,20 @@ export class RoomService {
     }
     return room.masterSocketId === socketId;
   }
+
+  checkRoomIsOpen(roomId: string) {
+    const room = this.rooms.get(roomId);
+    if (!room) {
+      return false;
+    }
+    return room.isOpen;
+  }
+
+  setRoomIsOpen(roomId: string, isOpen: boolean) {
+    const room = this.rooms.get(roomId);
+    if (!room) {
+      return;
+    }
+    room.isOpen = isOpen;
+  }
 }
