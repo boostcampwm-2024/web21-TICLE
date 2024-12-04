@@ -140,7 +140,9 @@ const tailwindConfig: Config = {
       // animation
       animation: {
         flashWhite: 'flashWhite 1s ease-out infinite alternate',
-        flashPrimary: 'flashPurple 1s ease-out infinite alternate',
+        flashPrimary: 'flashPurple   1s ease-out infinite alternate',
+        'bounce-in-bottom': 'bounceInBottom 300ms both',
+        'bounce-out-bottom': 'bounceOutBottom 300ms both',
       },
 
       // keyframes
@@ -159,6 +161,26 @@ const tailwindConfig: Config = {
           },
           '50%': {
             backgroundColor: 'var(--purple-500)',
+          },
+        },
+        bounceInBottom: {
+          from: {
+            opacity: '0',
+            transform: 'translate3d(0, -30px, 0)',
+          },
+          to: {
+            opacity: '1',
+            transform: 'translate3d(0, 0, 0)',
+          },
+        },
+        bounceOutBottom: {
+          '20%': {
+            opacity: '1',
+            transform: 'translate3d(0, 0, 0)',
+          },
+          to: {
+            opacity: '0',
+            transform: 'translate3d(0, 30px, 0)',
           },
         },
       },

@@ -113,6 +113,10 @@ export class MediasoupService implements OnModuleInit {
     const peer = room.getPeer(socketId);
     const transport = peer.getTransport(transportId);
 
+    if (appData.mediaTypes !== 'audio') {
+      rtpParameters.encodings = server.PRODUCER_OPTIONS.encodings;
+    }
+
     const producer = await transport.produce({
       kind,
       rtpParameters,
@@ -126,9 +130,7 @@ export class MediasoupService implements OnModuleInit {
   }
 
   disconnect(socketId: string) {
-    const roomIds = this.roomService.deletePeer(socketId);
-
-    return roomIds;
+    return this.roomService.deletePeer(socketId);
   }
 
   getProducers(roomId: string, socketId: string) {
@@ -267,7 +269,7 @@ export class MediasoupService implements OnModuleInit {
     const peer = room.peers.get(socketId);
     const consumer = peer.getConsumer(consumerId);
 
-    consumer.pause();
+    consumer?.pause();
 
     return { paused: true, consumerId, producerId: consumer.producerId };
   }
@@ -277,11 +279,11 @@ export class MediasoupService implements OnModuleInit {
     const peer = room.peers.get(socketId);
     const consumer = peer.getConsumer(consumerId);
 
-    if (consumer.producerPaused) {
+    if (consumer?.producerPaused) {
       return { paused: true, consumerId, producerId: consumer.producerId };
     }
 
-    consumer.resume();
+    consumer?.resume();
 
     return { paused: false, consumerId, producerId: consumer.producerId };
   }
@@ -292,5 +294,56 @@ export class MediasoupService implements OnModuleInit {
 
   resumeConsumers(socketId: string, roomId: string, consumerIds: string[]) {
     return consumerIds.map((consumerId) => this.resumeConsumer(socketId, consumerId, roomId));
+  }
+
+  changeConsumerPreferredLayers(
+    socketId: string,
+    roomId: string,
+    data: server.NetworkQualityDto[]
+  ) {
+    data.forEach(({ consumerId, networkQuality }) => {
+      const room = this.roomService.getRoom(roomId);
+      const peer = room.peers.get(socketId);
+
+      const consumer = peer.getConsumer(consumerId);
+
+      consumer?.setPreferredLayers({
+        spatialLayer: networkQuality,
+        temporalLayer: networkQuality,
+      });
+    });
+  }
+
+  closeRoom(roomId: string) {
+    this.roomService.closeRoom(roomId);
+  }
+
+  async createPlainTransport(router: types.Router) {
+    return router.createPlainTransport(this.mediasoupConfig.plainTransport);
+  }
+
+  async createRecordConsumer(
+    transport: types.Transport,
+    producerId: string,
+    rtpCapabilities: types.RtpCapabilities,
+    producerPaused: boolean
+  ) {
+    const consumer = await transport.consume({
+      producerId,
+      rtpCapabilities,
+      paused: producerPaused,
+    });
+    consumer.on('producerpause', () => {
+      consumer.pause();
+    });
+
+    consumer.on('producerresume', () => {
+      if (consumer.kind !== 'audio') {
+        return;
+      }
+      consumer.resume();
+    });
+
+    return consumer;
   }
 }

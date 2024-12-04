@@ -1,7 +1,7 @@
 import { cva } from 'class-variance-authority';
 import { useEffect, useRef, useState } from 'react';
+import { client } from '@repo/mediasoup';
 
-import { StreamData } from '@/components/live/StreamView';
 import VideoPlayer from '@/components/live/StreamView/List/VideoPlayer';
 
 const highlightVariants = cva(`h-full w-full overflow-hidden rounded-lg border-2`, {
@@ -17,10 +17,10 @@ const highlightVariants = cva(`h-full w-full overflow-hidden rounded-lg border-2
 });
 
 interface SubVideoGridProps {
-  videoStreamData: StreamData[];
-  pinnedVideoStreamData: StreamData | null;
-  onVideoClick: (stream: StreamData) => void;
-  getAudioMutedState: (stream: StreamData) => boolean;
+  videoStreamData: client.RemoteStream[];
+  pinnedVideoStreamData: client.RemoteStream | null;
+  onVideoClick: (stream: client.RemoteStream) => void;
+  getAudioMutedState: (stream: client.RemoteStream) => boolean;
 }
 
 function SubVideoGrid({
@@ -50,27 +50,26 @@ function SubVideoGrid({
 
   return (
     <div ref={containerRef} className="flex h-full flex-1 justify-center gap-5 px-10">
-      {videoStreamData.map((streamData) => (
+      {videoStreamData.map((streamData, idx) => (
         <div
-          key={streamData.stream?.id}
+          key={`${streamData.socketId}${idx}`}
           style={{ maxWidth: videoMaxWidth }}
           className={highlightVariants({
             pinned: pinnedVideoStreamData?.stream?.id === streamData.stream?.id,
           })}
-          onClick={() => onVideoClick(streamData)}
+          onClick={() => streamData.stream && onVideoClick(streamData)}
         >
           <VideoPlayer
-            stream={streamData.stream}
             avatarSize="sm"
             paused={streamData.paused}
-            isMicOn={getAudioMutedState(streamData)}
             nickname={streamData.nickname}
-            mediaType={streamData.consumer?.appData?.mediaTypes}
+            stream={streamData.stream ?? null}
+            isMicOn={streamData && getAudioMutedState(streamData)}
+            mediaType={streamData.consumer?.appData?.mediaTypes ?? streamData.mediaType}
           />
         </div>
       ))}
     </div>
   );
 }
-
 export default SubVideoGrid;

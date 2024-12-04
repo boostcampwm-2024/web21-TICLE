@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
+  PlainTransportOptions,
   RouterOptions,
   RtpCodecCapability,
   WebRtcTransportOptions,
@@ -60,5 +61,14 @@ export class MediasoupConfig {
     enableUdp: true,
     enableTcp: true,
     preferUdp: true,
+  };
+
+  plainTransport: PlainTransportOptions = {
+    listenIp: {
+      ip: '127.0.0.1',
+      announcedIp: '127.0.0.1',
+    },
+    rtcpMux: true,
+    comedia: false,
   };
 }

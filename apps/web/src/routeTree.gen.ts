@@ -13,11 +13,11 @@
 import { Route as rootRoute } from './routes/__root';
 import { Route as AuthenticatedLayoutImport } from './routes/_authenticated/_layout';
 import { Route as IndexImport } from './routes/index';
+import { Route as TicleTicleIdImport } from './routes/ticle/$ticleId';
 import { Route as AuthOauthImport } from './routes/auth/oauth';
 import { Route as AuthLoginImport } from './routes/auth/login';
 import { Route as AuthenticatedDashboardLayoutImport } from './routes/_authenticated/dashboard/_layout';
 import { Route as AuthenticatedTicleOpenImport } from './routes/_authenticated/ticle/open';
-import { Route as AuthenticatedTicleTicleIdImport } from './routes/_authenticated/ticle/$ticleId';
 import { Route as AuthenticatedLiveTicleIdImport } from './routes/_authenticated/live/$ticleId';
 import { Route as AuthenticatedDashboardOpenImport } from './routes/_authenticated/dashboard/open';
 import { Route as AuthenticatedDashboardApplyImport } from './routes/_authenticated/dashboard/apply';
@@ -32,6 +32,12 @@ const AuthenticatedLayoutRoute = AuthenticatedLayoutImport.update({
 const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRoute,
+} as any);
+
+const TicleTicleIdRoute = TicleTicleIdImport.update({
+  id: '/ticle/$ticleId',
+  path: '/ticle/$ticleId',
   getParentRoute: () => rootRoute,
 } as any);
 
@@ -56,12 +62,6 @@ const AuthenticatedDashboardLayoutRoute = AuthenticatedDashboardLayoutImport.upd
 const AuthenticatedTicleOpenRoute = AuthenticatedTicleOpenImport.update({
   id: '/ticle/open',
   path: '/ticle/open',
-  getParentRoute: () => AuthenticatedLayoutRoute,
-} as any);
-
-const AuthenticatedTicleTicleIdRoute = AuthenticatedTicleTicleIdImport.update({
-  id: '/ticle/$ticleId',
-  path: '/ticle/$ticleId',
   getParentRoute: () => AuthenticatedLayoutRoute,
 } as any);
 
@@ -122,6 +122,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthOauthImport;
       parentRoute: typeof rootRoute;
     };
+    '/ticle/$ticleId': {
+      id: '/ticle/$ticleId';
+      path: '/ticle/$ticleId';
+      fullPath: '/ticle/$ticleId';
+      preLoaderRoute: typeof TicleTicleIdImport;
+      parentRoute: typeof rootRoute;
+    };
     '/_authenticated/dashboard/apply': {
       id: '/_authenticated/dashboard/apply';
       path: '/apply';
@@ -141,13 +148,6 @@ declare module '@tanstack/react-router' {
       path: '/live/$ticleId';
       fullPath: '/live/$ticleId';
       preLoaderRoute: typeof AuthenticatedLiveTicleIdImport;
-      parentRoute: typeof AuthenticatedLayoutImport;
-    };
-    '/_authenticated/ticle/$ticleId': {
-      id: '/_authenticated/ticle/$ticleId';
-      path: '/ticle/$ticleId';
-      fullPath: '/ticle/$ticleId';
-      preLoaderRoute: typeof AuthenticatedTicleTicleIdImport;
       parentRoute: typeof AuthenticatedLayoutImport;
     };
     '/_authenticated/ticle/open': {
@@ -178,14 +178,12 @@ const AuthenticatedDashboardLayoutRouteWithChildren =
 interface AuthenticatedLayoutRouteChildren {
   AuthenticatedDashboardLayoutRoute: typeof AuthenticatedDashboardLayoutRouteWithChildren;
   AuthenticatedLiveTicleIdRoute: typeof AuthenticatedLiveTicleIdRoute;
-  AuthenticatedTicleTicleIdRoute: typeof AuthenticatedTicleTicleIdRoute;
   AuthenticatedTicleOpenRoute: typeof AuthenticatedTicleOpenRoute;
 }
 
 const AuthenticatedLayoutRouteChildren: AuthenticatedLayoutRouteChildren = {
   AuthenticatedDashboardLayoutRoute: AuthenticatedDashboardLayoutRouteWithChildren,
   AuthenticatedLiveTicleIdRoute: AuthenticatedLiveTicleIdRoute,
-  AuthenticatedTicleTicleIdRoute: AuthenticatedTicleTicleIdRoute,
   AuthenticatedTicleOpenRoute: AuthenticatedTicleOpenRoute,
 };
 
@@ -199,10 +197,10 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof AuthenticatedDashboardLayoutRouteWithChildren;
   '/auth/login': typeof AuthLoginRoute;
   '/auth/oauth': typeof AuthOauthRoute;
+  '/ticle/$ticleId': typeof TicleTicleIdRoute;
   '/dashboard/apply': typeof AuthenticatedDashboardApplyRoute;
   '/dashboard/open': typeof AuthenticatedDashboardOpenRoute;
   '/live/$ticleId': typeof AuthenticatedLiveTicleIdRoute;
-  '/ticle/$ticleId': typeof AuthenticatedTicleTicleIdRoute;
   '/ticle/open': typeof AuthenticatedTicleOpenRoute;
 }
 
@@ -212,10 +210,10 @@ export interface FileRoutesByTo {
   '/dashboard': typeof AuthenticatedDashboardLayoutRouteWithChildren;
   '/auth/login': typeof AuthLoginRoute;
   '/auth/oauth': typeof AuthOauthRoute;
+  '/ticle/$ticleId': typeof TicleTicleIdRoute;
   '/dashboard/apply': typeof AuthenticatedDashboardApplyRoute;
   '/dashboard/open': typeof AuthenticatedDashboardOpenRoute;
   '/live/$ticleId': typeof AuthenticatedLiveTicleIdRoute;
-  '/ticle/$ticleId': typeof AuthenticatedTicleTicleIdRoute;
   '/ticle/open': typeof AuthenticatedTicleOpenRoute;
 }
 
@@ -226,10 +224,10 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardLayoutRouteWithChildren;
   '/auth/login': typeof AuthLoginRoute;
   '/auth/oauth': typeof AuthOauthRoute;
+  '/ticle/$ticleId': typeof TicleTicleIdRoute;
   '/_authenticated/dashboard/apply': typeof AuthenticatedDashboardApplyRoute;
   '/_authenticated/dashboard/open': typeof AuthenticatedDashboardOpenRoute;
   '/_authenticated/live/$ticleId': typeof AuthenticatedLiveTicleIdRoute;
-  '/_authenticated/ticle/$ticleId': typeof AuthenticatedTicleTicleIdRoute;
   '/_authenticated/ticle/open': typeof AuthenticatedTicleOpenRoute;
 }
 
@@ -241,10 +239,10 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/auth/login'
     | '/auth/oauth'
+    | '/ticle/$ticleId'
     | '/dashboard/apply'
     | '/dashboard/open'
     | '/live/$ticleId'
-    | '/ticle/$ticleId'
     | '/ticle/open';
   fileRoutesByTo: FileRoutesByTo;
   to:
@@ -253,10 +251,10 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/auth/login'
     | '/auth/oauth'
+    | '/ticle/$ticleId'
     | '/dashboard/apply'
     | '/dashboard/open'
     | '/live/$ticleId'
-    | '/ticle/$ticleId'
     | '/ticle/open';
   id:
     | '__root__'
@@ -265,10 +263,10 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/auth/login'
     | '/auth/oauth'
+    | '/ticle/$ticleId'
     | '/_authenticated/dashboard/apply'
     | '/_authenticated/dashboard/open'
     | '/_authenticated/live/$ticleId'
-    | '/_authenticated/ticle/$ticleId'
     | '/_authenticated/ticle/open';
   fileRoutesById: FileRoutesById;
 }
@@ -278,6 +276,7 @@ export interface RootRouteChildren {
   AuthenticatedLayoutRoute: typeof AuthenticatedLayoutRouteWithChildren;
   AuthLoginRoute: typeof AuthLoginRoute;
   AuthOauthRoute: typeof AuthOauthRoute;
+  TicleTicleIdRoute: typeof TicleTicleIdRoute;
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -285,6 +284,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedLayoutRoute: AuthenticatedLayoutRouteWithChildren,
   AuthLoginRoute: AuthLoginRoute,
   AuthOauthRoute: AuthOauthRoute,
+  TicleTicleIdRoute: TicleTicleIdRoute,
 };
 
 export const routeTree = rootRoute
@@ -300,7 +300,8 @@ export const routeTree = rootRoute
         "/",
         "/_authenticated",
         "/auth/login",
-        "/auth/oauth"
+        "/auth/oauth",
+        "/ticle/$ticleId"
       ]
     },
     "/": {
@@ -311,7 +312,6 @@ export const routeTree = rootRoute
       "children": [
         "/_authenticated/dashboard",
         "/_authenticated/live/$ticleId",
-        "/_authenticated/ticle/$ticleId",
         "/_authenticated/ticle/open"
       ]
     },
@@ -329,6 +329,9 @@ export const routeTree = rootRoute
     "/auth/oauth": {
       "filePath": "auth/oauth.tsx"
     },
+    "/ticle/$ticleId": {
+      "filePath": "ticle/$ticleId.tsx"
+    },
     "/_authenticated/dashboard/apply": {
       "filePath": "_authenticated/dashboard/apply.tsx",
       "parent": "/_authenticated/dashboard"
@@ -339,10 +342,6 @@ export const routeTree = rootRoute
     },
     "/_authenticated/live/$ticleId": {
       "filePath": "_authenticated/live/$ticleId.tsx",
-      "parent": "/_authenticated"
-    },
-    "/_authenticated/ticle/$ticleId": {
-      "filePath": "_authenticated/ticle/$ticleId.tsx",
       "parent": "/_authenticated"
     },
     "/_authenticated/ticle/open": {

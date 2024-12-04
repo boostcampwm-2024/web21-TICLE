@@ -1,7 +1,13 @@
 import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
 import { GetDashboardListQueryType } from '@repo/types';
 
-import { getDashboardTicleList, getApplicantsTicle, startTicle, joinTicle } from '@/api/dashboard';
+import {
+  getDashboardTicleList,
+  getApplicantsTicle,
+  startTicle,
+  joinTicle,
+  getAiSummary,
+} from '@/api/dashboard';
 
 export const useDashboardTicleList = (params: GetDashboardListQueryType) => {
   return useInfiniteQuery({
@@ -28,14 +34,21 @@ export const useApplicantsTicle = (ticleId: string) => {
   });
 };
 
+export const useAiSummary = (ticleId: string) => {
+  return useQuery({
+    queryKey: ['aiSummary', ticleId],
+    queryFn: () => getAiSummary(ticleId),
+    enabled: !!ticleId,
+  });
+};
+
 export const useStartTicle = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: startTicle,
-    onSuccess: (_, ticleId) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['appliedTicleList'] });
-      queryClient.invalidateQueries({ queryKey: ['applicantsTicle', ticleId] });
     },
   });
 };

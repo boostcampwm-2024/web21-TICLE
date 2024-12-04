@@ -2,18 +2,20 @@ import { useParams } from '@tanstack/react-router';
 
 import CalendarIc from '@/assets/icons/calendar.svg?react';
 import ClockIc from '@/assets/icons/clock.svg?react';
-import TrashIc from '@/assets/icons/trash.svg?react';
 import Avatar from '@/components/common/Avatar';
 import Badge from '@/components/common/Badge';
-import Button from '@/components/common/Button';
 import UserProfileDialog from '@/components/user/UserProfileDialog';
 import { useApplyTicle, useDeleteTicle, useTicle } from '@/hooks/api/ticle';
 import useModal from '@/hooks/useModal';
+import useAuthStore from '@/stores/useAuthStore';
 import { formatDateTimeRange } from '@/utils/date';
 
+import CtaButton from './CtaButton';
+
 function Detail() {
-  const { ticleId } = useParams({ from: '/_authenticated/ticle/$ticleId' });
-  const { data } = useTicle(ticleId);
+  const { ticleId } = useParams({ from: '/ticle/$ticleId' });
+  const userId = useAuthStore.getState().authInfo?.userId;
+  const { data } = useTicle(ticleId, userId || '');
   const { mutate: applyMutate } = useApplyTicle();
   const { mutate: deleteMutate } = useDeleteTicle();
 
@@ -34,7 +36,7 @@ function Detail() {
   const { dateStr, timeRangeStr } = formatDateTimeRange(data.startTime, data.endTime);
   return (
     <div className="flex flex-col items-end gap-9">
-      <div className="surface-white flex w-[49.5rem] flex-col gap-9 rounded-lg border border-main p-10 shadow-normal">
+      <div className="flex w-[49.5rem] flex-col gap-9 rounded-lg border border-main bg-white p-10 shadow-normal">
         <div className="flex flex-col gap-2">
           <h1 className="w-full text-head1 text-main">{data.title}</h1>
           <div className="flex gap-2.5">
@@ -84,18 +86,13 @@ function Detail() {
           </div>
         </div>
       </div>
-      {data.isOwner ? (
-        <Button onClick={handleDeleteButtonClick}>
-          <span className="flex items-center gap-1">
-            티클 삭제하기
-            <TrashIc className="fill-white" />
-          </span>
-        </Button>
-      ) : (
-        <Button onClick={handleApplyButtonClick} disabled={data.alreadyApplied}>
-          {data.alreadyApplied ? '신청 완료' : '티클 신청하기'}
-        </Button>
-      )}
+      <CtaButton
+        isOwner={data.isOwner}
+        alreadyApplied={data.alreadyApplied}
+        ticleStatus={data.ticleStatus}
+        onApply={handleApplyButtonClick}
+        onDelete={handleDeleteButtonClick}
+      />
     </div>
   );
 }

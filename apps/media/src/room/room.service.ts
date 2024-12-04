@@ -41,4 +41,11 @@ export class RoomService {
       return roomId;
     }
   }
+
+  closeRoom(roomId: string) {
+    const room = this.getRoom(roomId);
+    room.close();
+    this.rooms.delete(roomId);
+    return roomId;
+  }
 }

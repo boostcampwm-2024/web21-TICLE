@@ -12,15 +12,19 @@ import { SOCKET_EVENTS, STREAM_STATUS } from '@repo/mediasoup';
 import type { client, server } from '@repo/mediasoup';
 
 import { MediasoupService } from '@/mediasoup/mediasoup.service';
+import { RecordService } from '@/record/record.service';
 import { WSExceptionFilter } from '@/wsException.filter';
 
 @WebSocketGateway()
 @UseFilters(WSExceptionFilter)
 export class SignalingGateway implements OnGatewayDisconnect {
-  constructor(private mediasoupService: MediasoupService) {}
+  constructor(
+    private mediasoupService: MediasoupService,
+    private recordService: RecordService
+  ) {}
 
   @SubscribeMessage(SOCKET_EVENTS.createRoom)
-  async handleCreateRoom(@ConnectedSocket() client: Socket, @MessageBody('roomId') roomId: string) {
+  async handleCreateRoom(@MessageBody('roomId') roomId: string) {
     await this.mediasoupService.createRoom(roomId);
     return { roomId };
   }
@@ -30,7 +34,7 @@ export class SignalingGateway implements OnGatewayDisconnect {
     const { roomId, nickname } = joinRoomDto;
     client.join(roomId);
     const rtpCapabilities = this.mediasoupService.joinRoom(roomId, client.id, nickname);
-    client.to(roomId).emit(SOCKET_EVENTS.newPeer, { peerId: client.id });
+    client.to(roomId).emit(SOCKET_EVENTS.newPeer, { peerId: client.id, nickname });
     return { rtpCapabilities };
   }
 
@@ -100,6 +104,10 @@ export class SignalingGateway implements OnGatewayDisconnect {
 
   handleDisconnect(@ConnectedSocket() client: Socket) {
     const roomId = this.mediasoupService.disconnect(client.id);
+    const recordInfo = this.recordService.getRecordInfo(roomId);
+    if (recordInfo && recordInfo.socketId === client.id) {
+      this.recordService.stopRecord(roomId);
+    }
 
     client.to(roomId).emit(SOCKET_EVENTS.peerLeft, { peerId: client.id });
   }
@@ -175,5 +183,45 @@ export class SignalingGateway implements OnGatewayDisconnect {
     @MessageBody('consumerIds') consumerIds: string[]
   ) {
     return this.mediasoupService.resumeConsumers(client.id, roomId, consumerIds);
+  }
+
+  @SubscribeMessage(SOCKET_EVENTS.closeRoom)
+  closeMeetingRoom(@ConnectedSocket() client: Socket, @MessageBody('roomId') roomId: string) {
+    client.to(roomId).emit(SOCKET_EVENTS.roomClosed);
+    this.mediasoupService.closeRoom(roomId);
+  }
+
+  @SubscribeMessage(SOCKET_EVENTS.startRecord)
+  async startRecord(@ConnectedSocket() client: Socket, @MessageBody('roomId') roomId: string) {
+    await this.recordService.startRecord(roomId, client.id);
+  }
+
+  @SubscribeMessage(SOCKET_EVENTS.stopRecord)
+  stopRecord(@MessageBody('roomId') roomId: string) {
+    this.recordService.stopRecord(roomId);
+  }
+
+  @SubscribeMessage(SOCKET_EVENTS.pauseRecord)
+  pauseRecord(@MessageBody('roomId') roomId: string) {
+    this.recordService.pauseRecord(roomId);
+  }
+
+  @SubscribeMessage(SOCKET_EVENTS.resumeRecord)
+  resumeRecord(@MessageBody('roomId') roomId: string) {
+    this.recordService.resumeRecord(roomId);
+  }
+  @SubscribeMessage(SOCKET_EVENTS.getIsRecording)
+  getIsRecording(@MessageBody('roomId') roomId: string) {
+    const isRecording = this.recordService.getIsRecording(roomId);
+    return { isRecording };
+  }
+
+  @SubscribeMessage(SOCKET_EVENTS.changeConsumerPreferredLayers)
+  changeConsumerPreferredLayers(
+    @ConnectedSocket() client: Socket,
+    @MessageBody('roomId') roomId: string,
+    @MessageBody('networkQualities') data: server.NetworkQualityDto[]
+  ) {
+    return this.mediasoupService.changeConsumerPreferredLayers(client.id, roomId, data);
   }
 }

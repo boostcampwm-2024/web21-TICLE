@@ -12,7 +12,7 @@ const useRemoteStream = () => {
   const [audioStreams, setAudioStreams] = useState<client.RemoteStream[]>([]);
 
   const consume = async (data: client.CreateProducerRes) => {
-    const { peerId, producerId, kind, paused, appData, nickname } = data;
+    const { peerId, producerId, kind, paused, nickname, appData } = data;
 
     const socket = socketRef.current;
     const device = deviceRef.current;
@@ -21,38 +21,19 @@ const useRemoteStream = () => {
     if (!device || !recvTransport || !socket) return;
 
     const params = {
-      roomId: ticleId,
-      paused,
       kind,
+      paused,
+      appData,
+      nickname,
       producerId,
+      roomId: ticleId,
       transportId: recvTransport.id,
       rtpCapabilities: device.rtpCapabilities,
     };
 
     return new Promise<void>((resolve) => {
       socket.emit(SOCKET_EVENTS.consume, params, async (params: client.CreateConsumerRes) => {
-        const { consumerId, paused, ...rest } = params;
-
-        const consumer = await recvTransport.consume({
-          id: consumerId,
-          appData,
-          ...rest,
-        });
-        const stream = new MediaStream([consumer.track]);
-
-        if (paused) {
-          consumer.pause();
-        }
-
-        setRemoteStream({
-          stream,
-          consumer,
-          socketId: peerId,
-          kind: consumer.kind,
-          paused: consumer.paused,
-          nickname,
-        });
-
+        await createRemoteStream({ ...params, peerId });
         resolve();
       });
     });
@@ -98,7 +79,7 @@ const useRemoteStream = () => {
 
     const consumerIds = consumers
       .filter((consumer) => consumer.kind === 'audio')
-      .map((consumer) => consumer.consumer.id);
+      .map((consumer) => consumer.consumer?.id);
 
     const params = { roomId: ticleId, consumerIds };
 
@@ -117,11 +98,12 @@ const useRemoteStream = () => {
     if (!socket) {
       throw new Error('socket is not initialized');
     }
+
     if (!consumers.length) return;
 
     const consumerIds = consumers
       .filter((consumer) => consumer.kind === 'video')
-      .map((consumer) => consumer.consumer.id);
+      .map((consumer) => consumer.consumer?.id);
 
     const params = { roomId: ticleId, consumerIds };
 
@@ -136,14 +118,16 @@ const useRemoteStream = () => {
 
   const pauseVideoConsumers = (consumers: client.RemoteStream[]) => {
     const socket = socketRef.current;
+
     if (!socket) {
       throw new Error('socket is not initialized');
     }
+
     if (!consumers.length) return;
 
     const consumerIds = consumers
       .filter((consumer) => consumer.kind === 'video')
-      .map((consumer) => consumer.consumer.id);
+      .map((consumer) => consumer.consumer?.id);
 
     const params = { roomId: ticleId, consumerIds };
 
@@ -155,7 +139,7 @@ const useRemoteStream = () => {
   const pauseStreamByConsumerId = (consumerId: string) => {
     return (prevStreams: client.RemoteStream[]) => {
       const newStreams = prevStreams.map((stream) => {
-        if (stream.consumer.id === consumerId) {
+        if (stream.consumer?.id === consumerId) {
           stream.consumer.pause();
           stream.paused = true;
         }
@@ -170,7 +154,7 @@ const useRemoteStream = () => {
   const resumeStreamByConsumerId = (consumerId: string) => {
     return (prevStreams: client.RemoteStream[]) => {
       const newStreams = prevStreams.map((stream) => {
-        if (stream.consumer.id === consumerId) {
+        if (stream.consumer?.id === consumerId) {
           stream.consumer.resume();
           stream.paused = false;
         }
@@ -202,10 +186,10 @@ const useRemoteStream = () => {
     const newStream = {
       stream,
       consumer,
+      nickname,
+      socketId: peerId,
       kind: consumer.kind,
       paused: consumer.paused,
-      socketId: peerId,
-      nickname,
     };
 
     setRemoteStream(newStream);
@@ -215,15 +199,19 @@ const useRemoteStream = () => {
 
   const setRemoteStream = (remoteStream: client.RemoteStream) => {
     const getNewStreams = (prevStreams: client.RemoteStream[]) => {
-      const isExist = prevStreams.some(
-        (stream) => stream.consumer.producerId === remoteStream.consumer.producerId
+      const newStreams = [...prevStreams];
+
+      const remoteStreamIdx = prevStreams.findIndex(
+        (stream) => stream.socketId === remoteStream.socketId && !stream.stream
       );
 
-      if (isExist) {
-        return prevStreams;
+      if (remoteStreamIdx !== -1) {
+        newStreams[remoteStreamIdx] = remoteStream;
+      } else {
+        newStreams.push(remoteStream);
       }
 
-      return [...prevStreams, remoteStream];
+      return newStreams;
     };
 
     if (remoteStream.kind === 'video') {
@@ -241,7 +229,7 @@ const useRemoteStream = () => {
 
       const deletedStreams = prevStreams.filter((stream) => !cb(stream));
 
-      deletedStreams.forEach((stream) => stream.consumer.close());
+      deletedStreams.forEach((stream) => stream.consumer?.close());
 
       return result;
     };
@@ -259,7 +247,7 @@ const useRemoteStream = () => {
 
     const getNewStreams = (prevStreams: client.RemoteStream[]) => {
       const newStreams = [...prevStreams];
-      const stream = newStreams.find((stream) => stream.consumer.producerId === producerId);
+      const stream = newStreams.find((stream) => stream.consumer?.producerId === producerId);
 
       if (!stream) {
         return prevStreams;
@@ -267,10 +255,10 @@ const useRemoteStream = () => {
 
       socket.emit(SOCKET_EVENTS.pauseConsumers, {
         roomId: ticleId,
-        consumerIds: [stream.consumer.id],
+        consumerIds: [stream.consumer?.id],
       });
 
-      stream.consumer.pause();
+      stream.consumer?.pause();
       stream.paused = true;
 
       return newStreams;
@@ -280,35 +268,55 @@ const useRemoteStream = () => {
     setAudioStreams(getNewStreams);
   }, []);
 
-  const resumeRemoteStream = useCallback((producerId: string) => {
-    const socket = socketRef.current;
+  const resumeRemoteStream = useCallback(
+    (producerId: string) => {
+      const socket = socketRef.current;
 
-    if (!socket) {
-      throw new Error('socket is not initialized');
-    }
-
-    const getNewStreams = (prevStreams: client.RemoteStream[]) => {
-      const newStreams = [...prevStreams];
-      const stream = newStreams.find((stream) => stream.consumer.producerId === producerId);
-
-      if (!stream) {
-        return prevStreams;
+      if (!socket) {
+        throw new Error('socket is not initialized');
       }
 
-      socket.emit(SOCKET_EVENTS.resumeConsumers, {
-        roomId: ticleId,
-        consumerIds: [stream.consumer.id],
-      });
+      const getNewStreams = (prevStreams: client.RemoteStream[]) => {
+        const newStreams = [...prevStreams];
+        const stream = newStreams.find((stream) => stream.consumer?.producerId === producerId);
 
-      stream.consumer.resume();
-      stream.paused = false;
+        if (!stream) {
+          return prevStreams;
+        }
 
-      return newStreams;
-    };
+        socket.emit(SOCKET_EVENTS.resumeConsumers, {
+          roomId: ticleId,
+          consumerIds: [stream.consumer?.id],
+        });
 
-    setVideoStreams(getNewStreams);
-    setAudioStreams(getNewStreams);
-  }, []);
+        stream.consumer?.resume();
+        stream.paused = false;
+
+        return newStreams;
+      };
+
+      setVideoStreams(getNewStreams);
+      setAudioStreams(getNewStreams);
+    },
+    [socketRef, ticleId]
+  );
+
+  const addInitialRemoteStream = (
+    initialStream: Pick<client.RemoteStream, 'nickname' | 'socketId'>
+  ) => {
+    setVideoStreams((prevStreams) => [...prevStreams, { ...initialStream }]);
+  };
+
+  const clearRemoteStream = () => {
+    setVideoStreams((prevStreams) => {
+      prevStreams.forEach((stream) => stream.consumer?.close());
+      return [];
+    });
+    setAudioStreams((prevStreams) => {
+      prevStreams.forEach((stream) => stream.consumer?.close());
+      return [];
+    });
+  };
 
   return {
     videoStreams,
@@ -320,7 +328,9 @@ const useRemoteStream = () => {
     resumeRemoteStream,
     resumeAudioConsumers,
     resumeVideoConsumers,
+    addInitialRemoteStream,
     pauseVideoConsumers,
+    clearRemoteStream,
   };
 };
 

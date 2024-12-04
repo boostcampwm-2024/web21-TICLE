@@ -11,7 +11,7 @@ const useMediasoup = () => {
   const { socketRef, isConnected, isError } = useMediasoupState();
 
   const { createRoom } = useRoom();
-  const { createRecvTransport, createSendTransport, createDevice, disconnect } =
+  const { createRecvTransport, createSendTransport, createDevice, clearMediasoup } =
     useMediasoupAction();
   const {
     consume,
@@ -20,26 +20,29 @@ const useMediasoup = () => {
     pauseRemoteStream,
     resumeRemoteStream,
     resumeAudioConsumers,
+    clearRemoteStream,
+    addInitialRemoteStream,
   } = useRemoteStreamAction();
-  const { startCameraStream, startMicStream } = useLocalStreamAction();
-
+  const { startCameraStream, startMicStream, clearLocalStream } = useLocalStreamAction();
   const initSocketEvent = () => {
     const socket = socketRef.current;
 
     if (!socket) return;
 
-    // TODO: new peer 이벤트시 목록에 추가하고 stream은 없다고 표시
+    socket.on(SOCKET_EVENTS.newPeer, ({ peerId, nickname }) => {
+      addInitialRemoteStream({ socketId: peerId, nickname });
+    });
 
     socket.on(SOCKET_EVENTS.peerLeft, ({ peerId }) => {
       filterRemoteStream((rs) => rs.socketId !== peerId);
     });
 
     socket.on(SOCKET_EVENTS.consumerClosed, ({ consumerId }) => {
-      filterRemoteStream((rs) => rs.consumer.id !== consumerId);
+      filterRemoteStream((rs) => rs.consumer?.id !== consumerId);
     });
 
     socket.on(SOCKET_EVENTS.producerClosed, ({ producerId }) => {
-      filterRemoteStream((rs) => rs.consumer.producerId !== producerId);
+      filterRemoteStream((rs) => rs.consumer?.producerId !== producerId);
     });
 
     socket.on(SOCKET_EVENTS.producerPaused, ({ producerId }) => {
@@ -52,19 +55,14 @@ const useMediasoup = () => {
 
     socket.on(SOCKET_EVENTS.newProducer, (data) => {
       if (socket.id === data.peerId) return;
-
       consume(data);
     });
   };
 
   const setLocalStream = async (device: client.Device) => {
-    try {
-      await createSendTransport(device);
+    await createSendTransport(device);
 
-      await Promise.all([startCameraStream(), startMicStream()]);
-    } catch (_) {
-      // TODO: Error
-    }
+    Promise.all([startCameraStream(), startMicStream()]);
   };
 
   const setRemoteStream = async (device: client.Device) => {
@@ -98,8 +96,17 @@ const useMediasoup = () => {
   }, [isConnected, isError]);
 
   useEffect(() => {
+    const clearAll = () => {
+      clearRemoteStream();
+      clearLocalStream();
+      clearMediasoup();
+    };
+
+    window.addEventListener('beforeunload', clearAll);
+
     return () => {
-      disconnect();
+      clearAll();
+      window.removeEventListener('beforeunload', clearAll);
     };
   }, []);
 };

@@ -4,6 +4,8 @@ import { io, Socket } from 'socket.io-client';
 import { SOCKET_EVENTS } from '@repo/mediasoup';
 
 import { ENV } from '@/constants/env';
+import { toast } from '@/core/toast';
+import { renderError } from '@/utils/toast/renderMessage';
 
 const SOCKET_OPTIONS = {
   transports: ['websocket', 'polling'],
@@ -38,6 +40,10 @@ const useSocket = (): UseSocketReturn => {
 
   const initSocketEvents = useCallback(
     (socket: Socket) => {
+      socket.on(SOCKET_EVENTS.error, (result) => {
+        toast(renderError(result.error.message));
+      });
+
       socket.on(SOCKET_EVENTS.connect, () => {
         setIsConnected(true);
         setIsError(null);
@@ -53,6 +59,13 @@ const useSocket = (): UseSocketReturn => {
         setIsConnected(false);
         setIsError(new Error(`socket connection error: ${error}`));
       });
+
+      socket.on(SOCKET_EVENTS.roomClosed, () => {
+        navigate({ to: '/', replace: true });
+        toast(renderError('티클이 종료되었습니다.'));
+        setIsConnected(false);
+        setIsError(null);
+      });
     },
     [navigate]
   );
@@ -61,10 +74,6 @@ const useSocket = (): UseSocketReturn => {
     const socket = initSocket();
 
     initSocketEvents(socket);
-
-    return () => {
-      socket.disconnect();
-    };
   }, [initSocket, initSocketEvents]);
 
   return { socketRef, isConnected, isError };

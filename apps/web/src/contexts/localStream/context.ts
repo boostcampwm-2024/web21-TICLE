@@ -6,20 +6,36 @@ export interface LocalStream {
   paused: boolean;
 }
 
+export interface MediaDevice {
+  label: string;
+  value: string;
+}
+
 interface LocalStreamState {
   audio: LocalStream;
   video: LocalStream;
   screen: LocalStream;
+
+  videoDevices: MediaDevice[];
+  audioDevices: MediaDevice[];
+  audioOutputDevices: MediaDevice[];
+  selectedVideoDeviceId: string | null;
+  selectedAudioDeviceId: string | null;
+  selectedAudioOutputDeviceId: string | null;
 }
 
 interface StreamActionContextProps {
   startCameraStream: () => void;
   startMicStream: () => void;
   startScreenStream: () => void;
-  closeScreenStream: () => void;
   pauseStream: (type: MediaTypes) => void;
   resumeStream: (type: MediaTypes) => void;
   closeStream: (type: MediaTypes) => void;
+  clearLocalStream: () => void;
+
+  setSelectedVideoDeviceId: (deviceId: string) => void;
+  setSelectedAudioDeviceId: (deviceId: string) => void;
+  setSelectedAudioOutputDeviceId: (deviceId: string) => void;
 }
 
 export const LocalStreamStateContext = createContext<LocalStreamState | undefined>(undefined);

@@ -37,6 +37,14 @@ export const SOCKET_EVENTS = {
   resumeAudioConsumers: 'resume-audio-consumers',
   resumeVideoConsumers: 'resume-video-consumers',
   resumeConsumers: 'resume-consumers',
+
+  changeConsumerPreferredLayers: 'change-consumer-preferred-layers',
+  // 녹음관련 이벤트
+  startRecord: 'start-record',
+  stopRecord: 'stop-record',
+  pauseRecord: 'pause-record',
+  resumeRecord: 'resume-record',
+  getIsRecording: 'get-is-recording',
 } as const;
 
 export const TRANSPORT_EVENTS = {

@@ -45,11 +45,12 @@ export interface CreateConsumerRes {
 
 export interface RemoteStream {
   socketId: string;
-  stream: MediaStream;
-  consumer: types.Consumer<{ mediaTypes: MediaTypes; nickname: string }>;
-  kind: types.MediaKind;
-  paused: boolean;
+  stream?: MediaStream | null;
+  consumer?: types.Consumer<{ mediaTypes: MediaTypes; nickname: string }>;
+  kind?: types.MediaKind;
+  paused?: boolean;
   nickname: string;
+  mediaType?: string;
 }
 
 export interface GetProducersRes {
@@ -66,21 +67,9 @@ export interface ResumeConsumersRes {
 
 export const PRODUCER_OPTIONS: ProducerOptions = {
   encodings: [
-    {
-      rid: 'r0',
-      maxBitrate: 100000,
-      scalabilityMode: 'S1T3',
-    },
-    {
-      rid: 'r1',
-      maxBitrate: 300000,
-      scalabilityMode: 'S1T3',
-    },
-    {
-      rid: 'r2',
-      maxBitrate: 900000,
-      scalabilityMode: 'S1T3',
-    },
+    { rid: 'r0', maxBitrate: 50000, scalabilityMode: 'S1T3' },
+    { rid: 'r1', maxBitrate: 150000, scalabilityMode: 'S1T3' },
+    { rid: 'r2', maxBitrate: 500000, scalabilityMode: 'S1T3' },
   ],
   codecOptions: {
     videoGoogleStartBitrate: 1000,
@@ -89,34 +78,17 @@ export const PRODUCER_OPTIONS: ProducerOptions = {
 
 export const VIDEO_PRODUCER_OPTIONS: ProducerOptions = {
   encodings: [
-    {
-      rid: 'r0',
-      maxBitrate: 100000,
-      scalabilityMode: 'S1T3',
-    },
-    {
-      rid: 'r1',
-      maxBitrate: 300000,
-      scalabilityMode: 'S1T3',
-    },
-    {
-      rid: 'r2',
-      maxBitrate: 900000,
-      scalabilityMode: 'S1T3',
-    },
+    { rid: 'r0', maxBitrate: 50000, scalabilityMode: 'S1T3' },
+    { rid: 'r1', maxBitrate: 150000, scalabilityMode: 'S1T3' },
+    { rid: 'r2', maxBitrate: 500000, scalabilityMode: 'S1T3' },
   ],
   codecOptions: {
     videoGoogleStartBitrate: 1000,
     opusDtx: true,
-    opusStereo: true,
   },
 };
 
 export const AUDIO_PRODUCER_OPTIONS: ProducerOptions = {
-  encodings: [
-    {
-      maxBitrate: 64000,
-    },
-  ],
+  encodings: [{ maxBitrate: 64000 }],
   codecOptions: {},
 };

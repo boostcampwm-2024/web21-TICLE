@@ -15,13 +15,10 @@ export class Summary {
   id: number;
 
   @Column('varchar')
-  name: string;
+  audioUrl: string;
 
-  @Column('varchar')
-  source: string;
-
-  @Column('varchar')
-  summary: string;
+  @Column('json', { nullable: true })
+  summaryText: string[];
 
   @CreateDateColumn({ type: 'timestamp', name: 'created_at' })
   createdAt: Date;

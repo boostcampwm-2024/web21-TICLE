@@ -1,3 +1,4 @@
+import { useParams, useNavigate } from '@tanstack/react-router';
 import { SOCKET_EVENTS } from '@repo/mediasoup';
 
 import CameraOffIc from '@/assets/icons/camera-off.svg?react';
@@ -7,28 +8,54 @@ import MicOffIc from '@/assets/icons/mic-off.svg?react';
 import MicOnIc from '@/assets/icons/mic-on.svg?react';
 import ScreenOffIc from '@/assets/icons/screen-off.svg?react';
 import ScreenOnIc from '@/assets/icons/screen-on.svg?react';
+import SettingIc from '@/assets/icons/setting.svg?react';
 import ToggleButton from '@/components/live/ControlBar/ToggleButton';
 import ExitDialog from '@/components/live/ExitDialog';
+import SettingDialog from '@/components/live/SettingDialog';
 import { useLocalStreamAction, useLocalStreamState } from '@/contexts/localStream/context';
-import { useMediasoupAction, useMediasoupState } from '@/contexts/mediasoup/context';
+import { useMediasoupState } from '@/contexts/mediasoup/context';
 import useModal from '@/hooks/useModal';
 
-const ControlBar = () => {
-  const { isOpen, onClose, onOpen } = useModal();
+interface ControlBarProps {
+  isOwner: boolean;
+  onTicleEnd: () => void;
+}
+
+const ControlBar = ({ isOwner, onTicleEnd }: ControlBarProps) => {
+  const navigate = useNavigate({ from: '/live/$ticleId' });
+
+  const {
+    isOpen: isOpenExitModal,
+    onClose: onCloseExitModal,
+    onOpen: onOpenExitModal,
+  } = useModal();
+
+  const {
+    isOpen: isOpenSettingModal,
+    onClose: onCloseSettingModal,
+    onOpen: onOpenSettingModal,
+  } = useModal();
 
   const { socketRef } = useMediasoupState();
   const { video, screen, audio } = useLocalStreamState();
 
-  const { disconnect } = useMediasoupAction();
-  const { closeStream, pauseStream, resumeStream, startScreenStream, closeScreenStream } =
-    useLocalStreamAction();
+  const {
+    closeStream,
+    pauseStream,
+    resumeStream,
+    startScreenStream,
+    startCameraStream,
+    startMicStream,
+  } = useLocalStreamAction();
+
+  const { ticleId } = useParams({ from: '/_authenticated/live/$ticleId' });
 
   const toggleScreenShare = async () => {
     const { paused, stream } = screen;
 
     try {
       if (stream && !paused) {
-        closeScreenStream();
+        closeStream('screen');
       } else {
         startScreenStream();
       }
@@ -40,7 +67,10 @@ const ControlBar = () => {
   const toggleVideo = () => {
     const { paused, stream } = video;
 
-    if (!stream) return;
+    if (!stream) {
+      startCameraStream();
+      return;
+    }
 
     if (paused) {
       resumeStream('video');
@@ -52,7 +82,10 @@ const ControlBar = () => {
   const toggleAudio = () => {
     const { paused, stream } = audio;
 
-    if (!stream) return;
+    if (!stream) {
+      startMicStream();
+      return;
+    }
 
     if (paused) {
       resumeStream('audio');
@@ -61,17 +94,24 @@ const ControlBar = () => {
     }
   };
 
-  const handleExit = (isOwner: boolean) => {
+  const handleExit = () => {
     if (isOwner) {
-      socketRef.current?.emit(SOCKET_EVENTS.closeRoom);
+      socketRef.current?.emit(SOCKET_EVENTS.closeRoom, { roomId: ticleId });
+      onTicleEnd();
     }
 
-    disconnect();
+    navigate({ to: '/', replace: true });
   };
 
   return (
     <>
       <div className="flex items-center justify-start gap-x-[14px]">
+        <ToggleButton
+          isActivated
+          ActiveIcon={SettingIc}
+          InactiveIcon={SettingIc}
+          onToggle={onOpenSettingModal}
+        />
         <ToggleButton
           ActiveIcon={MicOnIc}
           InactiveIcon={MicOffIc}
@@ -90,10 +130,27 @@ const ControlBar = () => {
           onToggle={toggleScreenShare}
           isActivated={screen.paused}
         />
-        <ToggleButton type="exit" ActiveIcon={ExitIc} InactiveIcon={ExitIc} onToggle={onOpen} />
+        <ToggleButton
+          type="exit"
+          ActiveIcon={ExitIc}
+          InactiveIcon={ExitIc}
+          onToggle={onOpenExitModal}
+        />
       </div>
-      {isOpen && (
-        <ExitDialog isOpen={isOpen} isOwner={false} handleExit={handleExit} onClose={onClose} />
+      {isOpenExitModal && (
+        <ExitDialog
+          isOpen={isOpenExitModal}
+          isOwner={isOwner}
+          handleExit={handleExit}
+          onClose={onCloseExitModal}
+        />
+      )}
+      {isOpenSettingModal && (
+        <SettingDialog
+          isOpen={isOpenSettingModal}
+          onClose={onCloseSettingModal}
+          isOwner={isOwner}
+        />
       )}
     </>
   );

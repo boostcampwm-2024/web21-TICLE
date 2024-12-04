@@ -3,7 +3,7 @@ import { GetDashboardListQuerySchema } from '@repo/types';
 
 import { JwtAuthGuard } from '@/auth/jwt/jwt-auth.guard';
 import { GetUserId } from '@/common/decorator/get-userId.decorator';
-import { ZodValidationPipe } from '@/zodValidationPipe';
+import { ZodValidationPipe } from '@/common/pipe/zodValidationPipe';
 
 import { DashboardService } from './dashboard.service';
 import { GetDashboardListQueryDto } from './dto/getDashboardListQueryDto';
@@ -31,8 +31,19 @@ export class DashboardController {
     return await this.dashboardService.getApplicants(ticleId);
   }
 
-  @Post('start')
-  startTicle(@Param('ticleId') ticleId: number) {}
+  @Post(':ticleId/start')
+  @UseGuards(JwtAuthGuard)
+  async startTicle(@GetUserId() userId: number, @Param('ticleId') ticleId: number) {
+    await this.dashboardService.startTicle(userId, ticleId);
+    return 'success ticle start';
+  }
+
+  @Post(':ticleId/end')
+  @UseGuards(JwtAuthGuard)
+  async endTicle(@GetUserId() userId: number, @Param('ticleId') ticleId: number) {
+    await this.dashboardService.endTicle(userId, ticleId);
+    return 'success ticle end';
+  }
 
   @Post('join')
   joinTicle(@Param('ticleId') ticleId: number) {}

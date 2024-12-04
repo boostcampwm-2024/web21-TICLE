@@ -14,7 +14,10 @@ export const GetDashboardListQuerySchema = z.object({
     .optional()
     .transform((val) => (val ? parseInt(val, 10) : 10))
     .refine((val) => !isNaN(val) && val > 0, '페이지 크기는 0보다 커야 합니다'),
-  status: z.enum([TicleStatus.CLOSED, TicleStatus.OPEN]).nullable().optional(),
+  status: z
+    .enum([TicleStatus.CLOSED, TicleStatus.OPEN, TicleStatus.IN_PROGRESS])
+    .nullable()
+    .optional(),
 });
 
 export type GetDashboardListQueryType = z.infer<typeof GetDashboardListQuerySchema>;
@@ -32,7 +35,7 @@ const BaseDashboardResponseSchema = z.object({
   title: z.string(),
   startTime: z.string().datetime(),
   endTime: z.string().datetime(),
-  ticleStatus: z.enum([TicleStatus.CLOSED, TicleStatus.OPEN]),
+  ticleStatus: z.enum([TicleStatus.CLOSED, TicleStatus.OPEN, TicleStatus.IN_PROGRESS]),
 });
 
 const AppliedTicleSchema = BaseDashboardResponseSchema.extend({
@@ -58,3 +61,9 @@ export const DashboardApplicantsResponseSchema = z.array(
 );
 
 export type DashboardApplicantsResponse = z.infer<typeof DashboardApplicantsResponseSchema>;
+
+export const DashboardAiSummaryResponseSchema = z.object({
+  summary: z.array(z.string()),
+});
+
+export type DashboardAiSummaryResponse = z.infer<typeof DashboardAiSummaryResponseSchema>;

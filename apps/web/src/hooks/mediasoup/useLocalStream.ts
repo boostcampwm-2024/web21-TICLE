@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useEffect } from 'react';
 import { MediaTypes } from '@repo/mediasoup';
 
-import { LocalStream } from '@/contexts/localStream/context';
 import { useMediasoupAction } from '@/contexts/mediasoup/context';
-import { getCameraStream, getMicStream, getScreenStream } from '@/utils/stream';
+import { toast } from '@/core/toast';
+import useMediaTracks from '@/hooks/useMediaTracks';
+import { renderError } from '@/utils/toast/renderMessage';
 
 const DEFAULT_LOCAL_STREAM = {
   stream: null,
@@ -11,132 +12,98 @@ const DEFAULT_LOCAL_STREAM = {
 } as const;
 
 const useLocalStream = () => {
-  const [video, setVideo] = useState<LocalStream>({ ...DEFAULT_LOCAL_STREAM });
-  const [audio, setAudio] = useState<LocalStream>({ ...DEFAULT_LOCAL_STREAM });
-  const [screen, setScreen] = useState<LocalStream>({ ...DEFAULT_LOCAL_STREAM });
+  const {
+    video,
+    audio,
+    screen,
 
-  const getState = (type: MediaTypes) => {
-    if (type === 'video') {
-      return [video, setVideo] as const;
-    }
+    getAudioTrack,
+    getCameraTrack,
+    getScreenTrack,
 
-    if (type === 'audio') {
-      return [audio, setAudio] as const;
-    }
+    videoDevices,
+    audioDevices,
+    audioOutputDevices,
 
-    if (type === 'screen') {
-      return [screen, setScreen] as const;
-    }
+    selectedVideoDeviceId,
+    selectedAudioDeviceId,
+    selectedAudioOutputDeviceId,
 
-    throw new Error('Invalid stream type');
-  };
+    setSelectedVideoDeviceId,
+    setSelectedAudioDeviceId,
+    setSelectedAudioOutputDeviceId,
+
+    getMediaState,
+    clearStreams,
+  } = useMediaTracks();
 
   const { createProducer, closeProducer, resumeProducer, pauseProducer } = useMediasoupAction();
 
   const startCameraStream = async () => {
     try {
-      if (video.stream) {
-        return;
-      }
-
-      const stream = await getCameraStream();
-
-      const track = stream.getVideoTracks()[0];
+      const track = await getCameraTrack();
 
       if (!track) {
-        return;
+        throw new Error();
       }
 
-      setVideo({ stream, paused: true });
-
       return createProducer('video', track);
-    } catch (_) {
-      // TODO: Error
+    } catch (e) {
+      toast(renderError('카메라를 찾을 수 없습니다.'));
       closeStream('video');
+      throw e;
     }
   };
 
   const startMicStream = async () => {
     try {
-      if (audio.stream) {
-        return;
-      }
-
-      const stream = await getMicStream();
-      const track = stream.getAudioTracks()[0];
+      const track = await getAudioTrack();
 
       if (!track) {
-        return;
+        throw new Error();
       }
-
-      setAudio({ stream, paused: true });
       return createProducer('audio', track);
-    } catch (_) {
-      // TODO: Error
+    } catch (e) {
+      toast(renderError('마이크를 찾을 수 없습니다.'));
       closeStream('audio');
+      throw e;
     }
   };
 
   const startScreenStream = async () => {
-    if (screen.stream) {
-      return;
-    }
+    try {
+      const track = await getScreenTrack();
 
-    const stream = await getScreenStream();
+      if (!track) {
+        throw new Error();
+      }
 
-    const track = stream.getVideoTracks()[0];
+      track.onended = () => {
+        track.stop();
+        closeStream('screen');
+      };
 
-    if (!track) {
-      return;
-    }
-
-    track.onended = () => {
-      track.stop();
+      return createProducer('screen', track);
+    } catch (e) {
+      toast(renderError('화면 공유를 시작할 수 없습니다.'));
       closeStream('screen');
-      closeProducer('screen');
-    };
-
-    setScreen({ stream, paused: false });
-
-    return createProducer('screen', track);
-  };
-
-  const closeScreenStream = () => {
-    const [localStream, setLocalStream] = getState('screen');
-    const { stream } = localStream;
-
-    if (!stream) {
-      return;
+      throw e;
     }
-
-    stream.getTracks().forEach((track) => {
-      track.stop();
-    });
-
-    setLocalStream({ ...DEFAULT_LOCAL_STREAM });
-    closeProducer('screen');
   };
-
   const closeStream = (type: MediaTypes) => {
-    const [localStream, setLocalStream] = getState(type);
-
-    const { stream } = localStream;
-
-    setLocalStream({ ...DEFAULT_LOCAL_STREAM });
-
-    if (!stream) {
-      return;
-    }
-
-    stream.getTracks().forEach((track) => {
-      track.stop();
-    });
+    const [, setLocalStream] = getMediaState(type);
 
     closeProducer(type);
+
+    setLocalStream(({ stream }) => {
+      stream?.getTracks().forEach((track) => track.stop());
+
+      return { ...DEFAULT_LOCAL_STREAM };
+    });
   };
 
   const pauseStream = (type: MediaTypes) => {
-    const [localStream, setLocalStream] = getState(type);
+    const [localStream, setLocalStream] = getMediaState(type);
 
     const { stream } = localStream;
 
@@ -146,15 +113,15 @@ const useLocalStream = () => {
       return;
     }
 
+    pauseProducer(type);
+
     stream.getTracks().forEach((track) => {
       track.enabled = false;
     });
-
-    pauseProducer(type);
   };
 
   const resumeStream = (type: MediaTypes) => {
-    const [localStream, setLocalStream] = getState(type);
+    const [localStream, setLocalStream] = getMediaState(type);
 
     const { stream } = localStream;
 
@@ -164,12 +131,42 @@ const useLocalStream = () => {
       return;
     }
 
+    resumeProducer(type);
+
     stream.getTracks().forEach((track) => {
       track.enabled = true;
     });
-
-    resumeProducer(type);
   };
+
+  useEffect(() => {
+    if (!selectedVideoDeviceId) return;
+
+    const videoTrack = video.stream?.getVideoTracks()[0];
+
+    if (!videoTrack) return;
+
+    const isSameDevice = videoTrack.getSettings().deviceId === selectedVideoDeviceId;
+
+    if (isSameDevice) return;
+
+    closeStream('video');
+    startCameraStream();
+  }, [selectedVideoDeviceId]);
+
+  useEffect(() => {
+    if (!selectedAudioDeviceId) return;
+
+    const audioTrack = audio.stream?.getAudioTracks()[0];
+
+    if (!audioTrack) return;
+
+    const isSameDevice = audioTrack.getSettings().deviceId === selectedAudioDeviceId;
+
+    if (isSameDevice) return;
+
+    closeStream('audio');
+    startMicStream();
+  }, [selectedAudioDeviceId]);
 
   return {
     video,
@@ -181,7 +178,19 @@ const useLocalStream = () => {
     closeStream,
     pauseStream,
     resumeStream,
-    closeScreenStream,
+    clearLocalStream: clearStreams,
+
+    videoDevices,
+    audioDevices,
+    audioOutputDevices,
+
+    selectedVideoDeviceId,
+    selectedAudioDeviceId,
+    selectedAudioOutputDeviceId,
+
+    setSelectedVideoDeviceId,
+    setSelectedAudioDeviceId,
+    setSelectedAudioOutputDeviceId,
   } as const;
 };
 
