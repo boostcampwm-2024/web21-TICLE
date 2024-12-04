@@ -72,7 +72,7 @@ export const PRODUCER_OPTIONS: ProducerOptions = {
     { rid: 'r2', maxBitrate: 500000, scalabilityMode: 'S1T3' },
   ],
   codecOptions: {
-    videoGoogleStartBitrate: 10000,
+    videoGoogleStartBitrate: 1000,
   },
 };
 
@@ -83,7 +83,7 @@ export const VIDEO_PRODUCER_OPTIONS: ProducerOptions = {
     { rid: 'r2', maxBitrate: 500000, scalabilityMode: 'S1T3' },
   ],
   codecOptions: {
-    videoGoogleStartBitrate: 10000,
+    videoGoogleStartBitrate: 1000,
     opusDtx: true,
   },
 };
