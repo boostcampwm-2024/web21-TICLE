@@ -5,22 +5,32 @@ import { SOCKET_EVENTS } from '@repo/mediasoup';
 import Button from '@/components/common/Button';
 import { useMediasoupState } from '@/contexts/mediasoup/context';
 
+interface GetIsRecordingRes {
+  isRecording: boolean;
+}
+
 function AiSummary() {
   const [isRecording, setIsRecording] = useState<boolean>(false);
   const { socketRef } = useMediasoupState();
-  const socket = socketRef.current;
   const { ticleId: roomId } = useParams({ from: '/_authenticated/live/$ticleId' });
 
   const handleRecordStart = () => {
+    const socket = socketRef.current;
+
     if (!socket) return;
+
     socket.emit(SOCKET_EVENTS.startRecord, { roomId });
     setIsRecording(true);
   };
 
   useEffect(() => {
+    const socket = socketRef.current;
+
     if (!socket) return;
-    socket.emit(SOCKET_EVENTS.getIsRecording, { roomId }, (res) => {
-      const { isRecording } = res;
+
+    socket.emit(SOCKET_EVENTS.getIsRecording, { roomId }, (data: GetIsRecordingRes) => {
+      const { isRecording } = data;
+
       setIsRecording(isRecording);
     });
   }, []);
