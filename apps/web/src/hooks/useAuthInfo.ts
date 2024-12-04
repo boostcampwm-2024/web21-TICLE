@@ -24,6 +24,7 @@ const useAuthInfo = (): AuthInfoReturn => {
     }
 
     setAuthInfo({
+      userId: user.id.toString(),
       nickname: user.nickname,
       profileImageUrl: user.profileImageUrl,
       provider: user.provider,
