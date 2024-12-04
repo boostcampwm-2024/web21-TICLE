@@ -147,11 +147,7 @@ const useRemoteStream = () => {
         return stream;
       });
 
-      return newStreams.sort((a, b) => {
-        if (a.paused === b.paused) return 0;
-
-        return a.paused ? 1 : -1;
-      });
+      return newStreams;
     };
   };
 
@@ -166,11 +162,7 @@ const useRemoteStream = () => {
         return stream;
       });
 
-      return newStreams.sort((a, b) => {
-        if (a.paused === b.paused) return 0;
-
-        return a.paused ? 1 : -1;
-      });
+      return newStreams;
     };
   };
 
@@ -269,11 +261,7 @@ const useRemoteStream = () => {
       stream.consumer?.pause();
       stream.paused = true;
 
-      return newStreams.sort((a, b) => {
-        if (a.paused === b.paused) return 0;
-
-        return a.paused ? 1 : -1;
-      });
+      return newStreams;
     };
 
     setVideoStreams(getNewStreams);
@@ -304,11 +292,7 @@ const useRemoteStream = () => {
         stream.consumer?.resume();
         stream.paused = false;
 
-        return newStreams.sort((a, b) => {
-          if (a.paused === b.paused) return 0;
-
-          return a.paused ? 1 : -1;
-        });
+        return newStreams;
       };
 
       setVideoStreams(getNewStreams);
