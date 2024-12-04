@@ -176,10 +176,10 @@
 > 로그인 성공 후 JWT를 쿠키에 넣은 뒤 redirection을 하여 클라이언트에서 쿠키를 조작할 수 없었습니다.
 > 클라이언트 단일로 로그아웃이 불가능하여 쿠키 옵션에 대해 공부하며 로그아웃 기능을 구현했습니다.
 
-<h4><a href='https://simeunseo.notion.site/nest-Throttler-143c27a1f6bf4feb9b0983e770c82b95?pvs=4'>🔗 게스트 로그인 구현과 @nest/Throttler</a></h4>
+<h4><a href='https://simeunseo.notion.site/ffmpeg-4668724ddc4c4ec484c4e2551a11f577?pvs=4'>🔗 mediasoup + ffmpeg을 활용한 음성저장</a></h4>
 
-> 캠퍼들이 저희의 서비스를 편하게 테스트할 수 있도록 게스트 로그인 기능을 구현하였습니다.
-> 게스트 로그인을 구현하며 고민이였던 과도한 게스트 로그인 요청을 nest의 Throttler를 활용하여 해결하였습니다.
+> 강의 AI 요약 기능을 위하여 회의실의 음성을 저장해야합니다
+> mediasoup의 transport에 대해 간단히 학습하고 ffmpeg을 활용하여 음성저장 기능을 구현하였습니다.
 
 <h4><a href='https://simeunseo.notion.site/clova-speech-clova-studio-ec1a9813b5a74439b32186b4fc5f8450?pvs=4'>🔗 Clova studio, Clova speech</a></h4>
 
