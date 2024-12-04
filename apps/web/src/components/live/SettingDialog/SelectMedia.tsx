@@ -28,6 +28,12 @@ function SelectMedia() {
     getStream();
   }, [selectedVideoDeviceId]);
 
+  useEffect(() => {
+    return () => {
+      stream?.getTracks().forEach((track) => track.stop());
+    };
+  }, [stream]);
+
   return (
     <div className="flex h-full flex-col gap-y-4 overflow-y-auto">
       <div>
