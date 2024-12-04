@@ -31,7 +31,7 @@ function SelectMedia() {
   return (
     <div className="flex h-full flex-col gap-y-4 overflow-y-auto">
       <div>
-        <h2 className="text-h4 text-alt">카메라</h2>
+        <h2 className="text-head3 text-main">카메라</h2>
         <video
           ref={videoRef}
           autoPlay
@@ -56,7 +56,7 @@ function SelectMedia() {
         )}
       </div>
       <div>
-        <h2 className="text-h4 text-alt">마이크</h2>
+        <h2 className="text-head3 text-main">마이크</h2>
         {audioDevices.length === 0 && (
           <p className="mt-2 text-body2 text-alt">사용 가능한 마이크가 없습니다.</p>
         )}

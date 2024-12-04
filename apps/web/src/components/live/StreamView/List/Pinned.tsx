@@ -1,4 +1,5 @@
-import { StreamData } from '@/components/live/StreamView';
+import { client } from '@repo/mediasoup';
+
 import PaginationControls from '@/components/live/StreamView/List/PaginationControls';
 import SubVideoGrid from '@/components/live/StreamView/List/SubVideoGrid';
 import VideoPlayer from '@/components/live/StreamView/List/VideoPlayer';
@@ -7,11 +8,11 @@ import usePagination from '@/hooks/usePagination';
 const ITEMS_PER_SUB_GRID = 4;
 
 interface PinnedListProps {
-  pinnedVideoStreamData: StreamData;
+  pinnedVideoStreamData: client.RemoteStream;
 
-  addPinnedVideo: (stream: StreamData) => void;
+  addPinnedVideo: (stream: client.RemoteStream) => void;
   removePinnedVideo: () => void;
-  getAudioMutedState: (stream: StreamData) => boolean;
+  getAudioMutedState: (stream: client.RemoteStream) => boolean;
 }
 
 function PinnedGrid({

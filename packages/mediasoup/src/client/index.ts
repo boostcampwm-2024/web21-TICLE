@@ -45,11 +45,12 @@ export interface CreateConsumerRes {
 
 export interface RemoteStream {
   socketId: string;
-  stream: MediaStream;
-  consumer: types.Consumer<{ mediaTypes: MediaTypes; nickname: string }>;
-  kind: types.MediaKind;
-  paused: boolean;
+  stream?: MediaStream | null;
+  consumer?: types.Consumer<{ mediaTypes: MediaTypes; nickname: string }>;
+  kind?: types.MediaKind;
+  paused?: boolean;
   nickname: string;
+  mediaType?: string;
 }
 
 export interface GetProducersRes {

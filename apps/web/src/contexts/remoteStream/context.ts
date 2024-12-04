@@ -19,6 +19,9 @@ interface MediasoupActionContextProps {
   pauseRemoteStream: (producerId: string) => void;
   resumeRemoteStream: (producerId: string) => void;
   clearRemoteStream: () => void;
+  addInitialRemoteStream: (
+    initialStream: Pick<client.RemoteStream, 'nickname' | 'socketId'>
+  ) => void;
 }
 
 export const RemoteStreamStateContext = createContext<RemoteStreamState | undefined>(undefined);

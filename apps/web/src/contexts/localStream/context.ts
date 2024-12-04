@@ -28,11 +28,10 @@ interface StreamActionContextProps {
   startCameraStream: () => void;
   startMicStream: () => void;
   startScreenStream: () => void;
-  closeScreenStream: () => void;
   pauseStream: (type: MediaTypes) => void;
   resumeStream: (type: MediaTypes) => void;
   closeStream: (type: MediaTypes) => void;
-  closeLocalStream: () => void;
+  clearLocalStream: () => void;
 
   setSelectedVideoDeviceId: (deviceId: string) => void;
   setSelectedAudioDeviceId: (deviceId: string) => void;

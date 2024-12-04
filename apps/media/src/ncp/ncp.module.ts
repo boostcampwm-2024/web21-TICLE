@@ -7,4 +7,4 @@ import { NcpService } from './ncp.service';
   providers: [NcpService, NcpConfig],
   exports: [NcpService],
 })
-export class AppModule {}
+export class NcpModule {}
