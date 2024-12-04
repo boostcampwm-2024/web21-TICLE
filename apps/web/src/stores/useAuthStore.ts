@@ -6,6 +6,7 @@ export interface AuthInfo {
   nickname: string;
   profileImageUrl: string;
   provider: Provider;
+  userId: string;
 }
 
 interface AuthState {

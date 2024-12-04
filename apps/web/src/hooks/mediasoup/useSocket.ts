@@ -59,6 +59,13 @@ const useSocket = (): UseSocketReturn => {
         setIsConnected(false);
         setIsError(new Error(`socket connection error: ${error}`));
       });
+
+      socket.on(SOCKET_EVENTS.roomClosed, () => {
+        navigate({ to: '/', replace: true });
+        toast(renderError('티클이 종료되었습니다.'));
+        setIsConnected(false);
+        setIsError(null);
+      });
     },
     [navigate]
   );
