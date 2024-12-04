@@ -182,4 +182,13 @@ export class SignalingGateway implements OnGatewayDisconnect {
     client.to(roomId).emit(SOCKET_EVENTS.roomClosed);
     this.mediasoupService.closeRoom(roomId);
   }
+
+  @SubscribeMessage(SOCKET_EVENTS.changeConsumerPreferredLayers)
+  changeConsumerPreferredLayers(
+    @ConnectedSocket() client: Socket,
+    @MessageBody('roomId') roomId: string,
+    @MessageBody('networkQualities') data: server.NetworkQualityDto[]
+  ) {
+    return this.mediasoupService.changeConsumerPreferredLayers(client.id, roomId, data);
+  }
 }

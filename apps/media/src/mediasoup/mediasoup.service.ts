@@ -296,6 +296,24 @@ export class MediasoupService implements OnModuleInit {
     return consumerIds.map((consumerId) => this.resumeConsumer(socketId, consumerId, roomId));
   }
 
+  changeConsumerPreferredLayers(
+    socketId: string,
+    roomId: string,
+    data: server.NetworkQualityDto[]
+  ) {
+    data.forEach(({ consumerId, networkQuality }) => {
+      const room = this.roomService.getRoom(roomId);
+      const peer = room.peers.get(socketId);
+
+      const consumer = peer.getConsumer(consumerId);
+
+      consumer?.setPreferredLayers({
+        spatialLayer: networkQuality,
+        temporalLayer: networkQuality,
+      });
+    });
+  }
+
   closeRoom(roomId: string) {
     this.roomService.closeRoom(roomId);
   }
