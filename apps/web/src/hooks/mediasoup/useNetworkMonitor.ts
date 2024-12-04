@@ -15,7 +15,7 @@ const QUALITY_LEVEL = {
     quality: 0,
     options: { packetLossRate: 5, jitter: 30, frameDropRate: 10, averageRTT: 300, nackCount: 50 },
   },
-};
+} as const;
 
 interface UseNetworkMonitorProps {
   streams: client.RemoteStream[];
@@ -140,9 +140,9 @@ const useNetworkMonitor = ({ streams }: UseNetworkMonitorProps) => {
     if (!socket) return;
 
     const interval = setInterval(async () => {
-      const notPausedConsumers = getNotPausedStreams(streams);
+      const notPausedStreams = getNotPausedStreams(streams);
 
-      const networkQualities = await checkNetworkQuality(notPausedConsumers);
+      const networkQualities = await checkNetworkQuality(notPausedStreams);
 
       socket.emit(SOCKET_EVENTS.changeConsumerPreferredLayers, {
         roomId: ticleId,
