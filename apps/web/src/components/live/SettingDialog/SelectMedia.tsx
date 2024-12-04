@@ -18,7 +18,7 @@ function SelectMedia() {
 
       stream?.getTracks().forEach((track) => track.stop());
 
-      const cameraStream = await getCameraStream({ video: { deviceId: selectedVideoDeviceId } });
+      const cameraStream = await getCameraStream({ deviceId: selectedVideoDeviceId });
 
       videoRef.current.srcObject = cameraStream;
 
