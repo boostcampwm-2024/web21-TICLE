@@ -317,4 +317,33 @@ export class MediasoupService implements OnModuleInit {
   closeRoom(roomId: string) {
     this.roomService.closeRoom(roomId);
   }
+
+  async createPlainTransport(router: types.Router) {
+    return router.createPlainTransport(this.mediasoupConfig.plainTransport);
+  }
+
+  async createRecordConsumer(
+    transport: types.Transport,
+    producerId: string,
+    rtpCapabilities: types.RtpCapabilities,
+    producerPaused: boolean
+  ) {
+    const consumer = await transport.consume({
+      producerId,
+      rtpCapabilities,
+      paused: producerPaused,
+    });
+    consumer.on('producerpause', () => {
+      consumer.pause();
+    });
+
+    consumer.on('producerresume', () => {
+      if (consumer.kind !== 'audio') {
+        return;
+      }
+      consumer.resume();
+    });
+
+    return consumer;
+  }
 }
