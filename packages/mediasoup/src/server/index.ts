@@ -68,6 +68,16 @@ export interface ChangeConsumerStateDto {
   roomId: string;
 }
 
+export interface NetworkQualityDto {
+  consumerId: string;
+  networkQuality: number;
+}
+
+export interface ChangeConsumerPreferredLayersDto {
+  roomId: string;
+  networkQualities: NetworkQualityDto[];
+}
+
 export const PRODUCER_OPTIONS = {
   encodings: [
     { rid: 'r0', maxBitrate: 50000, scalabilityMode: 'S1T3', active: true, dtx: false },

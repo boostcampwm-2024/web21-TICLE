@@ -37,6 +37,8 @@ export const SOCKET_EVENTS = {
   resumeAudioConsumers: 'resume-audio-consumers',
   resumeVideoConsumers: 'resume-video-consumers',
   resumeConsumers: 'resume-consumers',
+
+  changeConsumerPreferredLayers: 'change-consumer-preferred-layers',
 } as const;
 
 export const TRANSPORT_EVENTS = {
