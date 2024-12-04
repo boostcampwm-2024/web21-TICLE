@@ -1,6 +1,5 @@
 import { cva } from 'class-variance-authority';
-
-import { StreamData } from '@/components/live/StreamView';
+import { client } from '@repo/mediasoup';
 
 import VideoPlayer from './VideoPlayer';
 
@@ -17,9 +16,9 @@ const containerVariants = cva('h-full flex-1 justify-center gap-5', {
 });
 
 interface VideoGridProps {
-  videoStreamData: StreamData[];
-  onVideoClick: (stream: StreamData) => void;
-  getAudioMutedState: (stream: StreamData) => boolean;
+  videoStreamData: client.RemoteStream[];
+  onVideoClick: (stream: client.RemoteStream) => void;
+  getAudioMutedState: (stream: client.RemoteStream) => boolean;
 }
 
 function VideoGrid({ videoStreamData, onVideoClick, getAudioMutedState }: VideoGridProps) {
@@ -36,7 +35,7 @@ function VideoGrid({ videoStreamData, onVideoClick, getAudioMutedState }: VideoG
             nickname={streamData.nickname}
             stream={streamData.stream ?? null}
             isMicOn={streamData && getAudioMutedState(streamData)}
-            mediaType={streamData.consumer?.appData?.mediaTypes}
+            mediaType={streamData.consumer?.appData?.mediaTypes ?? streamData.mediaType}
           />
         </div>
       ))}

@@ -1,7 +1,9 @@
 import { cva } from 'class-variance-authority';
 import { ReactNode } from 'react';
 
-const alertVariants = cva('flex items-center justify-center', {
+import ExclamationIc from '@/assets/icons/exclamation.svg?react';
+
+const alertVariants = cva('flex items-center justify-center gap-2 text-body3', {
   variants: {
     type: {
       info: 'text-black',
@@ -18,7 +20,12 @@ interface AlertProps {
 }
 
 function Alert({ children, type = 'info' }: AlertProps) {
-  return <div className={alertVariants({ type })}>{children}</div>;
+  return (
+    <div className={alertVariants({ type })}>
+      {type === 'error' && <ExclamationIc className="fill-error" width={12} height={12} />}
+      {children}
+    </div>
+  );
 }
 
 export default Alert;

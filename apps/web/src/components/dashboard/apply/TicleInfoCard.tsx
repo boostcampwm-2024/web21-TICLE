@@ -70,9 +70,17 @@ function TicleInfoCard({
               </div>
             </button>
           )}
-          <Button disabled={status === 'closed'} onClick={handleTicleParticipate} className="w-36">
-            {status === 'closed' ? '종료된 티클' : '티클 참여하기'}
-          </Button>
+        <Button
+          disabled={status === 'closed' || status === 'open'}
+          onClick={handleTicleParticipate}
+          className="w-36"
+        >
+          {status === 'closed'
+            ? '종료된 티클'
+            : status === 'inProgress'
+              ? '티클 참여하기'
+              : '티클 시작 전'}
+        </Button>
         </div>
         {isOpen && (
           <AiSummaryDialog onClose={onClose} isOpen={isOpen} ticleId={ticleId.toString()} />

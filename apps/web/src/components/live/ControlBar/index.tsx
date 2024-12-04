@@ -1,3 +1,5 @@
+import { useParams } from '@tanstack/react-router';
+import { useNavigate } from '@tanstack/react-router';
 import { SOCKET_EVENTS } from '@repo/mediasoup';
 
 import CameraOffIc from '@/assets/icons/camera-off.svg?react';
@@ -12,7 +14,7 @@ import ToggleButton from '@/components/live/ControlBar/ToggleButton';
 import ExitDialog from '@/components/live/ExitDialog';
 import SettingDialog from '@/components/live/SettingDialog';
 import { useLocalStreamAction, useLocalStreamState } from '@/contexts/localStream/context';
-import { useMediasoupAction, useMediasoupState } from '@/contexts/mediasoup/context';
+import { useMediasoupState } from '@/contexts/mediasoup/context';
 import useModal from '@/hooks/useModal';
 
 interface ControlBarProps {
@@ -21,6 +23,8 @@ interface ControlBarProps {
 }
 
 const ControlBar = ({ isOwner, onTicleEnd }: ControlBarProps) => {
+  const navigate = useNavigate({ from: '/live/$ticleId' });
+
   const {
     isOpen: isOpenExitModal,
     onClose: onCloseExitModal,
@@ -36,7 +40,6 @@ const ControlBar = ({ isOwner, onTicleEnd }: ControlBarProps) => {
   const { socketRef } = useMediasoupState();
   const { video, screen, audio } = useLocalStreamState();
 
-  const { disconnect } = useMediasoupAction();
   const {
     closeStream,
     pauseStream,
@@ -44,15 +47,16 @@ const ControlBar = ({ isOwner, onTicleEnd }: ControlBarProps) => {
     startScreenStream,
     startCameraStream,
     startMicStream,
-    closeScreenStream,
   } = useLocalStreamAction();
+
+  const { ticleId } = useParams({ from: '/_authenticated/live/$ticleId' });
 
   const toggleScreenShare = async () => {
     const { paused, stream } = screen;
 
     try {
       if (stream && !paused) {
-        closeScreenStream();
+        closeStream('screen');
       } else {
         startScreenStream();
       }
@@ -93,11 +97,11 @@ const ControlBar = ({ isOwner, onTicleEnd }: ControlBarProps) => {
 
   const handleExit = () => {
     if (isOwner) {
-      socketRef.current?.emit(SOCKET_EVENTS.closeRoom);
+      socketRef.current?.emit(SOCKET_EVENTS.closeRoom, { roomId: ticleId });
       onTicleEnd();
     }
 
-    disconnect();
+    navigate({ to: '/', replace: true });
   };
 
   return (
@@ -137,7 +141,7 @@ const ControlBar = ({ isOwner, onTicleEnd }: ControlBarProps) => {
       {isOpenExitModal && (
         <ExitDialog
           isOpen={isOpenExitModal}
-          isOwner={false}
+          isOwner={isOwner}
           handleExit={handleExit}
           onClose={onCloseExitModal}
         />

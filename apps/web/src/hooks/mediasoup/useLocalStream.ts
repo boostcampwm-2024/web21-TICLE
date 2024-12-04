@@ -34,6 +34,7 @@ const useLocalStream = () => {
     setSelectedAudioOutputDeviceId,
 
     getMediaState,
+    clearStreams,
   } = useMediaTracks();
 
   const { createProducer, closeProducer, resumeProducer, pauseProducer } = useMediasoupAction();
@@ -80,7 +81,6 @@ const useLocalStream = () => {
       track.onended = () => {
         track.stop();
         closeStream('screen');
-        closeProducer('screen');
       };
 
       return createProducer('screen', track);
@@ -90,39 +90,15 @@ const useLocalStream = () => {
       throw e;
     }
   };
-
-  const closeScreenStream = () => {
-    const [localStream, setLocalStream] = getMediaState('screen');
-    const { stream } = localStream;
-
-    setLocalStream({ ...DEFAULT_LOCAL_STREAM });
-
-    if (!stream) {
-      return;
-    }
-
-    closeProducer('screen');
-
-    stream.getTracks().forEach((track) => {
-      track.stop();
-    });
-  };
-
   const closeStream = (type: MediaTypes) => {
-    const [localStream, setLocalStream] = getMediaState(type);
-
-    const { stream } = localStream;
-
-    setLocalStream({ ...DEFAULT_LOCAL_STREAM });
-
-    if (!stream) {
-      return;
-    }
+    const [, setLocalStream] = getMediaState(type);
 
     closeProducer(type);
 
-    stream.getTracks().forEach((track) => {
-      track.stop();
+    setLocalStream(({ stream }) => {
+      stream?.getTracks().forEach((track) => track.stop());
+
+      return { ...DEFAULT_LOCAL_STREAM };
     });
   };
 
@@ -160,12 +136,6 @@ const useLocalStream = () => {
     stream.getTracks().forEach((track) => {
       track.enabled = true;
     });
-  };
-
-  const closeLocalStream = () => {
-    closeStream('video');
-    closeStream('audio');
-    closeStream('screen');
   };
 
   useEffect(() => {
@@ -208,8 +178,7 @@ const useLocalStream = () => {
     closeStream,
     pauseStream,
     resumeStream,
-    closeScreenStream,
-    closeLocalStream,
+    clearLocalStream: clearStreams,
 
     videoDevices,
     audioDevices,

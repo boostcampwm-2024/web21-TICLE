@@ -65,7 +65,7 @@ function SubVideoGrid({
             nickname={streamData.nickname}
             stream={streamData.stream ?? null}
             isMicOn={streamData && getAudioMutedState(streamData)}
-            mediaType={streamData.consumer?.appData?.mediaTypes}
+            mediaType={streamData.consumer?.appData?.mediaTypes ?? streamData.mediaType}
           />
         </div>
       ))}

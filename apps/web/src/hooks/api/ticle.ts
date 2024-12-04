@@ -1,9 +1,11 @@
 import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
+import { isAxiosError } from 'axios';
+import { useEffect } from 'react';
 
 import { getTitleList, getTicle, createTicle, applyTicle, deleteTicle } from '@/api/ticle';
 import { toast } from '@/core/toast';
-import { renderSuccess } from '@/utils/toast/renderMessage';
+import { renderError, renderSuccess } from '@/utils/toast/renderMessage';
 
 interface GetTicleListParams {
   page?: number;
@@ -29,12 +31,24 @@ export const useTicleList = (params: GetTicleListParams = {}) => {
   });
 };
 
-export const useTicle = (ticleId: string) => {
-  return useQuery({
+export const useTicle = (ticleId: string, userId: string) => {
+  const navigate = useNavigate({ from: '/live/$ticleId' });
+
+  const query = useQuery({
     queryKey: ['ticle', ticleId],
-    queryFn: () => getTicle(ticleId),
+    queryFn: () => getTicle(ticleId, userId),
     enabled: !!ticleId,
+    retry: false,
   });
+
+  useEffect(() => {
+    if (query.isError && isAxiosError(query.error) && query.error.response?.status === 404) {
+      toast(renderError('존재하지 않는 티클입니다.'));
+      navigate({ to: '/' });
+    }
+  }, [query.isError, query.error, navigate]);
+
+  return query;
 };
 
 export const useCreateTicle = () => {
