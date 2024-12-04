@@ -18,7 +18,7 @@ function SelectMedia() {
 
       stream?.getTracks().forEach((track) => track.stop());
 
-      const cameraStream = await getCameraStream({ video: { deviceId: selectedVideoDeviceId } });
+      const cameraStream = await getCameraStream({ deviceId: selectedVideoDeviceId });
 
       videoRef.current.srcObject = cameraStream;
 
@@ -27,6 +27,12 @@ function SelectMedia() {
 
     getStream();
   }, [selectedVideoDeviceId]);
+
+  useEffect(() => {
+    return () => {
+      stream?.getTracks().forEach((track) => track.stop());
+    };
+  }, [stream]);
 
   return (
     <div className="flex h-full flex-col gap-y-4 overflow-y-auto">
