@@ -3,6 +3,7 @@ import { client } from '@repo/mediasoup';
 import PaginationControls from '@/components/live/StreamView/List/PaginationControls';
 import SubVideoGrid from '@/components/live/StreamView/List/SubVideoGrid';
 import VideoPlayer from '@/components/live/StreamView/List/VideoPlayer';
+import useNetworkMonitor from '@/hooks/mediasoup/useNetworkMonitor';
 import usePagination from '@/hooks/usePagination';
 
 const ITEMS_PER_SUB_GRID = 4;
@@ -21,10 +22,12 @@ function PinnedGrid({
   addPinnedVideo,
   getAudioMutedState,
 }: PinnedListProps) {
-  const { paginatedItems: subPaginatedStreams, ...subPaginationControlsProps } = usePagination({
+  const { paginatedItems, ...paginationControlsProps } = usePagination({
     itemsPerPage: ITEMS_PER_SUB_GRID,
     pinnedStream: pinnedVideoStreamData,
   });
+
+  useNetworkMonitor({ streams: [...paginatedItems, pinnedVideoStreamData] });
 
   return (
     <div className="relative flex h-full w-full flex-col gap-5">
@@ -43,10 +46,10 @@ function PinnedGrid({
         </div>
       </div>
       <div className="relative flex h-1/4 items-center justify-between">
-        <PaginationControls {...subPaginationControlsProps}>
+        <PaginationControls {...paginationControlsProps}>
           <SubVideoGrid
             pinnedVideoStreamData={pinnedVideoStreamData}
-            videoStreamData={subPaginatedStreams}
+            videoStreamData={paginatedItems}
             onVideoClick={addPinnedVideo}
             getAudioMutedState={getAudioMutedState}
           />
