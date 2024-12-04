@@ -215,4 +215,13 @@ export class SignalingGateway implements OnGatewayDisconnect {
     const isRecording = this.recordService.getIsRecording(roomId);
     return { isRecording };
   }
+
+  @SubscribeMessage(SOCKET_EVENTS.changeConsumerPreferredLayers)
+  changeConsumerPreferredLayers(
+    @ConnectedSocket() client: Socket,
+    @MessageBody('roomId') roomId: string,
+    @MessageBody('networkQualities') data: server.NetworkQualityDto[]
+  ) {
+    return this.mediasoupService.changeConsumerPreferredLayers(client.id, roomId, data);
+  }
 }

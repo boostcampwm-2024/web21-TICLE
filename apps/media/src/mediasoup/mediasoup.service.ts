@@ -113,6 +113,10 @@ export class MediasoupService implements OnModuleInit {
     const peer = room.getPeer(socketId);
     const transport = peer.getTransport(transportId);
 
+    if (appData.mediaTypes !== 'audio') {
+      rtpParameters.encodings = server.PRODUCER_OPTIONS.encodings;
+    }
+
     const producer = await transport.produce({
       kind,
       rtpParameters,
@@ -275,7 +279,7 @@ export class MediasoupService implements OnModuleInit {
     const peer = room.peers.get(socketId);
     const consumer = peer.getConsumer(consumerId);
 
-    if (consumer.producerPaused) {
+    if (consumer?.producerPaused) {
       return { paused: true, consumerId, producerId: consumer.producerId };
     }
 
@@ -290,6 +294,24 @@ export class MediasoupService implements OnModuleInit {
 
   resumeConsumers(socketId: string, roomId: string, consumerIds: string[]) {
     return consumerIds.map((consumerId) => this.resumeConsumer(socketId, consumerId, roomId));
+  }
+
+  changeConsumerPreferredLayers(
+    socketId: string,
+    roomId: string,
+    data: server.NetworkQualityDto[]
+  ) {
+    data.forEach(({ consumerId, networkQuality }) => {
+      const room = this.roomService.getRoom(roomId);
+      const peer = room.peers.get(socketId);
+
+      const consumer = peer.getConsumer(consumerId);
+
+      consumer?.setPreferredLayers({
+        spatialLayer: networkQuality,
+        temporalLayer: networkQuality,
+      });
+    });
   }
 
   closeRoom(roomId: string) {

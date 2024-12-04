@@ -54,7 +54,6 @@ const usePagination = ({ itemsPerPage, pinnedStream }: PaginationParams) => {
 
     const startIdx = currentPage * itemsPerPage;
     const endIdx = startIdx + itemsPerPage;
-
     return totalItems.slice(startIdx, endIdx);
   }, [videoStreams, currentPage, itemsPerPage, video, screen, nickname]);
 
@@ -70,16 +69,24 @@ const usePagination = ({ itemsPerPage, pinnedStream }: PaginationParams) => {
   const totalPages = Math.ceil(streamLength / itemsPerPage);
 
   const resumeGridStreams = useDebouncedCallback(() => {
-    const gridItems = paginatedItems.filter(
-      (item) => item.socketId !== 'local' && item.consumer?.closed === false
-    ) as client.RemoteStream[];
-    const isExistPinned = gridItems.some((item) => item.socketId === pinnedStream?.socketId);
+    const prevGridItems = prevGridItemsRef.current;
+
+    const target = paginatedItems
+      .filter(
+        (item) =>
+          item.socketId !== 'local' && item.consumer?.closed === false && item.paused === true
+      )
+      .filter((item) => prevGridItems.some((prevItem) => prevItem.socketId === item.socketId));
+
+    const isExistPinned = target.some(
+      (item) => item.socketId === pinnedStream?.socketId && item.paused === true
+    );
 
     if (pinnedStream?.consumer && !isExistPinned) {
-      gridItems.push(pinnedStream as client.RemoteStream);
+      target.push(pinnedStream as client.RemoteStream);
     }
 
-    resumeVideoConsumers(gridItems);
+    resumeVideoConsumers(target);
   }, 300);
 
   const pauseGridStreams = () => {
@@ -89,10 +96,15 @@ const usePagination = ({ itemsPerPage, pinnedStream }: PaginationParams) => {
     if (!socket || prevGridItems.length === 0) return;
 
     const target = prevGridItems
-      .filter((item) => item.consumer?.closed === false && pinnedStream?.socketId !== item.socketId)
       .filter(
-        (item) => !paginatedItems.some((paginatedItem) => paginatedItem.socketId === item.socketId)
-      ) as client.RemoteStream[];
+        (item) =>
+          item.consumer?.closed === false &&
+          pinnedStream?.socketId !== item.socketId &&
+          item.paused === false
+      )
+      .filter((item) => {
+        return !paginatedItems.some((paginatedItem) => paginatedItem.socketId === item.socketId);
+      }) as client.RemoteStream[];
 
     pauseVideoConsumers(target);
   };
