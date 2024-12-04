@@ -31,14 +31,7 @@ export class RoomService {
 
   deletePeer(socketId: string) {
     for (const [roomId, room] of this.rooms) {
-      if (!room.removePeer(socketId)) continue;
-
-      if (room.peers.size === 0) {
-        room.close();
-        this.rooms.delete(roomId);
-      }
-
-      return roomId;
+      if (room.removePeer(socketId)) return roomId;
     }
   }
 
@@ -47,5 +40,13 @@ export class RoomService {
     room.close();
     this.rooms.delete(roomId);
     return roomId;
+  }
+
+  checkIsMaster(roomId: string, socketId: string) {
+    const room = this.rooms.get(roomId);
+    if (!room) {
+      return false;
+    }
+    return room.masterSocketId === socketId;
   }
 }
