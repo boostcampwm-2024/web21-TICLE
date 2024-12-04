@@ -31,18 +31,11 @@ const useMediaTracks = () => {
   );
 
   const getCameraTrack = async () => {
-    if (!selectedVideoDeviceId) {
-      return;
-    }
+    const options = selectedVideoDeviceId ? { deviceId: selectedVideoDeviceId } : {};
 
-    const stream = await getCameraStream({
-      video: { deviceId: selectedVideoDeviceId },
-    });
+    const stream = await getCameraStream(options);
     const track = stream.getVideoTracks()[0];
-
-    if (!track) {
-      return;
-    }
+    if (!track) return;
 
     setVideo({ stream, paused: true });
 
@@ -50,24 +43,13 @@ const useMediaTracks = () => {
   };
 
   const getAudioTrack = async () => {
-    if (!selectedAudioDeviceId) {
-      return;
-    }
+    const options = selectedAudioDeviceId ? { deviceId: selectedAudioDeviceId } : {};
 
-    const stream = await getMicStream({
-      audio: {
-        deviceId: {
-          exact: selectedAudioDeviceId,
-          ideal: selectedAudioDeviceId,
-        },
-      },
-    });
+    const stream = await getMicStream(options);
 
     const track = stream.getAudioTracks()[0];
 
-    if (!track) {
-      return;
-    }
+    if (!track) return;
 
     setAudio({ stream, paused: true });
 
@@ -83,9 +65,7 @@ const useMediaTracks = () => {
 
     const track = stream.getVideoTracks()[0];
 
-    if (!track) {
-      return;
-    }
+    if (!track) return;
 
     setScreen({ stream, paused: false });
 
