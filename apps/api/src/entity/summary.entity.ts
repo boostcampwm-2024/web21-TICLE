@@ -17,7 +17,7 @@ export class Summary {
   @Column('varchar')
   audioUrl: string;
 
-  @Column('json')
+  @Column('json', { nullable: true })
   summaryText: string[];
 
   @CreateDateColumn({ type: 'timestamp', name: 'created_at' })
