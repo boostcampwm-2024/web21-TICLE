@@ -113,10 +113,6 @@ export class MediasoupService implements OnModuleInit {
     const peer = room.getPeer(socketId);
     const transport = peer.getTransport(transportId);
 
-    if (appData.mediaTypes !== 'audio') {
-      rtpParameters.encodings = server.PRODUCER_OPTIONS.encodings;
-    }
-
     const producer = await transport.produce({
       kind,
       rtpParameters,
@@ -269,6 +265,8 @@ export class MediasoupService implements OnModuleInit {
     const peer = room.peers.get(socketId);
     const consumer = peer.getConsumer(consumerId);
 
+    if (!consumer) return;
+
     consumer?.pause();
 
     return { paused: true, consumerId, producerId: consumer.producerId };
@@ -278,6 +276,8 @@ export class MediasoupService implements OnModuleInit {
     const room = this.roomService.getRoom(roomId);
     const peer = room.peers.get(socketId);
     const consumer = peer.getConsumer(consumerId);
+
+    if (!consumer) return;
 
     if (consumer?.producerPaused) {
       return { paused: true, consumerId, producerId: consumer.producerId };
@@ -289,11 +289,15 @@ export class MediasoupService implements OnModuleInit {
   }
 
   pauseConsumers(socketId: string, roomId: string, consumerIds: string[]) {
-    return consumerIds.map((consumerId) => this.pauseConsumer(socketId, consumerId, roomId));
+    return consumerIds
+      .map((consumerId) => this.pauseConsumer(socketId, consumerId, roomId))
+      .filter(Boolean);
   }
 
   resumeConsumers(socketId: string, roomId: string, consumerIds: string[]) {
-    return consumerIds.map((consumerId) => this.resumeConsumer(socketId, consumerId, roomId));
+    return consumerIds
+      .map((consumerId) => this.resumeConsumer(socketId, consumerId, roomId))
+      .filter(Boolean);
   }
 
   changeConsumerPreferredLayers(
