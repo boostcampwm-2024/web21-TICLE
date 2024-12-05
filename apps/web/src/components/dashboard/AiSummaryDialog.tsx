@@ -17,7 +17,7 @@ function AiSummaryDialog({ isOpen, onClose, ticleId }: AiSummaryDialogProps) {
       <Dialog.Title align="center">AI 음성 요약</Dialog.Title>
       <Dialog.Close onClose={onClose} />
       <Dialog.Content className="custom-scrollbar h-full overflow-y-scroll">
-        {!data && (
+        {!data?.summaryText && (
           <div className="flex h-[20rem] w-full flex-col items-center justify-center gap-10">
             <Loading color="primary" />
             <span className="whitespace-pre text-center text-title1 text-primary">
