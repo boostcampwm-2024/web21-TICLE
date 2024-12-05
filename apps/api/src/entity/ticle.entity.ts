@@ -34,7 +34,7 @@ export class Ticle {
   @Column({ type: 'varchar', name: 'speaker_email' })
   speakerEmail: string;
 
-  @Column({ type: 'varchar', name: 'speaker_introduce' })
+  @Column({ type: 'text', name: 'speaker_introduce' })
   speakerIntroduce: string;
 
   @Column({ type: 'varchar' })
