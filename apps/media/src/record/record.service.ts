@@ -66,10 +66,6 @@ export class RecordService {
     return recordInfo;
   }
 
-  getRecordInfo(roomId: string) {
-    return this.recordInfos.get(roomId);
-  }
-
   private async addPlainTransport(recordInfo: RecordInfo, router: types.Router) {
     const plainTransport = await this.mediasoupService.createPlainTransport(router);
     recordInfo.setPlainTransport(plainTransport);
@@ -117,7 +113,7 @@ export class RecordService {
       return;
     }
     this.releasePort(recordInfo.port);
-    recordInfo.stopRecordProcess();
+    recordInfo.clearStream();
     this.recordInfos.delete(roomId);
   }
 
