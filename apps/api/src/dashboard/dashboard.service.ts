@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { ErrorMessage, TicleStatus } from '@repo/types';
 
 import { Applicant } from '@/entity/applicant.entity';
+import { Summary } from '@/entity/summary.entity';
 import { Ticle } from '@/entity/ticle.entity';
 
 @Injectable()
@@ -12,7 +13,9 @@ export class DashboardService {
     @InjectRepository(Ticle)
     private readonly ticleRepository: Repository<Ticle>,
     @InjectRepository(Applicant)
-    private readonly applicantRepository: Repository<Applicant>
+    private readonly applicantRepository: Repository<Applicant>,
+    @InjectRepository(Summary)
+    private readonly summaryRepository: Repository<Summary>
   ) {}
 
   async getCreatedTicleList(
@@ -25,7 +28,15 @@ export class DashboardService {
 
     const queryBuilder = this.ticleRepository
       .createQueryBuilder('ticle')
-      .select(['ticle.id', 'ticle.title', 'ticle.startTime', 'ticle.endTime', 'ticle.ticleStatus'])
+      .leftJoin('ticle.summary', 'summary')
+      .select([
+        'ticle.id',
+        'ticle.title',
+        'ticle.startTime',
+        'ticle.endTime',
+        'ticle.ticleStatus',
+        'summary.id',
+      ])
       .where('ticle.speaker = :speakerId', { speakerId })
       .skip(skip)
       .take(pageSize);
@@ -40,7 +51,12 @@ export class DashboardService {
       }
     }
 
-    const [ticles, totalItems] = await queryBuilder.getManyAndCount();
+    const [ticle, totalItems] = await queryBuilder.getManyAndCount();
+
+    const ticles = ticle.map((ticle) => ({
+      ...ticle,
+      summary: ticle.summary ? ticle.summary.id !== null : false,
+    }));
 
     const totalPages = Math.ceil(totalItems / pageSize);
 
@@ -62,6 +78,7 @@ export class DashboardService {
     const queryBuilder = this.applicantRepository
       .createQueryBuilder('applicant')
       .leftJoinAndSelect('applicant.ticle', 'ticle')
+      .leftJoin('ticle.summary', 'summary')
       .select([
         'applicant.id',
         'ticle.id',
@@ -70,6 +87,7 @@ export class DashboardService {
         'ticle.startTime',
         'ticle.endTime',
         'ticle.ticleStatus',
+        'summary.id',
       ])
       .where('applicant.user = :userId', { userId })
       .skip(skip)
@@ -87,7 +105,11 @@ export class DashboardService {
 
     const [applicants, totalItems] = await queryBuilder.getManyAndCount();
 
-    const ticles = applicants.map((applicant) => applicant.ticle);
+    const ticles = applicants.map((applicant) => ({
+      ...applicant.ticle,
+      summary: applicant.ticle.summary ? applicant.ticle.summary.id !== null : false, // summary 필드 안전하게 처리
+    }));
+
     const totalPages = Math.ceil(totalItems / pageSize);
 
     return {
