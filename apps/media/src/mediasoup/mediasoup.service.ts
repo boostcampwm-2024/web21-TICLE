@@ -311,10 +311,9 @@ export class MediasoupService implements OnModuleInit {
 
       const consumer = peer.getConsumer(consumerId);
 
-      consumer?.setPreferredLayers({
-        spatialLayer: networkQuality,
-        temporalLayer: networkQuality,
-      });
+      if (!consumer || consumer.closed || consumer.paused) return;
+
+      consumer?.setPreferredLayers({ spatialLayer: networkQuality });
     });
   }
 
