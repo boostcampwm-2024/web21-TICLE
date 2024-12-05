@@ -32,13 +32,10 @@ function TicleInfoCard({ ticleId, ticleTitle, startTime, endTime, status }: Ticl
     onClose: onAiSummaryDialogClose,
   } = useModal();
 
-  const { data: applicantsData } = useApplicantsTicle(ticleId.toString());
   const { mutate: ticleStartMutate } = useStartTicle();
   const { dateStr, timeRangeStr } = formatDateTimeRange(startTime, endTime);
 
   const navigate = useNavigate();
-
-  if (!applicantsData) return;
 
   const handleTicleStart = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -107,9 +104,9 @@ function TicleInfoCard({ ticleId, ticleTitle, startTime, endTime, status }: Ticl
         </div>
         {isApplicantsDialogOpen && (
           <ApplicantsDialog
+            ticleId={ticleId}
             onClose={onApplicantsDialogClose}
             isOpen={isApplicantsDialogOpen}
-            applicants={applicantsData}
           />
         )}
         {isAiSummaryDialogOpen && (
