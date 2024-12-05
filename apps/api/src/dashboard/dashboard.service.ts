@@ -107,7 +107,7 @@ export class DashboardService {
 
     const ticles = applicants.map((applicant) => ({
       ...applicant.ticle,
-      summary: applicant.ticle.summary ? applicant.ticle.summary.id !== null : false, // summary 필드 안전하게 처리
+      summary: applicant.ticle.summary ? applicant.ticle.summary.id !== null : false,
     }));
 
     const totalPages = Math.ceil(totalItems / pageSize);
