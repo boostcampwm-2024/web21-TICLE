@@ -31,6 +31,7 @@ export const useApplicantsTicle = (ticleId: string) => {
     queryKey: ['applicantsTicle', ticleId],
     queryFn: () => getApplicantsTicle(ticleId),
     enabled: !!ticleId,
+    staleTime: 0,
   });
 };
 
@@ -39,6 +40,7 @@ export const useAiSummary = (ticleId: string) => {
     queryKey: ['aiSummary', ticleId],
     queryFn: () => getAiSummary(ticleId),
     enabled: !!ticleId,
+    staleTime: 0,
   });
 };
 
