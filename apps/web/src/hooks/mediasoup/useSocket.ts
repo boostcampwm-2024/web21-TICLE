@@ -50,7 +50,6 @@ const useSocket = (): UseSocketReturn => {
       });
 
       socket.on(SOCKET_EVENTS.disconnect, () => {
-        navigate({ to: '/', replace: true });
         setIsConnected(false);
         setIsError(null);
       });
