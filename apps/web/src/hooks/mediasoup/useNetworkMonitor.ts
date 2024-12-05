@@ -13,7 +13,7 @@ const QUALITY_LEVEL = {
   },
   poor: {
     quality: 0,
-    options: { packetLossRate: 5, jitter: 30, frameDropRate: 10, averageRTT: 300, nackCount: 50 },
+    options: { packetLossRate: 10, jitter: 30, frameDropRate: 10, averageRTT: 300, nackCount: 50 },
   },
 } as const;
 
@@ -143,6 +143,8 @@ const useNetworkMonitor = ({ streams }: UseNetworkMonitorProps) => {
       const notPausedStreams = getNotPausedStreams(streams);
 
       const networkQualities = await checkNetworkQuality(notPausedStreams);
+
+      if (!networkQualities || !networkQualities.length) return;
 
       socket.emit(SOCKET_EVENTS.changeConsumerPreferredLayers, {
         roomId: ticleId,
