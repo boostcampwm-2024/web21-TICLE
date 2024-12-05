@@ -249,7 +249,7 @@ const useRemoteStream = () => {
       const newStreams = [...prevStreams];
       const stream = newStreams.find((stream) => stream.consumer?.producerId === producerId);
 
-      if (!stream) {
+      if (!stream || stream.consumer?.closed) {
         return prevStreams;
       }
 
@@ -280,7 +280,7 @@ const useRemoteStream = () => {
         const newStreams = [...prevStreams];
         const stream = newStreams.find((stream) => stream.consumer?.producerId === producerId);
 
-        if (!stream) {
+        if (!stream || stream.consumer?.closed) {
           return prevStreams;
         }
 
