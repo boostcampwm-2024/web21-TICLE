@@ -106,19 +106,24 @@ const ControlBar = ({ isOwner, onTicleEnd }: ControlBarProps) => {
   };
 
   useEffect(() => {
-    const handleBeforeUnload = (e: Event) => {
-      if (isOwner) {
-        const blob = new Blob([], {
-          type: 'application/json',
-        });
-
-        navigator.sendBeacon(`${ENV.API_URL}/dashboard/${ticleId}/end`, blob);
-      }
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       e.preventDefault();
     };
 
+    const handleUnload = () => {
+      if (isOwner) {
+        const blob = new Blob([], { type: 'application/json' });
+        navigator.sendBeacon(`${ENV.API_URL}/dashboard/${ticleId}/end`, blob);
+      }
+    };
+
     window.addEventListener('beforeunload', handleBeforeUnload);
-    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+    window.addEventListener('unload', handleUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      window.removeEventListener('unload', handleUnload);
+    };
   }, []);
 
   return (

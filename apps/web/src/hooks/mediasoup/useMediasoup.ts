@@ -102,11 +102,11 @@ const useMediasoup = () => {
       clearMediasoup();
     };
 
-    window.addEventListener('beforeunload', clearAll);
+    window.addEventListener('unload', clearAll);
 
     return () => {
       clearAll();
-      window.removeEventListener('beforeunload', clearAll);
+      window.removeEventListener('unload', clearAll);
     };
   }, []);
 };
