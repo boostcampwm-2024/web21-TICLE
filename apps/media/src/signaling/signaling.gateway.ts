@@ -13,6 +13,7 @@ import type { client, server } from '@repo/mediasoup';
 
 import { MediasoupService } from '@/mediasoup/mediasoup.service';
 import { RecordService } from '@/record/record.service';
+import { RoomService } from '@/room/room.service';
 import { WSExceptionFilter } from '@/wsException.filter';
 
 @WebSocketGateway()
@@ -20,20 +21,21 @@ import { WSExceptionFilter } from '@/wsException.filter';
 export class SignalingGateway implements OnGatewayDisconnect {
   constructor(
     private mediasoupService: MediasoupService,
-    private recordService: RecordService
+    private recordService: RecordService,
+    private roomService: RoomService
   ) {}
 
   @SubscribeMessage(SOCKET_EVENTS.createRoom)
-  async handleCreateRoom(@MessageBody('roomId') roomId: string) {
-    await this.mediasoupService.createRoom(roomId);
+  async handleCreateRoom(@ConnectedSocket() client: Socket, @MessageBody('roomId') roomId: string) {
+    await this.mediasoupService.createRoom(roomId, client.id);
     return { roomId };
   }
 
   @SubscribeMessage(SOCKET_EVENTS.joinRoom)
   joinRoom(@ConnectedSocket() client: Socket, @MessageBody() joinRoomDto: server.JoinRoomDto) {
     const { roomId, nickname } = joinRoomDto;
-    client.join(roomId);
     const rtpCapabilities = this.mediasoupService.joinRoom(roomId, client.id, nickname);
+    client.join(roomId);
     client.to(roomId).emit(SOCKET_EVENTS.newPeer, { peerId: client.id, nickname });
     return { rtpCapabilities };
   }
@@ -104,12 +106,18 @@ export class SignalingGateway implements OnGatewayDisconnect {
 
   handleDisconnect(@ConnectedSocket() client: Socket) {
     const roomId = this.mediasoupService.disconnect(client.id);
-    const recordInfo = this.recordService.getRecordInfo(roomId);
-    if (recordInfo && recordInfo.socketId === client.id) {
+    const isMaster = this.roomService.checkIsMaster(roomId, client.id);
+    if (isMaster) {
+      client.to(roomId).emit(SOCKET_EVENTS.roomClosed);
       this.recordService.stopRecord(roomId);
+      this.mediasoupService.closeRoom(roomId);
+      return;
     }
 
-    client.to(roomId).emit(SOCKET_EVENTS.peerLeft, { peerId: client.id });
+    const isOpen = this.roomService.checkRoomIsOpen(roomId);
+    if (isOpen) {
+      client.to(roomId).emit(SOCKET_EVENTS.peerLeft, { peerId: client.id });
+    }
   }
 
   @SubscribeMessage(SOCKET_EVENTS.closeProducer)
@@ -188,7 +196,7 @@ export class SignalingGateway implements OnGatewayDisconnect {
   @SubscribeMessage(SOCKET_EVENTS.closeRoom)
   closeMeetingRoom(@ConnectedSocket() client: Socket, @MessageBody('roomId') roomId: string) {
     client.to(roomId).emit(SOCKET_EVENTS.roomClosed);
-    this.mediasoupService.closeRoom(roomId);
+    this.roomService.setRoomIsOpen(roomId, false);
   }
 
   @SubscribeMessage(SOCKET_EVENTS.startRecord)

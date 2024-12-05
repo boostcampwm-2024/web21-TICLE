@@ -77,14 +77,3 @@ export interface ChangeConsumerPreferredLayersDto {
   roomId: string;
   networkQualities: NetworkQualityDto[];
 }
-
-export const PRODUCER_OPTIONS = {
-  encodings: [
-    { rid: 'r0', maxBitrate: 50000, scalabilityMode: 'S1T3', active: true, dtx: false },
-    { rid: 'r1', maxBitrate: 150000, scalabilityMode: 'S1T3', active: true, dtx: false },
-    { rid: 'r2', maxBitrate: 500000, scalabilityMode: 'S1T3', active: true, dtx: false },
-  ],
-  codecOptions: {
-    videoGoogleStartBitrate: 1000,
-  },
-};

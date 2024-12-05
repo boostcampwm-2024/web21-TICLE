@@ -1,4 +1,5 @@
 import { useParams, useNavigate } from '@tanstack/react-router';
+import { useEffect } from 'react';
 import { SOCKET_EVENTS } from '@repo/mediasoup';
 
 import CameraOffIc from '@/assets/icons/camera-off.svg?react';
@@ -12,6 +13,7 @@ import SettingIc from '@/assets/icons/setting.svg?react';
 import ToggleButton from '@/components/live/ControlBar/ToggleButton';
 import ExitDialog from '@/components/live/ExitDialog';
 import SettingDialog from '@/components/live/SettingDialog';
+import { ENV } from '@/constants/env';
 import { useLocalStreamAction, useLocalStreamState } from '@/contexts/localStream/context';
 import { useMediasoupState } from '@/contexts/mediasoup/context';
 import useModal from '@/hooks/useModal';
@@ -102,6 +104,27 @@ const ControlBar = ({ isOwner, onTicleEnd }: ControlBarProps) => {
 
     navigate({ to: '/', replace: true });
   };
+
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+    };
+
+    const handleUnload = () => {
+      if (isOwner) {
+        const blob = new Blob([], { type: 'application/json' });
+        navigator.sendBeacon(`${ENV.API_URL}/dashboard/${ticleId}/end`, blob);
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    window.addEventListener('unload', handleUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      window.removeEventListener('unload', handleUnload);
+    };
+  }, []);
 
   return (
     <>

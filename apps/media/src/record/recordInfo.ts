@@ -43,7 +43,7 @@ export class RecordInfo {
     this.recordConsumer.resume();
   }
 
-  stopRecordProcess() {
+  clearStream() {
     if (this.recordConsumer) {
       this.recordConsumer.close();
       this.recordConsumer = null;
@@ -84,6 +84,7 @@ export class RecordInfo {
         this.ncpService.uploadFile(filePath, remoteFileName, roomId);
         unlinkSync(sdpFilePath);
         this.ffmpegProcess = null;
+        this.clearStream();
       })
       .save(filePath);
 

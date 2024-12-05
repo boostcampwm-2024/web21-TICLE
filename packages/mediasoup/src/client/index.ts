@@ -65,25 +65,26 @@ export interface ResumeConsumersRes {
   paused: boolean;
 }
 
-export const PRODUCER_OPTIONS: ProducerOptions = {
-  encodings: [
-    { rid: 'r0', maxBitrate: 50000, scalabilityMode: 'S1T3' },
-    { rid: 'r1', maxBitrate: 150000, scalabilityMode: 'S1T3' },
-    { rid: 'r2', maxBitrate: 500000, scalabilityMode: 'S1T3' },
-  ],
-  codecOptions: {
-    videoGoogleStartBitrate: 1000,
-  },
-};
-
 export const VIDEO_PRODUCER_OPTIONS: ProducerOptions = {
   encodings: [
-    { rid: 'r0', maxBitrate: 50000, scalabilityMode: 'S1T3' },
-    { rid: 'r1', maxBitrate: 150000, scalabilityMode: 'S1T3' },
-    { rid: 'r2', maxBitrate: 500000, scalabilityMode: 'S1T3' },
+    {
+      rid: 'r0',
+      maxBitrate: 750000,
+      maxFramerate: 30,
+    },
+    {
+      rid: 'r1',
+      maxBitrate: 2000000,
+      maxFramerate: 30,
+    },
+    {
+      rid: 'r2',
+      maxBitrate: 3500000,
+      maxFramerate: 30,
+    },
   ],
   codecOptions: {
-    videoGoogleStartBitrate: 1000,
+    videoGoogleStartBitrate: 100000,
     opusDtx: true,
   },
 };
