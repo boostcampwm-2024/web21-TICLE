@@ -36,6 +36,7 @@ const BaseDashboardResponseSchema = z.object({
   startTime: z.string().datetime(),
   endTime: z.string().datetime(),
   ticleStatus: z.enum([TicleStatus.CLOSED, TicleStatus.OPEN, TicleStatus.IN_PROGRESS]),
+  summary: z.boolean(),
 });
 
 const AppliedTicleSchema = BaseDashboardResponseSchema.extend({

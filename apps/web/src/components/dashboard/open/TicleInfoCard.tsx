@@ -17,9 +17,17 @@ interface TicleInfoCardProps {
   startTime: string;
   endTime: string;
   status: 'closed' | 'open' | 'inProgress';
+  isSummaryExist: boolean;
 }
 
-function TicleInfoCard({ ticleId, ticleTitle, startTime, endTime, status }: TicleInfoCardProps) {
+function TicleInfoCard({
+  ticleId,
+  ticleTitle,
+  startTime,
+  endTime,
+  status,
+  isSummaryExist,
+}: TicleInfoCardProps) {
   const {
     isOpen: isApplicantsDialogOpen,
     onOpen: onApplicantsDialogOpen,
@@ -72,7 +80,7 @@ function TicleInfoCard({ ticleId, ticleTitle, startTime, endTime, status }: Ticl
           </div>
         </div>
         <div className="flex gap-9">
-          {status === 'closed' && (
+          {status === 'closed' && isSummaryExist && (
             <button
               className="flex items-center gap-2 rounded-md p-2.5 hover:bg-teritary"
               onClick={handleAiSummaryDialogOpen}

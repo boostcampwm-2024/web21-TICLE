@@ -66,6 +66,7 @@ function Apply() {
                     startTime={ticle.startTime}
                     endTime={ticle.endTime}
                     status={ticle.ticleStatus}
+                    isSummaryExist={ticle.summary}
                   />
                 ))}
               </Fragment>
