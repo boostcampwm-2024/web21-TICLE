@@ -313,7 +313,7 @@ export class MediasoupService implements OnModuleInit {
 
       if (!consumer || consumer.closed || consumer.paused) return;
 
-      consumer?.setPreferredLayers({ spatialLayer: networkQuality });
+      consumer.setPreferredLayers({ spatialLayer: networkQuality });
     });
   }
 
