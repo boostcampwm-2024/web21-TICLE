@@ -89,12 +89,12 @@ const useNetworkMonitor = ({ streams }: UseNetworkMonitorProps) => {
     []
   );
 
-  const checkNetworkQuality = async (streams: client.RemoteStream[]) => {
+  const checkNetworkQualities = async (streams: client.RemoteStream[]) => {
     const networkQualities = await Promise.all(
       streams.map(async (data) => {
         const { consumer } = data;
 
-        if (!consumer) return;
+        if (!consumer || consumer.closed || consumer.paused) return;
 
         let networkQuality = 2; // 0: poor, 1: average, 2: good
 
@@ -131,7 +131,15 @@ const useNetworkMonitor = ({ streams }: UseNetworkMonitorProps) => {
       })
     );
 
-    return networkQualities;
+    return networkQualities.filter(Boolean).reduce(
+      (acc, cur) => {
+        if (!cur) return acc;
+        if (acc.some((data) => data.consumerId === cur.consumerId)) return acc;
+
+        return [...acc, cur];
+      },
+      [] as { consumerId: string; networkQuality: number }[]
+    );
   };
 
   useEffect(() => {
@@ -142,7 +150,7 @@ const useNetworkMonitor = ({ streams }: UseNetworkMonitorProps) => {
     const interval = setInterval(async () => {
       const notPausedStreams = getNotPausedStreams(streams);
 
-      const networkQualities = await checkNetworkQuality(notPausedStreams);
+      const networkQualities = await checkNetworkQualities(notPausedStreams);
 
       if (!networkQualities || !networkQualities.length) return;
 
