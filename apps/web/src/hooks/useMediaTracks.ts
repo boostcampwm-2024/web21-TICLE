@@ -12,7 +12,7 @@ const DEFAULT_LOCAL_STREAM = {
 
 const getMediaDevices = (kind: MediaDeviceKind, devices: MediaDeviceInfo[]) => {
   return devices
-    .filter((device) => device.kind === kind && device.deviceId && device.deviceId !== 'default')
+    .filter((device) => device.kind === kind && device.deviceId)
     .map((device) => ({ label: device.label, value: device.deviceId }));
 };
 
@@ -116,16 +116,22 @@ const useMediaTracks = () => {
         setAudioDevices(audioInputs);
         setAudioOutputDevices(audioOutputs);
 
-        if (videoInputs[0]) setSelectedVideoDeviceId(videoInputs[0].value);
-        if (audioInputs[0]) setSelectedAudioDeviceId(audioInputs[0].value);
-        if (audioOutputs[0]) setSelectedAudioOutputDeviceId(audioOutputs[0].value);
+        if (videoInputs[0] && !selectedVideoDeviceId) {
+          setSelectedVideoDeviceId(videoInputs[0].value);
+        }
+        if (audioInputs[0] && !selectedAudioDeviceId) {
+          setSelectedAudioDeviceId(audioInputs[0].value);
+        }
+        if (audioOutputs[0] && !selectedAudioOutputDeviceId) {
+          setSelectedAudioOutputDeviceId(audioOutputs[0].value);
+        }
       } catch (_) {
         toast('미디어 정보를 가져올 수 없습니다.');
       }
     };
 
     fetchMediaDevices();
-  }, []);
+  }, [video, audio]);
 
   return {
     video,
