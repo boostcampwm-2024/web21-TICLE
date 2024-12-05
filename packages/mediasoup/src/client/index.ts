@@ -70,19 +70,16 @@ export const VIDEO_PRODUCER_OPTIONS: ProducerOptions = {
     {
       rid: 'r0',
       maxBitrate: 750000,
-      scaleResolutionDownBy: 2,
       maxFramerate: 30,
     },
     {
       rid: 'r1',
       maxBitrate: 2000000,
-      scaleResolutionDownBy: 1.5,
       maxFramerate: 30,
     },
     {
       rid: 'r2',
       maxBitrate: 3500000,
-      scaleResolutionDownBy: 1,
       maxFramerate: 30,
     },
   ],
