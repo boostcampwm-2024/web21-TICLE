@@ -106,15 +106,15 @@ const ControlBar = ({ isOwner, onTicleEnd }: ControlBarProps) => {
   };
 
   useEffect(() => {
-    const handleBeforeUnload = (e) => {
-      if (!isOwner) return;
-      const blob = new Blob([], {
-        type: 'application/json',
-      });
+    const handleBeforeUnload = (e: Event) => {
+      if (isOwner) {
+        const blob = new Blob([], {
+          type: 'application/json',
+        });
 
-      navigator.sendBeacon(`${ENV.API_URL}/dashboard/${ticleId}/end`, blob);
+        navigator.sendBeacon(`${ENV.API_URL}/dashboard/${ticleId}/end`, blob);
+      }
       e.preventDefault();
-      e.returnValue = '';
     };
 
     window.addEventListener('beforeunload', handleBeforeUnload);
