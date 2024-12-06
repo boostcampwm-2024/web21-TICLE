@@ -31,15 +31,6 @@ export class MediasoupConfig {
       },
       {
         kind: 'video',
-        mimeType: 'video/H264',
-        clockRate: 90000,
-        parameters: {
-          'packetization-mode': 1,
-          'profile-level-id': '42e01f',
-        },
-      },
-      {
-        kind: 'video',
         mimeType: 'video/VP8',
         clockRate: 90000,
         parameters: {
