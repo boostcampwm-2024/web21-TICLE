@@ -20,7 +20,11 @@ RUN pnpm install -g turbo@^2.2.3
 
 # 의존성 파일만 우선 복사하여 캐시 활용
 COPY package.json pnpm-lock.yaml ./
-RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store pnpm install --frozen-lockfile
+
+# PNPM 캐시 디렉토리 전달
+ARG PNPM_CACHE_DIR=/pnpm/store
+RUN pnpm install --frozen-lockfile --store=${PNPM_CACHE_DIR}
+
 
 # 소스 파일 전체 복사
 COPY . .
@@ -38,15 +42,15 @@ WORKDIR /app
 COPY --from=builder /app/out/json/ .
 COPY --from=builder /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
 
-# 캐시 활용하여 의존성 설치
-RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store pnpm install --frozen-lockfile
+
+# PNPM 캐시 디렉토리 전달
+ARG PNPM_CACHE_DIR=/pnpm/store
+RUN pnpm install --frozen-lockfile --store=${PNPM_CACHE_DIR}
 
 # 전체 소스 복사 및 빌드
 COPY --from=builder /app/out/full/ .
 
-# 이곳에서 캐시를 활용하여 C++ 모듈의 컴파일 결과를 캐싱합니다.
-RUN --mount=type=cache,id=build-cache,target=/root/.cache \
-    pnpm build:media
+RUN pnpm build:media
 
 # 환경 파일 복사
 COPY --from=builder /app/apps/media/.env /app/apps/media/dist/.env
