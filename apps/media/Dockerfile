@@ -22,6 +22,11 @@ FROM base AS builder
 # Turbo CLI 설치
 RUN pnpm install -g turbo@^2.2.3
 
+# PNPM 및 node-gyp 캐시를 Docker 캐시 디렉토리에 연결
+ARG PNPM_STORE_PATH=/pnpm/store
+ARG NODE_GYP_CACHE=/node-gyp-cache
+ENV NODE_GYP_CACHE=${NODE_GYP_CACHE}
+
 # 캐시 디렉토리 생성
 RUN mkdir -p ${PNPM_STORE_PATH} ${NODE_GYP_CACHE}
 
@@ -43,7 +48,12 @@ FROM base AS runner
 # 작업 디렉토리 설정
 WORKDIR /app
 
-# PNPM 및 node-gyp 캐시를 사용하여 의존성 설치
+# PNPM 및 node-gyp 캐시를 Docker 캐시 디렉토리에 연결
+ARG PNPM_STORE_PATH=/pnpm/store
+ARG NODE_GYP_CACHE=/node-gyp-cache
+ENV NODE_GYP_CACHE=${NODE_GYP_CACHE}
+
+# 캐시 디렉토리 생성
 RUN mkdir -p ${PNPM_STORE_PATH} ${NODE_GYP_CACHE}
 
 # Turbo Prune 결과 복사

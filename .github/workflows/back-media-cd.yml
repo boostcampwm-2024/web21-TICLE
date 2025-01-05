@@ -29,19 +29,44 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'pnpm'
 
-      - name: 🔄 캐시 복원
+      - name: 🔄 pnpm 캐시 복원
         uses: actions/cache@v3
         with:
-          path: |
-            ~/.pnpm-store
-            ~/.cache/node-gyp
-            ~/.cache/node-gyp-binary
+          path: ~/.pnpm-store
           key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-pnpm-
 
+      - name: 🔄 node-gyp 캐시 복원
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/node-gyp
+            ~/.cache/node-gyp-binary
+          key: ${{ runner.os }}-node-gyp-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-node-gyp-
+
+      # 의존성 설치 및 빌드 후 node-gyp 캐시 저장
       - name: ⬇️ 의존성 설치
-        run: pnpm install --frozen-lockfile
+        run: |
+          pnpm install --frozen-lockfile
+          # node-gyp 캐시를 actions 캐시에 다시 저장
+          if [ -d ~/.cache/node-gyp ]; then
+            echo "node-gyp cache exists, updating cache."
+            echo "Updating node-gyp cache in GitHub Actions."
+            echo "::set-output name=cache-paths::$(echo ~/.cache/node-gyp)"
+          else
+            echo "node-gyp cache does not exist."
+          fi
+
+      # 캐시 저장 단계
+      - name: 🔄 node-gyp 캐시 저장
+        if: steps.cache-paths.outputs.cache-paths != ''
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/node-gyp
+          key: ${{ runner.os }}-node-gyp-${{ hashFiles('pnpm-lock.yaml') }
 
       - name: 📦 프로젝트 빌드
         run: pnpm build:media
