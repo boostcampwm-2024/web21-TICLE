@@ -37,32 +37,26 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-
 
-      # Turbo 캐시 복원
-      - name: 🔄 Turbo 캐시 복원
+      - name: 🔄 mediasoup 빌드 결과 캐시 복원
         uses: actions/cache@v3
         with:
-          path: |
-            .turbo/cache
-          key: ${{ runner.os }}-turbo-${{ hashFiles('turbo.json') }}
+          path: /app/apps/media/node_modules/.pnpm/mediasoup@3.15.1/node_modules/mediasoup
+          key: ${{ runner.os }}-mediasoup-${{ hashFiles('pnpm-lock.yaml') }}
           restore-keys: |
-            ${{ runner.os }}-turbo-
+            ${{ runner.os }}-mediasoup-
 
-      # 의존성 설치
       - name: ⬇️ 의존성 설치
-        run: pnpm install --frozen-lockfile
+        run: |
+          pnpm install --frozen-lockfile
 
       - name: 📦 프로젝트 빌드
         run: pnpm build:media
 
-      - name: 🔄 Turbo 캐시 저장
+      - name: 🔄 mediasoup 빌드 결과 캐시 저장
         uses: actions/cache@v3
         with:
-          path: |
-            .turbo/cache
-          key: ${{ runner.os }}-turbo-${{ hashFiles('turbo.json') }}
-
-      - name: 빌드 테스트
-        run: echo "test11"
+          path: /app/apps/media/node_modules/.pnpm/mediasoup@3.15.1/node_modules/mediasoup
+          key: ${{ runner.os }}-mediasoup-${{ hashFiles('pnpm-lock.yaml') }}
 
   build:
     runs-on: ubuntu-latest
@@ -84,7 +78,7 @@ jobs:
       - name: 🐳 Docker 빌드 및 푸시
         run: |
           echo "Starting Docker build..."
-          DOCKER_BUILDKIT=1 docker buildx build --progress=plain --build-arg PNPM_CACHE_DIR=/root/.pnpm-store -f apps/media/Dockerfile . -t my-media-app
+          DOCKER_BUILDKIT=1 docker buildx build --progress=plain --build-arg PNPM_CACHE_DIR=/root/.pnpm-store --build-arg MEDIASOUP_CACHE_DIR=//app/apps/media/node_modules/.pnpm/mediasoup@3.15.1/node_modules/mediasoup -f apps/media/Dockerfile . -t my-media-app
           echo "Docker build completed."
 
       - name: 🐳 Docker 실행
