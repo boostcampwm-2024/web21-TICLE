@@ -66,7 +66,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.cache/node-gyp
-          key: ${{ runner.os }}-node-gyp-${{ hashFiles('pnpm-lock.yaml') }
+          key: ${{ runner.os }}-node-gyp-${{ hashFiles('pnpm-lock.yaml') }}
 
       - name: 📦 프로젝트 빌드
         run: pnpm build:media
