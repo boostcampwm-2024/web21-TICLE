@@ -59,12 +59,9 @@ jobs:
         with:
           fetch-depth: 2
 
-      - name: jq 설치
-        run: sudo apt-get install jq -y
-
       - name: .env 파일 생성
         run: |
-          echo "$SECRETS_CONTEXT" | jq -r 'to_entries|map("\(.key)=\(.value|tostring)")|.[]' > .env
+          jq -r 'to_entries|map("\(.key)=\(.value|tostring)")|.[]' <<< "$SECRETS_CONTEXT" > .env
           mv .env apps/media/.env
         env:
           SECRETS_CONTEXT: ${{ toJson(secrets) }}
@@ -75,19 +72,10 @@ jobs:
       #     registry: ${{secrets.DOCKER_REGISTRY_URL}}
       #     username: ${{secrets.DOCKER_REGISTRY_ACCESS_KEY}}
       #     password: ${{secrets.DOCKER_REGISTRY_SECRET_KEY}}
-
-      - name: 🐳 Docker Buildx 설정
-        uses: docker/setup-buildx-action@v3
-
       - name: 🐳 Docker 빌드 및 푸시
         run: |
-          docker buildx build \
-            --progress=plain \
-            --build-arg PNPM_CACHE_DIR=/root/.pnpm-store \
-            -f apps/media/Dockerfile \
-            . \
-            -t my-media-app
-            --load
+          echo "Starting Docker build..."
+          DOCKER_BUILDKIT=1 docker buildx build --progress=plain --build-arg PNPM_CACHE_DIR=/root/.pnpm-store -f apps/media/Dockerfile . -t my-media-app
           echo "Docker build completed."
 
       - name: 🐳 Docker 실행
