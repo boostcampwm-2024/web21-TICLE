@@ -36,8 +36,8 @@ jobs:
             ~/.pnpm-store
             ~/.cache/node-gyp
             ~/.cache/node-gyp-binary
-        key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
-        restore-keys: |
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
           ${{ runner.os }}-pnpm-
 
       - name: ⬇️ 의존성 설치
