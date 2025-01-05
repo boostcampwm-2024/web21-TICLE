@@ -38,7 +38,7 @@ jobs:
             ~/.cache/node-gyp-binary
           key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
           restore-keys: |
-          ${{ runner.os }}-pnpm-
+            ${{ runner.os }}-pnpm-
 
       - name: ⬇️ 의존성 설치
         run: pnpm install --frozen-lockfile
