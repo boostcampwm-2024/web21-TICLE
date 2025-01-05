@@ -87,6 +87,7 @@ jobs:
             -f apps/media/Dockerfile \
             . \
             -t my-media-app
+            --load
           echo "Docker build completed."
 
       - name: 🐳 Docker 실행
