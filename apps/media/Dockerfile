@@ -39,7 +39,8 @@ FROM base AS runner
 WORKDIR /app
 
 # 캐시된 mediasoup 빌드 결과물 복사
-COPY --from=builder ${MEDIASOUP_CACHE_DIR} ./node_modules/mediasoup && echo "Mediasoup copied to runner"
+COPY --from=builder ${MEDIASOUP_CACHE_DIR}/mediasoup ./node_modules/mediasoup
+RUN echo "Mediasoup copied to runner"
 
 # 나머지 파일 복사 및 실행
 COPY --from=builder /app .
