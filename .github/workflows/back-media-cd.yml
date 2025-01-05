@@ -37,39 +37,29 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-
 
-      - name: 🔄 node-gyp 캐시 복원
+      # Turbo 캐시 복원
+      - name: 🔄 Turbo 캐시 복원
         uses: actions/cache@v3
         with:
           path: |
-            ~/.cache/node-gyp
-            ~/.cache/node-gyp-binary
-          key: ${{ runner.os }}-node-gyp-${{ hashFiles('pnpm-lock.yaml') }}
+            .turbo/cache
+          key: ${{ runner.os }}-turbo-${{ hashFiles('turbo.json') }}
           restore-keys: |
-            ${{ runner.os }}-node-gyp-
+            ${{ runner.os }}-turbo-
 
-      # 의존성 설치 및 빌드 후 node-gyp 캐시 저장
+      # 의존성 설치
       - name: ⬇️ 의존성 설치
-        run: |
-          pnpm install --frozen-lockfile
-          # node-gyp 캐시를 actions 캐시에 다시 저장
-          if [ -d ~/.cache/node-gyp ]; then
-            echo "node-gyp cache exists, updating cache."
-            echo "Updating node-gyp cache in GitHub Actions."
-            echo "::set-output name=cache-paths::$(echo ~/.cache/node-gyp)"
-          else
-            echo "node-gyp cache does not exist."
-          fi
-
-      # 캐시 저장 단계
-      - name: 🔄 node-gyp 캐시 저장
-        if: steps.cache-paths.outputs.cache-paths != ''
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/node-gyp
-          key: ${{ runner.os }}-node-gyp-${{ hashFiles('pnpm-lock.yaml') }}
+        run: pnpm install --frozen-lockfile
 
       - name: 📦 프로젝트 빌드
         run: pnpm build:media
+
+      - name: 🔄 Turbo 캐시 저장
+        uses: actions/cache@v3
+        with:
+          path: |
+            .turbo/cache
+          key: ${{ runner.os }}-turbo-${{ hashFiles('turbo.json') }}
 
       - name: 빌드 테스트
         run: echo "test11"
@@ -91,12 +81,6 @@ jobs:
         env:
           SECRETS_CONTEXT: ${{ toJson(secrets) }}
 
-      # - name: 🐳 Docker 로그인
-      #   uses: docker/login-action@v3
-      #   with:
-      #     registry: ${{secrets.DOCKER_REGISTRY_URL}}
-      #     username: ${{secrets.DOCKER_REGISTRY_ACCESS_KEY}}
-      #     password: ${{secrets.DOCKER_REGISTRY_SECRET_KEY}}
       - name: 🐳 Docker 빌드 및 푸시
         run: |
           echo "Starting Docker build..."
