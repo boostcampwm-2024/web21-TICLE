@@ -40,7 +40,7 @@ jobs:
       - name: 🔄 mediasoup 빌드 결과 캐시 복원
         uses: actions/cache@v3
         with:
-          path: /app/apps/media/node_modules/.pnpm/mediasoup@3.15.1/node_modules/mediasoup
+          path: /app/apps/media/node_modules/.pnpm/mediasoup@*/node_modules/mediasoup
           key: ${{ runner.os }}-mediasoup-${{ hashFiles('pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-mediasoup-
@@ -55,7 +55,7 @@ jobs:
       - name: 🔄 mediasoup 빌드 결과 캐시 저장
         uses: actions/cache@v3
         with:
-          path: /app/apps/media/node_modules/.pnpm/mediasoup@3.15.1/node_modules/mediasoup
+          path: /app/apps/media/node_modules/.pnpm/mediasoup@*/node_modules/mediasoup
           key: ${{ runner.os }}-mediasoup-${{ hashFiles('pnpm-lock.yaml') }}
 
   build:
@@ -78,7 +78,10 @@ jobs:
       - name: 🐳 Docker 빌드 및 푸시
         run: |
           echo "Starting Docker build..."
-          DOCKER_BUILDKIT=1 docker buildx build --progress=plain --build-arg PNPM_CACHE_DIR=/root/.pnpm-store --build-arg MEDIASOUP_CACHE_DIR=//app/apps/media/node_modules/.pnpm/mediasoup@3.15.1/node_modules/mediasoup -f apps/media/Dockerfile . -t my-media-app
+          DOCKER_BUILDKIT=1 docker buildx build --progress=plain \
+            --build-arg PNPM_CACHE_DIR=/root/.pnpm-store \
+            --build-arg MEDIASOUP_CACHE_DIR=/app/apps/media/node_modules/.pnpm/mediasoup@*/node_modules/mediasoup \
+            -f apps/media/Dockerfile . -t my-media-app
           echo "Docker build completed."
 
       - name: 🐳 Docker 실행
