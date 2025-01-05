@@ -30,7 +30,8 @@ COPY . .
 RUN pnpm build && echo "Build completed successfully"
 
 # 3. Mediasoup 빌드 결과 캐싱
-RUN cp -r node_modules/.pnpm/mediasoup@*/node_modules/mediasoup ${MEDIASOUP_CACHE_DIR} && echo "Mediasoup cached successfully"
+RUN mkdir -p ${MEDIASOUP_CACHE_DIR} && \
+    cp -r node_modules/.pnpm/mediasoup@*/node_modules/mediasoup ${MEDIASOUP_CACHE_DIR} && echo "Mediasoup cached successfully"
 
 # 4. Runner 단계
 FROM base AS runner
